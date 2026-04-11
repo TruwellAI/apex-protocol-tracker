@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Melanotan II — Apex Research Reference</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap');
+    :root{--bg:#080c10;--panel:#0d1318;--border:#1a2d3a;--accent:#00d4ff;--accent2:#00ff9d;--accent3:#ff6b35;--text:#c8dde8;--muted:#4a6272;--white:#eaf4f8;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;line-height:1.6;padding:40px 20px;}
+    body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 70% 10%,rgba(0,212,255,0.06) 0%,transparent 60%),radial-gradient(ellipse at 20% 90%,rgba(255,107,53,0.04) 0%,transparent 50%);pointer-events:none;z-index:0;}
+    .container{max-width:900px;margin:0 auto;position:relative;z-index:1;}
+    .header{margin-bottom:40px;border-bottom:1px solid var(--border);padding-bottom:24px;}
+    .peptide-label{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;}
+    .peptide-name{font-family:'Rajdhani',sans-serif;font-size:52px;font-weight:700;color:var(--white);line-height:1;margin-bottom:8px;}
+    .peptide-fullname{font-size:16px;color:var(--muted);margin-bottom:16px;}
+    .tag-row{display:flex;gap:8px;flex-wrap:wrap;}
+    .tag{background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.25);color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;padding:3px 10px;}
+    .section{background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--muted);padding:28px 32px;margin-bottom:16px;animation:fadeUp 0.4s ease both;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+    .section-num{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:8px;}
+    h2{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px;}
+    .stat-box{background:var(--bg);border:1px solid var(--border);padding:16px;text-align:center;}
+    .stat-value{font-family:'Rajdhani',sans-serif;font-size:32px;font-weight:700;color:var(--white);line-height:1;}
+    .stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-top:4px;}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+    .info-item{margin-bottom:14px;}
+    .info-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:4px;}
+    .info-value{color:var(--white);font-size:13px;line-height:1.5;}
+    .timeline{position:relative;padding-left:20px;}
+    .timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:var(--border);}
+    .timeline-item{position:relative;margin-bottom:20px;}
+    .timeline-item::before{content:'';position:absolute;left:-24px;top:5px;width:8px;height:8px;background:var(--accent);border-radius:50%;}
+    .timeline-year{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:4px;}
+    .benefit-item{display:flex;gap:14px;margin-bottom:16px;align-items:flex-start;}
+    .benefit-num{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent3);min-width:28px;padding-top:2px;}
+    .benefit-title{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;color:var(--white);margin-bottom:3px;}
+    .recon-box{background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--accent2);padding:20px 24px;margin-bottom:16px;}
+    .recon-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);margin-bottom:12px;}
+    .recon-math{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--white);margin-bottom:8px;}
+    .dose-table{width:100%;border-collapse:collapse;}
+    .dose-table th{background:rgba(0,212,255,0.08);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);}
+    .dose-table td{padding:12px 14px;border-bottom:1px solid rgba(26,45,58,0.5);vertical-align:top;font-size:13px;}
+    .dose-level{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);font-weight:700;}
+    .dose-amount{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--white);}
+    .dose-units{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent);display:block;margin-top:2px;}
+    .bio-table{width:100%;border-collapse:collapse;}
+    .bio-table th{background:rgba(0,212,255,0.06);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--muted);text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);}
+    .bio-table td{padding:10px 12px;border-bottom:1px solid rgba(26,45,58,0.4);vertical-align:top;font-size:12px;}
+    .bio-name{color:var(--white);font-weight:500;display:block;}
+    .bio-test{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);}
+    .range-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 6px;margin-right:4px;}
+    .range-clinical{background:rgba(74,98,114,0.3);color:var(--muted);}
+    .range-optimal{background:rgba(0,255,157,0.1);color:var(--accent2);}
+    .bio-category{margin-bottom:24px;}
+    .bio-category-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);margin-bottom:10px;}
+    .note-box{background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.15);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .warning-box{background:rgba(255,107,53,0.08);border:1px solid rgba(255,107,53,0.3);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .disclaimer-box{background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.2);padding:14px 18px;margin-top:20px;font-size:12px;color:var(--text);line-height:1.5;}
+    .dual-protocol{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;}
+    .protocol-card{background:var(--bg);border:1px solid var(--border);border-top:2px solid var(--accent2);padding:18px;}
+    .protocol-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent2);margin-bottom:12px;}
+  </style>
+</head>
+<body>
+<div class="container">
+<a href="index.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--muted);text-decoration:none;text-transform:uppercase;margin-bottom:28px;padding:8px 14px;border:1px solid var(--border);transition:all .2s;" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">← Back to Encyclopedia</a>
+
+  <div class="header">
+    <div class="peptide-label">Apex Research Reference</div>
+    <div class="peptide-name">MELANOTAN II</div>
+    <div class="peptide-fullname">MT-II — Non-Selective Melanocortin Receptor Agonist (MC1R · MC3R · MC4R)</div>
+    <div class="tag-row">
+      <span class="tag">TANNING</span>
+      <span class="tag">SEXUAL HEALTH</span>
+      <span class="tag">APPETITE</span>
+      <span class="tag">MC1R · MC3R · MC4R</span>
+      <span class="tag">ON-DEMAND</span>
+    </div>
+  </div>
+
+  <!-- 01 -->
+  <div class="section" style="animation-delay:0.1s;border-top-color:var(--accent);">
+    <div class="section-num">01 / IDENTITY</div>
+    <h2>Compound Profile</h2>
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-value">7</div>
+        <div class="stat-label">AMINO ACIDS</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">~1.02</div>
+        <div class="stat-label">kDa MW</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">SC</div>
+        <div class="stat-label">ROUTE</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">1–2h</div>
+        <div class="stat-label">HALF-LIFE</div>
+      </div>
+    </div>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">CLASSIFICATION</div>
+          <div class="info-value">Cyclic heptapeptide; synthetic analog of α-MSH (alpha-melanocyte stimulating hormone)</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">RECEPTORS</div>
+          <div class="info-value">
+            <strong style="color:var(--accent2);">MC1R</strong> — melanocytes → skin pigmentation (tanning)<br>
+            <strong style="color:var(--accent2);">MC3R</strong> — hypothalamus → appetite suppression, energy balance<br>
+            <strong style="color:var(--accent2);">MC4R</strong> — brain/spinal cord → sexual arousal, erectile function (libido)
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">SEQUENCE</div>
+          <div class="info-value" style="font-family:'Share Tech Mono',monospace;font-size:11px;">Ac-Nle-c[Asp-His-D-Phe-Arg-Trp-Lys]-NH₂</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">DEVELOPED BY</div>
+          <div class="info-value">University of Arizona — Dr. Mac Hadley &amp; Dr. Victor Hruby, 1980s–1990s. Originally designed as a sunless tanning agent and skin cancer prevention tool.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">DISTINCTION FROM MT-1</div>
+          <div class="info-value">Melanotan I (afamelanotide) = MC1R selective only (tanning, no libido). Melanotan II = non-selective MC1R + MC3R + MC4R (tanning + appetite + sexual effects).</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 -->
+  <div class="section" style="animation-delay:0.15s;border-top-color:var(--accent2);">
+    <div class="section-num">02 / RESEARCH HISTORY</div>
+    <h2>Development Timeline</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-year">1980s</div>
+        <div>Hruby &amp; Hadley at University of Arizona synthesize early MSH analogs while researching sunless tanning. The goal: create a compound that stimulates melanin production without UV exposure to reduce skin cancer risk.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">1991</div>
+        <div>Melanotan II synthesized — the cyclic, more potent and metabolically stable analog of α-MSH. Self-experimentation by researchers (most famously, Norman Walker's documented self-injection) demonstrates profound tanning effect and unexpectedly strong erection as side effect.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">1996–2000</div>
+        <div>University of Arizona Phase I/II trials establish MT-II's efficacy for erectile dysfunction (MEDLINE: Wessells et al., 1998, <em>Journal of Urology</em>). MT-II triggers erection via central CNS mechanism (MC4R in the paraventricular nucleus) independent of testosterone or NO/PDE5 pathway — works where Viagra fails in some cases.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2000–2005</div>
+        <div>Palatin Technologies develops bremelanotide (PT-141) — a stabilized MT-II derivative — for female sexual dysfunction. MT-II research splits: PT-141 → pharmaceutical development track; MT-II → tanning/grey market. Palatin drops MT-II due to BP side effect profile; pursues PT-141 intranasal formulation.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2010–present</div>
+        <div>MT-II remains one of the most widely researched peptides in the bodybuilding/aesthetics community globally. Extensive anecdotal database accumulated on tanning protocols, libido effects, appetite suppression, and side effect management. Continued use in research settings for melanocortin system studies.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 -->
+  <div class="section" style="animation-delay:0.2s;border-top-color:var(--accent3);">
+    <div class="section-num">03 / BENEFITS</div>
+    <h2>Primary Effects</h2>
+    <div class="benefit-item">
+      <div class="benefit-num">01</div>
+      <div>
+        <div class="benefit-title">Accelerated Skin Tanning (MC1R)</div>
+        <div>MT-II stimulates melanocyte production of eumelanin (brown/black pigment) via MC1R activation. Requires UV exposure to "set" the tan — MT-II primes melanocytes; UV light triggers melanin transfer. Users typically achieve a 2–4 week tan in 5–10 sessions vs. months without. Tan persists 4–8 weeks post-cycle.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">02</div>
+      <div>
+        <div class="benefit-title">Sexual Function &amp; Libido (MC4R)</div>
+        <div>MC4R activation in the paraventricular nucleus of the hypothalamus generates spontaneous erections in males and increased genital arousal in females. Clinical trials documented 80%+ response rate for erectile function independent of PDE5 inhibitors. Works in patients unresponsive to Viagra/Cialis by targeting a completely different mechanism (central vs. vascular).</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">03</div>
+      <div>
+        <div class="benefit-title">Appetite Suppression (MC3R/MC4R)</div>
+        <div>Hypothalamic melanocortin system is a primary regulator of energy homeostasis. MT-II MC3R/MC4R activation reliably reduces hunger. Many users report 20–40% reduction in caloric intake during tanning cycles without intentional calorie restriction. Useful as an adjunct in fat loss protocols.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">04</div>
+      <div>
+        <div class="benefit-title">Photoprotection</div>
+        <div>Increased melanin production provides measurable UV protection. Dense melanin pigmentation (Fitzpatrick type IV–VI equivalent) reduces UV damage, DNA strand breaks, and sunburn. Not a replacement for sunscreen, but a functional benefit alongside cosmetic tanning.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 -->
+  <div class="section" style="animation-delay:0.25s;border-top-color:var(--accent2);">
+    <div class="section-num">04 / RECONSTITUTION</div>
+    <h2>Preparation Protocol</h2>
+    <div class="recon-box">
+      <div class="recon-title">// 10MG VIAL — STANDARD RECONSTITUTION</div>
+      <div class="recon-math">10,000 mcg ÷ 300 units BAC water = <span style="color:var(--accent2)">33.3 mcg per unit</span></div>
+      <div style="font-size:13px;margin-top:8px;color:var(--muted);">Add 3.0 mL (300 units) bacteriostatic water to 10mg lyophilized vial.</div>
+    </div>
+    <table class="dose-table">
+      <thead>
+        <tr>
+          <th>TARGET DOSE</th>
+          <th>UNITS TO DRAW</th>
+          <th>VOLUME</th>
+          <th>NOTE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="dose-level">INTRO</span><span class="dose-amount">250 mcg</span><span class="dose-units">0.25 mg</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--white);">7.5 units</td>
+          <td style="font-family:'Share Tech Mono',monospace;">0.075 mL</td>
+          <td>First use — assess nausea/side effects</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">LOW</span><span class="dose-amount">500 mcg</span><span class="dose-units">0.5 mg</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--white);">15 units</td>
+          <td style="font-family:'Share Tech Mono',monospace;">0.15 mL</td>
+          <td>Minimal side effects; moderate tanning</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">STANDARD</span><span class="dose-amount">1 mg</span><span class="dose-units">1,000 mcg</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--white);">30 units</td>
+          <td style="font-family:'Share Tech Mono',monospace;">0.30 mL</td>
+          <td>Standard tanning protocol</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">HIGH</span><span class="dose-amount">1.5 mg</span><span class="dose-units">1,500 mcg</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--white);">45 units</td>
+          <td style="font-family:'Share Tech Mono',monospace;">0.45 mL</td>
+          <td>Rapid loading; higher nausea risk</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note-box" style="margin-top:16px;">
+      <strong style="color:var(--accent2);">Storage:</strong> Lyophilized — refrigerate or room temp (light-protected). Reconstituted: refrigerate (2–8°C), 30-day stability. Do not freeze reconstituted peptide.
+    </div>
+  </div>
+
+  <!-- 05 -->
+  <div class="section" style="animation-delay:0.3s;border-top-color:var(--accent);">
+    <div class="section-num">05 / DOSING PROTOCOL</div>
+    <h2>Dual Protocol — Tanning vs. On-Demand</h2>
+    <div class="dual-protocol">
+      <div class="protocol-card">
+        <div class="protocol-title">// TANNING PROTOCOL</div>
+        <div class="info-item">
+          <div class="info-label">LOADING PHASE</div>
+          <div class="info-value">0.5–1.0 mg SC daily × 5–10 days (until desired base tan achieved). Pair each injection with 10–20 min UV exposure within 4 hours.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">MAINTENANCE</div>
+          <div class="info-value">0.5–1.0 mg SC 1–2×/week with brief UV exposure to maintain tan color.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">TIMING</div>
+          <div class="info-value">Inject 30–90 min before UV exposure. Side effects (nausea, flushing) peak at 30–60 min — plan accordingly.</div>
+        </div>
+      </div>
+      <div class="protocol-card">
+        <div class="protocol-title">// ON-DEMAND (LIBIDO/ED)</div>
+        <div class="info-item">
+          <div class="info-label">DOSE</div>
+          <div class="info-value">0.5–1.0 mg SC approximately 90–120 minutes before desired activity.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">FREQUENCY</div>
+          <div class="info-value">As needed — not daily. Tolerance to sexual effects develops with frequent use. Use max 2–3× per week.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">NOTE</div>
+          <div class="info-value">Spontaneous erections may occur within 1–2 hours of injection. Normal physiological response. Reduces with lower doses.</div>
+        </div>
+      </div>
+    </div>
+    <div class="warning-box" style="margin-top:16px;">
+      <strong style="color:var(--accent3);">Side Effects:</strong> Nausea (most common, 30–60 min post-injection), facial flushing, yawning, spontaneous erections. Nausea typically resolves by weeks 2–3 of use. Nausea management: inject in the evening before sleep; use 250–500 mcg starting doses; stay hydrated.
+    </div>
+    <div class="warning-box">
+      <strong style="color:var(--accent3);">Mole/Nevus Monitoring:</strong> MC1R activation accelerates pigmentation of existing moles and nevi. Users must monitor existing moles for changes in size, shape, or color. Consult dermatologist if new moles develop or existing moles change during use. Do not use if personal/family history of melanoma.
+    </div>
+  </div>
+
+  <!-- 06 -->
+  <div class="section" style="animation-delay:0.35s;border-top-color:var(--accent3);">
+    <div class="section-num">06 / TIMING</div>
+    <h2>Administration Timing</h2>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">TANNING WINDOW</div>
+          <div class="info-value">Inject 30–90 minutes before UV exposure. Plasma peak at 30–60 min. Melanocyte priming occurs over hours — UV exposure within 4 hours of injection is ideal.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">EVENING DOSING</div>
+          <div class="info-value">Preferred for side effect minimization. Sleep through the nausea and flushing window. Wake with effects resolved. More sustainable for loading protocols.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">FOOD STATE</div>
+          <div class="info-value">Empty stomach increases nausea risk. Light meal 1 hour before injection reduces GI side effects without blunting peptide absorption.</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">HALF-LIFE NOTE</div>
+          <div class="info-value">MT-II has short plasma half-life (~1–2h) but biological effects persist much longer due to receptor internalization and downstream pigmentation processes (days to weeks).</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">FREQUENCY</div>
+          <div class="info-value">Loading: daily × 5–10 days. Maintenance: 1–2×/week. On-demand: as needed, max 3×/week. Tolerance to tanning effects develops slowly — cycling is recommended.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">UV PAIRING</div>
+          <div class="info-value">10–20 min natural sunlight or tanning bed within 4 hours of injection dramatically amplifies melanin production. MT-II alone without UV produces minimal tanning.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 07 -->
+  <div class="section" style="animation-delay:0.4s;border-top-color:var(--accent);">
+    <div class="section-num">07 / BIOMARKERS</div>
+    <h2>Monitoring Panel</h2>
+
+    <div class="bio-category">
+      <div class="bio-category-title">// SKIN SAFETY</div>
+      <table class="bio-table">
+        <thead>
+          <tr><th>MARKER</th><th>METHOD</th><th>CLINICAL RANGE</th><th>MONITOR FOR</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">Nevus/Mole Mapping</span><span class="bio-test">Dermatoscopy</span></td>
+            <td>Dermatologist exam</td>
+            <td><span class="range-label range-clinical">CLIN</span>ABCDE criteria (Asymmetry, Border, Color, Diameter, Evolution)</td>
+            <td><span class="range-label range-optimal">FLAG</span>Any change in existing nevi — stop use, consult derm</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Total Body Mole Count</span><span class="bio-test">Baseline + Follow-up</span></td>
+            <td>Dermatologist mapping</td>
+            <td><span class="range-label range-clinical">CLIN</span>Baseline established before first use</td>
+            <td><span class="range-label range-optimal">FLAG</span>New moles during use — evaluate immediately</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">// CARDIOVASCULAR</div>
+      <table class="bio-table">
+        <thead>
+          <tr><th>MARKER</th><th>TEST</th><th>CLINICAL RANGE</th><th>EXPECTED</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">Blood Pressure</span><span class="bio-test">Systolic/Diastolic</span></td>
+            <td>Home BP monitor</td>
+            <td><span class="range-label range-clinical">CLIN</span>&lt;120/80 mmHg</td>
+            <td><span class="range-label range-optimal">NOTE</span>Transient rise (5–10 mmHg) for 1–2h post-injection is normal; monitor baseline</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Heart Rate</span><span class="bio-test">Resting HR</span></td>
+            <td>Wearable / pulse ox</td>
+            <td><span class="range-label range-clinical">CLIN</span>60–100 bpm</td>
+            <td><span class="range-label range-optimal">NOTE</span>Mild tachycardia (flushing response) 30–90 min post-injection</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">// HORMONAL (LIBIDO PROTOCOL)</div>
+      <table class="bio-table">
+        <thead>
+          <tr><th>MARKER</th><th>TEST</th><th>CLINICAL RANGE</th><th>OPTIMAL</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">Total Testosterone</span><span class="bio-test">Total T</span></td>
+            <td>Serum (AM, fasted)</td>
+            <td><span class="range-label range-clinical">CLIN</span>300–1000 ng/dL</td>
+            <td><span class="range-label range-optimal">OPT</span>600–900 ng/dL</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">SHBG</span><span class="bio-test">Sex Hormone Binding Globulin</span></td>
+            <td>Serum</td>
+            <td><span class="range-label range-clinical">CLIN</span>10–57 nmol/L</td>
+            <td><span class="range-label range-optimal">OPT</span>20–35 nmol/L</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Prolactin</span><span class="bio-test">Serum Prolactin</span></td>
+            <td>Serum</td>
+            <td><span class="range-label range-clinical">CLIN</span>2–18 ng/mL (M)</td>
+            <td><span class="range-label range-optimal">OPT</span>&lt;10 ng/mL (elevated prolactin can blunt MT-II libido response)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 08 -->
+  <div class="section" style="animation-delay:0.45s;border-top-color:var(--accent2);">
+    <div class="section-num">08 / CYCLE PROTOCOL</div>
+    <h2>Recommended Cycle</h2>
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-value">4–8</div>
+        <div class="stat-label">WEEKS LOADING</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">1–2×</div>
+        <div class="stat-label">MAINTENANCE/WK</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">8–12</div>
+        <div class="stat-label">WEEKS OFF</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">4–8wks</div>
+        <div class="stat-label">TAN LASTS</div>
+      </div>
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent2);">Loading (Weeks 1–2):</strong> Begin at 250 mcg to assess tolerance. Progress to 500 mcg after 3–5 doses if tolerated. Dose nightly. Combine each injection day with 10–20 min UV. Significant tan typically visible by days 7–14.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent2);">Loading (Weeks 3–4+):</strong> Advance to 1.0 mg if desired darkness not achieved. Most users reach target tan within 2–4 weeks. Loading phase can extend to 6–8 weeks for very fair skin (Fitzpatrick I–II).
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent2);">Maintenance:</strong> 0.5–1.0 mg once or twice weekly with brief UV exposure maintains achieved tan indefinitely. Many users maintain a tan year-round on this protocol.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent);">Off Cycle:</strong> Take 8–12 weeks off annually. Tan fades over 4–8 weeks without maintenance dosing. Recommended to see dermatologist for mole mapping annually, preferably during off-cycle.
+    </div>
+    <div class="disclaimer-box">
+      <strong style="color:var(--accent3);">Research Compound Notice:</strong> Melanotan II is not FDA-approved. Human clinical trials (University of Arizona) demonstrated efficacy for erectile dysfunction and demonstrated safety in controlled settings. Long-term use safety profile, particularly regarding nevus development, is not established in large-scale studies. Mandatory mole monitoring before, during, and after use. Not for use in individuals with personal or family history of melanoma or dysplastic nevus syndrome.
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

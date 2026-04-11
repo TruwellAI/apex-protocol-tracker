@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Retatrutide — Apex Research Reference</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap');
+    :root{--bg:#080c10;--panel:#0d1318;--border:#1a2d3a;--accent:#00d4ff;--accent2:#00ff9d;--accent3:#ff6b35;--text:#c8dde8;--muted:#4a6272;--white:#eaf4f8;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;line-height:1.6;padding:40px 20px;}
+    body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 70% 10%,rgba(0,212,255,0.06) 0%,transparent 60%),radial-gradient(ellipse at 20% 90%,rgba(255,107,53,0.04) 0%,transparent 50%);pointer-events:none;z-index:0;}
+    .container{max-width:900px;margin:0 auto;position:relative;z-index:1;}
+    .header{margin-bottom:40px;border-bottom:1px solid var(--border);padding-bottom:24px;}
+    .peptide-label{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;}
+    .peptide-name{font-family:'Rajdhani',sans-serif;font-size:52px;font-weight:700;color:var(--white);line-height:1;margin-bottom:8px;}
+    .peptide-fullname{font-size:16px;color:var(--muted);margin-bottom:16px;}
+    .tag-row{display:flex;gap:8px;flex-wrap:wrap;}
+    .tag{background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.25);color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;padding:3px 10px;}
+    .section{background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--muted);padding:28px 32px;margin-bottom:16px;animation:fadeUp 0.4s ease both;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+    .section-num{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:8px;}
+    h2{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px;}
+    .stat-box{background:var(--bg);border:1px solid var(--border);padding:16px;text-align:center;}
+    .stat-value{font-family:'Rajdhani',sans-serif;font-size:32px;font-weight:700;color:var(--white);line-height:1;}
+    .stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-top:4px;}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+    .info-item{margin-bottom:14px;}
+    .info-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:4px;}
+    .info-value{color:var(--white);font-size:13px;line-height:1.5;}
+    .timeline{position:relative;padding-left:20px;}
+    .timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:var(--border);}
+    .timeline-item{position:relative;margin-bottom:20px;}
+    .timeline-item::before{content:'';position:absolute;left:-24px;top:5px;width:8px;height:8px;background:var(--accent);border-radius:50%;}
+    .timeline-year{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:4px;}
+    .benefit-item{display:flex;gap:14px;margin-bottom:16px;align-items:flex-start;}
+    .benefit-num{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent3);min-width:28px;padding-top:2px;}
+    .benefit-title{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;color:var(--white);margin-bottom:3px;}
+    .recon-box{background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--accent2);padding:20px 24px;margin-bottom:16px;}
+    .recon-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);margin-bottom:12px;}
+    .recon-math{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--white);margin-bottom:8px;}
+    .dose-table{width:100%;border-collapse:collapse;}
+    .dose-table th{background:rgba(0,212,255,0.08);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);}
+    .dose-table td{padding:12px 14px;border-bottom:1px solid rgba(26,45,58,0.5);vertical-align:top;font-size:13px;}
+    .dose-level{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);font-weight:700;}
+    .dose-amount{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--white);}
+    .dose-units{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent);display:block;margin-top:2px;}
+    .bio-table{width:100%;border-collapse:collapse;}
+    .bio-table th{background:rgba(0,212,255,0.06);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--muted);text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);}
+    .bio-table td{padding:10px 12px;border-bottom:1px solid rgba(26,45,58,0.4);vertical-align:top;font-size:12px;}
+    .bio-name{color:var(--white);font-weight:500;display:block;}
+    .bio-test{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);}
+    .range-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 6px;margin-right:4px;}
+    .range-clinical{background:rgba(74,98,114,0.3);color:var(--muted);}
+    .range-optimal{background:rgba(0,255,157,0.1);color:var(--accent2);}
+    .bio-category{margin-bottom:24px;}
+    .bio-category-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);margin-bottom:10px;}
+    .note-box{background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.15);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .highlight-box{background:rgba(0,255,157,0.04);border:1px solid rgba(0,255,157,0.2);padding:16px 20px;margin:16px 0;}
+    .disclaimer-box{background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.2);padding:14px 18px;margin-top:20px;font-size:12px;color:var(--text);line-height:1.5;}
+    .receptor-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;}
+    .receptor-card{background:var(--bg);border:1px solid var(--border);border-top:2px solid var(--accent3);padding:16px;text-align:center;}
+    .receptor-name{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--white);}
+    .receptor-type{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;color:var(--accent3);margin-bottom:6px;}
+    .receptor-effect{font-size:12px;color:var(--muted);}
+  </style>
+</head>
+<body>
+<div class="container">
+<a href="index.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--muted);text-decoration:none;text-transform:uppercase;margin-bottom:28px;padding:8px 14px;border:1px solid var(--border);transition:all .2s;" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">← Back to Encyclopedia</a>
+
+  <div class="header">
+    <div class="peptide-label">Apex Research Reference</div>
+    <div class="peptide-name">RETATRUTIDE</div>
+    <div class="peptide-fullname">LY3437943 — Triple G Receptor Agonist (GLP-1 · GIP · Glucagon)</div>
+    <div class="tag-row">
+      <span class="tag">WEIGHT LOSS</span>
+      <span class="tag">TRIPLE AGONIST</span>
+      <span class="tag">GLP-1 · GIP · GCGR</span>
+      <span class="tag">METABOLIC</span>
+      <span class="tag">CARDIOVASCULAR</span>
+    </div>
+  </div>
+
+  <!-- 01 -->
+  <div class="section" style="animation-delay:0.1s;border-top-color:var(--accent);">
+    <div class="section-num">01 / IDENTITY</div>
+    <h2>Compound Profile</h2>
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-value">24%</div>
+        <div class="stat-label">WEIGHT LOSS (24wk)</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">Weekly</div>
+        <div class="stat-label">DOSING</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">SC</div>
+        <div class="stat-label">ROUTE</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">~6 days</div>
+        <div class="stat-label">HALF-LIFE</div>
+      </div>
+    </div>
+
+    <div class="receptor-grid">
+      <div class="receptor-card">
+        <div class="receptor-type">RECEPTOR 1</div>
+        <div class="receptor-name">GLP-1R</div>
+        <div class="receptor-effect">Satiety, insulin secretion, gastric emptying delay, weight loss</div>
+      </div>
+      <div class="receptor-card">
+        <div class="receptor-type">RECEPTOR 2</div>
+        <div class="receptor-name">GIPR</div>
+        <div class="receptor-effect">Insulin potentiation, adipocyte lipolysis, GLP-1 synergy</div>
+      </div>
+      <div class="receptor-card">
+        <div class="receptor-type">RECEPTOR 3</div>
+        <div class="receptor-name">GCGR</div>
+        <div class="receptor-effect">Hepatic fat mobilization, energy expenditure, thermogenesis ↑</div>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">DEVELOPER</div>
+          <div class="info-value">Eli Lilly and Company — the same team behind tirzepatide (Mounjaro/Zepbound). Retatrutide adds glucagon receptor (GCGR) agonism to tirzepatide's dual GLP-1/GIP profile.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">IND NUMBER</div>
+          <div class="info-value">LY3437943 (Eli Lilly internal designation). Phase II data published in <em>NEJM</em> 2023 — highest weight loss numbers ever recorded in a pharmacological obesity trial at that time.</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">VIAL SIZE</div>
+          <div class="info-value">30mg lyophilized powder</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">WHY GCGR MATTERS</div>
+          <div class="info-value">Glucagon receptor activation increases hepatic glucose output (controlled by GLP-1), drives fat mobilization from liver and adipose, and importantly increases resting energy expenditure — you burn more calories at rest. This is the key differentiator from semaglutide/tirzepatide.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 -->
+  <div class="section" style="animation-delay:0.15s;border-top-color:var(--accent2);">
+    <div class="section-num">02 / RESEARCH HISTORY</div>
+    <h2>Development Timeline</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-year">2010–2018</div>
+        <div>Incretin research establishes GLP-1 + GIP synergy (Lilly, Novo Nordisk competing programs). GLP-1 monotherapy (semaglutide, liraglutide) demonstrates 10–15% weight loss. Dual GLP-1/GIP (tirzepatide) pushes to 20–22%. Research question: can glucagon receptor co-agonism further amplify energy expenditure?</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2019–2022</div>
+        <div>Eli Lilly designs LY3437943 — a C18 fatty acid-conjugated peptide with 6-day half-life enabling once-weekly SC dosing. Triple agonism engineered with balanced receptor potency: GLP-1R (strong), GIPR (strong), GCGR (moderate — enough to boost thermogenesis without glucagon-mediated hyperglycemia).</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2023 (June)</div>
+        <div><em>NEJM</em> Phase II trial results: 338 participants with obesity. After 48 weeks, highest dose group (12 mg/week) achieved <strong style="color:var(--accent2);">24.2% mean body weight reduction</strong>. At 24 weeks, 8 mg cohort averaged 17.5% loss. Unprecedented numbers. Trial dubbed "breakthrough" by obesity medicine community. No serious adverse events beyond GI class effects.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2023–2024</div>
+        <div>Phase III trials (TRIUMPH program) initiated for obesity and T2D. Additional trials for NASH/metabolic-associated liver disease, heart failure, and CKD. Lilly projects NDA submission 2025–2026. Widely expected to surpass tirzepatide in efficacy.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2024–present</div>
+        <div>Compounded retatrutide becomes available through research chemical suppliers due to Phase II data driving physician and patient interest. Protocol development primarily extrapolated from Phase II dosing escalation scheme. No commercial product approved as of 2025.</div>
+      </div>
+    </div>
+    <div class="highlight-box">
+      <strong style="color:var(--accent2);">Clinical Context:</strong> Retatrutide achieved 24.2% body weight loss in 48 weeks — the highest ever recorded in a pharmaceutical obesity trial at that time. For context: semaglutide 2.4mg (Wegovy) averages 14.9%, tirzepatide 15mg averages 22.5%. Retatrutide's glucagon component adds thermogenic amplification that the other agents lack.
+    </div>
+  </div>
+
+  <!-- 03 -->
+  <div class="section" style="animation-delay:0.2s;border-top-color:var(--accent3);">
+    <div class="section-num">03 / BENEFITS</div>
+    <h2>Primary Effects</h2>
+    <div class="benefit-item">
+      <div class="benefit-num">01</div>
+      <div>
+        <div class="benefit-title">Maximum Weight Loss — Triple Mechanism</div>
+        <div>GLP-1R: appetite suppression + early satiety. GIPR: potentiates insulin response and reduces adipocyte lipid accumulation. GCGR: increases hepatic fat mobilization and resting energy expenditure. Combined effect: less food in + more calories burned = greatest total energy deficit of any pharmacological agent studied.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">02</div>
+      <div>
+        <div class="benefit-title">Superior Fat Mass Loss vs. Lean Mass Preservation</div>
+        <div>Phase II body composition data shows retatrutide-induced weight loss is predominantly fat mass, with lean mass preservation superior to caloric restriction alone. GCGR activation drives preferential fat mobilization. Relevant for body recomposition goals beyond pure weight loss.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">03</div>
+      <div>
+        <div class="benefit-title">Hepatic Fat Reduction (NAFLD/NASH)</div>
+        <div>Glucagon receptor activation in the liver is the primary driver of hepatic fat clearance. Phase II liver sub-studies show dramatic reduction in hepatic fat fraction — relevant for the 25–30% of US adults with NAFLD. Potential to reverse established steatohepatitis.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">04</div>
+      <div>
+        <div class="benefit-title">Cardiometabolic Risk Reduction</div>
+        <div>Profound improvements across the entire cardiometabolic panel: HbA1c, triglycerides, LDL, blood pressure, hsCRP, fasting insulin. Weight-independent effects on cardiovascular risk factors observed — GLP-1R and GCGR both have direct cardiac effects beyond weight loss.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">05</div>
+      <div>
+        <div class="benefit-title">Resting Metabolic Rate Increase</div>
+        <div>Unique to the triple agonist — semaglutide and tirzepatide reduce resting metabolic rate as weight falls (adaptive thermogenesis). Retatrutide's GCGR component partially counteracts this, maintaining higher RMR during weight loss. Important for long-term weight maintenance.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 -->
+  <div class="section" style="animation-delay:0.25s;border-top-color:var(--accent2);">
+    <div class="section-num">04 / RECONSTITUTION</div>
+    <h2>Preparation Protocol</h2>
+    <div class="recon-box">
+      <div class="recon-title">// 30MG VIAL — STANDARD RECONSTITUTION</div>
+      <div class="recon-math">30,000 mcg ÷ 300 units BAC water = <span style="color:var(--accent2)">100 mcg per unit</span></div>
+      <div style="font-size:13px;margin-top:8px;color:var(--muted);">Add 3.0 mL (300 units) bacteriostatic water to 30mg lyophilized vial.</div>
+    </div>
+    <table class="dose-table">
+      <thead>
+        <tr>
+          <th>TARGET DOSE</th>
+          <th>UNITS TO DRAW</th>
+          <th>VOLUME</th>
+          <th>PHASE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="dose-level">WEEK 1–4</span><span class="dose-amount">2 mg</span><span class="dose-units">2,000 mcg</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--white);">20 units</td>
+          <td style="font-family:'Share Tech Mono',monospace;">0.20 mL</td>
+          <td>Initial; GI tolerance establishment</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">WEEK 5–8</span><span class="dose-amount">4 mg</span><span class="dose-units">4,000 mcg</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--white);">40 units</td>
+          <td style="font-family:'Share Tech Mono',monospace;">0.40 mL</td>
+          <td>Low dose escalation</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">WEEK 9–12</span><span class="dose-amount">6 mg</span><span class="dose-units">6,000 mcg</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--white);">60 units</td>
+          <td style="font-family:'Share Tech Mono',monospace;">0.60 mL</td>
+          <td>Mid escalation; most users plateau here</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">WEEK 13–20</span><span class="dose-amount">8 mg</span><span class="dose-units">8,000 mcg</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--white);">80 units</td>
+          <td style="font-family:'Share Tech Mono',monospace;">0.80 mL</td>
+          <td>Strong efficacy range; Phase II sweet spot</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">MAX</span><span class="dose-amount">12 mg</span><span class="dose-units">12,000 mcg</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--white);">120 units</td>
+          <td style="font-family:'Share Tech Mono',monospace;">1.20 mL</td>
+          <td>Highest Phase II dose — 24.2% loss at 48wk</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note-box" style="margin-top:16px;">
+      <strong style="color:var(--accent2);">Storage:</strong> Lyophilized powder — refrigerate (recommended), protect from light. Reconstituted: refrigerate (2–8°C), use within 30 days. Once-weekly dosing means one vial = ~30 weeks at 2mg or ~3–4 weeks at 8mg.
+    </div>
+  </div>
+
+  <!-- 05 -->
+  <div class="section" style="animation-delay:0.3s;border-top-color:var(--accent);">
+    <div class="section-num">05 / DOSING PROTOCOL</div>
+    <h2>Escalation Protocol (Phase II Derived)</h2>
+    <table class="dose-table">
+      <thead>
+        <tr>
+          <th>WEEK</th>
+          <th>DOSE</th>
+          <th>UNITS</th>
+          <th>RATIONALE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="dose-level">1–4</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;">2 mg weekly</td>
+          <td style="font-family:'Share Tech Mono',monospace;">20u</td>
+          <td>GI system adaptation; minimal nausea at this dose</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">5–8</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;">4 mg weekly</td>
+          <td style="font-family:'Share Tech Mono',monospace;">40u</td>
+          <td>First significant weight loss typically begins here</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">9–12</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;">6 mg weekly</td>
+          <td style="font-family:'Share Tech Mono',monospace;">60u</td>
+          <td>Escalate if GI tolerance established and progress desired</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">13–20</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;">8 mg weekly</td>
+          <td style="font-family:'Share Tech Mono',monospace;">80u</td>
+          <td>Strong fat loss phase; energy expenditure upregulation</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">20+</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;">8–12 mg weekly</td>
+          <td style="font-family:'Share Tech Mono',monospace;">80–120u</td>
+          <td>Maintain at effective dose; continue until goal achieved</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note-box">
+      <strong style="color:var(--accent);">GI Management:</strong> Nausea and vomiting are the primary dose-limiting side effects — identical to semaglutide/tirzepatide class. Strategies: take weekly dose before sleep, eat small portions 3–4×/day vs. large meals, avoid high-fat/spicy foods during dose escalation weeks, stay hydrated with electrolytes.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent);">Injection Site:</strong> Subcutaneous — abdomen, outer thigh, back of upper arm. Rotate sites weekly. No food restriction at time of injection. Once-weekly dosing on a consistent day is preferred.
+    </div>
+  </div>
+
+  <!-- 06 -->
+  <div class="section" style="animation-delay:0.35s;border-top-color:var(--accent3);">
+    <div class="section-num">06 / TIMING</div>
+    <h2>Administration Timing</h2>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">FREQUENCY</div>
+          <div class="info-value">Once weekly — same day each week (e.g., every Sunday). ~6-day half-life allows weekly dosing with stable plasma levels by week 4–5.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">PREFERRED TIME</div>
+          <div class="info-value">Evening before sleep (manage nausea overnight). OR morning with light meal. Consistent timing improves steady-state plasma levels.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">MISSED DOSE</div>
+          <div class="info-value">If &lt;4 days late, inject when remembered then resume normal schedule. If &gt;4 days late, skip and resume next regular day. Never double-dose.</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">STEADY STATE</div>
+          <div class="info-value">~4–5 weeks of weekly dosing to reach steady-state plasma concentrations. Escalation schedule mirrors this — minimum 4 weeks at each dose level before escalating.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">STACKING</div>
+          <div class="info-value">Not typically stacked with other GLP-1 agents. Compatible with GH peptides (ipamorelin/CJC) for body recomposition — GH preserves lean mass during aggressive caloric deficit. SLU-PP-332 additive for metabolic rate support.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">EXERCISE TIMING</div>
+          <div class="info-value">Exercise on non-injection-day nausea days (days 2–4 post-dose are typically best tolerated). Resistance training critical during weight loss to preserve muscle mass.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 07 -->
+  <div class="section" style="animation-delay:0.4s;border-top-color:var(--accent);">
+    <div class="section-num">07 / BIOMARKERS</div>
+    <h2>Monitoring Panel</h2>
+
+    <div class="bio-category">
+      <div class="bio-category-title">// METABOLIC EFFICACY</div>
+      <table class="bio-table">
+        <thead>
+          <tr><th>MARKER</th><th>TEST</th><th>CLINICAL RANGE</th><th>OPTIMAL (ON RETATRUTIDE)</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">HbA1c</span><span class="bio-test">Glycated Hemoglobin</span></td>
+            <td>Every 3 months</td>
+            <td><span class="range-label range-clinical">CLIN</span>&lt;5.7%</td>
+            <td><span class="range-label range-optimal">OPT</span>&lt;5.2%</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Fasting Insulin / HOMA-IR</span><span class="bio-test">Insulin Resistance</span></td>
+            <td>Standard lab</td>
+            <td><span class="range-label range-clinical">CLIN</span>HOMA-IR &lt;2.0</td>
+            <td><span class="range-label range-optimal">OPT</span>HOMA-IR &lt;1.0</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Triglycerides</span><span class="bio-test">Lipid Panel</span></td>
+            <td>Fasting lipid panel</td>
+            <td><span class="range-label range-clinical">CLIN</span>&lt;150 mg/dL</td>
+            <td><span class="range-label range-optimal">OPT</span>&lt;80 mg/dL (dramatic improvement expected)</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">LDL Cholesterol</span><span class="bio-test">LDL-C</span></td>
+            <td>Fasting lipid panel</td>
+            <td><span class="range-label range-clinical">CLIN</span>&lt;100 mg/dL</td>
+            <td><span class="range-label range-optimal">OPT</span>&lt;70 mg/dL</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">// LIVER HEALTH</div>
+      <table class="bio-table">
+        <thead>
+          <tr><th>MARKER</th><th>TEST</th><th>CLINICAL RANGE</th><th>EXPECTED ON RETATRUTIDE</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">ALT / AST</span><span class="bio-test">Liver Enzymes</span></td>
+            <td>CMP</td>
+            <td><span class="range-label range-clinical">CLIN</span>ALT &lt;56 | AST &lt;40 U/L</td>
+            <td><span class="range-label range-optimal">OPT</span>Significant improvement if elevated at baseline (GCGR clears hepatic fat)</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">GGT</span><span class="bio-test">Hepatic Stress</span></td>
+            <td>Liver panel</td>
+            <td><span class="range-label range-clinical">CLIN</span>&lt;55 U/L</td>
+            <td><span class="range-label range-optimal">OPT</span>Normalization expected within 12–24 weeks</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Hepatic Fat Fraction</span><span class="bio-test">MRI-PDFF or FibroScan CAP</span></td>
+            <td>Imaging (6-month intervals)</td>
+            <td><span class="range-label range-clinical">CLIN</span>&lt;5% hepatic fat (normal)</td>
+            <td><span class="range-label range-optimal">OPT</span>30–50% reduction in hepatic fat expected at 24 weeks</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">// SAFETY MONITORING</div>
+      <table class="bio-table">
+        <thead>
+          <tr><th>MARKER</th><th>TEST</th><th>CLINICAL RANGE</th><th>MONITOR FOR</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">Lipase / Amylase</span><span class="bio-test">Pancreatic Enzymes</span></td>
+            <td>Standard lab (baseline + q3mo)</td>
+            <td><span class="range-label range-clinical">CLIN</span>Lipase &lt;160 U/L | Amylase &lt;100 U/L</td>
+            <td><span class="range-label range-optimal">FLAG</span>&gt;3× ULN → hold drug, evaluate for pancreatitis</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Heart Rate</span><span class="bio-test">Resting HR</span></td>
+            <td>Wearable</td>
+            <td><span class="range-label range-clinical">CLIN</span>60–100 bpm</td>
+            <td><span class="range-label range-optimal">NOTE</span>Mild tachycardia (5–10 bpm increase) common with GLP-1/GCGR class</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Calcitonin</span><span class="bio-test">Thyroid C-Cell Marker</span></td>
+            <td>Annual (or at baseline)</td>
+            <td><span class="range-label range-clinical">CLIN</span>&lt;10 pg/mL</td>
+            <td><span class="range-label range-optimal">FLAG</span>Theoretical C-cell risk from GLP-1 class (rodent data, not confirmed in humans)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 08 -->
+  <div class="section" style="animation-delay:0.45s;border-top-color:var(--accent2);">
+    <div class="section-num">08 / CYCLE PROTOCOL</div>
+    <h2>Recommended Cycle</h2>
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-value">24–48</div>
+        <div class="stat-label">WEEKS ACTIVE</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">Weekly</div>
+        <div class="stat-label">DOSE FREQUENCY</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">8–12</div>
+        <div class="stat-label">WEEKS OFF (IF CYCLING)</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">2→12mg</div>
+        <div class="stat-label">ESCALATION RANGE</div>
+      </div>
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent2);">Phase I — Tolerance (Weeks 1–8):</strong> 2 mg/week → 4 mg/week. GI adaptation. Weight loss begins at week 4–6. Patients with prior GLP-1 experience (semaglutide/tirzepatide) may escalate faster; naive patients — take the full 4 weeks per dose level.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent2);">Phase II — Active Loss (Weeks 9–24):</strong> Escalate to 6 mg → 8 mg per protocol. Most significant weight loss phase. Expect 1–2 lbs/week. GCGR-driven thermogenesis amplifies fat loss beyond GLP-1/GIP effects alone.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent2);">Phase III — Maintenance or Maximum (Weeks 24+):</strong> At goal weight — step down to lowest effective dose (often 4–6 mg/week). Pursuing maximum loss — escalate to 12 mg if tolerated. Phase II showed continued loss to 48 weeks with no plateau at 12 mg.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent);">Cycling Consideration:</strong> Retatrutide, like all GLP-1 class agents, results in weight regain upon discontinuation (average 50–60% of lost weight returns within 1 year). Many users treat this as a long-term maintenance medication rather than a fixed cycle. If cycling, have a robust diet/lifestyle plan in place before stopping.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent);">Body Composition Stack:</strong> Combine with Ipamorelin/CJC-1295 (GH pulse preservation), resistance training 3×/week, and 1.6–2.0g protein/kg body weight to prevent lean mass loss during aggressive weight loss phase.
+    </div>
+    <div class="disclaimer-box">
+      <strong style="color:var(--accent3);">Research Compound Notice:</strong> Retatrutide (LY3437943) is currently in Phase III clinical trials. It is not FDA-approved. Phase II data published in <em>NEJM</em> (2023) shows remarkable efficacy and acceptable safety profile, consistent with the GLP-1 drug class. Contraindicated in personal or family history of medullary thyroid carcinoma or MEN-2 syndrome. GI side effects are manageable with slow dose escalation. Long-term safety data beyond 48 weeks in research settings is limited. Consult a qualified healthcare provider.
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

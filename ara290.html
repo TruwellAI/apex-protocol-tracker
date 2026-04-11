@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARA-290 — Apex Research Reference</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap');
+    :root{--bg:#080c10;--panel:#0d1318;--border:#1a2d3a;--accent:#00d4ff;--accent2:#00ff9d;--accent3:#ff6b35;--text:#c8dde8;--muted:#4a6272;--white:#eaf4f8;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;line-height:1.6;padding:40px 20px;}
+    body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 70% 10%,rgba(0,212,255,0.06) 0%,transparent 60%),radial-gradient(ellipse at 20% 90%,rgba(255,107,53,0.04) 0%,transparent 50%);pointer-events:none;z-index:0;}
+    .container{max-width:900px;margin:0 auto;position:relative;z-index:1;}
+    .header{margin-bottom:40px;border-bottom:1px solid var(--border);padding-bottom:24px;}
+    .peptide-label{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;}
+    .peptide-name{font-family:'Rajdhani',sans-serif;font-size:52px;font-weight:700;color:var(--white);line-height:1;margin-bottom:8px;}
+    .peptide-fullname{font-size:16px;color:var(--muted);margin-bottom:16px;}
+    .tag-row{display:flex;gap:8px;flex-wrap:wrap;}
+    .tag{background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.25);color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;padding:3px 10px;}
+    .section{background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--muted);padding:28px 32px;margin-bottom:16px;animation:fadeUp 0.4s ease both;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+    .section-num{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:8px;}
+    h2{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px;}
+    .stat-box{background:var(--bg);border:1px solid var(--border);padding:16px;text-align:center;}
+    .stat-value{font-family:'Rajdhani',sans-serif;font-size:32px;font-weight:700;color:var(--white);line-height:1;}
+    .stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-top:4px;}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+    .info-item{margin-bottom:14px;}
+    .info-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:4px;}
+    .info-value{color:var(--white);font-size:13px;line-height:1.5;}
+    .timeline{position:relative;padding-left:20px;}
+    .timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:var(--border);}
+    .timeline-item{position:relative;margin-bottom:20px;}
+    .timeline-item::before{content:'';position:absolute;left:-24px;top:5px;width:8px;height:8px;background:var(--accent);border-radius:50%;}
+    .timeline-year{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:4px;}
+    .benefit-item{display:flex;gap:14px;margin-bottom:16px;align-items:flex-start;}
+    .benefit-num{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent3);min-width:28px;padding-top:2px;}
+    .benefit-title{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;color:var(--white);margin-bottom:3px;}
+    .recon-box{background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--accent2);padding:20px 24px;margin-bottom:16px;}
+    .recon-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);margin-bottom:12px;}
+    .recon-math{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--white);margin-bottom:8px;}
+    .dose-table{width:100%;border-collapse:collapse;}
+    .dose-table th{background:rgba(0,212,255,0.08);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);}
+    .dose-table td{padding:12px 14px;border-bottom:1px solid rgba(26,45,58,0.5);vertical-align:top;font-size:13px;}
+    .dose-level{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);font-weight:700;}
+    .dose-amount{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--white);}
+    .dose-units{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent);display:block;margin-top:2px;}
+    .bio-table{width:100%;border-collapse:collapse;}
+    .bio-table th{background:rgba(0,212,255,0.06);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--muted);text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);}
+    .bio-table td{padding:10px 12px;border-bottom:1px solid rgba(26,45,58,0.4);vertical-align:top;font-size:12px;}
+    .bio-name{color:var(--white);font-weight:500;display:block;}
+    .bio-test{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);}
+    .range-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 6px;margin-right:4px;}
+    .range-clinical{background:rgba(74,98,114,0.3);color:var(--muted);}
+    .range-optimal{background:rgba(0,255,157,0.1);color:var(--accent2);}
+    .bio-category{margin-bottom:24px;}
+    .bio-category-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);margin-bottom:10px;}
+    .note-box{background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.15);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .disclaimer-box{background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.2);padding:14px 18px;margin-top:20px;font-size:12px;color:var(--text);line-height:1.5;}
+  </style>
+</head>
+<body>
+<div class="container">
+<a href="index.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--muted);text-decoration:none;text-transform:uppercase;margin-bottom:28px;padding:8px 14px;border:1px solid var(--border);transition:all .2s;" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">← Back to Encyclopedia</a>
+
+  <div class="header">
+    <div class="peptide-label">Apex Research Reference</div>
+    <div class="peptide-name">ARA-290</div>
+    <div class="peptide-fullname">Cibinetide — Erythropoietin (EPO) Tissue-Protective Receptor Agonist</div>
+    <div class="tag-row">
+      <span class="tag">NEUROPROTECTION</span>
+      <span class="tag">ANTI-INFLAMMATORY</span>
+      <span class="tag">NERVE REPAIR</span>
+      <span class="tag">METABOLIC</span>
+      <span class="tag">EPO MIMETIC</span>
+    </div>
+  </div>
+
+  <!-- 01 -->
+  <div class="section" style="animation-delay:0.1s;border-top-color:var(--accent);">
+    <div class="section-num">01 / IDENTITY</div>
+    <h2>Compound Profile</h2>
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-value">11</div>
+        <div class="stat-label">AMINO ACIDS</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">~1.3</div>
+        <div class="stat-label">kDa MW</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">SC</div>
+        <div class="stat-label">ROUTE</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">4–8h</div>
+        <div class="stat-label">HALF-LIFE</div>
+      </div>
+    </div>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">CLASSIFICATION</div>
+          <div class="info-value">Helix B surface peptide (HBSP); tissue-protective receptor (TPR) agonist</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">MECHANISM</div>
+          <div class="info-value">Binds the innate repair receptor (IRR / βcR heterodimer) — the tissue-protective arm of the EPO receptor. Does NOT stimulate erythropoiesis or raise hematocrit.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">VIAL SIZE</div>
+          <div class="info-value">10mg lyophilized powder</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">SEQUENCE</div>
+          <div class="info-value" style="font-family:'Share Tech Mono',monospace;font-size:11px;">QEQLERALNSS (helix B loop fragment)</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">DEVELOPER</div>
+          <div class="info-value">Araim Pharmaceuticals (Tarrytown, NY)</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">ALSO KNOWN AS</div>
+          <div class="info-value">Cibinetide; HBSP; ARA290</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 -->
+  <div class="section" style="animation-delay:0.15s;border-top-color:var(--accent2);">
+    <div class="section-num">02 / RESEARCH HISTORY</div>
+    <h2>Development Timeline</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-year">2000–2004</div>
+        <div>Brines, Cerami &amp; colleagues at The Rockefeller University discover that EPO has two distinct receptor systems: the classical EPOR homodimer (erythropoiesis) and a tissue-protective heterodimer (βcR + EPOR). Key insight: the tissue-protective effects can be separated from hematopoietic effects.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2008</div>
+        <div>Synthesis of ARA-290 (cibinetide) — an 11-amino-acid helix-B surface peptide derived from the EPO protein loop region responsible for tissue-protection signaling. Zero erythropoietic activity confirmed in preclinical models.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2010–2012</div>
+        <div>Phase I/II trials in Europe for diabetic peripheral neuropathy. Leiden University Medical Center (Netherlands) — Dr. Argyros and team document statistically significant corneal nerve fiber density (CNFD) regrowth and reduction in neuropathic pain scores.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2014</div>
+        <div><em>Diabetes</em> (ADA journal) publishes randomized controlled trial: ARA-290 (4 mg/day SC × 28 days) vs. placebo in painful diabetic peripheral neuropathy. Primary endpoint met — corneal confocal microscopy confirmed new nerve fiber growth. Pain scores (VAS, NTSS-6) significantly improved.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2016–2019</div>
+        <div>Sarcoidosis trials at Maastricht University Medical Center. ARA-290 demonstrated reduction in small fiber neuropathy symptoms (burning pain, autonomic dysfunction) in sarcoidosis patients — a notoriously treatment-resistant condition. Received orphan drug designation (EU).</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2020–2024</div>
+        <div>Expanded research into metabolic applications: improved insulin sensitivity in type 2 diabetes models, pancreatic beta-cell preservation, and inflammation resolution in metabolic syndrome. Post-COVID neuropathy research ongoing.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 -->
+  <div class="section" style="animation-delay:0.2s;border-top-color:var(--accent3);">
+    <div class="section-num">03 / BENEFITS</div>
+    <h2>Primary Effects</h2>
+    <div class="benefit-item">
+      <div class="benefit-num">01</div>
+      <div>
+        <div class="benefit-title">Small Fiber Nerve Regeneration</div>
+        <div>ARA-290 is the only peptide with RCT-level evidence showing actual regrowth of small fiber nerve endings (corneal confocal microscopy as surrogate marker). In diabetic neuropathy trials, CNFD increased measurably after 28 days of 4mg/day SC dosing.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">02</div>
+      <div>
+        <div class="benefit-title">Neuropathic Pain Reduction</div>
+        <div>Significant improvement in NTSS-6 pain scores, burning sensation, and autonomic neuropathy symptoms (impaired sweating, orthostatic intolerance). Works through resolution of neuroinflammation rather than pain masking.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">03</div>
+      <div>
+        <div class="benefit-title">Systemic Anti-Inflammatory Action</div>
+        <div>Activates anti-inflammatory pathways downstream of the IRR. Reduces TNF-α, IL-6, and IL-1β in inflammatory models. Promotes M2 macrophage polarization (tissue-repair phenotype). Does not suppress immune function — it resolves inflammation.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">04</div>
+      <div>
+        <div class="benefit-title">Insulin Sensitivity &amp; Beta-Cell Protection</div>
+        <div>Preclinical and early clinical data suggest ARA-290 improves glucose metabolism independent of body weight changes. May preserve pancreatic beta-cell mass in inflammatory/autoimmune environments. Relevant for metabolic syndrome and early T2D.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">05</div>
+      <div>
+        <div class="benefit-title">Organ &amp; Tissue Cytoprotection</div>
+        <div>Strong ischemia-reperfusion protection in kidney, heart, and CNS models. ARA-290 post-conditioning significantly reduces infarct size and preserves organ function after ischemic insult — without polycythemia risk of full EPO.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">06</div>
+      <div>
+        <div class="benefit-title">Mood &amp; Cognitive Function</div>
+        <div>Secondary endpoints in sarcoidosis trials showed improved fatigue scores and mood. Neuroinflammation reduction likely mechanism. Anecdotally reported: improved cognitive clarity, reduced brain fog — particularly relevant in post-viral syndrome contexts.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 -->
+  <div class="section" style="animation-delay:0.25s;border-top-color:var(--accent2);">
+    <div class="section-num">04 / RECONSTITUTION</div>
+    <h2>Preparation Protocol</h2>
+    <div class="recon-box">
+      <div class="recon-title">// 10MG VIAL — STANDARD RECONSTITUTION</div>
+      <div class="recon-math">10,000 mcg ÷ 300 units BAC water = <span style="color:var(--accent2)">33.3 mcg per unit</span></div>
+      <div style="font-size:13px;margin-top:8px;color:var(--muted);">Add 3.0 mL (300 units) bacteriostatic water to 10mg lyophilized vial.</div>
+    </div>
+    <table class="dose-table">
+      <thead>
+        <tr>
+          <th>TARGET DOSE</th>
+          <th>UNITS TO DRAW</th>
+          <th>VOLUME</th>
+          <th>NOTE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="dose-level">LOW</span><span class="dose-amount">1 mg</span><span class="dose-units">1,000 mcg</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--white);">30 units</td>
+          <td style="font-family:'Share Tech Mono',monospace;">0.30 mL</td>
+          <td>Maintenance / first-time use</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">STANDARD</span><span class="dose-amount">2 mg</span><span class="dose-units">2,000 mcg</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--white);">60 units</td>
+          <td style="font-family:'Share Tech Mono',monospace;">0.60 mL</td>
+          <td>Clinical trial dose (most evidence)</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">HIGH</span><span class="dose-amount">4 mg</span><span class="dose-units">4,000 mcg</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--white);">120 units</td>
+          <td style="font-family:'Share Tech Mono',monospace;">1.20 mL</td>
+          <td>Neuropathy trials dose; maximum studied</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note-box" style="margin-top:16px;">
+      <strong style="color:var(--accent2);">Storage:</strong> Lyophilized powder — room temperature, away from light. Reconstituted: refrigerate (2–8°C), use within 30 days. Do not freeze reconstituted solution. Protect from direct sunlight.
+    </div>
+  </div>
+
+  <!-- 05 -->
+  <div class="section" style="animation-delay:0.3s;border-top-color:var(--accent);">
+    <div class="section-num">05 / DOSING PROTOCOL</div>
+    <h2>Administration Guide</h2>
+    <table class="dose-table">
+      <thead>
+        <tr>
+          <th>PROTOCOL</th>
+          <th>DOSE</th>
+          <th>FREQUENCY</th>
+          <th>DURATION</th>
+          <th>CONTEXT</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="dose-level">INTRO</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;">1–2 mg SC</td>
+          <td>Daily</td>
+          <td>2–4 weeks</td>
+          <td>Assess tolerance; neuroprotection onset</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">CLINICAL</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;">4 mg SC</td>
+          <td>Daily</td>
+          <td>4 weeks</td>
+          <td>RCT-validated for neuropathy</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">MAINTENANCE</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;">2 mg SC</td>
+          <td>3–5×/week</td>
+          <td>Ongoing</td>
+          <td>Sustained neuroprotection, metabolic support</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">ACUTE</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;">4 mg SC</td>
+          <td>Daily × 28 days</td>
+          <td>1 month pulse</td>
+          <td>Active neuropathic pain, post-injury nerve repair</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note-box">
+      <strong style="color:var(--accent);">Injection site:</strong> Subcutaneous — abdomen, outer thigh, or flank. Rotate sites. No food restriction required; timing relative to meals is not critical. Most users dose in the morning or post-workout.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent);">Notable:</strong> Unlike EPO, ARA-290 causes NO increase in hematocrit, hemoglobin, or red blood cell mass. Zero risk of blood viscosity complications. Safe in cardiovascular patients.
+    </div>
+  </div>
+
+  <!-- 06 -->
+  <div class="section" style="animation-delay:0.35s;border-top-color:var(--accent3);">
+    <div class="section-num">06 / TIMING</div>
+    <h2>Administration Timing</h2>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">PREFERRED WINDOW</div>
+          <div class="info-value">Morning (fasted or fed — no difference demonstrated). Some users prefer post-workout for combined tissue-repair signaling.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">FOOD RESTRICTION</div>
+          <div class="info-value">None — ARA-290 is not affected by fed/fasted state. Administer any time.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">STACKING TIMING</div>
+          <div class="info-value">Can be co-administered with BPC-157, TB-500, or other repair peptides. Complementary mechanisms — no competition at receptor level.</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">FREQUENCY NOTES</div>
+          <div class="info-value">Daily dosing provides most consistent tissue-protective signaling. 5 on / 2 off acceptable for maintenance phases.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">ONSET</div>
+          <div class="info-value">Nerve regeneration markers (CNFD) improve over 4–8 weeks. Pain reduction often noticed within 1–2 weeks of consistent use.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">PEAK PLASMA</div>
+          <div class="info-value">~2–4 hours post SC injection. Active tissue levels persist 4–8 hours. Daily dosing maintains protective receptor activation.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 07 -->
+  <div class="section" style="animation-delay:0.4s;border-top-color:var(--accent);">
+    <div class="section-num">07 / BIOMARKERS</div>
+    <h2>Monitoring Panel</h2>
+
+    <div class="bio-category">
+      <div class="bio-category-title">// NERVE HEALTH</div>
+      <table class="bio-table">
+        <thead>
+          <tr><th>MARKER</th><th>TEST</th><th>CLINICAL RANGE</th><th>OPTIMAL (ON ARA-290)</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">Corneal Nerve Fiber Density</span><span class="bio-test">Corneal Confocal Microscopy (CCM)</span></td>
+            <td>CCM imaging</td>
+            <td><span class="range-label range-clinical">CLIN</span>&gt;5 fibers/mm²</td>
+            <td><span class="range-label range-optimal">OPT</span>Increasing trend over 8 weeks</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Intraepidermal Nerve Fiber Density</span><span class="bio-test">Skin Punch Biopsy</span></td>
+            <td>Pathology lab</td>
+            <td><span class="range-label range-clinical">CLIN</span>Age/sex dependent (lab ref)</td>
+            <td><span class="range-label range-optimal">OPT</span>Within normal range for age</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">NF-Light (Neurofilament Light)</span><span class="bio-test">Serum NfL</span></td>
+            <td>Blood draw (Simoa assay)</td>
+            <td><span class="range-label range-clinical">CLIN</span>&lt;20 pg/mL (age-adjusted)</td>
+            <td><span class="range-label range-optimal">OPT</span>&lt;10 pg/mL</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">// INFLAMMATION MARKERS</div>
+      <table class="bio-table">
+        <thead>
+          <tr><th>MARKER</th><th>TEST</th><th>CLINICAL RANGE</th><th>OPTIMAL</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">High-Sensitivity CRP</span><span class="bio-test">hs-CRP</span></td>
+            <td>Standard panel</td>
+            <td><span class="range-label range-clinical">CLIN</span>&lt;3.0 mg/L</td>
+            <td><span class="range-label range-optimal">OPT</span>&lt;0.5 mg/L</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Interleukin-6</span><span class="bio-test">IL-6</span></td>
+            <td>Cytokine panel</td>
+            <td><span class="range-label range-clinical">CLIN</span>&lt;7 pg/mL</td>
+            <td><span class="range-label range-optimal">OPT</span>&lt;2 pg/mL</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">TNF-Alpha</span><span class="bio-test">TNF-α</span></td>
+            <td>Cytokine panel</td>
+            <td><span class="range-label range-clinical">CLIN</span>&lt;8.1 pg/mL</td>
+            <td><span class="range-label range-optimal">OPT</span>&lt;3 pg/mL</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">// METABOLIC &amp; HEMATOLOGIC SAFETY</div>
+      <table class="bio-table">
+        <thead>
+          <tr><th>MARKER</th><th>TEST</th><th>CLINICAL RANGE</th><th>EXPECTED ON ARA-290</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">Hematocrit</span><span class="bio-test">HCT</span></td>
+            <td>CBC</td>
+            <td><span class="range-label range-clinical">CLIN</span>M: 38–50% | F: 35–45%</td>
+            <td><span class="range-label range-optimal">OPT</span>NO CHANGE — confirms non-erythropoietic</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Fasting Glucose</span><span class="bio-test">FBG</span></td>
+            <td>Fasting blood glucose</td>
+            <td><span class="range-label range-clinical">CLIN</span>70–99 mg/dL</td>
+            <td><span class="range-label range-optimal">OPT</span>70–85 mg/dL</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">HbA1c</span><span class="bio-test">Glycated Hemoglobin</span></td>
+            <td>Standard lab</td>
+            <td><span class="range-label range-clinical">CLIN</span>&lt;5.7%</td>
+            <td><span class="range-label range-optimal">OPT</span>&lt;5.2%</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Hemoglobin</span><span class="bio-test">Hgb</span></td>
+            <td>CBC</td>
+            <td><span class="range-label range-clinical">CLIN</span>M: 13.5–17.5 | F: 12–15.5 g/dL</td>
+            <td><span class="range-label range-optimal">OPT</span>No change from baseline</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 08 -->
+  <div class="section" style="animation-delay:0.45s;border-top-color:var(--accent2);">
+    <div class="section-num">08 / CYCLE PROTOCOL</div>
+    <h2>Recommended Cycle</h2>
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-value">4–12</div>
+        <div class="stat-label">WEEKS ACTIVE</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">5–7</div>
+        <div class="stat-label">DAYS PER WEEK</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">4–8</div>
+        <div class="stat-label">WEEKS OFF</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">Daily</div>
+        <div class="stat-label">FREQUENCY</div>
+      </div>
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent2);">Phase 1 (Weeks 1–4):</strong> 4 mg/day SC — acute neuroprotection and inflammation resolution. This matches the RCT-validated protocol. Expect pain reduction and early nerve fiber recovery signals.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent2);">Phase 2 (Weeks 5–12):</strong> 2–4 mg SC, 5×/week — maintenance. CNFD continues to improve. Metabolic markers stabilize. Autonomic symptoms (sweating, GI motility) often improve in this window.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent2);">Off Period:</strong> 4–8 weeks off. Nerve regeneration effects persist beyond the dosing period due to structural changes (actual new nerve fibers). Re-assess with corneal confocal or symptom scores before restarting.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent);">Stacking:</strong> ARA-290 + BPC-157 is a powerful combination for nerve and tissue repair. Add SS-31 for mitochondrial support in chronic neuropathy cases. Compatible with GHK-Cu for combined anti-inflammatory + tissue remodeling.
+    </div>
+    <div class="disclaimer-box">
+      <strong style="color:var(--accent3);">Research Compound Notice:</strong> ARA-290 (cibinetide) has completed Phase II clinical trials in Europe for diabetic neuropathy and sarcoidosis. It has received orphan drug designation (EU) and shown an excellent safety profile across multiple RCTs. All references to dosing and protocols are for educational purposes. Not approved by FDA. Consult a qualified healthcare provider.
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

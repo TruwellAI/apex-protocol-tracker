@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wolverine Stack — Apex Research Reference</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap');
+    :root{--bg:#080c10;--panel:#0d1318;--border:#1a2d3a;--accent:#00d4ff;--accent2:#00ff9d;--accent3:#ff6b35;--text:#c8dde8;--muted:#4a6272;--white:#eaf4f8;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;line-height:1.6;padding:40px 20px;}
+    body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 50% 0%,rgba(255,107,53,0.07) 0%,transparent 60%),radial-gradient(ellipse at 20% 90%,rgba(0,212,255,0.04) 0%,transparent 50%);pointer-events:none;z-index:0;}
+    .container{max-width:900px;margin:0 auto;position:relative;z-index:1;}
+    .header{margin-bottom:40px;border-bottom:1px solid var(--border);padding-bottom:24px;}
+    .stack-label{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--accent3);text-transform:uppercase;margin-bottom:8px;}
+    .stack-name{font-family:'Rajdhani',sans-serif;font-size:64px;font-weight:700;color:var(--white);line-height:1;margin-bottom:8px;}
+    .stack-sub{font-size:18px;color:var(--muted);margin-bottom:4px;}
+    .stack-tagline{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent3);letter-spacing:2px;margin-bottom:16px;}
+    .tag-row{display:flex;gap:8px;flex-wrap:wrap;}
+    .tag{background:rgba(255,107,53,0.1);border:1px solid rgba(255,107,53,0.3);color:var(--accent3);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;padding:3px 10px;}
+    .tag-blue{background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.25);color:var(--accent);}
+    .section{background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--muted);padding:28px 32px;margin-bottom:16px;animation:fadeUp 0.4s ease both;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+    .section-num{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:8px;}
+    h2{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;}
+    .compound-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
+    .compound-card{background:var(--bg);border:1px solid var(--border);border-top:2px solid var(--accent3);padding:20px 22px;}
+    .compound-name{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);margin-bottom:4px;}
+    .compound-dose{font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--accent2);margin-bottom:8px;}
+    .compound-mech{font-size:12px;color:var(--text);line-height:1.5;}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px;}
+    .stat-box{background:var(--bg);border:1px solid var(--border);padding:16px;text-align:center;}
+    .stat-value{font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--white);line-height:1;}
+    .stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-top:4px;}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+    .info-item{margin-bottom:14px;}
+    .info-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:4px;}
+    .info-value{color:var(--white);font-size:13px;line-height:1.5;}
+    .recon-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+    .recon-box{background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--accent2);padding:20px 24px;}
+    .recon-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);margin-bottom:12px;}
+    .recon-math{font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--white);margin-bottom:6px;}
+    .dose-table{width:100%;border-collapse:collapse;}
+    .dose-table th{background:rgba(255,107,53,0.08);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent3);text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);}
+    .dose-table td{padding:11px 14px;border-bottom:1px solid rgba(26,45,58,0.5);vertical-align:top;font-size:13px;}
+    .dose-level{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);font-weight:700;}
+    .dose-amount{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--white);}
+    .dose-units{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);display:block;margin-top:2px;}
+    .bio-table{width:100%;border-collapse:collapse;}
+    .bio-table th{background:rgba(0,212,255,0.06);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--muted);text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);}
+    .bio-table td{padding:10px 12px;border-bottom:1px solid rgba(26,45,58,0.4);vertical-align:top;font-size:12px;}
+    .bio-name{color:var(--white);font-weight:500;display:block;}
+    .bio-test{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);}
+    .range-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 6px;margin-right:4px;}
+    .range-clinical{background:rgba(74,98,114,0.3);color:var(--muted);}
+    .range-optimal{background:rgba(0,255,157,0.1);color:var(--accent2);}
+    .bio-category{margin-bottom:24px;}
+    .bio-category-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);margin-bottom:10px;}
+    .note-box{background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.15);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .highlight-box{background:rgba(255,107,53,0.05);border:1px solid rgba(255,107,53,0.2);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .disclaimer-box{background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.2);padding:14px 18px;margin-top:20px;font-size:12px;color:var(--text);line-height:1.5;}
+    .synergy-row{display:flex;align-items:flex-start;gap:14px;background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--accent3);padding:14px 18px;margin-bottom:10px;}
+    .synergy-icon{font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;color:var(--accent3);min-width:40px;}
+    .synergy-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:3px;}
+    .synergy-desc{font-size:13px;color:var(--white);}
+    .schedule-row{display:grid;grid-template-columns:120px 1fr 1fr 1fr;gap:0;border:1px solid var(--border);margin-bottom:2px;}
+    .schedule-row > div{padding:10px 14px;border-right:1px solid var(--border);font-size:13px;}
+    .schedule-row > div:last-child{border-right:none;}
+    .schedule-head{background:rgba(255,107,53,0.08);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--accent3);}
+    .schedule-peptide{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;color:var(--white);}
+    .check{color:var(--accent2);}
+    .dash{color:var(--muted);}
+  </style>
+</head>
+<body>
+<div class="container">
+<a href="index.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--muted);text-decoration:none;text-transform:uppercase;margin-bottom:28px;padding:8px 14px;border:1px solid var(--border);transition:all .2s;" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">← Back to Encyclopedia</a>
+
+  <div class="header">
+    <div class="stack-label">Apex Curated Stack</div>
+    <div class="stack-name">WOLVERINE</div>
+    <div class="stack-sub">BPC-157 + TB-500</div>
+    <div class="stack-tagline">Maximum Regeneration · Accelerated Healing · Tissue Repair</div>
+    <div class="tag-row">
+      <span class="tag">RECOVERY STACK</span>
+      <span class="tag">INJURY REPAIR</span>
+      <span class="tag">TISSUE REGENERATION</span>
+      <span class="tag tag-blue">SYNERGISTIC</span>
+      <span class="tag tag-blue">ANTI-INFLAMMATORY</span>
+    </div>
+  </div>
+
+  <!-- 01 STACK OVERVIEW -->
+  <div class="section" style="animation-delay:0.1s;border-top-color:var(--accent3);">
+    <div class="section-num">01 / STACK OVERVIEW</div>
+    <h2>What Is The Wolverine Stack?</h2>
+
+    <div class="highlight-box">
+      <strong style="color:var(--accent3);">The Wolverine Stack</strong> is the most powerful peptide combination for accelerated healing and tissue regeneration. Named for its near-superhuman recovery profile — BPC-157 and TB-500 attack tissue repair from two completely different mechanisms, creating a synergistic effect that neither compound achieves alone. Used by elite athletes, post-surgical patients, and anyone with chronic injuries that conventional medicine can't resolve.
+    </div>
+
+    <div class="compound-grid">
+      <div class="compound-card">
+        <div class="compound-name">BPC-157</div>
+        <div class="compound-dose">10mg vial · 33.3 mcg/unit</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--accent3);margin-bottom:10px;">LOCAL REPAIR AGENT</div>
+        <div class="compound-mech">Body Protection Compound — 15 amino acid peptide isolated from gastric juice. Activates growth factor receptors (VEGFR2, FGFR) at injury sites. Accelerates angiogenesis (new blood vessel formation), tendon-to-bone attachment, ligament healing, and gut repair. Works locally at the injury site — inject near damaged tissue for maximum effect.</div>
+      </div>
+      <div class="compound-card">
+        <div class="compound-name">TB-500</div>
+        <div class="compound-dose">10mg vial · 33.3 mcg/unit</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--accent3);margin-bottom:10px;">SYSTEMIC REPAIR AGENT</div>
+        <div class="compound-mech">Synthetic fragment of Thymosin Beta-4. Binds actin — the protein in all cells that drives cellular motility and structural repair. Reduces systemic inflammation via NF-κB pathway inhibition. Promotes stem cell migration to injury sites throughout the entire body. Works systemically — one injection repairs everywhere.</div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-value">20mg</div>
+        <div class="stat-label">TOTAL STACK</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">2</div>
+        <div class="stat-label">VIALS</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">Dual</div>
+        <div class="stat-label">MECHANISM</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">8–12w</div>
+        <div class="stat-label">CYCLE LENGTH</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 SYNERGY -->
+  <div class="section" style="animation-delay:0.15s;border-top-color:var(--accent2);">
+    <div class="section-num">02 / SYNERGY MECHANISM</div>
+    <h2>Why These Two Together</h2>
+
+    <div class="synergy-row">
+      <div class="synergy-icon">L</div>
+      <div>
+        <div class="synergy-label">BPC-157 — LOCAL PRECISION</div>
+        <div class="synergy-desc">Concentrates repair signals at the specific injury site. Accelerates local angiogenesis (blood flow to damaged tissue), stimulates local growth factor cascades, and drives tendon/ligament fibroblast proliferation. Think of it as calling the repair crew directly to the worksite.</div>
+      </div>
+    </div>
+
+    <div class="synergy-row">
+      <div class="synergy-icon">S</div>
+      <div>
+        <div class="synergy-label">TB-500 — SYSTEMIC AMPLIFICATION</div>
+        <div class="synergy-desc">Floods the body with stem cells, reduces systemic inflammation, and upregulates actin availability in every cell. Creates the optimal systemic environment for the local BPC-157 repair process to work. Think of it as clearing traffic, reducing friction, and bringing reinforcements everywhere.</div>
+      </div>
+    </div>
+
+    <div class="synergy-row" style="border-left-color:var(--accent2);">
+      <div class="synergy-icon" style="color:var(--accent2);">2×</div>
+      <div>
+        <div class="synergy-label">COMBINED EFFECT</div>
+        <div class="synergy-desc">Animal studies show the combination heals tendon injuries significantly faster than either peptide alone. BPC-157 drives local tissue architecture reconstruction while TB-500 provides the cellular building blocks and removes inflammatory barriers. The result: the fastest non-surgical tissue repair protocol in peptide research.</div>
+      </div>
+    </div>
+
+    <div class="note-box">
+      <strong style="color:var(--accent);">Injury Protocol:</strong> For acute injuries — BPC-157 injected subcutaneously as close to the injury site as possible. TB-500 injected into any SC site (systemic distribution). Run both simultaneously for maximum effect.
+    </div>
+  </div>
+
+  <!-- 03 RECONSTITUTION -->
+  <div class="section" style="animation-delay:0.2s;border-top-color:var(--accent2);">
+    <div class="section-num">03 / RECONSTITUTION</div>
+    <h2>Vial Preparation</h2>
+    <div class="recon-grid">
+      <div class="recon-box">
+        <div class="recon-title">BPC-157 — 10mg VIAL</div>
+        <div class="recon-math">10mg + 3.0 mL BAC water</div>
+        <div class="recon-math" style="color:var(--accent2);">33.3 mcg per unit</div>
+        <div style="margin-top:12px;font-size:12px;">
+          <div style="margin-bottom:6px;"><span style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;">250mcg:</span> <span style="color:var(--white);">7.5 units / 0.075 mL</span></div>
+          <div style="margin-bottom:6px;"><span style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;">500mcg:</span> <span style="color:var(--white);">15 units / 0.15 mL</span></div>
+          <div><span style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;">750mcg:</span> <span style="color:var(--white);">22.5 units / 0.225 mL</span></div>
+        </div>
+      </div>
+      <div class="recon-box">
+        <div class="recon-title">TB-500 — 10mg VIAL</div>
+        <div class="recon-math">10mg + 3.0 mL BAC water</div>
+        <div class="recon-math" style="color:var(--accent2);">33.3 mcg per unit</div>
+        <div style="margin-top:12px;font-size:12px;">
+          <div style="margin-bottom:6px;"><span style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;">500mcg:</span> <span style="color:var(--white);">15 units / 0.15 mL</span></div>
+          <div style="margin-bottom:6px;"><span style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;">1mg:</span> <span style="color:var(--white);">30 units / 0.30 mL</span></div>
+          <div><span style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;">2mg:</span> <span style="color:var(--white);">60 units / 0.60 mL</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent);">Storage:</strong> Both vials: lyophilized powder stable at room temp 6 months. After reconstitution: refrigerate (2–8°C), use within 28–30 days. Protect from light. Do NOT freeze reconstituted vials.
+    </div>
+  </div>
+
+  <!-- 04 DOSING -->
+  <div class="section" style="animation-delay:0.25s;border-top-color:var(--accent);">
+    <div class="section-num">04 / DOSING PROTOCOL</div>
+    <h2>Stack Dose Ranges</h2>
+
+    <div style="margin-bottom:20px;">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent3);margin-bottom:10px;">BPC-157</div>
+      <table class="dose-table">
+        <thead><tr><th>LEVEL</th><th>DOSE</th><th>FREQUENCY</th><th>INJECTION SITE</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="dose-level">LOW</span></td>
+            <td><span class="dose-amount">250</span><span class="dose-units">mcg / day</span></td>
+            <td>Daily</td>
+            <td>SC near injury site or abdominal fat pad</td>
+          </tr>
+          <tr>
+            <td><span class="dose-level">STANDARD</span></td>
+            <td><span class="dose-amount">500</span><span class="dose-units">mcg / day</span></td>
+            <td>Daily</td>
+            <td>SC near injury (preferred) or any SC site</td>
+          </tr>
+          <tr>
+            <td><span class="dose-level">HIGH</span></td>
+            <td><span class="dose-amount">750</span><span class="dose-units">mcg / day</span></td>
+            <td>Daily</td>
+            <td>Can split AM/PM — 375mcg × 2</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent3);margin-bottom:10px;">TB-500</div>
+      <table class="dose-table">
+        <thead><tr><th>LEVEL</th><th>DOSE</th><th>FREQUENCY</th><th>NOTES</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="dose-level">LOADING</span></td>
+            <td><span class="dose-amount">2–4</span><span class="dose-units">mg / week</span></td>
+            <td>2× weekly (Weeks 1–4)</td>
+            <td>Front-load for acute injury or first cycle</td>
+          </tr>
+          <tr>
+            <td><span class="dose-level">MAINTENANCE</span></td>
+            <td><span class="dose-amount">2</span><span class="dose-units">mg / week</span></td>
+            <td>1–2× weekly (Weeks 5+)</td>
+            <td>Standard maintenance. Split 1mg × 2 injections.</td>
+          </tr>
+          <tr>
+            <td><span class="dose-level">HIGH</span></td>
+            <td><span class="dose-amount">4</span><span class="dose-units">mg / week</span></td>
+            <td>2× weekly</td>
+            <td>Severe injury or rapid recovery protocol</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 05 SCHEDULE -->
+  <div class="section" style="animation-delay:0.3s;border-top-color:var(--accent3);">
+    <div class="section-num">05 / INJECTION SCHEDULE</div>
+    <h2>Weekly Protocol</h2>
+
+    <div class="schedule-row">
+      <div class="schedule-head">PEPTIDE</div>
+      <div class="schedule-head">MON / THU</div>
+      <div class="schedule-head">DAILY (TUE–SUN)</div>
+      <div class="schedule-head">SITE</div>
+    </div>
+    <div class="schedule-row">
+      <div class="schedule-peptide">BPC-157</div>
+      <div><span class="check">✓</span> 500mcg</div>
+      <div><span class="check">✓</span> 500mcg daily</div>
+      <div style="font-size:12px;color:var(--muted);">Near injury / abdomen</div>
+    </div>
+    <div class="schedule-row">
+      <div class="schedule-peptide">TB-500</div>
+      <div><span class="check">✓</span> 1–2mg each</div>
+      <div><span class="dash">—</span> rest days</div>
+      <div style="font-size:12px;color:var(--muted);">Any SC site, rotate</div>
+    </div>
+
+    <div class="note-box" style="margin-top:16px;">
+      <strong style="color:var(--accent);">Timing:</strong> BPC-157 — no fasting required. Can inject any time. Best results when injected as close to the injury site as possible. TB-500 — no fasting required. Injected 2× weekly regardless of BPC-157 timing.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent);">Acute Injury Protocol (Weeks 1–2):</strong> TB-500 loading dose 2mg every 3–4 days + BPC-157 750mcg daily split AM/PM. Front-loading accelerates the inflammatory-to-regenerative phase transition.
+    </div>
+  </div>
+
+  <!-- 06 BIOMARKERS -->
+  <div class="section" style="animation-delay:0.35s;border-top-color:var(--accent);">
+    <div class="section-num">06 / BIOMARKER MONITORING</div>
+    <h2>Recommended Lab Panel</h2>
+
+    <div class="bio-category">
+      <div class="bio-category-title">INFLAMMATION — PRIMARY RECOVERY MARKERS</div>
+      <table class="bio-table">
+        <thead><tr><th>MARKER</th><th>CLINICAL RANGE</th><th>OPTIMAL TARGET</th><th>NOTES</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">hs-CRP</span><span class="bio-test">high-sensitivity C-reactive protein</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>&lt;3.0 mg/L</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>&lt;0.5 mg/L</td>
+            <td>Primary inflammation marker — should drop significantly within 4–6 weeks of stack use</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">IL-6</span><span class="bio-test">interleukin-6</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>&lt;7 pg/mL</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>&lt;2 pg/mL</td>
+            <td>Pro-inflammatory cytokine — TB-500 NF-κB inhibition drives this down</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">ESR</span><span class="bio-test">erythrocyte sedimentation rate</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>0–20 mm/hr</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>&lt;10 mm/hr</td>
+            <td>Secondary inflammation marker — tracks alongside CRP for recovery trajectory</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">TISSUE REPAIR MARKERS</div>
+      <table class="bio-table">
+        <thead><tr><th>MARKER</th><th>METHOD</th><th>NOTES</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">Ultrasound / MRI</span><span class="bio-test">radiographic assessment</span></td>
+            <td>Pre/post cycle imaging</td>
+            <td>Tendon, ligament, muscle imaging — before and after 8–12 week cycle. Objective tissue healing confirmation.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">VEGF</span><span class="bio-test">vascular endothelial growth factor</span></td>
+            <td>Serum — optional</td>
+            <td>BPC-157 drives VEGF upregulation (angiogenesis). Elevated VEGF confirms mechanism is active.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Collagen Cross-links</span><span class="bio-test">CTX / P1NP</span></td>
+            <td>Serum — optional</td>
+            <td>P1NP indicates new collagen synthesis (repair). CTX indicates breakdown. Improving P1NP:CTX ratio = net tissue building.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">SAFETY PANEL</div>
+      <table class="bio-table">
+        <thead><tr><th>MARKER</th><th>CLINICAL RANGE</th><th>NOTES</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">CBC</span><span class="bio-test">complete blood count</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>Standard</td>
+            <td>Baseline and at 8 weeks. Both peptides have excellent safety profile — monitoring confirms tolerability.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">CMP</span><span class="bio-test">comprehensive metabolic panel</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>Standard</td>
+            <td>Liver and kidney function. BPC-157 has hepatoprotective properties — expect normal or improved values.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 07 CYCLE -->
+  <div class="section" style="animation-delay:0.4s;border-top-color:var(--accent2);">
+    <div class="section-num">07 / CYCLE PROTOCOL</div>
+    <h2>Administration Schedule</h2>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">CYCLE LENGTH</div>
+          <div class="info-value" style="color:var(--white);font-size:18px;font-weight:600;">8–12 Weeks</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">ACUTE INJURY PHASE (Wks 1–4)</div>
+          <div class="info-value">TB-500: 2–4mg loading 2×/week. BPC-157: 500–750mcg daily. Aggressive front-load to drive rapid phase transition from inflammation to repair.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">MAINTENANCE PHASE (Wks 5–12)</div>
+          <div class="info-value">TB-500: 2mg 1–2×/week. BPC-157: 250–500mcg daily. Sustain repair environment while tissue remodeling completes.</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">OFF PERIOD</div>
+          <div class="info-value">4–8 weeks between cycles for healthy individuals. For ongoing injury management, some practitioners run BPC-157 indefinitely at low maintenance dose (250mcg/day).</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">UPGRADE: KLOW STACK</div>
+          <div class="info-value">Add KPV 10mg + GHK-Cu 50mg to this stack → full KLOW protocol. Adds gut/mucosal repair (KPV), skin/collagen matrix (GHK-Cu), and deeper anti-inflammatory coverage.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">REQUIRES</div>
+          <div class="info-value">2 vials (BPC-157 + TB-500) · BAC water · Apex V3 Pen · Refrigeration post-reconstitution</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="disclaimer-box">
+      ⚠ Research reference only. BPC-157 and TB-500 are not FDA-approved for human therapeutic use. Information sourced from published clinical and preclinical literature. Consult a qualified medical provider before use.
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

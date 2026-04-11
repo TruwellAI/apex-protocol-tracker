@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cartalax — Apex Research Reference</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap');
+    :root{--bg:#080c10;--panel:#0d1318;--border:#1a2d3a;--accent:#00d4ff;--accent2:#00ff9d;--accent3:#ff6b35;--text:#c8dde8;--muted:#4a6272;--white:#eaf4f8;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;line-height:1.6;padding:40px 20px;}
+    body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 70% 10%,rgba(0,212,255,0.06) 0%,transparent 60%),radial-gradient(ellipse at 20% 90%,rgba(0,255,157,0.04) 0%,transparent 50%);pointer-events:none;z-index:0;}
+    .container{max-width:900px;margin:0 auto;position:relative;z-index:1;}
+    .header{margin-bottom:40px;border-bottom:1px solid var(--border);padding-bottom:24px;}
+    .peptide-label{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;}
+    .peptide-name{font-family:'Rajdhani',sans-serif;font-size:52px;font-weight:700;color:var(--white);line-height:1;margin-bottom:8px;}
+    .peptide-fullname{font-size:16px;color:var(--muted);margin-bottom:16px;}
+    .tag-row{display:flex;gap:8px;flex-wrap:wrap;}
+    .tag{background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.25);color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;padding:3px 10px;}
+    .section{background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--muted);padding:28px 32px;margin-bottom:16px;animation:fadeUp 0.4s ease both;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+    .section-num{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:8px;}
+    h2{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px;}
+    .stat-box{background:var(--bg);border:1px solid var(--border);padding:16px;text-align:center;}
+    .stat-value{font-family:'Rajdhani',sans-serif;font-size:30px;font-weight:700;color:var(--white);line-height:1;}
+    .stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-top:4px;}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+    .info-item{margin-bottom:14px;}
+    .info-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:4px;}
+    .info-value{color:var(--white);font-size:13px;line-height:1.5;}
+    .timeline{position:relative;padding-left:20px;}
+    .timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:var(--border);}
+    .timeline-item{position:relative;margin-bottom:20px;}
+    .timeline-item::before{content:'';position:absolute;left:-24px;top:5px;width:8px;height:8px;background:var(--accent);border-radius:50%;}
+    .timeline-year{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:4px;}
+    .benefit-item{display:flex;gap:14px;margin-bottom:16px;align-items:flex-start;}
+    .benefit-num{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent3);min-width:28px;padding-top:2px;}
+    .benefit-title{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;color:var(--white);margin-bottom:3px;}
+    .recon-box{background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--accent2);padding:20px 24px;margin-bottom:16px;}
+    .recon-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);margin-bottom:12px;}
+    .recon-math{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--white);margin-bottom:8px;}
+    .dose-table{width:100%;border-collapse:collapse;}
+    .dose-table th{background:rgba(0,212,255,0.08);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);}
+    .dose-table td{padding:12px 14px;border-bottom:1px solid rgba(26,45,58,0.5);vertical-align:top;font-size:13px;}
+    .dose-level{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);font-weight:700;}
+    .dose-amount{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--white);}
+    .dose-units{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent);display:block;margin-top:2px;}
+    .bio-table{width:100%;border-collapse:collapse;}
+    .bio-table th{background:rgba(0,212,255,0.06);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--muted);text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);}
+    .bio-table td{padding:10px 12px;border-bottom:1px solid rgba(26,45,58,0.4);vertical-align:top;font-size:12px;}
+    .bio-name{color:var(--white);font-weight:500;display:block;}
+    .bio-test{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);}
+    .range-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 6px;margin-right:4px;}
+    .range-clinical{background:rgba(74,98,114,0.3);color:var(--muted);}
+    .range-optimal{background:rgba(0,255,157,0.1);color:var(--accent2);}
+    .bio-category{margin-bottom:24px;}
+    .bio-category-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);margin-bottom:10px;}
+    .note-box{background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.15);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .highlight-box{background:rgba(0,255,157,0.04);border:1px solid rgba(0,255,157,0.2);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .warning-box{background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.25);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .disclaimer-box{background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.2);padding:14px 18px;margin-top:20px;font-size:12px;color:var(--text);line-height:1.5;}
+  </style>
+</head>
+<body>
+<div class="container">
+<a href="index.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--muted);text-decoration:none;text-transform:uppercase;margin-bottom:28px;padding:8px 14px;border:1px solid var(--border);transition:all .2s;" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">← Back to Encyclopedia</a>
+
+  <div class="header">
+    <div class="peptide-label">Apex Research Reference</div>
+    <div class="peptide-name">CARTALAX</div>
+    <div class="peptide-fullname">Ala-Glu-Asp-Gly — Tetrapeptide Cartilage & Connective Tissue Bioregulator</div>
+    <div class="tag-row">
+      <span class="tag">ANTI-AGING</span>
+      <span class="tag">LONGEVITY</span>
+      <span class="tag">CARTILAGE REPAIR</span>
+      <span class="tag">CONNECTIVE TISSUE</span>
+      <span class="tag">GENE REGULATION</span>
+      <span class="tag">KHAVINSON PEPTIDE</span>
+    </div>
+  </div>
+
+  <!-- 01 IDENTITY -->
+  <div class="section" style="animation-delay:0.1s;border-top-color:var(--accent);">
+    <div class="section-num">01 / IDENTITY</div>
+    <h2>Compound Profile</h2>
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-value">4</div>
+        <div class="stat-label">AMINO ACIDS</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">~0.43</div>
+        <div class="stat-label">kDa MW</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">SC / Oral</div>
+        <div class="stat-label">ROUTE</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">Short</div>
+        <div class="stat-label">HALF-LIFE</div>
+      </div>
+    </div>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">SEQUENCE</div>
+          <div class="info-value" style="font-family:'Share Tech Mono',monospace;">Ala-Glu-Asp-Gly (AEDG)</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">ORIGIN</div>
+          <div class="info-value">Developed by Professor Vladimir Khavinson and colleagues at the St. Petersburg Institute of Bioregulation and Gerontology (Russia). Part of the peptide bioregulator series — short peptides isolated from specific tissues that act as epigenetic regulators for those same tissues. Cartalax is derived from cartilage tissue.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">MECHANISM — EPIGENETIC GENE REGULATION</div>
+          <div class="info-value">Khavinson peptides work via chromatin interaction. The tetrapeptide AEDG binds directly to DNA and histone complexes in the cell nucleus, acting as an epigenetic switch that turns on genes responsible for chondrocyte (cartilage cell) proliferation, collagen synthesis, and extracellular matrix production. This is fundamentally different from receptor-based peptide mechanisms.</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">TARGET TISSUE</div>
+          <div class="info-value">Primary: articular cartilage, intervertebral disc tissue, synovial joint membranes. Secondary: connective tissue throughout the musculoskeletal system. Cartalax preferentially accumulates in cartilaginous tissue after administration.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">KHAVINSON PEPTIDE SERIES CONTEXT</div>
+          <div class="info-value">Cartalax belongs to the same research lineage as Epitalon (AEDG pineal), Cortagen (nervous system), Vilon (immune), and Livagen (liver). Each is a 4-amino-acid tissue-specific bioregulator. The series represents 40+ years of Russian gerontology research with human longevity data.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">ORAL BIOAVAILABILITY</div>
+          <div class="info-value">Unlike most peptides, Cartalax tetrapeptide is small enough (4 AA) to survive partial GI transit and be absorbed sublingually or enterically. Both SC injection and oral/sublingual administration show clinical activity, though SC is more reliable for systemic dosing.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 RESEARCH HISTORY -->
+  <div class="section" style="animation-delay:0.15s;border-top-color:var(--accent2);">
+    <div class="section-num">02 / RESEARCH HISTORY</div>
+    <h2>Development Timeline</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-year">1970s–1980s</div>
+        <div>Professor Khavinson and colleagues at the Soviet Institute of Bioregulation begin systematically isolating short peptides from different organ tissues. The hypothesis: each tissue contains its own bioregulatory peptides that can restore the tissue's gene expression to a younger, more functional state.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">1990s</div>
+        <div>Cartalax (AEDG) identified as the bioregulatory peptide specific to cartilaginous tissue. Animal studies demonstrate chondrocyte proliferation, increased proteoglycan synthesis, and reduced cartilage degradation in aging and arthritic models.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2000s</div>
+        <div>Human trials in Russia: patients with osteoarthritis treated with Cartalax show reduced pain scores, improved joint mobility, and cartilage preservation on imaging. Studies conducted in elderly populations with degenerative joint disease.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2010s–Present</div>
+        <div>Epigenetic mechanism studies confirm AEDG peptide directly interacts with chromatin. X-ray crystallography and molecular modeling show AEDG binds to histone-DNA complexes at specific gene promoter regions — confirming direct gene regulatory activity rather than receptor-mediated signaling. Published in peer-reviewed gerontology journals.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 BENEFITS -->
+  <div class="section" style="animation-delay:0.2s;border-top-color:var(--accent3);">
+    <div class="section-num">03 / BENEFITS & MECHANISMS</div>
+    <h2>Research-Supported Effects</h2>
+    <div class="benefit-item">
+      <div class="benefit-num">01</div>
+      <div>
+        <div class="benefit-title">Chondrocyte Proliferation — Cartilage Cell Regeneration</div>
+        <div>Cartalax activates gene expression in chondrocytes (the cells that make and maintain cartilage). In aging cartilage, chondrocyte activity declines and cell density falls. AEDG reverses gene silencing in these cells, restoring their synthetic activity. Animal studies show measurable increase in chondrocyte density and proteoglycan content after Cartalax treatment.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">02</div>
+      <div>
+        <div class="benefit-title">Proteoglycan & Collagen II Synthesis</div>
+        <div>Articular cartilage is primarily composed of type II collagen and proteoglycans (aggrecan, versican). These provide the compressive strength and viscoelasticity that protects joints. Cartalax upregulates genes encoding collagen II and aggrecan production — restoring the molecular composition of aging cartilage toward a younger profile.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">03</div>
+      <div>
+        <div class="benefit-title">MMP Inhibition — Stops Cartilage Breakdown</div>
+        <div>Matrix metalloproteinases (MMP-13, MMP-3) are enzymes that degrade cartilage matrix in osteoarthritis. Cartalax reduces MMP expression while simultaneously increasing TIMP (tissue inhibitor of metalloproteinases) — creating a net anti-catabolic environment. Less breakdown + more synthesis = net cartilage preservation.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">04</div>
+      <div>
+        <div class="benefit-title">Intervertebral Disc Support</div>
+        <div>The nucleus pulposus (core of intervertebral discs) contains disc cells (notochordal cells, fibrocartilage) with similar biology to articular chondrocytes. Cartalax's gene regulatory activity extends to these cells — relevant for disc degeneration, herniation recovery, and lumbar/cervical health. Particularly valuable stacked with BPC-157 for comprehensive spine support.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">05</div>
+      <div>
+        <div class="benefit-title">Epigenetic Anti-Aging — Gene Expression Reset</div>
+        <div>The AEDG mechanism is fundamentally epigenetic — it doesn't just stimulate chondrocytes temporarily, it resets the gene expression profile of aging cartilage tissue toward a younger state. In the context of the full Khavinson bioregulator system, Cartalax is part of a tissue-specific epigenetic rejuvenation approach that has produced measurable longevity outcomes in Russian cohort studies.</div>
+      </div>
+    </div>
+    <div class="highlight-box">
+      <strong style="color:var(--accent2);">Joint Stack:</strong> Cartalax (cartilage gene activation) + AOD-9604 (chondroprotection via TGF-β) + BPC-157 (local angiogenesis and repair) + TB-500 (systemic anti-inflammatory) = comprehensive four-mechanism joint regeneration protocol covering gene expression, growth factor signaling, blood supply, and inflammation.
+    </div>
+  </div>
+
+  <!-- 04 RECONSTITUTION -->
+  <div class="section" style="animation-delay:0.25s;border-top-color:var(--accent2);">
+    <div class="section-num">04 / RECONSTITUTION</div>
+    <h2>Vial Preparation</h2>
+    <div class="recon-box">
+      <div class="recon-title">STANDARD VIAL — 20mg</div>
+      <div class="recon-math">20mg vial + 3.0 mL (300 units) bacteriostatic water</div>
+      <div class="recon-math" style="color:var(--accent2);">Concentration: 66.7 mcg per unit (0.01 mL)</div>
+      <div style="margin-top:14px;">
+        <table class="dose-table">
+          <thead><tr><th>DOSE</th><th>MCG</th><th>UNITS ON SYRINGE</th><th>VOLUME</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="dose-level">LOW</span></td>
+              <td><span class="dose-amount">1,000</span><span class="dose-units">mcg (1mg)</span></td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:16px;color:var(--white);">15 units</td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:14px;">0.15 mL</td>
+            </tr>
+            <tr>
+              <td><span class="dose-level">STANDARD</span></td>
+              <td><span class="dose-amount">2,000</span><span class="dose-units">mcg (2mg)</span></td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:16px;color:var(--white);">30 units</td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:14px;">0.30 mL</td>
+            </tr>
+            <tr>
+              <td><span class="dose-level">HIGH</span></td>
+              <td><span class="dose-amount">5,000</span><span class="dose-units">mcg (5mg)</span></td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:16px;color:var(--white);">75 units</td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:14px;">0.75 mL</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent);">Oral/Sublingual Alternative:</strong> Cartalax can also be used sublingually (dissolved under tongue) or orally as a capsule from some compounding pharmacies. SC injection provides more reliable systemic bioavailability. Oral/sublingual preferred for GI/mucosal delivery or when injection is not preferred.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent);">Storage:</strong> Lyophilized stable at room temp 6 months. Refrigerate post-reconstitution (2–8°C), use within 28 days. Protect from light.
+    </div>
+  </div>
+
+  <!-- 05 DOSING -->
+  <div class="section" style="animation-delay:0.3s;border-top-color:var(--accent);">
+    <div class="section-num">05 / DOSING PROTOCOL</div>
+    <h2>Dose Ranges</h2>
+    <table class="dose-table">
+      <thead><tr><th>PROTOCOL</th><th>DOSE</th><th>FREQUENCY</th><th>USE CASE</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="dose-level">MAINTENANCE</span></td>
+          <td><span class="dose-amount">1mg</span><span class="dose-units">daily</span></td>
+          <td>Daily SC or oral</td>
+          <td>Preventive joint health, longevity, mild OA prevention</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">STANDARD</span></td>
+          <td><span class="dose-amount">2mg</span><span class="dose-units">daily</span></td>
+          <td>Daily SC</td>
+          <td>Active OA, cartilage preservation, joint injury recovery</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">INTENSIVE</span></td>
+          <td><span class="dose-amount">5mg</span><span class="dose-units">daily</span></td>
+          <td>Daily SC × 10–20 days</td>
+          <td>Pulsed high-dose course for significant cartilage restoration — Khavinson protocol approach</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note-box" style="margin-top:14px;">
+      <strong style="color:var(--accent);">Pulsed Protocol (Khavinson Method):</strong> Like Epitalon, Cartalax may be most effective as a pulsed intensive course rather than continuous low-dose. 5mg/day × 10 days, then off 1–3 months, then repeat. This mimics the episodic gene activation pattern seen in the original Russian clinical studies.
+    </div>
+  </div>
+
+  <!-- 06 TIMING -->
+  <div class="section" style="animation-delay:0.35s;border-top-color:var(--accent3);">
+    <div class="section-num">06 / TIMING & ADMINISTRATION</div>
+    <h2>Injection Protocol</h2>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">TIMING</div>
+          <div class="info-value">No fasting requirement. Morning injection preferred for consistency. Evening acceptable.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">INJECTION SITE</div>
+          <div class="info-value">Subcutaneous — abdomen, thigh, or upper arm. Rotate sites. For knee/hip OA: some practitioners inject closer to the affected joint SC area — though systemic SC achieves cartilage tissue distribution regardless of site.</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">COMPREHENSIVE JOINT PROTOCOL</div>
+          <div class="info-value">Cartalax 2mg AM + AOD-9604 500mcg AM (TGF-β chondroprotection) + BPC-157 500mcg (local angiogenesis). For systemic support add TB-500 2mg 2×/week. This four-compound approach covers all known mechanisms of cartilage regeneration.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">SYNERGY WITH EPITALON</div>
+          <div class="info-value">Cartalax + Epitalon is a powerful longevity combination from the Khavinson series. Epitalon targets pineal/telomere/systemic aging; Cartalax targets cartilage/connective tissue aging. Together: tissue-specific + systemic anti-aging gene regulation. Run concurrently or in back-to-back pulsed cycles.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 07 BIOMARKERS -->
+  <div class="section" style="animation-delay:0.4s;border-top-color:var(--accent);">
+    <div class="section-num">07 / BIOMARKER MONITORING</div>
+    <h2>Recommended Lab Panel</h2>
+    <div class="bio-category">
+      <div class="bio-category-title">CARTILAGE & JOINT MARKERS</div>
+      <table class="bio-table">
+        <thead><tr><th>MARKER</th><th>CLINICAL RANGE</th><th>OPTIMAL TARGET</th><th>NOTES</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">COMP</span><span class="bio-test">cartilage oligomeric matrix protein</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>&lt;10 µg/mL</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>&lt;5 µg/mL</td>
+            <td>Elevated in active cartilage breakdown. Reduction indicates chondroprotective activity.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">CTX-II</span><span class="bio-test">C-terminal telopeptide of collagen II (urine)</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>Varies by age/sex</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>Decreasing vs. baseline</td>
+            <td>Specific marker of type II collagen (cartilage) breakdown. Should decrease with effective Cartalax treatment.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">MMP-3</span><span class="bio-test">matrix metalloproteinase-3 — serum</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>Varies</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>Decreasing vs. baseline</td>
+            <td>Cartilage-degrading enzyme. Cartalax should reduce MMP-3 via gene regulatory inhibition.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Joint MRI</span><span class="bio-test">radiographic</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>—</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>Preserved or improved</td>
+            <td>Pre/post 12-week MRI for cartilage volume and joint space width. Gold standard assessment.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="bio-category">
+      <div class="bio-category-title">INFLAMMATION</div>
+      <table class="bio-table">
+        <thead><tr><th>MARKER</th><th>CLINICAL RANGE</th><th>OPTIMAL TARGET</th><th>NOTES</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">hs-CRP</span><span class="bio-test">high-sensitivity C-reactive protein</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>&lt;3.0 mg/L</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>&lt;0.5 mg/L</td>
+            <td>Systemic inflammation drives OA progression. Track alongside cartilage markers.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 08 CYCLE -->
+  <div class="section" style="animation-delay:0.45s;border-top-color:var(--accent2);">
+    <div class="section-num">08 / CYCLE PROTOCOL</div>
+    <h2>Administration Schedule</h2>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">PULSED CYCLE (PREFERRED)</div>
+          <div class="info-value" style="color:var(--white);font-size:16px;font-weight:600;">5mg/day × 10 days — 3–4×/year</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">CONTINUOUS CYCLE</div>
+          <div class="info-value">1–2mg/day × 12 weeks, then 4–8 weeks off. Lower dose, sustained gene signaling. Best for ongoing OA management and general connective tissue maintenance.</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">RESULTS TIMELINE</div>
+          <div class="info-value">Epigenetic changes require sustained exposure — meaningful cartilage regeneration takes 8–16 weeks. Subjective improvement (reduced joint pain, better mobility) often reported at 4–6 weeks. Objective biomarker changes at 12+ weeks.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">REQUIRES</div>
+          <div class="info-value">Reconstitution with BAC water · Apex V3 Pen · Refrigeration post-reconstitution</div>
+        </div>
+      </div>
+    </div>
+    <div class="disclaimer-box">
+      ⚠ Research reference only. Cartalax is not FDA-approved for human therapeutic use. Research conducted primarily in Russia; published in peer-reviewed gerontology literature. Consult a qualified medical provider before use.
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

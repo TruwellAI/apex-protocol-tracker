@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PT-141 — Peptide Reference</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#080c10;--panel:#0d1318;--border:#1a2d3a;--accent:#00d4ff;--accent2:#00ff9d;--accent3:#ff6b35;--text:#c8dde8;--muted:#4a6272;--white:#eaf4f8;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-weight:300;min-height:100vh;padding:32px 20px;position:relative;overflow-x:hidden;}
+  body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse 60% 40% at 80% 10%,rgba(0,212,255,0.06) 0%,transparent 60%),radial-gradient(ellipse 40% 50% at 10% 80%,rgba(0,255,157,0.04) 0%,transparent 60%);pointer-events:none;z-index:0;}
+  .container{max-width:720px;margin:0 auto;position:relative;z-index:1;}
+  .header{border-left:3px solid var(--accent);padding-left:20px;margin-bottom:40px;animation:fadeSlide 0.6s ease both;}
+  .header .label{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:4px;color:var(--accent);text-transform:uppercase;margin-bottom:6px;}
+  .header h1{font-family:'Rajdhani',sans-serif;font-size:clamp(42px,10vw,72px);font-weight:700;color:var(--white);line-height:1;letter-spacing:2px;}
+  .header .subtitle{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted);margin-top:8px;letter-spacing:2px;}
+  .section{margin-bottom:28px;background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--accent);padding:24px 26px;animation:fadeSlide 0.6s ease both;}
+  .section-num{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:4px;}
+  .section h2{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:600;letter-spacing:1px;color:var(--white);margin-bottom:16px;text-transform:uppercase;}
+  .section p{font-size:15px;line-height:1.7;color:var(--text);margin-bottom:10px;}
+  .section p:last-child{margin-bottom:0;}
+  .timeline{display:flex;flex-direction:column;gap:12px;}
+  .tl-item{display:grid;grid-template-columns:90px 1fr;gap:16px;align-items:start;}
+  .tl-year{font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--accent2);padding-top:2px;letter-spacing:1px;}
+  .tl-text{font-size:14px;line-height:1.6;color:var(--text);border-left:1px solid var(--border);padding-left:14px;}
+  .benefits-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .benefit-item{background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.12);padding:12px 14px;display:flex;gap:10px;align-items:flex-start;}
+  .benefit-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);margin-top:6px;flex-shrink:0;}
+  .benefit-text{font-size:13px;line-height:1.5;color:var(--text);}
+  .recon-box{background:rgba(0,255,157,0.04);border:1px solid rgba(0,255,157,0.15);padding:18px 20px;margin-bottom:16px;}
+  .recon-box .big{font-family:'Rajdhani',sans-serif;font-size:36px;font-weight:700;color:var(--accent2);line-height:1;}
+  .recon-box .big-label{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:2px;margin-top:4px;}
+  .recon-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px;}
+  .stat-box{background:var(--bg);border:1px solid var(--border);padding:12px;text-align:center;}
+  .stat-val{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:600;color:var(--white);}
+  .stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;margin-top:2px;}
+  .dose-table{width:100%;border-collapse:collapse;}
+  .dose-table th{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);}
+  .dose-table td{font-size:14px;padding:10px 12px;border-bottom:1px solid rgba(26,45,58,0.6);color:var(--text);}
+  .dose-table tr:last-child td{border-bottom:none;}
+  .dose-table tr:hover td{background:rgba(0,212,255,0.03);}
+  .dose-units{font-family:'Share Tech Mono',monospace;font-size:15px;color:var(--accent3);font-weight:bold;}
+  .dose-tag{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;padding:2px 8px;background:rgba(0,255,157,0.1);border:1px solid rgba(0,255,157,0.25);color:var(--accent2);border-radius:2px;}
+  .note-box{margin-top:16px;background:rgba(255,107,53,0.06);border-left:3px solid var(--accent3);padding:12px 16px;font-size:13px;line-height:1.6;color:var(--text);}
+  .bio-category{margin-bottom:24px;}
+  .bio-category-title{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--accent3);text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(255,107,53,0.2);}
+  .bio-table{width:100%;border-collapse:collapse;}
+  .bio-table th{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;text-align:left;padding:7px 10px;border-bottom:1px solid var(--border);background:rgba(0,212,255,0.04);}
+  .bio-table td{font-size:13px;padding:9px 10px;border-bottom:1px solid rgba(26,45,58,0.5);color:var(--text);vertical-align:top;line-height:1.5;}
+  .bio-table tr:last-child td{border-bottom:none;}
+  .bio-table tr:hover td{background:rgba(0,212,255,0.025);}
+  .bio-name{font-weight:500;color:var(--white);font-size:13px;}
+  .bio-test{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);display:block;margin-top:2px;}
+  .range-clinical{color:var(--muted);font-size:12px;}
+  .range-optimal{color:var(--accent2);font-size:12px;font-weight:500;}
+  .range-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;display:block;margin-bottom:2px;opacity:0.7;}
+  .disclaimer-box{margin-top:20px;background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.12);padding:14px 16px;font-size:12px;line-height:1.7;color:var(--muted);font-style:italic;}
+  @keyframes fadeSlide{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+  @media(max-width:480px){.benefits-grid{grid-template-columns:1fr;}.recon-stats{grid-template-columns:1fr 1fr;}.tl-item{grid-template-columns:70px 1fr;}.bio-table th,.bio-table td{padding:7px 6px;font-size:12px;}}
+</style>
+</head>
+<body>
+<div class="container">
+<a href="index.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--muted);text-decoration:none;text-transform:uppercase;margin-bottom:28px;padding:8px 14px;border:1px solid var(--border);transition:all .2s;" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">← Back to Encyclopedia</a>
+
+  <div class="header">
+    <div class="label">Peptide Reference Sheet</div>
+    <h1>PT-141</h1>
+    <div class="subtitle">BREMELANOTIDE &nbsp;|&nbsp; MELANOCORTIN RECEPTOR AGONIST / SEXUAL FUNCTION PEPTIDE</div>
+  </div>
+
+  <div class="section" style="animation-delay:0.1s;border-top-color:var(--accent);">
+    <div class="section-num">01 — Identity</div>
+    <h2>Name & Classification</h2>
+    <p>PT-141, generically known as <strong style="color:var(--white)">Bremelanotide</strong>, is a synthetic cyclic heptapeptide analogue of alpha-melanocyte stimulating hormone (α-MSH). Its chemical designation is <span style="font-family:'Share Tech Mono',monospace;color:var(--accent);font-size:13px;">cyclo-(Nle⁴-Asp⁵-His⁶-D-Phe⁷-Arg⁸-Trp⁹-Lys¹⁰)-α-MSH(4-10)</span>.</p>
+    <p>It is an agonist of melanocortin receptors MC3R and MC4R in the central nervous system. Critically, unlike PDE5 inhibitors (Viagra, Cialis), PT-141 acts via the <strong style="color:var(--white)">brain and nervous system</strong> — not the vasculature — making it effective in both men and women and in cases where vascular ED treatments have failed. It received FDA approval in 2019 under the brand name <strong style="color:var(--white)">Vyleesi</strong> for hypoactive sexual desire disorder (HSDD) in premenopausal women.</p>
+  </div>
+
+  <div class="section" style="animation-delay:0.2s;border-top-color:var(--accent2);">
+    <div class="section-num">02 — Origin</div>
+    <h2>When It Was Developed</h2>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-year">1960s–80s</div><div class="tl-text">Alpha-MSH studied for pigmentation effects. Role of melanocortin receptors in sexual behavior observed incidentally in research animals receiving synthetic MSH analogues.</div></div>
+      <div class="tl-item"><div class="tl-year">Early 1990s</div><div class="tl-text"><strong style="color:var(--white)">University of Arizona</strong> researchers Victor Hruby and Mac Hadley studying the tanning peptide Melanotan-II noted spontaneous erections in male subjects — leading to isolation of the sexual arousal mechanism.</div></div>
+      <div class="tl-item"><div class="tl-year">2000</div><div class="tl-text">PT-141 derived as a metabolite of Melanotan-II (removing the tanning effect). Licensed to <strong style="color:var(--white)">Palatin Technologies</strong> for development as a sexual dysfunction drug.</div></div>
+      <div class="tl-item"><div class="tl-year">2000s</div><div class="tl-text">Phase 1/2 trials showed efficacy in erectile dysfunction and female sexual arousal disorder. Early intranasal formulations caused blood pressure increases, prompting shift to subcutaneous delivery.</div></div>
+      <div class="tl-item"><div class="tl-year">2019</div><div class="tl-text"><strong style="color:var(--white)">FDA approved</strong> as Vyleesi (bremelanotide) for HSDD in premenopausal women — the first non-hormonal, on-demand treatment for female sexual dysfunction ever approved.</div></div>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:0.3s;border-top-color:var(--accent);">
+    <div class="section-num">03 — Research History</div>
+    <h2>Research Background</h2>
+    <p>PT-141 emerged from a serendipitous observation: subjects in a tanning peptide study were experiencing erections. This led to focused research on melanocortin receptor subtypes MC3R and MC4R in the hypothalamus and limbic system — areas governing sexual motivation and arousal.</p>
+    <p>Unlike PDE5 inhibitors which work peripherally by increasing blood flow, PT-141 works <strong style="color:var(--white)">centrally</strong> — activating dopaminergic pathways in the hypothalamus to generate genuine sexual desire and arousal, not just a mechanical response. This makes it particularly valuable for desire disorders and cases where physical arousal is possible but psychological/neurological desire is impaired.</p>
+    <p>Phase 3 data for HSDD showed statistically significant improvements in satisfying sexual events and desire scores versus placebo, leading to FDA approval. Off-label use in men for ED — particularly cases unresponsive to PDE5 inhibitors — has grown substantially in the research/wellness space.</p>
+  </div>
+
+  <div class="section" style="animation-delay:0.4s;border-top-color:var(--accent3);">
+    <div class="section-num">04 — Key Benefits</div>
+    <h2>Proposed Benefits</h2>
+    <div class="benefits-grid">
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">FDA-approved for HSDD in premenopausal women (Vyleesi)</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Increases sexual desire and motivation via central CNS action</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Effective in both men and women — unique among sexual function drugs</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Works in cases where PDE5 inhibitors (Viagra/Cialis) have failed</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">On-demand dosing — taken 45 min before activity</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Does not require sexual stimulation to initiate response</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Activates dopaminergic pathways — addresses psychological desire deficit</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Effects last 6–12 hours with single dose</div></div>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:0.5s;border-top-color:var(--accent2);">
+    <div class="section-num">05 — Reconstitution</div>
+    <h2>10 mg Vial + 300 Units BAC Water</h2>
+    <div class="recon-box">
+      <div class="big">33.3 mcg</div>
+      <div class="big-label">per unit drawn on insulin syringe</div>
+    </div>
+    <div class="recon-stats">
+      <div class="stat-box"><div class="stat-val">10,000</div><div class="stat-label">mcg total</div></div>
+      <div class="stat-box"><div class="stat-val">0.3 mL</div><div class="stat-label">total volume</div></div>
+      <div class="stat-box"><div class="stat-val">4–6 wk</div><div class="stat-label">shelf life (fridge)</div></div>
+    </div>
+    <div class="note-box" style="margin-top:14px;">Store refrigerated at 2–8°C after reconstitution. PT-141 is relatively stable in solution. The FDA-approved Vyleesi auto-injector delivers 1.75 mg per dose — research formulations typically aim for the same range. Do not freeze reconstituted peptide.</div>
+  </div>
+
+  <div class="section" style="animation-delay:0.6s;border-top-color:var(--accent);">
+    <div class="section-num">06 — Dosage</div>
+    <h2>Dosage Reference</h2>
+    <table class="dose-table">
+      <thead><tr><th>Dose</th><th>Units to Draw</th><th>Context</th></tr></thead>
+      <tbody>
+        <tr><td>500 mcg (0.5 mg)</td><td><span class="dose-units">~15 u</span></td><td><span class="dose-tag">LOW / INTRO</span></td></tr>
+        <tr><td>1,000 mcg (1.0 mg)</td><td><span class="dose-units">~30 u</span></td><td><span class="dose-tag">COMMON</span></td></tr>
+        <tr><td>1,750 mcg (1.75 mg)</td><td><span class="dose-units">~52.5 u</span></td><td><span class="dose-tag">FDA DOSE (Vyleesi)</span></td></tr>
+        <tr><td>2,000 mcg (2.0 mg)</td><td><span class="dose-units">~60 u</span></td><td><span class="dose-tag">STANDARD MAX</span></td></tr>
+      </tbody>
+    </table>
+    <div class="note-box">PT-141 is an on-demand peptide — it is NOT used daily. The FDA-approved dose is <strong style="color:var(--white)">1.75 mg SC 45 minutes before activity</strong>, no more than once every 24 hours and no more than 8 times per month. Nausea (the primary side effect) is dose-dependent — start at 500 mcg–1 mg to assess tolerance. Flushing and transient blood pressure increase are common at higher doses.</div>
+  </div>
+
+  <div class="section" style="animation-delay:0.7s;border-top-color:var(--accent3);">
+    <div class="section-num">07 — Monitoring</div>
+    <h2>Biomarkers, Lab Tests & Ranges</h2>
+    <p style="font-size:13px;margin-bottom:20px;">PT-141 acts centrally on the CNS. Key monitoring focuses on hormonal status, cardiovascular safety (blood pressure), and the underlying drivers of sexual dysfunction.</p>
+
+    <div class="bio-category">
+      <div class="bio-category-title">▸ Hormonal Panel</div>
+      <table class="bio-table">
+        <thead><tr><th>Biomarker</th><th>Lab Test</th><th>Clinical Range</th><th>Optimal Range</th></tr></thead>
+        <tbody>
+          <tr><td><span class="bio-name">Total Testosterone</span></td><td><span class="bio-test">Serum Total Testosterone</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">M: 264–916 ng/dL / F: 15–70 ng/dL</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">M: 600–900 ng/dL / F: 40–60 ng/dL</span></td></tr>
+          <tr><td><span class="bio-name">Free Testosterone</span></td><td><span class="bio-test">Free Testosterone (direct or calculated)</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">M: 9–30 ng/dL / F: 0.3–1.9 ng/dL</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">M: upper quartile for age / F: mid-range</span></td></tr>
+          <tr><td><span class="bio-name">Estradiol (E2)</span></td><td><span class="bio-test">Serum Estradiol (sensitive assay)</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">M: 10–40 pg/mL / F: cycle-dependent</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">M: 20–30 pg/mL / F: 50–150 (follicular)</span></td></tr>
+          <tr><td><span class="bio-name">LH / FSH</span></td><td><span class="bio-test">Serum LH & FSH</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">LH: 1.7–8.6 / FSH: 1.5–12.4 mIU/mL</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">Mid-range; LH 3–7 / FSH 2–8 mIU/mL</span></td></tr>
+          <tr><td><span class="bio-name">Prolactin</span></td><td><span class="bio-test">Serum Prolactin</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">M: 2–18 / F: 2–29 ng/mL</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">M: 5–12 / F: 5–18 ng/mL</span></td></tr>
+          <tr><td><span class="bio-name">DHEA-S</span></td><td><span class="bio-test">Serum DHEA-Sulfate</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">Age/sex dependent (wide range)</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">Upper 25th percentile for age/sex</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">▸ Cardiovascular Safety</div>
+      <table class="bio-table">
+        <thead><tr><th>Biomarker</th><th>Lab Test</th><th>Clinical Range</th><th>Optimal Range</th></tr></thead>
+        <tbody>
+          <tr><td><span class="bio-name">Blood Pressure</span><br><span style="font-size:11px;color:var(--muted);">Key safety parameter</span></td><td><span class="bio-test">Office / Home BP Monitoring</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">&lt;130/80 mmHg</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">110–120 / 70–80 mmHg</span></td></tr>
+          <tr><td><span class="bio-name">hsCRP</span></td><td><span class="bio-test">High-sensitivity CRP</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">&lt;3.0 mg/L</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">&lt;0.5 mg/L</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">▸ Safety Panel</div>
+      <table class="bio-table">
+        <thead><tr><th>Biomarker</th><th>Lab Test</th><th>Clinical Range</th><th>Optimal Range</th></tr></thead>
+        <tbody>
+          <tr><td><span class="bio-name">AST / ALT</span></td><td><span class="bio-test">CMP</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">AST 10–40 / ALT 7–56 U/L</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">AST &lt;26 / ALT &lt;26 U/L</span></td></tr>
+          <tr><td><span class="bio-name">CBC</span></td><td><span class="bio-test">Complete Blood Count</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">Standard ranges</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">Mid-range; WBC 4.5–6.0</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="disclaimer-box">⚠ PT-141 is FDA-approved as Vyleesi for HSDD. Contraindicated in cardiovascular disease, uncontrolled hypertension, and with certain BP medications. Nausea occurs in ~40% at the 1.75 mg dose — starting at 0.5–1 mg significantly reduces this. Not for daily use.</div>
+  </div>
+
+  <div class="section" style="animation-delay:0.8s;border-top-color:var(--accent);">
+    <div class="section-num">08 — Cycle Protocol</div>
+    <h2>Cycle Length, Frequency & Timing</h2>
+
+    <div style="margin-bottom:22px;">
+      <div class="bio-category-title" style="color:var(--accent2);">▸ Usage Pattern</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+        <div class="stat-box" style="text-align:left;padding:14px 16px;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:6px;">FDA-APPROVED USE</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--white);line-height:1;">On-Demand</div>
+          <div style="font-size:12px;color:var(--text);margin-top:6px;line-height:1.5;">PT-141 is not a daily peptide. It is taken as-needed, 45 minutes before sexual activity, max once per 24 hours, no more than 8 uses per month per FDA labeling.</div>
+        </div>
+        <div class="stat-box" style="text-align:left;padding:14px 16px;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:6px;">RESEARCH / OFF-LABEL</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--white);line-height:1;">As-Needed</div>
+          <div style="font-size:12px;color:var(--text);margin-top:6px;line-height:1.5;">No traditional "cycle" applies. Use as-needed with spacing to avoid tachyphylaxis (reduced response with repeated use). Most practitioners recommend minimum 3 days between doses for consistent response.</div>
+        </div>
+      </div>
+      <div class="note-box" style="margin-top:0;"><strong style="color:var(--white)">Tachyphylaxis warning:</strong> Frequent daily use reduces receptor response. The FDA max of 8×/month exists partly for this reason. For best efficacy, use PT-141 sparingly and with adequate spacing. Nausea can be reduced by staying hydrated, taking slowly, and dosing at the lower end of the range.</div>
+    </div>
+
+    <div style="margin-bottom:22px;">
+      <div class="bio-category-title" style="color:var(--accent2);">▸ Timing Protocol</div>
+      <table class="bio-table">
+        <thead><tr><th>Variable</th><th>Recommendation</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><span class="bio-name">When to inject</span></td><td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent2);">45–60 min before activity</span></td><td><span style="font-size:12px;color:var(--text);line-height:1.5;">Peak CNS effect occurs at 45–70 minutes post-injection. Effects persist 6–12 hours. The FDA label specifies at least 45 minutes prior.</span></td></tr>
+          <tr><td><span class="bio-name">Fasted vs Fed</span></td><td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted);">~ Either acceptable</span></td><td><span style="font-size:12px;color:var(--text);line-height:1.5;">Food does not significantly affect efficacy but a heavy meal may increase nausea risk. Light meal or fasted state preferred for tolerability.</span></td></tr>
+          <tr><td><span class="bio-name">Injection site</span></td><td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent2);">SC — abdomen or thigh</span></td><td><span style="font-size:12px;color:var(--text);line-height:1.5;">Subcutaneous injection in the abdomen or thigh as per the Vyleesi auto-injector labeling. Rotate sites to reduce local reactions.</span></td></tr>
+          <tr><td><span class="bio-name">Minimum spacing</span></td><td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent3);">72 hrs between doses</span></td><td><span style="font-size:12px;color:var(--text);line-height:1.5;">3 days between uses preserves receptor sensitivity and minimizes tachyphylaxis. FDA allows once per 24 hrs but 72 hrs is preferred for sustained efficacy.</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.2);padding:18px 20px;">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent);margin-bottom:12px;">PROTOCOL SUMMARY</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;">
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);"><div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">On-Demand</div><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">DOSING STYLE</div></div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);"><div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">≤8×/mo</div><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">MAX FREQUENCY</div></div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);"><div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">45–60 min</div><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">BEFORE ACTIVITY</div></div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);"><div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">72 hrs</div><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">MIN SPACING</div></div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);"><div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">6–12 hrs</div><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">EFFECT DURATION</div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

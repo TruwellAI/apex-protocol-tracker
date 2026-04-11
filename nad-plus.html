@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NAD+ — Apex Research Reference</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap');
+    :root{--bg:#080c10;--panel:#0d1318;--border:#1a2d3a;--accent:#00d4ff;--accent2:#00ff9d;--accent3:#ff6b35;--text:#c8dde8;--muted:#4a6272;--white:#eaf4f8;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;line-height:1.6;padding:40px 20px;}
+    body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 70% 10%,rgba(0,212,255,0.06) 0%,transparent 60%),radial-gradient(ellipse at 20% 90%,rgba(255,107,53,0.04) 0%,transparent 50%);pointer-events:none;z-index:0;}
+    .container{max-width:900px;margin:0 auto;position:relative;z-index:1;}
+    .header{margin-bottom:40px;border-bottom:1px solid var(--border);padding-bottom:24px;}
+    .peptide-label{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;}
+    .peptide-name{font-family:'Rajdhani',sans-serif;font-size:52px;font-weight:700;color:var(--white);line-height:1;margin-bottom:8px;}
+    .peptide-fullname{font-size:16px;color:var(--muted);margin-bottom:16px;}
+    .tag-row{display:flex;gap:8px;flex-wrap:wrap;}
+    .tag{background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.25);color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;padding:3px 10px;}
+    .section{background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--muted);padding:28px 32px;margin-bottom:16px;animation:fadeUp 0.4s ease both;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+    .section-num{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:8px;}
+    h2{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px;}
+    .stat-box{background:var(--bg);border:1px solid var(--border);padding:16px;text-align:center;}
+    .stat-value{font-family:'Rajdhani',sans-serif;font-size:32px;font-weight:700;color:var(--white);line-height:1;}
+    .stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-top:4px;}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+    .info-item{margin-bottom:14px;}
+    .info-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:4px;}
+    .info-value{color:var(--white);font-size:13px;line-height:1.5;}
+    .timeline{position:relative;padding-left:20px;}
+    .timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:var(--border);}
+    .timeline-item{position:relative;margin-bottom:20px;}
+    .timeline-item::before{content:'';position:absolute;left:-24px;top:5px;width:8px;height:8px;background:var(--accent);border-radius:50%;}
+    .timeline-year{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:4px;}
+    .benefit-item{display:flex;gap:14px;margin-bottom:16px;align-items:flex-start;}
+    .benefit-num{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent3);min-width:28px;padding-top:2px;}
+    .benefit-title{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;color:var(--white);margin-bottom:3px;}
+    .recon-box{background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--accent2);padding:20px 24px;margin-bottom:16px;}
+    .recon-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);margin-bottom:12px;}
+    .recon-math{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--white);margin-bottom:8px;}
+    .dose-table{width:100%;border-collapse:collapse;}
+    .dose-table th{background:rgba(0,212,255,0.08);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);}
+    .dose-table td{padding:12px 14px;border-bottom:1px solid rgba(26,45,58,0.5);vertical-align:top;font-size:13px;}
+    .dose-level{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);font-weight:700;}
+    .dose-amount{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--white);}
+    .dose-units{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent);display:block;margin-top:2px;}
+    .bio-table{width:100%;border-collapse:collapse;}
+    .bio-table th{background:rgba(0,212,255,0.06);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--muted);text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);}
+    .bio-table td{padding:10px 12px;border-bottom:1px solid rgba(26,45,58,0.4);vertical-align:top;font-size:12px;}
+    .bio-name{color:var(--white);font-weight:500;display:block;}
+    .bio-test{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);}
+    .range-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 6px;margin-right:4px;}
+    .range-clinical{background:rgba(74,98,114,0.3);color:var(--muted);}
+    .range-optimal{background:rgba(0,255,157,0.1);color:var(--accent2);}
+    .bio-category{margin-bottom:24px;}
+    .bio-category-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);margin-bottom:10px;}
+    .note-box{background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.15);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .disclaimer-box{background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.2);padding:14px 18px;margin-top:20px;font-size:12px;color:var(--text);line-height:1.5;}
+  </style>
+</head>
+<body>
+<div class="container">
+<a href="index.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--muted);text-decoration:none;text-transform:uppercase;margin-bottom:28px;padding:8px 14px;border:1px solid var(--border);transition:all .2s;" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">← Back to Encyclopedia</a>
+
+  <div class="header">
+    <div class="peptide-label">Apex Research Reference</div>
+    <div class="peptide-name">NAD+</div>
+    <div class="peptide-fullname">Nicotinamide Adenine Dinucleotide — Cellular Energy Coenzyme &amp; Sirtuin Activator</div>
+    <div class="tag-row">
+      <span class="tag">ANTI-AGING</span>
+      <span class="tag">ENERGY</span>
+      <span class="tag">DNA REPAIR</span>
+      <span class="tag">SIRTUIN ACTIVATION</span>
+      <span class="tag">MITOCHONDRIAL</span>
+      <span class="tag">NEUROLOGICAL</span>
+    </div>
+  </div>
+
+  <!-- 01 -->
+  <div class="section" style="animation-delay:0.1s;border-top-color:var(--accent);">
+    <div class="section-num">01 / IDENTITY</div>
+    <h2>Compound Profile</h2>
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-value">663</div>
+        <div class="stat-label">Da MOLECULAR WT</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">IV/SC</div>
+        <div class="stat-label">ROUTE</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">1,000mg</div>
+        <div class="stat-label">VIAL SIZE</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">Minutes</div>
+        <div class="stat-label">PLASMA HALF-LIFE</div>
+      </div>
+    </div>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">CLASSIFICATION</div>
+          <div class="info-value">Coenzyme; dinucleotide found in all living cells. Essential cofactor for hundreds of metabolic reactions. Not a peptide — a small molecule coenzyme derived from niacin (vitamin B3).</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">MECHANISM</div>
+          <div class="info-value">Directly fuels the electron transport chain (NADH → ATP). Activates sirtuins (SIRT1–7) — longevity proteins that regulate DNA repair, inflammation, and metabolism. Activates PARP1 for DNA strand break repair. Activates CD38/CD157 ectoenzymes.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">WHY INJECT</div>
+          <div class="info-value">Oral NAD+ precursors (NMN, NR) require cellular conversion. IV/SC NAD+ delivers the active molecule directly — bypasses conversion steps, achieves higher acute plasma/intracellular levels. Particularly relevant for neurological and addiction recovery protocols.</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">DISCOVERY</div>
+          <div class="info-value">Discovered by Arthur Harden &amp; William Young (1906). Nobel Prize 1929. The role of NAD+ decline in aging established by David Sinclair, Johan Auwerx, and Charles Brenner — 2013–2016.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">NAD+ DECLINE WITH AGE</div>
+          <div class="info-value">NAD+ levels decline ~50% between age 20 and 60. This decline correlates with reduced mitochondrial function, increased DNA damage accumulation, metabolic dysfunction, and neurodegeneration. Restoration = core anti-aging target.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 -->
+  <div class="section" style="animation-delay:0.15s;border-top-color:var(--accent2);">
+    <div class="section-num">02 / RESEARCH HISTORY</div>
+    <h2>Development Timeline</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-year">1906</div>
+        <div>Arthur Harden and William Young discover a "coferment" required for alcoholic fermentation — later identified as NAD+. Nobel Prize in Chemistry awarded 1929 to Harden and Hans von Euler-Chelpin for this work.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">1930s–1960s</div>
+        <div>NAD+ established as central redox cofactor in cellular metabolism — NADH/NAD+ ratio governs glycolysis, TCA cycle, and oxidative phosphorylation. Pellagra (niacin deficiency) understood as NAD+ depletion disease.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2000</div>
+        <div>Leonard Guarente (MIT) discovers sirtuins — the first SIRT1 described as an NAD+-dependent deacetylase that regulates caloric restriction longevity effects in yeast. Sirtuins require NAD+ as a cofactor — establishing NAD+ as a longevity signaling molecule, not just an energy carrier.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2013</div>
+        <div>David Sinclair lab (Harvard) publishes landmark <em>Cell</em> paper: NAD+ decline with age disrupts SIRT1 regulation, causing muscle mitochondrial dysfunction. Restoring NAD+ in aged mice reverses muscle aging biomarkers to that of young mice within one week. Media: "Fountain of Youth Molecule."</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2016–2020</div>
+        <div>Johan Auwerx (EPFL) shows NAD+ restoration improves mitochondrial function in models of muscular dystrophy, NAFLD, and neurodegeneration. Charles Brenner (University of Iowa) develops NR (nicotinamide riboside) as oral precursor; human trials confirm blood NAD+ elevation. NMN (nicotinamide mononucleotide) gains massive popularity.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2019–2024</div>
+        <div>IV NAD+ therapy popularized in addiction recovery, anti-aging clinics, and functional medicine. Protocols established for addiction withdrawal (opioid, alcohol, benzos) — NAD+ reduces neurological cravings and withdrawal severity. Human studies confirm safety of IV NAD+ at 500–1500mg doses.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 -->
+  <div class="section" style="animation-delay:0.2s;border-top-color:var(--accent3);">
+    <div class="section-num">03 / BENEFITS</div>
+    <h2>Primary Effects</h2>
+    <div class="benefit-item">
+      <div class="benefit-num">01</div>
+      <div>
+        <div class="benefit-title">Mitochondrial Function &amp; Energy Production</div>
+        <div>NAD+ is the terminal electron acceptor in the mitochondrial electron transport chain — NADH donates electrons to Complex I, producing the proton gradient that drives ATP synthesis. Elevated NAD+ directly increases mitochondrial efficiency, ATP output, and metabolic capacity. Users report dramatic energy increases within hours of IV administration.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">02</div>
+      <div>
+        <div class="benefit-title">DNA Repair Activation (PARP)</div>
+        <div>PARP-1 (poly-ADP-ribose polymerase) is the primary DNA damage repair enzyme — it consumes NAD+ as a substrate. Elevated NAD+ dramatically accelerates detection and repair of DNA strand breaks, preventing mutation accumulation. Critical for cancer prevention and cellular longevity.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">03</div>
+      <div>
+        <div class="benefit-title">Sirtuin Activation (SIRT1–7)</div>
+        <div>Sirtuins are the longevity proteins that regulate gene expression, inflammation, metabolism, and stress response. SIRT1: fat mobilization, inflammation suppression. SIRT3: mitochondrial function. SIRT6: DNA repair, telomere maintenance. All require NAD+ — low NAD+ = low sirtuin activity = accelerated aging.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">04</div>
+      <div>
+        <div class="benefit-title">Neurological Recovery &amp; Addiction</div>
+        <div>The most clinically established use of IV NAD+. Addiction medicine clinics report 70–85% reduction in withdrawal symptoms for opioid, alcohol, and benzodiazepine dependence with 10-day IV NAD+ protocols. Mechanism: restores depleted neuronal NAD+ levels that are critically low in addiction states, restoring normal dopamine signaling.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">05</div>
+      <div>
+        <div class="benefit-title">Anti-Aging &amp; Longevity</div>
+        <div>Addresses the root biochemical mechanism of aging: NAD+ decline → sirtuin silencing → epigenetic dysregulation → hallmarks of aging. Studies in aged animals show reversal of vascular aging, improved muscle function, restored memory, and extended lifespan. Human data accumulating but still limited to surrogate endpoints.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">06</div>
+      <div>
+        <div class="benefit-title">Cognitive Enhancement &amp; Neuroprotection</div>
+        <div>NAD+ is essential for neuronal energy metabolism and is dramatically lower in neurodegenerative conditions (Alzheimer's, Parkinson's). Restoration improves synaptic plasticity, reduces neuroinflammation, and protects against excitotoxicity. Users report improved mental clarity, focus, and cognitive performance within 24–72 hours of IV administration.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 -->
+  <div class="section" style="animation-delay:0.25s;border-top-color:var(--accent2);">
+    <div class="section-num">04 / RECONSTITUTION</div>
+    <h2>Preparation Protocol</h2>
+    <div class="recon-box">
+      <div class="recon-title">// 1,000MG VIAL — MILLIGRAM-SCALE RECONSTITUTION</div>
+      <div class="recon-math">1,000 mg ÷ 3.0 mL BAC water = <span style="color:var(--accent2)">333 mg/mL</span></div>
+      <div style="font-size:13px;margin-top:8px;color:var(--muted);">Add 3.0 mL (300 units) bacteriostatic water to 1000mg lyophilized vial. NAD+ is dosed in milligrams (not micrograms) — work in mL volumes, not unit counts.</div>
+    </div>
+    <div class="note-box" style="background:rgba(0,255,157,0.04);border-color:rgba(0,255,157,0.2);">
+      <strong style="color:var(--accent2);">IMPORTANT — Milligram Scale:</strong> NAD+ is NOT dosed in micrograms. Do not use the standard "units" method. Work in mL volumes directly from the 333 mg/mL concentration. Example: 500mg dose = 1.5 mL draw.
+    </div>
+    <table class="dose-table">
+      <thead>
+        <tr>
+          <th>TARGET DOSE</th>
+          <th>VOLUME TO DRAW</th>
+          <th>ROUTE</th>
+          <th>NOTE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="dose-level">LOW</span><span class="dose-amount">100 mg</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--white);">0.30 mL</td>
+          <td style="font-family:'Share Tech Mono',monospace;">SC</td>
+          <td>Conservative SC starting point — assess tolerance</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">STANDARD</span><span class="dose-amount">250 mg</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--white);">0.75 mL</td>
+          <td style="font-family:'Share Tech Mono',monospace;">SC or IV slow</td>
+          <td>Most common SC maintenance dose</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">HIGH</span><span class="dose-amount">500 mg</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--white);">1.50 mL</td>
+          <td style="font-family:'Share Tech Mono',monospace;">SC split or IV slow drip</td>
+          <td>Aggressive SC — split across 2 sites if needed</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note-box">
+      <strong style="color:var(--accent3);">IV Rate Critical:</strong> NAD+ IV MUST be administered slowly — typically over 2–4 hours for 500–1000mg doses. Rapid infusion causes intense, unpleasant side effects: chest tightness, flushing, nausea, muscle cramps, shortness of breath. Slow the drip if any of these occur. All effects resolve when infusion is slowed.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent2);">SC Alternative:</strong> For home use, NAD+ can be administered subcutaneously in smaller doses (100–250mg split across 2 sites). Less dramatic acute effect than IV but avoids infusion logistics. Well-tolerated route for maintenance protocols.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent2);">Storage:</strong> Lyophilized — refrigerate (2–8°C), protect from light and moisture. Critical: NAD+ is unstable once reconstituted. Use within 24 hours of reconstitution. Do not pre-reconstitute and store. Reconstitute fresh for each use.
+    </div>
+  </div>
+
+  <!-- 05 -->
+  <div class="section" style="animation-delay:0.3s;border-top-color:var(--accent);">
+    <div class="section-num">05 / DOSING PROTOCOL</div>
+    <h2>Administration Guide</h2>
+    <table class="dose-table">
+      <thead>
+        <tr>
+          <th>PROTOCOL</th>
+          <th>DOSE</th>
+          <th>FREQUENCY</th>
+          <th>DURATION</th>
+          <th>CONTEXT</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="dose-level">MAINTENANCE</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;">250 mg SC</td>
+          <td>2–3×/week</td>
+          <td>Ongoing</td>
+          <td>Anti-aging baseline; home protocol</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">LOADING</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;">500 mg IV</td>
+          <td>Daily × 5–10 days</td>
+          <td>1–2 weeks</td>
+          <td>Initial repletion; anti-aging boost</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">ADDICTION</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;">750–1000 mg IV</td>
+          <td>Daily × 10 days</td>
+          <td>10 days</td>
+          <td>Opioid/alcohol/benzo withdrawal support</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">PERFORMANCE</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;">250–500 mg SC</td>
+          <td>1–2×/week</td>
+          <td>12+ weeks</td>
+          <td>Energy, cognition, athletic recovery</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note-box">
+      <strong style="color:var(--accent);">Synergy with NMN/NR:</strong> Many protocols combine IV/SC NAD+ loading with daily oral NMN (500–1000mg) or NR (500mg) for sustained NAD+ precursor availability between injections. The oral precursors maintain elevated NAD+ between IV/SC sessions.
+    </div>
+  </div>
+
+  <!-- 06 -->
+  <div class="section" style="animation-delay:0.35s;border-top-color:var(--accent3);">
+    <div class="section-num">06 / TIMING</div>
+    <h2>Administration Timing</h2>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">PREFERRED WINDOW</div>
+          <div class="info-value">Morning — NAD+ activates energy production and cognitive pathways. Evening administration can cause sleep disruption in some users (increased energy and metabolic activation).</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">FOOD STATE</div>
+          <div class="info-value">Fasted (or light meal) preferred for IV protocols. GI discomfort during infusion is worsened by a full stomach. SC dosing is less sensitive to food state.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">POST-EXERCISE</div>
+          <div class="info-value">Excellent timing — exercise depletes cellular NAD+ via PARP activation. Post-workout SC NAD+ replenishes depleted stores and amplifies recovery signaling.</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">IV DURATION</div>
+          <div class="info-value">500mg: minimum 90–120 min. 750mg: 2–3 hours. 1000mg: 3–4 hours. Never rush NAD+ infusion — chest tightness and intense discomfort result. Slow drip = better experience.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">FREQUENCY NOTES</div>
+          <div class="info-value">Anti-aging: 1–2×/month IV loading + daily oral NMN. Performance: 2–3×/week SC. Addiction: daily for 10 days then transition to 2×/week SC maintenance.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">STACKING</div>
+          <div class="info-value">Excellent with SS-31 (mitochondrial synergy — different targets). Pairs with Glutathione IV for comprehensive cellular detox + energy restoration protocol.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 07 -->
+  <div class="section" style="animation-delay:0.4s;border-top-color:var(--accent);">
+    <div class="section-num">07 / BIOMARKERS</div>
+    <h2>Monitoring Panel</h2>
+
+    <div class="bio-category">
+      <div class="bio-category-title">// NAD+ STATUS</div>
+      <table class="bio-table">
+        <thead>
+          <tr><th>MARKER</th><th>TEST</th><th>CLINICAL RANGE</th><th>OPTIMAL</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">Whole Blood NAD+</span><span class="bio-test">NAD+ Quantification</span></td>
+            <td>Specialty lab (Jinfiniti, LifeExtension)</td>
+            <td><span class="range-label range-clinical">CLIN</span>20–40 µmol/L (age-dependent)</td>
+            <td><span class="range-label range-optimal">OPT</span>40–60 µmol/L (young adult equivalent)</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">NAD+/NADH Ratio</span><span class="bio-test">Redox State</span></td>
+            <td>Specialty metabolomics</td>
+            <td><span class="range-label range-clinical">CLIN</span>700:1 (cytoplasmic)</td>
+            <td><span class="range-label range-optimal">OPT</span>Trending higher with treatment</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">// BIOLOGICAL AGE &amp; LONGEVITY MARKERS</div>
+      <table class="bio-table">
+        <thead>
+          <tr><th>MARKER</th><th>TEST</th><th>CLINICAL RANGE</th><th>OPTIMAL</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">Epigenetic Age (Horvath Clock)</span><span class="bio-test">DNA Methylation Age</span></td>
+            <td>TruAge, myDNAge (mail-in)</td>
+            <td><span class="range-label range-clinical">CLIN</span>Chronological age ± 5 years</td>
+            <td><span class="range-label range-optimal">OPT</span>&gt;5 years younger than chronological age</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Telomere Length</span><span class="bio-test">Leukocyte Telomere Length</span></td>
+            <td>Life Length or Repeat Diagnostics</td>
+            <td><span class="range-label range-clinical">CLIN</span>Age-normalized (median for age)</td>
+            <td><span class="range-label range-optimal">OPT</span>75th percentile or above for age</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">hs-CRP</span><span class="bio-test">Inflammatory Aging Marker</span></td>
+            <td>Standard lab</td>
+            <td><span class="range-label range-clinical">CLIN</span>&lt;3.0 mg/L</td>
+            <td><span class="range-label range-optimal">OPT</span>&lt;0.5 mg/L</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">// METABOLIC PANEL</div>
+      <table class="bio-table">
+        <thead>
+          <tr><th>MARKER</th><th>TEST</th><th>CLINICAL RANGE</th><th>OPTIMAL</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">ALT / AST</span><span class="bio-test">Liver Enzymes</span></td>
+            <td>CMP</td>
+            <td><span class="range-label range-clinical">CLIN</span>ALT &lt;56 | AST &lt;40</td>
+            <td><span class="range-label range-optimal">OPT</span>ALT &lt;25 | AST &lt;22</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Uric Acid</span><span class="bio-test">NAD+ Metabolism Byproduct</span></td>
+            <td>CMP or uric acid panel</td>
+            <td><span class="range-label range-clinical">CLIN</span>2.4–7.0 mg/dL (M) | 1.4–5.8 (F)</td>
+            <td><span class="range-label range-optimal">NOTE</span>High-dose NAD+ can transiently elevate; monitor in gout-prone users</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 08 -->
+  <div class="section" style="animation-delay:0.45s;border-top-color:var(--accent2);">
+    <div class="section-num">08 / CYCLE PROTOCOL</div>
+    <h2>Recommended Protocol</h2>
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-value">Loading</div>
+        <div class="stat-label">PHASE 1</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">5–10</div>
+        <div class="stat-label">DAYS INITIAL IV</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">Ongoing</div>
+        <div class="stat-label">MAINTENANCE</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">2–3×</div>
+        <div class="stat-label">SC/WEEK (MAINT.)</div>
+      </div>
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent2);">Loading Phase (Week 1–2):</strong> 500mg IV daily for 5–10 consecutive days. This achieves rapid tissue repletion. Clinic setting preferred for first 2–3 infusions — monitor for infusion reactions. After tolerance established, continue at home with proper IV setup or transition to SC.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent2);">Maintenance Phase (Ongoing):</strong> 250–500mg SC, 2–3×/week. OR monthly 500–1000mg IV "recharge" sessions combined with daily oral NMN (500–1000mg). Both approaches maintain elevated whole-blood NAD+ levels.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent2);">Performance Add-On:</strong> 250mg SC 30 minutes pre-workout on training days. Enhances mitochondrial energy production during exercise and accelerates post-workout recovery. Compatible with all other Apex peptides.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent);">Longevity Stack:</strong> NAD+ IV/SC + SS-31 (mitochondrial membrane protection) + Epitalon (telomere extension + sirtuin activation) + GHK-Cu (tissue remodeling) = comprehensive cellular anti-aging protocol targeting multiple hallmarks of aging simultaneously.
+    </div>
+    <div class="disclaimer-box">
+      <strong style="color:var(--accent3);">Notice:</strong> IV NAD+ is available through licensed medical providers and functional medicine clinics. SC administration requires proper training and sterile technique. NAD+ is not FDA-approved as a drug (it is a naturally occurring coenzyme). IV administration carries small infection and air embolism risk — sterile technique is mandatory. Monitor uric acid with high-dose protocols. Not recommended during pregnancy or breastfeeding.
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KPV — Peptide Reference</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#080c10;--panel:#0d1318;--border:#1a2d3a;--accent:#00d4ff;--accent2:#00ff9d;--accent3:#ff6b35;--text:#c8dde8;--muted:#4a6272;--white:#eaf4f8;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-weight:300;min-height:100vh;padding:32px 20px;position:relative;overflow-x:hidden;}
+  body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse 60% 40% at 20% 10%,rgba(0,255,157,0.06) 0%,transparent 60%),radial-gradient(ellipse 40% 50% at 90% 80%,rgba(0,212,255,0.04) 0%,transparent 60%);pointer-events:none;z-index:0;}
+  .container{max-width:720px;margin:0 auto;position:relative;z-index:1;}
+  .header{border-left:3px solid var(--accent2);padding-left:20px;margin-bottom:40px;animation:fadeSlide 0.6s ease both;}
+  .header .label{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:4px;color:var(--accent2);text-transform:uppercase;margin-bottom:6px;}
+  .header h1{font-family:'Rajdhani',sans-serif;font-size:clamp(42px,10vw,72px);font-weight:700;color:var(--white);line-height:1;letter-spacing:2px;}
+  .header .subtitle{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted);margin-top:8px;letter-spacing:2px;}
+  .section{margin-bottom:28px;background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--accent);padding:24px 26px;animation:fadeSlide 0.6s ease both;}
+  .section-num{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:4px;}
+  .section h2{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:600;letter-spacing:1px;color:var(--white);margin-bottom:16px;text-transform:uppercase;}
+  .section p{font-size:15px;line-height:1.7;color:var(--text);margin-bottom:10px;}
+  .section p:last-child{margin-bottom:0;}
+  .timeline{display:flex;flex-direction:column;gap:12px;}
+  .tl-item{display:grid;grid-template-columns:90px 1fr;gap:16px;align-items:start;}
+  .tl-year{font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--accent2);padding-top:2px;letter-spacing:1px;}
+  .tl-text{font-size:14px;line-height:1.6;color:var(--text);border-left:1px solid var(--border);padding-left:14px;}
+  .benefits-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .benefit-item{background:rgba(0,255,157,0.04);border:1px solid rgba(0,255,157,0.12);padding:12px 14px;display:flex;gap:10px;align-items:flex-start;}
+  .benefit-dot{width:6px;height:6px;border-radius:50%;background:var(--accent2);margin-top:6px;flex-shrink:0;}
+  .benefit-text{font-size:13px;line-height:1.5;color:var(--text);}
+  .recon-box{background:rgba(0,255,157,0.04);border:1px solid rgba(0,255,157,0.15);padding:18px 20px;margin-bottom:16px;}
+  .recon-box .big{font-family:'Rajdhani',sans-serif;font-size:36px;font-weight:700;color:var(--accent2);line-height:1;}
+  .recon-box .big-label{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:2px;margin-top:4px;}
+  .recon-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px;}
+  .stat-box{background:var(--bg);border:1px solid var(--border);padding:12px;text-align:center;}
+  .stat-val{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:600;color:var(--white);}
+  .stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;margin-top:2px;}
+  .dose-table{width:100%;border-collapse:collapse;}
+  .dose-table th{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);}
+  .dose-table td{font-size:14px;padding:10px 12px;border-bottom:1px solid rgba(26,45,58,0.6);color:var(--text);}
+  .dose-table tr:last-child td{border-bottom:none;}
+  .dose-table tr:hover td{background:rgba(0,212,255,0.03);}
+  .dose-units{font-family:'Share Tech Mono',monospace;font-size:15px;color:var(--accent3);font-weight:bold;}
+  .dose-tag{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;padding:2px 8px;background:rgba(0,255,157,0.1);border:1px solid rgba(0,255,157,0.25);color:var(--accent2);border-radius:2px;}
+  .note-box{margin-top:16px;background:rgba(255,107,53,0.06);border-left:3px solid var(--accent3);padding:12px 16px;font-size:13px;line-height:1.6;color:var(--text);}
+  .bio-category{margin-bottom:24px;}
+  .bio-category-title{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--accent3);text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(255,107,53,0.2);}
+  .bio-table{width:100%;border-collapse:collapse;}
+  .bio-table th{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;text-align:left;padding:7px 10px;border-bottom:1px solid var(--border);background:rgba(0,212,255,0.04);}
+  .bio-table td{font-size:13px;padding:9px 10px;border-bottom:1px solid rgba(26,45,58,0.5);color:var(--text);vertical-align:top;line-height:1.5;}
+  .bio-table tr:last-child td{border-bottom:none;}
+  .bio-table tr:hover td{background:rgba(0,212,255,0.025);}
+  .bio-name{font-weight:500;color:var(--white);font-size:13px;}
+  .bio-test{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);display:block;margin-top:2px;}
+  .range-clinical{color:var(--muted);font-size:12px;}
+  .range-optimal{color:var(--accent2);font-size:12px;font-weight:500;}
+  .range-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;display:block;margin-bottom:2px;opacity:0.7;}
+  .disclaimer-box{margin-top:20px;background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.12);padding:14px 16px;font-size:12px;line-height:1.7;color:var(--muted);font-style:italic;}
+  @keyframes fadeSlide{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+  @media(max-width:480px){.benefits-grid{grid-template-columns:1fr;}.recon-stats{grid-template-columns:1fr 1fr;}.tl-item{grid-template-columns:70px 1fr;}.bio-table th,.bio-table td{padding:7px 6px;font-size:12px;}}
+</style>
+</head>
+<body>
+<div class="container">
+<a href="index.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--muted);text-decoration:none;text-transform:uppercase;margin-bottom:28px;padding:8px 14px;border:1px solid var(--border);transition:all .2s;" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">← Back to Encyclopedia</a>
+
+  <div class="header">
+    <div class="label">Peptide Reference Sheet</div>
+    <h1>KPV</h1>
+    <div class="subtitle">LYS-PRO-VAL &nbsp;|&nbsp; ANTI-INFLAMMATORY TRIPEPTIDE / α-MSH C-TERMINAL FRAGMENT</div>
+  </div>
+
+  <div class="section" style="animation-delay:0.1s;border-top-color:var(--accent2);">
+    <div class="section-num">01 — Identity</div>
+    <h2>Name & Classification</h2>
+    <p>KPV is a tripeptide composed of three amino acids: <strong style="color:var(--white)">Lysine–Proline–Valine</strong>. It represents the C-terminal fragment (positions 11–13) of alpha-melanocyte stimulating hormone (α-MSH), which is itself a potent endogenous anti-inflammatory neuropeptide.</p>
+    <p>KPV is classified as a <strong style="color:var(--white)">melanocortin-derived anti-inflammatory peptide</strong>. Unlike its parent molecule α-MSH, KPV lacks hormonal activity but retains — and in some studies exceeds — the anti-inflammatory and antimicrobial potency of the full sequence. It acts primarily on gut epithelium, immune cells, and skin via NF-κB pathway inhibition.</p>
+    <p>Also known as: <span style="font-family:'Share Tech Mono',monospace;color:var(--accent);font-size:13px;">α-MSH(11-13) &nbsp;|&nbsp; H-Lys-Pro-Val-OH</span></p>
+  </div>
+
+  <div class="section" style="animation-delay:0.2s;border-top-color:var(--accent);">
+    <div class="section-num">02 — Origin</div>
+    <h2>When It Was Developed</h2>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-year">1980s–90s</div><div class="tl-text">Research into α-MSH's anti-inflammatory properties identified that its potency resided primarily in specific sequence fragments. KPV (the C-terminal tripeptide) was isolated and found to replicate key anti-inflammatory effects.</div></div>
+      <div class="tl-item"><div class="tl-year">1990s–2000s</div><div class="tl-text">Studies by <strong style="color:var(--white)">Dr. Anna Catania</strong> and others demonstrated KPV's ability to suppress fever, reduce local and systemic inflammation, and inhibit NF-κB signaling without the pigmentation effects of full α-MSH.</div></div>
+      <div class="tl-item"><div class="tl-year">2000s–2010s</div><div class="tl-text">Growing body of research on gut health applications — KPV shown to reduce intestinal inflammation in IBD models, improve mucosal barrier integrity, and suppress pro-inflammatory cytokine production in colonic tissue.</div></div>
+      <div class="tl-item"><div class="tl-year">2015–Present</div><div class="tl-text">Increasing use in functional medicine for IBD, leaky gut, skin conditions, and systemic inflammation. Both injectable and oral/topical routes studied. No FDA approval; research peptide status.</div></div>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:0.3s;border-top-color:var(--accent2);">
+    <div class="section-num">03 — Research History</div>
+    <h2>Research Background</h2>
+    <p>KPV was identified through systematic research on which portion of α-MSH was responsible for its powerful anti-inflammatory effects. The tripeptide was found to be the minimal active sequence — capable of inhibiting NF-κB, reducing pro-inflammatory cytokines (TNF-α, IL-6, IL-1β), and suppressing fever in animal models at doses comparable to full-length α-MSH.</p>
+    <p>Particularly compelling is its role in gut health. Research showed KPV can be taken orally and survives intestinal transit well enough to act locally on colonic mucosa — a major advantage over injectable peptides for gut conditions. Studies in colitis models showed KPV reduced inflammation scores, preserved crypt architecture, and improved barrier function by upregulating tight junction proteins.</p>
+    <p>KPV also shows direct <strong style="color:var(--white)">antimicrobial activity</strong> against several pathogens including Candida albicans and Staphylococcus aureus, suggesting a dual role as both anti-inflammatory and antimicrobial agent in mucosal tissues.</p>
+  </div>
+
+  <div class="section" style="animation-delay:0.4s;border-top-color:var(--accent3);">
+    <div class="section-num">04 — Key Benefits</div>
+    <h2>Proposed Benefits</h2>
+    <div class="benefits-grid">
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Potent NF-κB inhibition — master inflammation switch</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Reduces TNF-α, IL-6, IL-1β in gut and systemic tissue</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Heals intestinal mucosal barrier — tight junction upregulation</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Effective in IBD/colitis models (Crohn's, UC)</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Oral route viable — survives gut transit to act locally</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Antimicrobial activity against Candida and Staph aureus</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Skin anti-inflammatory — effective topically for dermatitis</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">No hormonal activity — no pigmentation or endocrine effects</div></div>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:0.5s;border-top-color:var(--accent);">
+    <div class="section-num">05 — Reconstitution</div>
+    <h2>10 mg Vial + 300 Units BAC Water</h2>
+    <div class="recon-box">
+      <div class="big">33.3 mcg</div>
+      <div class="big-label">per unit drawn on insulin syringe</div>
+    </div>
+    <div class="recon-stats">
+      <div class="stat-box"><div class="stat-val">10,000</div><div class="stat-label">mcg total</div></div>
+      <div class="stat-box"><div class="stat-val">0.3 mL</div><div class="stat-label">total volume</div></div>
+      <div class="stat-box"><div class="stat-val">4–6 wk</div><div class="stat-label">shelf life (fridge)</div></div>
+    </div>
+    <div class="note-box" style="margin-top:14px;">KPV is also available in oral capsule form (typically 500 mcg–2 mg per capsule) for targeted gut action. Injectable form reconstituted with BAC water as above. For gut-focused protocols, oral is preferred; for systemic or skin applications, subcutaneous injection or topical is used. Store refrigerated at 2–8°C.</div>
+  </div>
+
+  <div class="section" style="animation-delay:0.6s;border-top-color:var(--accent2);">
+    <div class="section-num">06 — Dosage</div>
+    <h2>Dosage Reference</h2>
+    <table class="dose-table">
+      <thead><tr><th>Dose</th><th>Units / Format</th><th>Context</th></tr></thead>
+      <tbody>
+        <tr><td>100–250 mcg SC</td><td><span class="dose-units">3–7.5 u</span></td><td><span class="dose-tag">LOW / INTRO</span></td></tr>
+        <tr><td>500 mcg SC</td><td><span class="dose-units">15 u</span></td><td><span class="dose-tag">COMMON (injectable)</span></td></tr>
+        <tr><td>500 mcg–2 mg oral</td><td><span class="dose-units">1–4 capsules</span></td><td><span class="dose-tag">GUT PROTOCOL</span></td></tr>
+        <tr><td>1–2 mg SC</td><td><span class="dose-units">30–60 u</span></td><td><span class="dose-tag">STANDARD</span></td></tr>
+      </tbody>
+    </table>
+    <div class="note-box">KPV is well-tolerated with a very wide safety margin given its endogenous origin. For <strong style="color:var(--white)">gut/IBD protocols</strong>, oral dosing 500 mcg–2 mg/day is typical. For <strong style="color:var(--white)">systemic inflammation</strong>, subcutaneous 500 mcg–1 mg/day is common. Oral and injectable can be combined for dual systemic + local gut effect.</div>
+  </div>
+
+  <div class="section" style="animation-delay:0.7s;border-top-color:var(--accent3);">
+    <div class="section-num">07 — Monitoring</div>
+    <h2>Biomarkers, Lab Tests & Ranges</h2>
+    <p style="font-size:13px;margin-bottom:20px;">KPV targets intestinal inflammation, systemic inflammatory cytokines, and gut barrier integrity. Monitor these markers before, at 6 weeks, and at cycle end.</p>
+
+    <div class="bio-category">
+      <div class="bio-category-title">▸ Gut Barrier & Intestinal Health</div>
+      <table class="bio-table">
+        <thead><tr><th>Biomarker</th><th>Lab Test</th><th>Clinical Range</th><th>Optimal Range</th></tr></thead>
+        <tbody>
+          <tr><td><span class="bio-name">Zonulin</span><br><span style="font-size:11px;color:var(--muted);">Intestinal permeability marker</span></td><td><span class="bio-test">Serum or Stool Zonulin</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">&lt;107 ng/mL (serum)</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">&lt;40 ng/mL</span></td></tr>
+          <tr><td><span class="bio-name">LPS (Lipopolysaccharide)</span><br><span style="font-size:11px;color:var(--muted);">Bacterial translocation marker</span></td><td><span class="bio-test">Serum LPS / LPS-binding protein</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">LBP &lt;7.5 µg/mL</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">LBP &lt;5.0 µg/mL</span></td></tr>
+          <tr><td><span class="bio-name">Calprotectin</span><br><span style="font-size:11px;color:var(--muted);">Gut inflammation marker</span></td><td><span class="bio-test">Stool Calprotectin</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">&lt;50 µg/g</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">&lt;25 µg/g</span></td></tr>
+          <tr><td><span class="bio-name">Secretory IgA (sIgA)</span></td><td><span class="bio-test">Stool sIgA</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">510–2040 µg/g</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">700–1500 µg/g</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">▸ Systemic Inflammation</div>
+      <table class="bio-table">
+        <thead><tr><th>Biomarker</th><th>Lab Test</th><th>Clinical Range</th><th>Optimal Range</th></tr></thead>
+        <tbody>
+          <tr><td><span class="bio-name">hsCRP</span></td><td><span class="bio-test">High-sensitivity CRP</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">&lt;3.0 mg/L</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">&lt;0.5 mg/L</span></td></tr>
+          <tr><td><span class="bio-name">IL-6</span></td><td><span class="bio-test">Serum Interleukin-6</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">&lt;7.0 pg/mL</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">&lt;1.5 pg/mL</span></td></tr>
+          <tr><td><span class="bio-name">TNF-α</span></td><td><span class="bio-test">Serum TNF-alpha</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">&lt;8.1 pg/mL</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">&lt;2.0 pg/mL</span></td></tr>
+          <tr><td><span class="bio-name">ESR</span></td><td><span class="bio-test">Erythrocyte Sedimentation Rate</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">0–22 (M) / 0–29 (F) mm/hr</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">&lt;10 mm/hr</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">▸ Safety</div>
+      <table class="bio-table">
+        <thead><tr><th>Biomarker</th><th>Lab Test</th><th>Clinical Range</th><th>Optimal Range</th></tr></thead>
+        <tbody>
+          <tr><td><span class="bio-name">AST / ALT</span></td><td><span class="bio-test">CMP</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">AST 10–40 / ALT 7–56 U/L</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">AST &lt;26 / ALT &lt;26 U/L</span></td></tr>
+          <tr><td><span class="bio-name">CBC</span></td><td><span class="bio-test">Complete Blood Count</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">Standard ranges</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">Mid-range; WBC 4.5–6.0</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="disclaimer-box">⚠ KPV is not FDA-approved. It is derived from an endogenous sequence (α-MSH) and has a strong safety profile in research. Stool testing (calprotectin, zonulin, sIgA) is particularly valuable for tracking gut-focused protocols. Consult a qualified practitioner.</div>
+  </div>
+
+  <div class="section" style="animation-delay:0.8s;border-top-color:var(--accent);">
+    <div class="section-num">08 — Cycle Protocol</div>
+    <h2>Cycle Length, Frequency & Timing</h2>
+
+    <div style="margin-bottom:22px;">
+      <div class="bio-category-title" style="color:var(--accent2);">▸ How Long to Cycle</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+        <div class="stat-box" style="text-align:left;padding:14px 16px;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:6px;">RESEARCH PROTOCOLS</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--white);line-height:1;">8–12 Weeks</div>
+          <div style="font-size:12px;color:var(--text);margin-top:6px;line-height:1.5;">Animal IBD and colitis studies used 4–12 week treatment courses. Functional improvements in gut histology visible from week 4.</div>
+        </div>
+        <div class="stat-box" style="text-align:left;padding:14px 16px;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:6px;">PRACTITIONER CONSENSUS</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--white);line-height:1;">12–16 Weeks</div>
+          <div style="font-size:12px;color:var(--text);margin-top:6px;line-height:1.5;">Gut healing typically requires sustained support. Most practitioners run 12–16 week cycles for IBD/leaky gut, with off-period biomarker reassessment before re-cycling.</div>
+        </div>
+      </div>
+      <div class="note-box" style="margin-top:0;">KPV has one of the most favorable safety profiles of any research peptide given its endogenous origin. Longer cycles are considered acceptable. For chronic gut conditions, some practitioners use intermittent longer protocols with periodic breaks every 16–20 weeks.</div>
+    </div>
+
+    <div style="margin-bottom:22px;">
+      <div class="bio-category-title" style="color:var(--accent2);">▸ Frequency & Timing</div>
+      <table class="bio-table">
+        <thead><tr><th>Variable</th><th>Recommendation</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><span class="bio-name">Frequency (injectable)</span></td><td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent2);">Daily (7×/week)</span></td><td><span style="font-size:12px;color:var(--text);line-height:1.5;">Daily dosing maintains consistent NF-κB suppression. KPV's short half-life means consistent daily administration is needed for systemic effect.</span></td></tr>
+          <tr><td><span class="bio-name">Frequency (oral)</span></td><td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent2);">1–2× daily with food</span></td><td><span style="font-size:12px;color:var(--text);line-height:1.5;">Oral dosing with meals delivers KPV to intestinal epithelium during digestion — maximizing local gut contact time. Split AM/PM dosing for twice-daily regimens.</span></td></tr>
+          <tr><td><span class="bio-name">Fasted vs Fed (injectable)</span></td><td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted);">~ Either acceptable</span></td><td><span style="font-size:12px;color:var(--text);line-height:1.5;">Unlike metabolic peptides, KPV does not require a fasted state. Its anti-inflammatory mechanism is not insulin-sensitive. AM fasted is conventional; no strong data for preference.</span></td></tr>
+          <tr><td><span class="bio-name">Fasted vs Fed (oral)</span></td><td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent2);">✓ With food</span></td><td><span style="font-size:12px;color:var(--text);line-height:1.5;">Taking oral KPV with food extends gut contact time and maximizes local anti-inflammatory effect on intestinal mucosa. The transit time through the gut is the delivery window.</span></td></tr>
+          <tr><td><span class="bio-name">Timing</span></td><td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent2);">AM preferred</span></td><td><span style="font-size:12px;color:var(--text);line-height:1.5;">Morning dosing aligns with peak inflammatory cytokine production (which is typically highest in the early morning). May be most effective when administered before the daily inflammatory peak.</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="background:rgba(0,255,157,0.05);border:1px solid rgba(0,255,157,0.2);padding:18px 20px;">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);margin-bottom:12px;">PROTOCOL SUMMARY</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;">
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);"><div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">12–16 wk</div><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">CYCLE LENGTH</div></div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);"><div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">Daily</div><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">FREQUENCY</div></div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);"><div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">AM</div><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">TIMING</div></div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);"><div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">Oral or SC</div><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">ROUTE</div></div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);"><div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">4–8 wk</div><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">BREAK</div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

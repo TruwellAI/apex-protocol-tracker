@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GLOW Stack — Apex Research Reference</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap');
+    :root{--bg:#080c10;--panel:#0d1318;--border:#1a2d3a;--accent:#00d4ff;--accent2:#00ff9d;--accent3:#ff6b35;--text:#c8dde8;--muted:#4a6272;--white:#eaf4f8;--gold:#f59e0b;--rose:#f472b6;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;line-height:1.6;padding:40px 20px;}
+    body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 60% 0%,rgba(245,158,11,0.06) 0%,transparent 60%),radial-gradient(ellipse at 10% 80%,rgba(244,114,182,0.04) 0%,transparent 50%);pointer-events:none;z-index:0;}
+    .container{max-width:900px;margin:0 auto;position:relative;z-index:1;}
+    .header{margin-bottom:40px;border-bottom:1px solid var(--border);padding-bottom:24px;}
+    .stack-label{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-bottom:8px;}
+    .stack-name{font-family:'Rajdhani',sans-serif;font-size:80px;font-weight:700;color:var(--white);line-height:1;margin-bottom:8px;}
+    .stack-sub{font-size:16px;color:var(--muted);margin-bottom:4px;}
+    .stack-tagline{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--gold);letter-spacing:2px;margin-bottom:16px;}
+    .tag-row{display:flex;gap:8px;flex-wrap:wrap;}
+    .tag{background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);color:var(--gold);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;padding:3px 10px;}
+    .tag-rose{background:rgba(244,114,182,0.1);border:1px solid rgba(244,114,182,0.3);color:var(--rose);}
+    .tag-green{background:rgba(0,255,157,0.1);border:1px solid rgba(0,255,157,0.3);color:var(--accent2);}
+    .tag-blue{background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.25);color:var(--accent);}
+    .section{background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--muted);padding:28px 32px;margin-bottom:16px;animation:fadeUp 0.4s ease both;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+    .section-num{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:8px;}
+    h2{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;}
+    .compound-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:20px;}
+    .compound-card{background:var(--bg);border:1px solid var(--border);border-top:2px solid var(--gold);padding:18px 20px;}
+    .compound-name{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--white);margin-bottom:2px;}
+    .compound-dose{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);margin-bottom:8px;}
+    .compound-role-badge{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 8px;margin-bottom:10px;}
+    .role-1{background:rgba(0,255,157,0.1);border:1px solid rgba(0,255,157,0.2);color:var(--accent2);}
+    .role-2{background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.2);color:var(--accent);}
+    .role-3{background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);color:var(--gold);}
+    .compound-mech{font-size:12px;color:var(--text);line-height:1.5;}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:20px;}
+    .stat-box{background:var(--bg);border:1px solid var(--border);padding:16px;text-align:center;}
+    .stat-value{font-family:'Rajdhani',sans-serif;font-size:26px;font-weight:700;color:var(--white);line-height:1;}
+    .stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-top:4px;}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+    .info-item{margin-bottom:14px;}
+    .info-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:4px;}
+    .info-value{color:var(--white);font-size:13px;line-height:1.5;}
+    .recon-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px;}
+    .recon-box{background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--accent2);padding:18px 20px;}
+    .recon-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);margin-bottom:10px;}
+    .recon-math{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--white);margin-bottom:5px;}
+    .dose-table{width:100%;border-collapse:collapse;}
+    .dose-table th{background:rgba(245,158,11,0.08);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--gold);text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);}
+    .dose-table td{padding:11px 14px;border-bottom:1px solid rgba(26,45,58,0.5);vertical-align:top;font-size:13px;}
+    .dose-level{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);font-weight:700;}
+    .dose-amount{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--white);}
+    .dose-units{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);display:block;margin-top:2px;}
+    .bio-table{width:100%;border-collapse:collapse;}
+    .bio-table th{background:rgba(0,212,255,0.06);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--muted);text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);}
+    .bio-table td{padding:10px 12px;border-bottom:1px solid rgba(26,45,58,0.4);vertical-align:top;font-size:12px;}
+    .bio-name{color:var(--white);font-weight:500;display:block;}
+    .bio-test{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);}
+    .range-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 6px;margin-right:4px;}
+    .range-clinical{background:rgba(74,98,114,0.3);color:var(--muted);}
+    .range-optimal{background:rgba(0,255,157,0.1);color:var(--accent2);}
+    .bio-category{margin-bottom:24px;}
+    .bio-category-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);margin-bottom:10px;}
+    .note-box{background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.15);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .highlight-box{background:rgba(245,158,11,0.04);border:1px solid rgba(245,158,11,0.2);padding:16px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .glow-box{background:rgba(244,114,182,0.04);border:1px solid rgba(244,114,182,0.2);padding:16px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .disclaimer-box{background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.2);padding:14px 18px;margin-top:20px;font-size:12px;color:var(--text);line-height:1.5;}
+    .outcome-row{display:flex;align-items:flex-start;gap:14px;background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--gold);padding:14px 18px;margin-bottom:10px;}
+    .outcome-icon{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--gold);min-width:36px;}
+    .outcome-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:3px;}
+    .outcome-desc{font-size:13px;color:var(--white);}
+    .schedule-row{display:grid;grid-template-columns:140px 1fr 1fr;gap:0;border:1px solid var(--border);margin-bottom:2px;}
+    .schedule-row > div{padding:10px 14px;border-right:1px solid var(--border);font-size:13px;}
+    .schedule-row > div:last-child{border-right:none;}
+    .schedule-head{background:rgba(245,158,11,0.08);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--gold);}
+    .schedule-peptide{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;color:var(--white);}
+    .check{color:var(--accent2);}
+    .vs-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0;}
+    .vs-box{background:var(--bg);border:1px solid var(--border);padding:18px 20px;}
+    .vs-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;margin-bottom:12px;}
+    .vs-item{font-size:13px;margin-bottom:6px;padding-left:16px;position:relative;}
+    .vs-item::before{content:'▸';position:absolute;left:0;color:var(--gold);}
+  </style>
+</head>
+<body>
+<div class="container">
+<a href="index.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--muted);text-decoration:none;text-transform:uppercase;margin-bottom:28px;padding:8px 14px;border:1px solid var(--border);transition:all .2s;" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">← Back to Encyclopedia</a>
+
+  <div class="header">
+    <div class="stack-label">Apex Curated Stack — Skin, Collagen & Recovery</div>
+    <div class="stack-name">GLOW</div>
+    <div class="stack-sub">GHK-Cu + TB-500 + BPC-157</div>
+    <div class="stack-tagline">Skin Rejuvenation · Collagen Synthesis · Tissue Repair · Anti-Aging</div>
+    <div class="tag-row">
+      <span class="tag">SKIN & COLLAGEN</span>
+      <span class="tag tag-rose">ANTI-AGING</span>
+      <span class="tag tag-rose">REJUVENATION</span>
+      <span class="tag tag-green">TISSUE REPAIR</span>
+      <span class="tag tag-blue">WOUND HEALING</span>
+      <span class="tag">3-COMPOUND SYNERGY</span>
+    </div>
+  </div>
+
+  <!-- 01 OVERVIEW -->
+  <div class="section" style="animation-delay:0.1s;border-top-color:var(--gold);">
+    <div class="section-num">01 / STACK OVERVIEW</div>
+    <h2>The GLOW Protocol</h2>
+
+    <div class="highlight-box">
+      <strong style="color:var(--gold);">GLOW</strong> is Apex's skin, collagen, and tissue rejuvenation stack. Built around GHK-Cu's extraordinary ability to activate over 31 collagen and elastin genes, amplified by BPC-157's local repair and angiogenesis, and supported systemically by TB-500's stem cell mobilization. The result: a comprehensive protocol that works at the genetic level, the cellular level, and the vascular level simultaneously. For skin health, wound healing, anti-aging, and connective tissue restoration.
+    </div>
+
+    <div class="compound-grid-3">
+      <div class="compound-card">
+        <div class="compound-name">GHK-Cu</div>
+        <div class="compound-dose">50mg vial · 166.7 mcg/unit</div>
+        <div class="compound-role-badge role-3">GENE ACTIVATION LEAD</div>
+        <div class="compound-mech">Copper tripeptide naturally found in human plasma. Activates 31+ collagen/elastin synthesis genes. Upregulates antioxidant enzymes (SOD, catalase). Promotes wound closure and hair follicle activation. Resets gene expression toward a younger, more regenerative profile. The anchor compound of the GLOW stack.</div>
+      </div>
+      <div class="compound-card">
+        <div class="compound-name">TB-500</div>
+        <div class="compound-dose">10mg vial · 33.3 mcg/unit</div>
+        <div class="compound-role-badge role-2">SYSTEMIC AMPLIFIER</div>
+        <div class="compound-mech">Thymosin Beta-4 synthetic fragment. Mobilizes stem cells throughout the body to sites of tissue damage. Reduces systemic inflammation via NF-κB inhibition. Binds actin to drive cellular motility — critical for wound closure and tissue remodeling. Creates the ideal systemic environment for GHK-Cu's local effects.</div>
+      </div>
+      <div class="compound-card">
+        <div class="compound-name">BPC-157</div>
+        <div class="compound-dose">10mg vial · 33.3 mcg/unit</div>
+        <div class="compound-role-badge role-1">LOCAL VASCULAR REPAIR</div>
+        <div class="compound-mech">Body Protection Compound. Drives angiogenesis (new blood vessel formation) via VEGFR2 activation — restoring blood supply to skin and tissue. EGF receptor activation accelerates wound healing and skin cell turnover. Synergizes with GHK-Cu: BPC-157 creates blood supply; GHK-Cu activates the collagen genes that use it.</div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-value">70mg</div>
+        <div class="stat-label">TOTAL STACK</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">3</div>
+        <div class="stat-label">VIALS</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">31+</div>
+        <div class="stat-label">GENES ACTIVATED</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">8–12w</div>
+        <div class="stat-label">VISIBLE RESULTS</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 OUTCOMES -->
+  <div class="section" style="animation-delay:0.15s;border-top-color:var(--rose);">
+    <div class="section-num">02 / OUTCOMES & MECHANISMS</div>
+    <h2>What GLOW Delivers</h2>
+
+    <div class="outcome-row">
+      <div class="outcome-icon">✦</div>
+      <div>
+        <div class="outcome-label">SKIN THICKNESS & ELASTICITY</div>
+        <div class="outcome-desc">GHK-Cu activates collagen I, III, and IV genes — the structural proteins that give skin its thickness, firmness, and resistance to wrinkling. Clinical studies show 35% increase in collagen production at target concentrations. Combined with BPC-157's EGF activation, skin cell turnover accelerates and damaged cells are replaced faster.</div>
+      </div>
+    </div>
+
+    <div class="outcome-row">
+      <div class="outcome-icon">✦</div>
+      <div>
+        <div class="outcome-label">WOUND HEALING & SCAR REDUCTION</div>
+        <div class="outcome-desc">BPC-157 drives angiogenesis (new blood supply to wound bed) while TB-500 mobilizes fibroblasts and stem cells to the site. GHK-Cu then provides the collagen blueprint — producing organized, non-fibrotic scar tissue that more closely matches the original skin architecture. Particularly effective for chronic wounds and post-surgical scars.</div>
+      </div>
+    </div>
+
+    <div class="outcome-row">
+      <div class="outcome-icon">✦</div>
+      <div>
+        <div class="outcome-label">ANTIOXIDANT DEFENSE & INFLAMMATION CONTROL</div>
+        <div class="outcome-desc">GHK-Cu upregulates superoxide dismutase (SOD) and catalase — the primary cellular antioxidant enzymes. TB-500 inhibits NF-κB (systemic inflammatory signal). Together: oxidative damage is reduced, skin cells live longer, and the inflammatory microenvironment that accelerates aging is suppressed.</div>
+      </div>
+    </div>
+
+    <div class="outcome-row">
+      <div class="outcome-icon">✦</div>
+      <div>
+        <div class="outcome-label">HAIR FOLLICLE ACTIVATION</div>
+        <div class="outcome-desc">GHK-Cu stimulates hair follicle growth from telogen (resting) back to anagen (active growth) phase. Increases follicle size and hair shaft diameter. Studied in both men and women — clinical data shows reversal of miniaturization pattern in androgenic alopecia. BPC-157's scalp angiogenesis supports the follicle with improved blood supply.</div>
+      </div>
+    </div>
+
+    <div class="outcome-row" style="border-left-color:var(--accent2);">
+      <div class="outcome-icon" style="color:var(--accent2);">✦</div>
+      <div>
+        <div class="outcome-label">GENE EXPRESSION RESET — ANTI-AGING AT THE ROOT</div>
+        <div class="outcome-desc">GHK-Cu's most remarkable property: it resets the gene expression profile of aged cells toward a younger state. Studies show GHK-Cu reverses the expression of genes associated with aging, inflammation, and cancer progression while upregulating genes associated with cellular repair. This is not surface treatment — it's reprogramming.</div>
+      </div>
+    </div>
+
+    <div class="vs-grid" style="margin-top:20px;">
+      <div class="vs-box">
+        <div class="vs-title" style="color:var(--gold);">GLOW STACK — WHAT IT ADDRESSES</div>
+        <div class="vs-item">Fine lines and wrinkles</div>
+        <div class="vs-item">Skin thickness and elasticity loss</div>
+        <div class="vs-item">Wound healing and chronic scars</div>
+        <div class="vs-item">Hair thinning and follicle miniaturization</div>
+        <div class="vs-item">Connective tissue laxity</div>
+        <div class="vs-item">Oxidative skin damage</div>
+        <div class="vs-item">Post-injury scar tissue quality</div>
+      </div>
+      <div class="vs-box">
+        <div class="vs-title" style="color:var(--rose);">GLOW vs. KLOW — CHOOSE YOUR STACK</div>
+        <div class="vs-item">GLOW: skin, collagen, hair, anti-aging focus</div>
+        <div class="vs-item">KLOW: adds gut/mucosal repair (KPV) for IBD, leaky gut, autoimmune</div>
+        <div class="vs-item">GLOW is the right choice when inflammation isn't the primary issue</div>
+        <div class="vs-item">KLOW is GLOW + KPV — for comprehensive systemic inflammation control</div>
+        <div class="vs-item">Both share the GHK-Cu + TB-500 + BPC-157 core</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 RECONSTITUTION -->
+  <div class="section" style="animation-delay:0.2s;border-top-color:var(--accent2);">
+    <div class="section-num">03 / RECONSTITUTION</div>
+    <h2>Vial Preparation</h2>
+    <div class="recon-grid">
+      <div class="recon-box" style="border-left-color:var(--gold);">
+        <div class="recon-title" style="color:var(--gold);">GHK-Cu — 50mg VIAL</div>
+        <div class="recon-math">50mg + 3.0 mL BAC water</div>
+        <div class="recon-math" style="color:var(--accent2);">166.7 mcg per unit</div>
+        <div style="margin-top:10px;font-size:12px;">
+          <div style="margin-bottom:5px;"><span style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;">500mcg:</span> <span style="color:var(--white);">3 units / 0.03 mL</span></div>
+          <div style="margin-bottom:5px;"><span style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;">1mg:</span> <span style="color:var(--white);">6 units / 0.06 mL</span></div>
+          <div><span style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;">2mg:</span> <span style="color:var(--white);">12 units / 0.12 mL</span></div>
+        </div>
+      </div>
+      <div class="recon-box">
+        <div class="recon-title">TB-500 — 10mg VIAL</div>
+        <div class="recon-math">10mg + 3.0 mL BAC water</div>
+        <div class="recon-math" style="color:var(--accent2);">33.3 mcg per unit</div>
+        <div style="margin-top:10px;font-size:12px;">
+          <div style="margin-bottom:5px;"><span style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;">1mg:</span> <span style="color:var(--white);">30 units / 0.30 mL</span></div>
+          <div style="margin-bottom:5px;"><span style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;">2mg:</span> <span style="color:var(--white);">60 units / 0.60 mL</span></div>
+        </div>
+      </div>
+      <div class="recon-box">
+        <div class="recon-title">BPC-157 — 10mg VIAL</div>
+        <div class="recon-math">10mg + 3.0 mL BAC water</div>
+        <div class="recon-math" style="color:var(--accent2);">33.3 mcg per unit</div>
+        <div style="margin-top:10px;font-size:12px;">
+          <div style="margin-bottom:5px;"><span style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;">250mcg:</span> <span style="color:var(--white);">7.5 units / 0.075 mL</span></div>
+          <div style="margin-bottom:5px;"><span style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;">500mcg:</span> <span style="color:var(--white);">15 units / 0.15 mL</span></div>
+          <div><span style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;">750mcg:</span> <span style="color:var(--white);">22.5 units / 0.225 mL</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--gold);">GHK-Cu Color Note:</strong> Reconstituted GHK-Cu solution will appear blue-green due to the copper component. This is normal and expected — the color confirms proper copper chelation. Do not discard.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent);">Storage (all vials):</strong> Lyophilized powder stable at room temp 6 months. After reconstitution: refrigerate (2–8°C), use within 28–30 days. Protect from light. Do NOT freeze reconstituted vials.
+    </div>
+  </div>
+
+  <!-- 04 DOSING -->
+  <div class="section" style="animation-delay:0.25s;border-top-color:var(--accent);">
+    <div class="section-num">04 / DOSING PROTOCOL</div>
+    <h2>Dose Ranges</h2>
+
+    <table class="dose-table">
+      <thead>
+        <tr>
+          <th>COMPOUND</th>
+          <th>LOW DOSE</th>
+          <th>STANDARD DOSE</th>
+          <th>HIGH DOSE</th>
+          <th>FREQUENCY</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="dose-level">GHK-Cu</span></td>
+          <td>500mcg/day</td>
+          <td><strong style="color:var(--white);">1mg/day</strong></td>
+          <td>2mg/day</td>
+          <td>Daily SC</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">TB-500</span></td>
+          <td>1mg/week</td>
+          <td><strong style="color:var(--white);">2mg/week</strong></td>
+          <td>4mg/week</td>
+          <td>1–2 injections/week</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">BPC-157</span></td>
+          <td>250mcg/day</td>
+          <td><strong style="color:var(--white);">500mcg/day</strong></td>
+          <td>750mcg/day</td>
+          <td>Daily (can split AM/PM)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="glow-box" style="margin-top:16px;">
+      <strong style="color:var(--rose);">Topical GHK-Cu Concurrent Use:</strong> Topical GHK-Cu cream (available separately) can be applied to face, scalp, or wound areas concurrent with SC injections. Topical delivers GHK-Cu directly to dermal target tissue; systemic SC injection provides whole-body collagen gene activation. For skin and hair goals, combining both routes produces superior outcomes versus either alone.
+    </div>
+
+    <div class="note-box">
+      <strong style="color:var(--accent);">Injection Site for BPC-157:</strong> For wound healing or skin-specific applications, inject BPC-157 subcutaneously in close proximity to the target area. Local injection concentrates angiogenic signals at the site. For general anti-aging use, periumbilical (abdominal) injection is sufficient.
+    </div>
+  </div>
+
+  <!-- 05 SCHEDULE -->
+  <div class="section" style="animation-delay:0.3s;border-top-color:var(--gold);">
+    <div class="section-num">05 / INJECTION SCHEDULE</div>
+    <h2>Weekly Protocol</h2>
+
+    <div class="schedule-row">
+      <div class="schedule-head">COMPOUND</div>
+      <div class="schedule-head">DAILY / WEEKLY SCHEDULE</div>
+      <div class="schedule-head">SITE / NOTES</div>
+    </div>
+    <div class="schedule-row">
+      <div class="schedule-peptide">GHK-Cu</div>
+      <div><span class="check">✓</span> 1mg every PM (daily)</div>
+      <div style="font-size:12px;color:var(--muted);">SC any site; topical to face/scalp concurrent</div>
+    </div>
+    <div class="schedule-row">
+      <div class="schedule-peptide">BPC-157</div>
+      <div><span class="check">✓</span> 500mcg every AM (daily)</div>
+      <div style="font-size:12px;color:var(--muted);">SC near target tissue or periumbilical</div>
+    </div>
+    <div class="schedule-row">
+      <div class="schedule-peptide">TB-500</div>
+      <div><span class="check">✓</span> 1mg Mon + 1mg Thu</div>
+      <div style="font-size:12px;color:var(--muted);">Any SC site, rotate locations</div>
+    </div>
+
+    <div class="note-box" style="margin-top:16px;">
+      <strong style="color:var(--accent);">Protocol Logic:</strong> BPC-157 AM drives daytime angiogenesis and local repair signaling. GHK-Cu PM leverages overnight gene expression — collagen synthesis peaks during sleep, and GHK-Cu's gene activation aligns with this window. TB-500 twice weekly maintains systemic stem cell mobilization throughout.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent);">No Fasting Required:</strong> Unlike GH secretagogues, none of the GLOW compounds require fasting. Injection timing relative to meals is not critical — consistency of timing matters more than fasting state.
+    </div>
+  </div>
+
+  <!-- 06 BIOMARKERS -->
+  <div class="section" style="animation-delay:0.35s;border-top-color:var(--accent);">
+    <div class="section-num">06 / BIOMARKER MONITORING</div>
+    <h2>Recommended Lab Panel</h2>
+
+    <div class="bio-category">
+      <div class="bio-category-title">COLLAGEN & TISSUE SYNTHESIS</div>
+      <table class="bio-table">
+        <thead><tr><th>MARKER</th><th>METHOD</th><th>OPTIMAL TARGET</th><th>NOTES</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">P1NP</span><span class="bio-test">procollagen type I N-terminal propeptide</span></td>
+            <td>Serum baseline + 8 weeks</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>Increasing</td>
+            <td>Primary collagen synthesis marker. GHK-Cu should drive measurable P1NP increase. Most direct readout of collagen gene activation.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">CTX-I</span><span class="bio-test">C-terminal telopeptide of type I collagen</span></td>
+            <td>Serum baseline + 8 weeks</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>Stable or decreasing</td>
+            <td>Collagen breakdown marker. P1NP rising + CTX stable = net positive collagen balance. The goal.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">VEGF</span><span class="bio-test">vascular endothelial growth factor</span></td>
+            <td>Serum — optional</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>Elevated vs. baseline</td>
+            <td>BPC-157 drives VEGF upregulation. Elevated VEGF confirms angiogenesis signaling is active.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">INFLAMMATION — ANTI-AGING MARKERS</div>
+      <table class="bio-table">
+        <thead><tr><th>MARKER</th><th>CLINICAL RANGE</th><th>OPTIMAL TARGET</th><th>NOTES</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">hs-CRP</span><span class="bio-test">high-sensitivity C-reactive protein</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>&lt;3.0 mg/L</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>&lt;0.5 mg/L</td>
+            <td>TB-500 + BPC-157 reduce systemic inflammation. Lower CRP = slower biological aging and better collagen preservation.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">8-OHdG</span><span class="bio-test">8-hydroxy-2-deoxyguanosine (urine)</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>&lt;15 ng/mg Cr</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>&lt;6 ng/mg Cr</td>
+            <td>Oxidative DNA damage marker. GHK-Cu's SOD/catalase upregulation should drive this down — confirms antioxidant mechanism.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">VISUAL / PHYSICAL ASSESSMENT</div>
+      <table class="bio-table">
+        <thead><tr><th>METHOD</th><th>TIMING</th><th>NOTES</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">Standardized Photography</span><span class="bio-test">skin texture, tone, wrinkle depth</span></td>
+            <td>Week 0 → Week 8 → Week 12</td>
+            <td>Same lighting, angle, distance. Tracks visible changes in skin texture, tone, and firmness. Most patients report visible changes at 8–10 weeks.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Hair Density Count</span><span class="bio-test">trichoscopy or photograph</span></td>
+            <td>Baseline + 12 weeks</td>
+            <td>For hair loss applications — GHK-Cu follicle activation typically measurable at 12 weeks. Use consistent scalp photography area.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Skin Elasticity</span><span class="bio-test">cutometer or pinch test</span></td>
+            <td>Baseline + 12 weeks</td>
+            <td>Objective elasticity measurement. GHK-Cu's elastin gene activation improves snap-back time and resistance to deformation.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Wound Healing Rate</span><span class="bio-test">clinical or photographic</span></td>
+            <td>Ongoing during cycle</td>
+            <td>For wound healing applications — track wound area reduction over time. BPC-157 effects visible within 7–14 days of local injection.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">SAFETY PANEL</div>
+      <table class="bio-table">
+        <thead><tr><th>MARKER</th><th>CLINICAL RANGE</th><th>NOTES</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">Serum Copper</span><span class="bio-test">copper — serum</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>70–140 µg/dL</td>
+            <td>Baseline check. GHK-Cu micro-doses copper — relevant if deficiency exists. Excess copper (>200 µg/dL) warrants dose reduction.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">CBC + CMP</span><span class="bio-test">complete blood count + metabolic panel</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>Standard</td>
+            <td>Baseline + 8 weeks. All three compounds have excellent safety profiles. BPC-157 hepatoprotective — liver values should remain stable or improve.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 07 CYCLE -->
+  <div class="section" style="animation-delay:0.4s;border-top-color:var(--accent2);">
+    <div class="section-num">07 / CYCLE PROTOCOL</div>
+    <h2>Administration Schedule</h2>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">CYCLE LENGTH</div>
+          <div class="info-value" style="color:var(--white);font-size:18px;font-weight:600;">12–16 Weeks</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">MINIMUM BEFORE RESULTS</div>
+          <div class="info-value">8 weeks — GHK-Cu's collagen gene activation requires sustained signaling. Skin turnover cycle is approximately 28 days. Allow 2 full skin cycles (8+ weeks) before evaluating visible outcomes.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">PEAK RESULTS WINDOW</div>
+          <div class="info-value">12–20 weeks — collagen remodeling continues for weeks after the active gene expression changes begin. Continued improvement often reported for 4–8 weeks post-cycle.</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">OFF PERIOD</div>
+          <div class="info-value">4–8 weeks between full cycles. For skin maintenance: GHK-Cu topical cream can bridge cycles between SC injections. BPC-157 can be maintained at 250mcg/day for chronic wound or skin conditions.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">UPGRADE PATH</div>
+          <div class="info-value">Add KPV 20mg → Full KLOW Stack. Adds upstream NF-κB / cytokine suppression for those with inflammatory conditions, autoimmune skin conditions (psoriasis, eczema), or gut/GI overlap.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">REQUIRES</div>
+          <div class="info-value">3 vials + BAC water + Apex V3 Pen. ~9 injections/week (2 daily + 2 TB-500 per week). Manageable protocol with Apex pen system. Optional: GHK-Cu topical cream concurrent.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="disclaimer-box">
+      ⚠ Research reference only. GHK-Cu, TB-500, and BPC-157 are not FDA-approved for human therapeutic use. Information sourced from published clinical and preclinical literature. Consult a qualified medical provider before use.
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

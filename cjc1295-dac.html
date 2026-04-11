@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CJC-1295 w/ DAC — Apex Research Reference</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap');
+    :root{--bg:#080c10;--panel:#0d1318;--border:#1a2d3a;--accent:#00d4ff;--accent2:#00ff9d;--accent3:#ff6b35;--text:#c8dde8;--muted:#4a6272;--white:#eaf4f8;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;line-height:1.6;padding:40px 20px;}
+    body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 70% 10%,rgba(0,212,255,0.06) 0%,transparent 60%),radial-gradient(ellipse at 20% 90%,rgba(255,107,53,0.04) 0%,transparent 50%);pointer-events:none;z-index:0;}
+    .container{max-width:900px;margin:0 auto;position:relative;z-index:1;}
+    .header{margin-bottom:40px;border-bottom:1px solid var(--border);padding-bottom:24px;}
+    .peptide-label{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;}
+    .peptide-name{font-family:'Rajdhani',sans-serif;font-size:52px;font-weight:700;color:var(--white);line-height:1;margin-bottom:8px;}
+    .peptide-fullname{font-size:16px;color:var(--muted);margin-bottom:16px;}
+    .tag-row{display:flex;gap:8px;flex-wrap:wrap;}
+    .tag{background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.25);color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;padding:3px 10px;}
+    .section{background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--muted);padding:28px 32px;margin-bottom:16px;animation:fadeUp 0.4s ease both;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+    .section-num{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:8px;}
+    h2{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px;}
+    .stat-box{background:var(--bg);border:1px solid var(--border);padding:16px;text-align:center;}
+    .stat-value{font-family:'Rajdhani',sans-serif;font-size:32px;font-weight:700;color:var(--white);line-height:1;}
+    .stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-top:4px;}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+    .info-item{margin-bottom:14px;}
+    .info-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:4px;}
+    .info-value{color:var(--white);font-size:13px;line-height:1.5;}
+    .timeline{position:relative;padding-left:20px;}
+    .timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:var(--border);}
+    .timeline-item{position:relative;margin-bottom:20px;}
+    .timeline-item::before{content:'';position:absolute;left:-24px;top:5px;width:8px;height:8px;background:var(--accent);border-radius:50%;}
+    .timeline-year{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:4px;}
+    .benefit-item{display:flex;gap:14px;margin-bottom:16px;align-items:flex-start;}
+    .benefit-num{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent3);min-width:28px;padding-top:2px;}
+    .benefit-title{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;color:var(--white);margin-bottom:3px;}
+    .recon-box{background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--accent2);padding:20px 24px;margin-bottom:16px;}
+    .recon-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);margin-bottom:12px;}
+    .recon-math{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--white);margin-bottom:8px;}
+    .dose-table{width:100%;border-collapse:collapse;}
+    .dose-table th{background:rgba(0,212,255,0.08);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);}
+    .dose-table td{padding:12px 14px;border-bottom:1px solid rgba(26,45,58,0.5);vertical-align:top;font-size:13px;}
+    .dose-level{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);font-weight:700;}
+    .dose-amount{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--white);}
+    .dose-units{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent);display:block;margin-top:2px;}
+    .bio-table{width:100%;border-collapse:collapse;}
+    .bio-table th{background:rgba(0,212,255,0.06);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--muted);text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);}
+    .bio-table td{padding:10px 12px;border-bottom:1px solid rgba(26,45,58,0.4);vertical-align:top;font-size:12px;}
+    .bio-name{color:var(--white);font-weight:500;display:block;}
+    .bio-test{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);}
+    .range-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 6px;margin-right:4px;}
+    .range-clinical{background:rgba(74,98,114,0.3);color:var(--muted);}
+    .range-optimal{background:rgba(0,255,157,0.1);color:var(--accent2);}
+    .bio-category{margin-bottom:24px;}
+    .bio-category-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);margin-bottom:10px;}
+    .note-box{background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.15);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .disclaimer-box{background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.2);padding:14px 18px;margin-top:20px;font-size:12px;color:var(--text);line-height:1.5;}
+  </style>
+</head>
+<body>
+<div class="container">
+<a href="index.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--muted);text-decoration:none;text-transform:uppercase;margin-bottom:28px;padding:8px 14px;border:1px solid var(--border);transition:all .2s;" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">← Back to Encyclopedia</a>
+
+  <div class="header">
+    <div class="peptide-label">Apex Research Reference</div>
+    <div class="peptide-name">CJC-1295 w/ DAC</div>
+    <div class="peptide-fullname">CJC-1295 with Drug Affinity Complex — Long-Acting GHRH Analog</div>
+    <div class="tag-row">
+      <span class="tag">GHRH ANALOG</span>
+      <span class="tag">LONG-ACTING</span>
+      <span class="tag">GH SECRETAGOGUE</span>
+      <span class="tag">DAC TECHNOLOGY</span>
+      <span class="tag">WEEKLY PROTOCOL</span>
+    </div>
+  </div>
+
+  <!-- 01 -->
+  <div class="section" style="animation-delay:0.1s;border-top-color:var(--accent);">
+    <div class="section-num">01 — Identity</div>
+    <h2>What Is CJC-1295 with DAC?</h2>
+    <div class="stat-grid">
+      <div class="stat-box"><div class="stat-value">2006</div><div class="stat-label">PUBLISHED</div></div>
+      <div class="stat-box"><div class="stat-value">6–8 Days</div><div class="stat-label">HALF-LIFE</div></div>
+      <div class="stat-box"><div class="stat-value">Albumin</div><div class="stat-label">DAC BINDS TO</div></div>
+      <div class="stat-box"><div class="stat-value">Weekly</div><div class="stat-label">DOSING FREQ</div></div>
+    </div>
+    <div class="info-grid">
+      <div>
+        <div class="info-item"><div class="info-label">Origin</div><div class="info-value">Developed by ConjuChem Biotechnologies. The DAC (Drug Affinity Complex) technology uses a maleimidoproprionic acid-lysine linker that covalently binds to serum albumin after injection, dramatically extending half-life from minutes to 6–8 days.</div></div>
+        <div class="info-item"><div class="info-label">Chemical Class</div><div class="info-value">Tetrasubstituted GHRH analog with DAC modification. 30 amino acids. The albumin-binding linker is what separates this from CJC-1295 no DAC (Mod GRF 1-29).</div></div>
+      </div>
+      <div>
+        <div class="info-item"><div class="info-label">Primary Use</div><div class="info-value">Sustained GH elevation, body composition improvement, anti-aging. Weekly injection creates a persistent "GH wave" — continuous low-level GH support between natural pulses.</div></div>
+        <div class="info-item"><div class="info-label">Administration</div><div class="info-value">Subcutaneous injection. Once or twice weekly — the extended half-life makes daily injection unnecessary. Major adherence advantage over daily GHRH analogs.</div></div>
+      </div>
+    </div>
+    <div class="note-box"><strong style="color:var(--white);">DAC vs. no-DAC — key distinction:</strong> CJC-1295 with DAC creates a sustained GH "wave" — continuous low-level GH elevation that persists for nearly a week. CJC-1295 no DAC (Mod GRF 1-29) creates a sharp GH pulse that clears in 2–4 hours. These are fundamentally different pharmacokinetic profiles with different use cases. DAC = convenience and sustained elevation. No DAC = pulsatile, physiologic mimicry.</div>
+  </div>
+
+  <!-- 02 -->
+  <div class="section" style="animation-delay:0.2s;">
+    <div class="section-num">02 — Research History</div>
+    <h2>Discovery & Research Timeline</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-year">1982</div>
+        <div>Native GHRH(1-44) sequenced. Early analogs show potential but are limited by ultra-short plasma half-life (~2 minutes) due to DPP-IV protease cleavage. Stability engineering becomes the primary development challenge.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2000–2004</div>
+        <div>ConjuChem Biotechnologies develops the DAC (Drug Affinity Complex) platform — a maleimidoproprionic acid linker that covalently binds peptides to serum albumin after injection. Albumin binding confers a half-life matching albumin's own ~19-day half-life, extended in practice by the binding kinetics to 6–8 days for CJC-1295 with DAC.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2006</div>
+        <div>Landmark human study published: "Long-acting growth hormone–releasing factor can reverse somatopause." CJC-1295 with DAC at 2mg doses showed 2–10× increases in serum GH AUC and proportional IGF-1 increases lasting 6–8 days per injection. Confirmed sustained GH elevation with excellent tolerability.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2008–Present</div>
+        <div>Despite promising human data, ConjuChem halts clinical development due to financial constraints — not safety concerns. CJC-1295 with DAC enters the research peptide market and becomes widely used in anti-aging and performance optimization communities for its convenient weekly dosing and sustained GH elevation.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 -->
+  <div class="section" style="animation-delay:0.3s;">
+    <div class="section-num">03 — Primary Benefits</div>
+    <h2>Documented Effects</h2>
+    <div class="benefit-item"><div class="benefit-num">01</div><div><div class="benefit-title">Sustained GH Elevation</div><div>The 6–8 day half-life creates a continuous low-level GH "wave" between pulses. Unlike daily GHRH analogs that produce sharp nightly pulses, CJC-1295 DAC maintains GH elevation throughout the week — a distinct pharmacokinetic profile with different body composition implications.</div></div></div>
+    <div class="benefit-item"><div class="benefit-num">02</div><div><div class="benefit-title">Weekly Convenience</div><div>Once-weekly injection replaces daily nightly injections required for Sermorelin, Tesamorelin, or CJC-1295 no DAC. Major adherence advantage — users are significantly more likely to maintain a weekly protocol vs. daily nightly injections over months.</div></div></div>
+    <div class="benefit-item"><div class="benefit-num">03</div><div><div class="benefit-title">IGF-1 Increase</div><div>Published human data showed proportional IGF-1 increases lasting the full 6–8 days. 2–10× GH AUC increase translates to meaningful, sustained IGF-1 elevation driving body composition and tissue repair effects.</div></div></div>
+    <div class="benefit-item"><div class="benefit-num">04</div><div><div class="benefit-title">Body Composition</div><div>Sustained GH/IGF-1 elevation promotes fat loss and lean mass accretion over 12–24 week cycles. The continuous GH signal supports lipolysis around the clock rather than only during the nocturnal pulse window.</div></div></div>
+    <div class="benefit-item"><div class="benefit-num">05</div><div><div class="benefit-title">Anti-Aging Support</div><div>GH/IGF-1 axis supports collagen synthesis, skin elasticity, bone density, and cognitive function. Sustained elevation via DAC technology provides consistent anti-aging signaling without the peaks and troughs of daily protocols.</div></div></div>
+    <div class="benefit-item"><div class="benefit-num">06</div><div><div class="benefit-title">Sleep Quality</div><div>While the GH pulse is not synchronized to sleep onset (as with nightly GHRH analogs), sustained low-level GH elevation still supports overall sleep architecture improvement over weeks of consistent use.</div></div></div>
+  </div>
+
+  <!-- 04 -->
+  <div class="section" style="animation-delay:0.4s;border-top-color:var(--accent2);">
+    <div class="section-num">04 — Reconstitution</div>
+    <h2>Mixing & Storage</h2>
+    <div class="recon-box">
+      <div class="recon-title">▸ Standard Reconstitution — 5mg Vial</div>
+      <div class="recon-math">5mg vial + 300 units BAC water = 16.7 mcg per unit on insulin syringe</div>
+      <div style="font-size:12px;color:var(--text);margin-top:6px;">5,000 mcg total per vial · Refrigerate after reconstitution · Use within 4–6 weeks · Protect from light</div>
+    </div>
+    <div style="margin-top:12px;background:var(--bg);border:1px solid var(--border);padding:16px 20px;">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);margin-bottom:10px;">DOSE REFERENCE TABLE</div>
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <thead><tr style="border-bottom:1px solid var(--border);">
+          <th style="text-align:left;padding:8px;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);">DOSE</th>
+          <th style="text-align:left;padding:8px;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);">DRAW (5mg vial)</th>
+          <th style="text-align:left;padding:8px;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);">FREQUENCY</th>
+        </tr></thead>
+        <tbody>
+          <tr><td style="padding:8px;color:var(--white);">250mcg</td><td style="padding:8px;color:var(--accent2);font-family:'Share Tech Mono',monospace;">~15 units</td><td style="padding:8px;color:var(--text);">Once weekly</td></tr>
+          <tr><td style="padding:8px;color:var(--white);">500mcg</td><td style="padding:8px;color:var(--accent2);font-family:'Share Tech Mono',monospace;">~30 units</td><td style="padding:8px;color:var(--text);">Once weekly (most common)</td></tr>
+          <tr><td style="padding:8px;color:var(--white);">1000mcg</td><td style="padding:8px;color:var(--accent2);font-family:'Share Tech Mono',monospace;">~60 units</td><td style="padding:8px;color:var(--text);">Once weekly (upper range)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;">
+      <div class="stat-box" style="text-align:left;padding:14px 16px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:6px;">UNRECONSTITUTED</div>
+        <div style="font-size:13px;color:var(--white);line-height:1.5;">Refrigerate at 2–8°C. Stable at room temp for shipping. Do not freeze lyophilized powder.</div>
+      </div>
+      <div class="stat-box" style="text-align:left;padding:14px 16px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:6px;">RECONSTITUTED</div>
+        <div style="font-size:13px;color:var(--white);line-height:1.5;">Refrigerate at 2–8°C. Use within 4–6 weeks. Keep away from light. Do not freeze.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 05 -->
+  <div class="section" style="animation-delay:0.5s;border-top-color:var(--accent3);">
+    <div class="section-num">05 — Dosing Protocol</div>
+    <h2>Dose Levels & Unit Draws</h2>
+    <table class="dose-table">
+      <thead><tr><th>Level</th><th>Dose</th><th>Syringe Draw</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="dose-level">LOW</span></td>
+          <td><div class="dose-amount">250mcg</div><span class="dose-units">~15 units on insulin syringe</span></td>
+          <td style="color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:12px;">~15u</td>
+          <td>Conservative weekly dose. Good for users new to GHRH analogs or those sensitive to GH-related side effects (fluid retention, joint discomfort).</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">STANDARD</span></td>
+          <td><div class="dose-amount">500mcg</div><span class="dose-units">~30 units on insulin syringe</span></td>
+          <td style="color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:12px;">~30u</td>
+          <td>Most commonly used weekly dose. Matches the lower end of published human study dosing. Best balance of efficacy and tolerability for most users.</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">HIGH</span></td>
+          <td><div class="dose-amount">1000mcg</div><span class="dose-units">~60 units on insulin syringe</span></td>
+          <td style="color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:12px;">~60u</td>
+          <td>Upper range. Used in published human studies. Monitor for GH-related side effects at this dose — fluid retention and joint discomfort are more common. Monitor glucose.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note-box">Some users split the weekly dose into 2 injections (e.g., 500mcg × 2 = 1000mcg/week) administered on Monday and Thursday. This maintains more consistent week-to-week GH levels and may reduce side effects by avoiding a single large weekly peak. Either approach is valid.</div>
+  </div>
+
+  <!-- 06 -->
+  <div class="section" style="animation-delay:0.6s;">
+    <div class="section-num">06 — Timing & Frequency</div>
+    <h2>When & How Often</h2>
+    <table class="bio-table">
+      <thead><tr><th>Variable</th><th>Recommendation</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="bio-name">Frequency</span></td>
+          <td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent2);">Once weekly (or 2× weekly)</span></td>
+          <td style="font-size:12px;color:var(--text);">The 6–8 day half-life means a single weekly injection maintains continuous GH elevation. 2× weekly splits the dose for smoother week-over-week levels.</td>
+        </tr>
+        <tr>
+          <td><span class="bio-name">Time of Day</span></td>
+          <td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted);">Any time — less critical than no-DAC</span></td>
+          <td style="font-size:12px;color:var(--text);">Unlike nightly GHRH analogs that synchronize with sleep, CJC-1295 DAC creates continuous elevation regardless of when it's injected. Morning or evening both work.</td>
+        </tr>
+        <tr>
+          <td><span class="bio-name">Fed State</span></td>
+          <td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted);">Fasted preferred — not critical</span></td>
+          <td style="font-size:12px;color:var(--text);">Fasted preferred to maximize the initial GH pulse at injection. Given the sustained release mechanism, food timing is less critical than with short-acting GHRH analogs.</td>
+        </tr>
+        <tr>
+          <td><span class="bio-name">Stack Compatibility</span></td>
+          <td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent2);">+ Ipamorelin at weekly injection</span></td>
+          <td style="font-size:12px;color:var(--text);">Many users add Ipamorelin at the weekly injection site to amplify the initial GH pulse via the GHRP pathway. The CJC-1295 DAC then maintains the baseline elevation for the week.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 07 -->
+  <div class="section" style="animation-delay:0.7s;">
+    <div class="section-num">07 — Biomarker Monitoring</div>
+    <h2>Lab Tests & Optimal Ranges</h2>
+    <div class="bio-category">
+      <div class="bio-category-title">▸ GH Axis Efficacy</div>
+      <table class="bio-table">
+        <thead><tr><th>Biomarker</th><th>Lab Test</th><th>Clinical Range</th><th>Optimal Range</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">IGF-1</span></td>
+            <td><span class="bio-test">Serum IGF-1</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span><span class="range-clinical">Age-dependent</span></td>
+            <td><span class="range-label range-optimal">OPTIMAL</span><span class="range-optimal">Upper third of age range</span></td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">IGFBP-3</span></td>
+            <td><span class="bio-test">Serum IGFBP-3</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span><span class="range-clinical">Age-dependent</span></td>
+            <td><span class="range-label range-optimal">OPTIMAL</span><span class="range-optimal">Upper third of age range</span></td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Fasting Glucose</span></td>
+            <td><span class="bio-test">Fasting plasma glucose</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span><span class="range-clinical">70–100 mg/dL</span></td>
+            <td><span class="range-label range-optimal">OPTIMAL</span><span class="range-optimal">75–90 mg/dL</span></td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Fasting Insulin</span></td>
+            <td><span class="bio-test">Serum insulin</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span><span class="range-clinical">2–25 µIU/mL</span></td>
+            <td><span class="range-label range-optimal">OPTIMAL</span><span class="range-optimal">2–6 µIU/mL</span></td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">HbA1c</span></td>
+            <td><span class="bio-test">Hemoglobin A1c</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span><span class="range-clinical">&lt;5.7%</span></td>
+            <td><span class="range-label range-optimal">OPTIMAL</span><span class="range-optimal">4.6–5.3%</span></td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">AST / ALT</span></td>
+            <td><span class="bio-test">CMP</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span><span class="range-clinical">AST 10–40 / ALT 7–56 U/L</span></td>
+            <td><span class="range-label range-optimal">OPTIMAL</span><span class="range-optimal">AST &lt;26 / ALT &lt;26 U/L</span></td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">CBC</span></td>
+            <td><span class="bio-test">Complete Blood Count</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span><span class="range-clinical">Standard ranges</span></td>
+            <td><span class="range-label range-optimal">OPTIMAL</span><span class="range-optimal">Mid-range</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="disclaimer-box">⚠ CJC-1295 with DAC is not FDA-approved. Human data from a 2006 publication — no subsequent large clinical trials. The sustained GH elevation created by the DAC mechanism is pharmacologically different from pulsatile GH release — long-term implications of continuous vs. pulsatile GH elevation are not fully characterized. Monitor glucose metabolism carefully. Do not use in active malignancy.</div>
+  </div>
+
+  <!-- 08 -->
+  <div class="section" style="animation-delay:0.8s;border-top-color:var(--accent);">
+    <div class="section-num">08 — Cycle Protocol</div>
+    <h2>Cycle Length, Frequency & Timing</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">
+      <div class="stat-box" style="text-align:left;padding:14px 16px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:6px;">STANDARD CYCLE</div>
+        <div style="font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--white);line-height:1;">12–24 Weeks</div>
+        <div style="font-size:12px;color:var(--text);margin-top:6px;line-height:1.5;">Once weekly at 500mcg–1mg. IGF-1 measurably rises within 2–4 weeks. Full body composition effects at 12–24 weeks of consistent use.</div>
+      </div>
+      <div class="stat-box" style="text-align:left;padding:14px 16px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:6px;">BREAK</div>
+        <div style="font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--white);line-height:1;">4–8 Weeks</div>
+        <div style="font-size:12px;color:var(--text);margin-top:6px;line-height:1.5;">Allow pituitary receptor recovery. Given the longer cycle duration enabled by weekly dosing, breaks may be less frequent than daily GHRH protocols.</div>
+      </div>
+    </div>
+    <div style="background:rgba(0,255,157,0.05);border:1px solid rgba(0,255,157,0.2);padding:18px 20px;">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);margin-bottom:12px;">PROTOCOL SUMMARY</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;">
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);">
+          <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">12–24 wk</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">CYCLE LENGTH</div>
+        </div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);">
+          <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">1–2×/wk</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">FREQUENCY</div>
+        </div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);">
+          <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">Any</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">TIME OF DAY</div>
+        </div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);">
+          <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">Fasted pref</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">FED STATE</div>
+        </div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);">
+          <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">4–8 wk</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">BREAK</div>
+        </div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);">
+          <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">SC</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">ROUTE</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

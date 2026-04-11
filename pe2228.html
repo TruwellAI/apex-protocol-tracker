@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PE-22-28 — Apex Peptide Reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#080c10;--panel:#0d1318;--border:#1a2d3a;--accent:#00d4ff;--accent2:#00ff9d;--accent3:#ff6b35;--text:#c8dde8;--muted:#4a6272;--white:#eaf4f8;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:15px;line-height:1.65;}
+  .hero{background:linear-gradient(135deg,#080c10 0%,#0a1520 50%,#080c10 100%);border-bottom:1px solid var(--border);padding:56px 48px 40px;}
+  .hero-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.25em;color:var(--accent);text-transform:uppercase;margin-bottom:16px;}
+  .hero h1{font-family:'Rajdhani',sans-serif;font-size:72px;font-weight:700;color:var(--white);letter-spacing:-1px;line-height:1;}
+  .hero-sub{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:500;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-top:14px;}
+  .hero-sub span{color:var(--accent3);}
+  .container{max-width:1100px;margin:0 auto;padding:0 32px 80px;}
+  .section{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:40px;margin-top:32px;}
+  .section-tag{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:20px;}
+  .section h2{font-family:'Rajdhani',sans-serif;font-size:26px;font-weight:700;color:var(--accent2);letter-spacing:.05em;text-transform:uppercase;margin-bottom:20px;}
+  .section h3{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:600;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin:28px 0 14px;border-bottom:1px solid var(--border);padding-bottom:8px;}
+  p{margin-bottom:14px;color:var(--text);}
+  .timeline{display:flex;flex-direction:column;}
+  .timeline-item{display:grid;grid-template-columns:140px 1fr;border-bottom:1px solid var(--border);padding:18px 0;}
+  .timeline-item:last-child{border-bottom:none;}
+  .timeline-year{font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--accent2);font-weight:700;padding-top:2px;}
+  .timeline-text{font-size:14px;color:var(--text);}
+  .mech-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0;}
+  .mech-card{background:#0a1520;border:1px solid var(--border);border-radius:4px;padding:20px;}
+  .mech-card .mc-title{font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;color:var(--accent2);margin-bottom:4px;}
+  .mech-card .mc-sub{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;margin-bottom:10px;}
+  .mech-card p{font-size:13px;margin:0;}
+  .benefits-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px;}
+  .benefit-card{background:#0a1520;border:1px solid var(--border);border-radius:3px;padding:16px 18px;font-size:13px;color:var(--text);}
+  .recon-hero{background:#0a1f2e;border:2px solid var(--accent2);border-radius:4px;padding:28px;margin:20px 0;text-align:center;}
+  .recon-hero .big-conc{font-family:'Rajdhani',sans-serif;font-size:60px;font-weight:700;color:var(--accent2);line-height:1;}
+  .recon-hero .conc-sub{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.2em;color:var(--muted);margin-top:8px;}
+  .recon-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:20px 0;}
+  .recon-stat{background:#0a1520;border:1px solid var(--border);border-radius:4px;padding:20px;text-align:center;}
+  .recon-stat .rs-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;}
+  .recon-stat .rs-value{font-family:'Rajdhani',sans-serif;font-size:26px;font-weight:700;color:var(--accent2);}
+  .recon-stat .rs-sub{font-size:11px;color:var(--muted);margin-top:4px;}
+  .info-box{background:#0a1520;border-left:3px solid var(--accent);padding:16px 20px;margin:20px 0;font-size:13px;color:var(--text);}
+  .warning-box{background:#1a0e08;border:2px solid var(--accent3);border-radius:4px;padding:24px 28px;margin:24px 0;}
+  .warning-box .warn-title{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.18em;color:var(--accent3);text-transform:uppercase;margin-bottom:10px;}
+  .warning-box p{color:#e0a07a;font-size:13px;margin-bottom:0;}
+  table{width:100%;border-collapse:collapse;margin-top:16px;font-size:13px;}
+  th{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;text-align:left;padding:10px 14px;border-bottom:2px solid var(--border);}
+  td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:top;}
+  tr:last-child td{border-bottom:none;}
+  .units-badge{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;color:var(--accent3);}
+  .ctx-badge{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.12em;padding:3px 8px;border-radius:2px;text-transform:uppercase;border:1px solid var(--muted);color:var(--muted);}
+  .ctx-badge.common{border-color:var(--accent2);color:var(--accent2);}
+  .ctx-badge.standard{border-color:var(--accent);color:var(--accent);}
+  .ctx-badge.high{border-color:var(--accent3);color:var(--accent3);}
+  .bm-section-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.2em;color:var(--accent);text-transform:uppercase;margin:24px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+  .bm-table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:20px;}
+  .bm-table th{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;text-align:left;padding:9px 12px;border-bottom:2px solid var(--border);}
+  .bm-table td{padding:12px 12px;border-bottom:1px solid var(--border);vertical-align:top;}
+  .bm-table tr:last-child td{border-bottom:none;}
+  .bm-name{font-weight:600;color:var(--white);display:block;}
+  .bm-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+  .lab-test{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);background:#0a1f2e;padding:3px 8px;border-radius:2px;}
+  .range-clinical{font-size:11px;color:var(--muted);background:#111820;padding:4px 8px;border-radius:2px;display:inline-block;}
+  .range-optimal{font-size:11px;color:var(--accent2);background:#0a1f15;padding:4px 8px;border-radius:2px;display:inline-block;}
+  .cycle-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0;}
+  .cycle-card{background:#0a1520;border:1px solid var(--border);border-radius:4px;padding:24px;}
+  .cycle-card .c-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;}
+  .cycle-card .c-value{font-family:'Rajdhani',sans-serif;font-size:36px;font-weight:700;color:var(--white);line-height:1;}
+  .cycle-card .c-sub{font-size:13px;color:var(--text);margin-top:10px;}
+  .timing-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:16px;}
+  .timing-table th{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;padding:9px 12px;text-align:left;border-bottom:2px solid var(--border);}
+  .timing-table td{padding:12px 12px;border-bottom:1px solid var(--border);vertical-align:top;}
+  .timing-table tr:last-child td{border-bottom:none;}
+  .rec{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);font-weight:600;}
+  .rec.warn{color:var(--accent3);}
+  .protocol-summary{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:24px;background:#0a1520;border:1px solid var(--border);padding:24px;border-radius:4px;}
+  .ps-item{text-align:center;}
+  .ps-item .ps-value{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--white);}
+  .ps-item .ps-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;margin-top:4px;}
+  .vs-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin:20px 0;}
+  .vs-card{background:#0a1520;border:1px solid var(--border);border-radius:4px;padding:18px;text-align:center;}
+  .vs-card .vs-title{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--accent);margin-bottom:6px;}
+  .vs-card p{font-size:12px;margin:0;color:var(--muted);}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="container">
+<a href="index.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--muted);text-decoration:none;text-transform:uppercase;margin-bottom:28px;padding:8px 14px;border:1px solid var(--border);transition:all .2s;" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">← Back to Encyclopedia</a>
+    <div class="hero-label">Apex Peptide Reference</div>
+    <h1>PE-22-28</h1>
+    <div class="hero-sub">Spadin Analogue &nbsp;|&nbsp; <span>TREK-1 Channel Blocker</span> &nbsp;|&nbsp; Rapid-Onset Antidepressant Peptide</div>
+  </div>
+</div>
+
+<div class="container">
+<a href="index.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--muted);text-decoration:none;text-transform:uppercase;margin-bottom:28px;padding:8px 14px;border:1px solid var(--border);transition:all .2s;" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">← Back to Encyclopedia</a>
+
+  <div class="section">
+    <div class="section-tag">01 — Identity</div>
+    <h2>Name &amp; Classification</h2>
+    <p>PE-22-28 is a synthetic peptide fragment derived from Spadin — an endogenous neuropeptide cleaved from the propeptide of the neurotensin receptor 3 (NTSR3/sortilin). PE-22-28 corresponds to residues 22–28 of Spadin, with the sequence <span style="font-family:'Share Tech Mono',monospace;color:var(--accent);">Arg-Ser-Ala-Thr-Pro-Leu-Met</span>.</p>
+    <p>It is classified as a <strong style="color:var(--accent2);">TREK-1 potassium channel blocker</strong> and rapid-onset antidepressant peptide. TREK-1 (TWIK-related potassium channel 1) is a background leak potassium channel highly expressed in limbic and cortical neurons. Its overactivity is directly linked to depression, anxiety, and cognitive blunting. By blocking TREK-1, PE-22-28 restores normal neuronal excitability and serotonergic transmission — producing antidepressant effects within hours, not weeks.</p>
+    <p style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted);">Also referenced as: <span style="color:var(--accent);">Spadin(22-28)</span> &nbsp;|&nbsp; <span style="color:var(--accent);">mini-Spadin</span></p>
+    <div class="vs-grid" style="margin-top:24px;">
+      <div class="vs-card"><div class="vs-title">SSRIs</div><p>Block serotonin reuptake transporter<br>Onset: 2–4 weeks</p></div>
+      <div class="vs-card"><div class="vs-title">Ketamine</div><p>Block NMDA glutamate receptors<br>Onset: hours</p></div>
+      <div class="vs-card" style="border-color:var(--accent2);"><div class="vs-title" style="color:var(--accent2);">PE-22-28</div><p style="color:var(--text);">Block TREK-1 K⁺ channel<br><strong style="color:var(--accent2);">Onset: hours — new mechanism</strong></p></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-tag">02 — Origin</div>
+    <h2>Research Timeline</h2>
+    <div class="timeline">
+      <div class="timeline-item"><div class="timeline-year">2000s</div><div class="timeline-text">TREK-1 potassium channel identified as a key regulator of neuronal excitability and mood. Mice lacking TREK-1 shown to be resistant to depression in multiple behavioral models — establishing TREK-1 as a legitimate antidepressant target.</div></div>
+      <div class="timeline-item"><div class="timeline-year">2010</div><div class="timeline-text">Spadin first identified by Dr. Catherine Belzung and colleagues in France as an endogenous TREK-1 blocker. Published in <em>Nature Chemical Biology</em>. Landmark paper linking the sortilin propeptide to mood regulation.</div></div>
+      <div class="timeline-item"><div class="timeline-year">2012–2016</div><div class="timeline-text">Structure-activity studies identified PE-22-28 as the minimal active fragment of Spadin with equivalent TREK-1 blocking potency but improved metabolic stability. Antidepressant effects in rodent models within 4 hours — vs 2–4 weeks for SSRIs.</div></div>
+      <div class="timeline-item"><div class="timeline-year">2017–2020</div><div class="timeline-text">Research expanded to neurogenesis: PE-22-28 shown to stimulate hippocampal neurogenesis in the dentate gyrus. BDNF and VEGF upregulation identified as downstream mechanisms — new neuron formation detectable within days.</div></div>
+      <div class="timeline-item"><div class="timeline-year">2020–Present</div><div class="timeline-text">Growing adoption in research and longevity/nootropic communities. No human clinical trials published. Considered one of the most mechanistically novel antidepressant compounds in the research pipeline.</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-tag">03 — Research History</div>
+    <h2>Research Background</h2>
+    <p>PE-22-28's mechanism is fundamentally different from every antidepressant currently in clinical use. It blocks the TREK-1 potassium channel, which controls the resting membrane potential of serotonergic neurons in the raphe nuclei. When TREK-1 is overactive, it hyperpolarizes neurons — reducing 5-HT release, causing blunted mood, anhedonia, and cognitive slowing. By blocking TREK-1, PE-22-28 restores normal neuronal firing thresholds and serotonin release dynamics without the delayed downstream receptor adaptation that makes SSRIs take weeks to work.</p>
+    <p>The hippocampal neurogenesis finding is separately compelling. PE-22-28 directly stimulates adult neurogenesis via BDNF and VEGF upregulation — making it one of the very few compounds with both acute mood effects and long-term structural brain repair potential.</p>
+    <div class="mech-grid">
+      <div class="mech-card"><div class="mc-title">TREK-1 Block</div><div class="mc-sub">Primary Mechanism</div><p>Blocks TREK-1 K⁺ leak channel in serotonergic neurons — restores normal firing threshold and 5-HT release. Rapid onset: effects in hours vs weeks for SSRIs.</p></div>
+      <div class="mech-card"><div class="mc-title">Neurogenesis</div><div class="mc-sub">Structural Brain Repair</div><p>Stimulates adult hippocampal neurogenesis in the dentate gyrus via BDNF and VEGF. New neuron formation detectable within days — long-term structural antidepressant effect.</p></div>
+      <div class="mech-card"><div class="mc-title">Serotonin</div><div class="mc-sub">Downstream Effect</div><p>Increases synaptic serotonin availability by restoring raphe neuron excitability through a pre-synaptic channel mechanism — not reuptake inhibition.</p></div>
+      <div class="mech-card"><div class="mc-title">BDNF / VEGF</div><div class="mc-sub">Growth Factor Upregulation</div><p>Upregulates both BDNF and VEGF in hippocampus. BDNF drives synaptic plasticity; VEGF supports new neuron vascularization and survival in the dentate gyrus.</p></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-tag">04 — Key Benefits</div>
+    <h2>Proposed Benefits</h2>
+    <div class="benefits-grid">
+      <div class="benefit-card">Rapid-onset antidepressant effect — hours, not weeks</div>
+      <div class="benefit-card">Novel mechanism: TREK-1 blockade — entirely new antidepressant class</div>
+      <div class="benefit-card">Stimulates hippocampal neurogenesis — structural brain repair</div>
+      <div class="benefit-card">Upregulates BDNF and VEGF in hippocampus</div>
+      <div class="benefit-card">Reduces anxiety and anhedonia in animal models</div>
+      <div class="benefit-card">Improves cognitive function — learning and memory</div>
+      <div class="benefit-card">No sedation, no receptor downregulation in current data</div>
+      <div class="benefit-card">Synergistic with SSRIs — potentiates antidepressant effect</div>
+      <div class="benefit-card">Endogenous origin (Spadin fragment) — favorable tolerability profile</div>
+      <div class="benefit-card">Potential PTSD and treatment-resistant depression application</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-tag">05 — Reconstitution</div>
+    <h2>Vial + BAC Water</h2>
+    <div class="recon-hero">
+      <div class="big-conc">33.3 mcg</div>
+      <div class="conc-sub">per unit — based on 10 mg vial + 300 units (3.0 mL) BAC water</div>
+    </div>
+    <div class="recon-grid-3">
+      <div class="recon-stat"><div class="rs-label">Typical Vial Size</div><div class="rs-value">5–10 mg</div><div class="rs-sub">lyophilized peptide</div></div>
+      <div class="recon-stat"><div class="rs-label">Reconstitution Solvent</div><div class="rs-value" style="font-size:18px;">BAC Water</div><div class="rs-sub">3.0 mL / 300 units standard</div></div>
+      <div class="recon-stat"><div class="rs-label">Shelf Life (Fridge)</div><div class="rs-value" style="color:var(--accent);">4–6 wk</div><div class="rs-sub">after reconstitution</div></div>
+    </div>
+    <div class="info-box">
+      <strong style="color:var(--accent);">REFRIGERATION — REQUIRED</strong><br><br>
+      Lyophilized powder: Store at –20°C (freezer) for long-term; 2–8°C (fridge) acceptable up to 3 months. Reconstituted solution: 2–8°C strictly — use within 4–6 weeks. <strong>Do NOT freeze reconstituted vial</strong> — peptide bond integrity degrades with freeze-thaw cycling. PE-22-28 also available intranasally from some research suppliers for faster CNS onset via the olfactory-limbic pathway (similar to Selank).
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-tag">06 — Dosage</div>
+    <h2>Dosage Reference</h2>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:4px;">Based on 10 mg vial reconstituted with 3.0 mL BAC water = 33.3 mcg/unit</p>
+    <table>
+      <thead><tr><th>Dose</th><th>Units to Draw</th><th>Context</th></tr></thead>
+      <tbody>
+        <tr><td>100–200 mcg SC</td><td><span class="units-badge">3–6 u</span></td><td><span class="ctx-badge">Low / Intro</span></td></tr>
+        <tr><td>200–500 mcg SC</td><td><span class="units-badge">6–15 u</span></td><td><span class="ctx-badge common">Common</span></td></tr>
+        <tr><td>500 mcg – 1 mg SC</td><td><span class="units-badge">15–30 u</span></td><td><span class="ctx-badge standard">Standard</span></td></tr>
+        <tr><td>1–2 mg SC</td><td><span class="units-badge">30–60 u</span></td><td><span class="ctx-badge high">High</span></td></tr>
+      </tbody>
+    </table>
+    <div class="info-box" style="margin-top:20px;">
+      No established human dose. HED extrapolation suggests <strong>200 mcg – 1 mg/day</strong> for most individuals. Start at 200–250 mcg and titrate slowly over 1–2 weeks. PE-22-28 is derived from an endogenous peptide sequence — tolerability profile expected to be favorable, but individual CNS sensitivity varies significantly.
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-tag">07 — Monitoring</div>
+    <h2>Biomarkers, Lab Tests &amp; Ranges</h2>
+    <p>Monitor before starting and at 4–6 week intervals. PE-22-28 targets hippocampal neurogenesis, serotonergic function, and BDNF signaling.</p>
+
+    <div class="bm-section-title">▸ Neuroplasticity &amp; Growth Factors</div>
+    <table class="bm-table">
+      <thead><tr><th>Biomarker</th><th>Lab Test</th><th>Clinical Range</th><th>Optimal Range</th></tr></thead>
+      <tbody>
+        <tr><td><span class="bm-name">BDNF</span><span class="bm-sub">Primary neurogenesis marker</span></td><td><span class="lab-test">Serum BDNF (fasting AM)</span></td><td><span class="range-clinical">~10,000–30,000 pg/mL</span></td><td><span class="range-optimal">Upper half of reference range; expect increase on PE-22-28</span></td></tr>
+        <tr><td><span class="bm-name">VEGF</span><span class="bm-sub">Hippocampal vascularization</span></td><td><span class="lab-test">Serum VEGF</span></td><td><span class="range-clinical">62–707 pg/mL</span></td><td><span class="range-optimal">Mid-to-upper range; trending up indicates neurogenic activity</span></td></tr>
+        <tr><td><span class="bm-name">NGF</span><span class="bm-sub">Nerve growth factor</span></td><td><span class="lab-test">Serum NGF (specialty labs)</span></td><td><span class="range-clinical">~15–100 pg/mL</span></td><td><span class="range-optimal">Upper half of range; supports neuronal survival and plasticity</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="bm-section-title">▸ Serotonin System &amp; Mood Markers</div>
+    <table class="bm-table">
+      <thead><tr><th>Biomarker</th><th>Lab Test</th><th>Clinical Range</th><th>Optimal Range</th></tr></thead>
+      <tbody>
+        <tr><td><span class="bm-name">Whole Blood Serotonin</span></td><td><span class="lab-test">Whole Blood Serotonin</span></td><td><span class="range-clinical">50–200 ng/mL</span></td><td><span class="range-optimal">100–180 ng/mL</span></td></tr>
+        <tr><td><span class="bm-name">Urine 5-HIAA</span><span class="bm-sub">Serotonin metabolite / turnover</span></td><td><span class="lab-test">24-hr Urine 5-HIAA</span></td><td><span class="range-clinical">2–9 mg/24h</span></td><td><span class="range-optimal">Mid-range; very low = poor serotonin turnover</span></td></tr>
+        <tr><td><span class="bm-name">Tryptophan</span><span class="bm-sub">Serotonin precursor pool</span></td><td><span class="lab-test">Plasma Tryptophan (fasting)</span></td><td><span class="range-clinical">45–74 µmol/L</span></td><td><span class="range-optimal">55–74 µmol/L; adequate substrate for serotonin synthesis</span></td></tr>
+        <tr><td><span class="bm-name">Cortisol (AM)</span><span class="bm-sub">HPA axis / depression marker</span></td><td><span class="lab-test">AM Serum Cortisol</span></td><td><span class="range-clinical">6–23 µg/dL</span></td><td><span class="range-optimal">10–18 µg/dL; elevated AM cortisol is a key depression/anxiety biomarker</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="bm-section-title">▸ Cognitive &amp; Stress Markers</div>
+    <table class="bm-table">
+      <thead><tr><th>Biomarker</th><th>Lab Test</th><th>Clinical Range</th><th>Optimal Range</th></tr></thead>
+      <tbody>
+        <tr><td><span class="bm-name">hsCRP</span><span class="bm-sub">Neuroinflammation proxy</span></td><td><span class="lab-test">High-sensitivity CRP</span></td><td><span class="range-clinical">&lt;3.0 mg/L</span></td><td><span class="range-optimal">&lt;0.5 mg/L; inflammation drives TREK-1 upregulation and depression</span></td></tr>
+        <tr><td><span class="bm-name">IL-6</span></td><td><span class="lab-test">Serum IL-6</span></td><td><span class="range-clinical">&lt;7.0 pg/mL</span></td><td><span class="range-optimal">&lt;1.5 pg/mL</span></td></tr>
+        <tr><td><span class="bm-name">DHEA-S</span><span class="bm-sub">Neuroprotective adrenal hormone</span></td><td><span class="lab-test">Serum DHEA-Sulfate</span></td><td><span class="range-clinical">Age/sex dependent</span></td><td><span class="range-optimal">Upper 25th percentile for age/sex; low DHEA-S linked to depression</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="bm-section-title">▸ Safety Panel</div>
+    <table class="bm-table">
+      <thead><tr><th>Biomarker</th><th>Lab Test</th><th>Clinical Range</th><th>Optimal Range</th></tr></thead>
+      <tbody>
+        <tr><td><span class="bm-name">AST / ALT</span></td><td><span class="lab-test">CMP</span></td><td><span class="range-clinical">AST 10–40 / ALT 7–56 U/L</span></td><td><span class="range-optimal">AST &lt;26 / ALT &lt;26 U/L</span></td></tr>
+        <tr><td><span class="bm-name">CBC</span></td><td><span class="lab-test">Complete Blood Count</span></td><td><span class="range-clinical">Standard ranges</span></td><td><span class="range-optimal">Mid-range; WBC 4.5–6.0</span></td></tr>
+        <tr><td><span class="bm-name">Thyroid (TSH)</span><span class="bm-sub">Rule out hypothyroidism as depression driver</span></td><td><span class="lab-test">TSH + Free T3 / T4</span></td><td><span class="range-clinical">TSH 0.4–4.0 mIU/L</span></td><td><span class="range-optimal">TSH 1.0–2.5 mIU/L; rule out hypothyroidism before peptide use</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="warning-box">
+      <div class="warn-title">⚠ Research Status Warning</div>
+      <p>PE-22-28 has no published human clinical trials. All efficacy data derives from rodent models. Derived from an endogenous peptide (Spadin) with expected favorable tolerability, but this has not been confirmed in humans. If currently taking SSRIs — PE-22-28 may be synergistic but this interaction has not been clinically evaluated. Do not discontinue psychiatric medications without physician guidance. Monitor BDNF as the primary objective biomarker of neurogenic response.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-tag">08 — Cycle Protocol</div>
+    <h2>Cycle Length, Frequency &amp; Timing</h2>
+    <div class="cycle-grid">
+      <div class="cycle-card">
+        <div class="c-label">Acute / On-Demand Use</div>
+        <div class="c-value">Single Dose</div>
+        <div class="c-sub">Given its rapid-onset mechanism, PE-22-28 can be used acutely for same-day mood, focus, or cognitive enhancement — unlike SSRIs which require weeks of continuous use.</div>
+      </div>
+      <div class="cycle-card">
+        <div class="c-label">Neurogenesis Protocol</div>
+        <div class="c-value">4–8 Weeks</div>
+        <div class="c-sub">For hippocampal neurogenesis and lasting structural antidepressant effects — new dentate gyrus neurons take 3–4 weeks to mature and integrate into circuits.</div>
+      </div>
+    </div>
+
+    <div class="info-box">
+      PE-22-28 shares the dual use pattern of Selank — both acutely effective and cumulatively therapeutic. The neurogenesis benefit specifically requires sustained use: new neurons take 3–4 weeks to mature and functionally integrate into memory and mood circuits. A 4-week minimum for structural benefit is supported by animal data.
+    </div>
+
+    <h3>Frequency &amp; Timing</h3>
+    <table class="timing-table">
+      <thead><tr><th>Variable</th><th>Recommendation</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td>Daily dosing (cycle)</td><td><span class="rec">Once Daily</span></td><td>Once daily maintains continuous TREK-1 modulation and neurogenic signaling. No evidence twice-daily provides meaningfully superior outcomes.</td></tr>
+        <tr><td>Morning (AM)</td><td><span class="rec">✓ Preferred for Cognition</span></td><td>AM dosing aligns with peak hippocampal neuroplasticity windows — learning and memory consolidation more active in the morning.</td></tr>
+        <tr><td>Evening (PM)</td><td><span class="rec">~ Acceptable if Targeting Sleep</span></td><td>Pre-bed dosing leverages serotonergic effects for sleep onset and mood regulation overnight. No sedation risk — PE-22-28 does not cause drowsiness.</td></tr>
+        <tr><td>Fasted vs Fed</td><td><span class="rec">~ Either Acceptable</span></td><td>CNS mechanism is not insulin or glucose-dependent. Food intake does not meaningfully affect efficacy.</td></tr>
+        <tr><td>Intranasal option</td><td><span class="rec">✓ Faster CNS Onset</span></td><td>Like Selank, intranasal delivery bypasses the BBB via the olfactory-limbic pathway — faster onset (~15–20 min vs 30–45 min SC) for acute mood and cognitive effects.</td></tr>
+        <tr><td>SSRI combination</td><td><span class="rec warn">⚠ Potentially Synergistic — Discuss with Prescriber</span></td><td>Animal data suggests PE-22-28 potentiates SSRI antidepressant effects. Do not adjust psychiatric medications without physician involvement.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="protocol-summary">
+      <div class="ps-item"><div class="ps-value">4–8 wk</div><div class="ps-label">Cycle Length</div></div>
+      <div class="ps-item"><div class="ps-value">Daily</div><div class="ps-label">Frequency</div></div>
+      <div class="ps-item"><div class="ps-value">AM</div><div class="ps-label">Timing</div></div>
+      <div class="ps-item"><div class="ps-value" style="font-size:14px;">SC or Nasal</div><div class="ps-label">Route</div></div>
+      <div class="ps-item"><div class="ps-value">Either</div><div class="ps-label">Fed State</div></div>
+      <div class="ps-item"><div class="ps-value" style="color:var(--accent3);">2–4 wk</div><div class="ps-label">Break</div></div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

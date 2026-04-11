@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MOTS-c — Apex Research Reference</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap');
+    :root{--bg:#080c10;--panel:#0d1318;--border:#1a2d3a;--accent:#00d4ff;--accent2:#00ff9d;--accent3:#ff6b35;--text:#c8dde8;--muted:#4a6272;--white:#eaf4f8;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;line-height:1.6;padding:40px 20px;}
+    body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 70% 10%,rgba(0,212,255,0.06) 0%,transparent 60%),radial-gradient(ellipse at 20% 90%,rgba(255,107,53,0.04) 0%,transparent 50%);pointer-events:none;z-index:0;}
+    .container{max-width:900px;margin:0 auto;position:relative;z-index:1;}
+    .header{margin-bottom:40px;border-bottom:1px solid var(--border);padding-bottom:24px;}
+    .peptide-label{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;}
+    .peptide-name{font-family:'Rajdhani',sans-serif;font-size:52px;font-weight:700;color:var(--white);line-height:1;margin-bottom:8px;}
+    .peptide-fullname{font-size:16px;color:var(--muted);margin-bottom:16px;}
+    .tag-row{display:flex;gap:8px;flex-wrap:wrap;}
+    .tag{background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.25);color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;padding:3px 10px;}
+    .section{background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--muted);padding:28px 32px;margin-bottom:16px;animation:fadeUp 0.4s ease both;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+    .section-num{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:8px;}
+    h2{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px;}
+    .stat-box{background:var(--bg);border:1px solid var(--border);padding:16px;text-align:center;}
+    .stat-value{font-family:'Rajdhani',sans-serif;font-size:32px;font-weight:700;color:var(--white);line-height:1;}
+    .stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-top:4px;}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+    .info-item{margin-bottom:14px;}
+    .info-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:4px;}
+    .info-value{color:var(--white);font-size:13px;line-height:1.5;}
+    .timeline{position:relative;padding-left:20px;}
+    .timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:var(--border);}
+    .timeline-item{position:relative;margin-bottom:20px;}
+    .timeline-item::before{content:'';position:absolute;left:-24px;top:5px;width:8px;height:8px;background:var(--accent);border-radius:50%;}
+    .timeline-year{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:4px;}
+    .benefit-item{display:flex;gap:14px;margin-bottom:16px;align-items:flex-start;}
+    .benefit-num{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent3);min-width:28px;padding-top:2px;}
+    .benefit-title{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;color:var(--white);margin-bottom:3px;}
+    .recon-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+    .recon-box{background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--accent2);padding:20px 24px;}
+    .recon-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);margin-bottom:12px;}
+    .recon-math{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--white);margin-bottom:8px;}
+    .dose-table{width:100%;border-collapse:collapse;}
+    .dose-table th{background:rgba(0,212,255,0.08);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);}
+    .dose-table td{padding:12px 14px;border-bottom:1px solid rgba(26,45,58,0.5);vertical-align:top;font-size:13px;}
+    .dose-level{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);font-weight:700;}
+    .dose-amount{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--white);}
+    .dose-units{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent);display:block;margin-top:2px;}
+    .bio-table{width:100%;border-collapse:collapse;}
+    .bio-table th{background:rgba(0,212,255,0.06);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--muted);text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);}
+    .bio-table td{padding:10px 12px;border-bottom:1px solid rgba(26,45,58,0.4);vertical-align:top;font-size:12px;}
+    .bio-name{color:var(--white);font-weight:500;display:block;}
+    .bio-test{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);}
+    .range-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 6px;margin-right:4px;}
+    .range-clinical{background:rgba(74,98,114,0.3);color:var(--muted);}
+    .range-optimal{background:rgba(0,255,157,0.1);color:var(--accent2);}
+    .bio-category{margin-bottom:24px;}
+    .bio-category-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);margin-bottom:10px;}
+    .note-box{background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.15);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .disclaimer-box{background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.2);padding:14px 18px;margin-top:20px;font-size:12px;color:var(--text);line-height:1.5;}
+    .vial-label{display:inline-block;background:rgba(0,212,255,0.12);border:1px solid rgba(0,212,255,0.3);color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;padding:3px 10px;margin-bottom:12px;}
+  </style>
+</head>
+<body>
+<div class="container">
+<a href="index.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--muted);text-decoration:none;text-transform:uppercase;margin-bottom:28px;padding:8px 14px;border:1px solid var(--border);transition:all .2s;" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">← Back to Encyclopedia</a>
+
+  <div class="header">
+    <div class="peptide-label">Apex Research Reference</div>
+    <div class="peptide-name">MOTS-c</div>
+    <div class="peptide-fullname">Mitochondrial Open Reading Frame of the 12S rRNA-c — Mitokine &amp; Exercise Mimetic</div>
+    <div class="tag-row">
+      <span class="tag">MITOCHONDRIAL</span>
+      <span class="tag">EXERCISE MIMETIC</span>
+      <span class="tag">FAT LOSS</span>
+      <span class="tag">INSULIN SENSITIVITY</span>
+      <span class="tag">LONGEVITY</span>
+      <span class="tag">MITOKINE</span>
+    </div>
+  </div>
+
+  <!-- 01 -->
+  <div class="section" style="animation-delay:0.1s;border-top-color:var(--accent);">
+    <div class="section-num">01 / IDENTITY</div>
+    <h2>Compound Profile</h2>
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-value">16</div>
+        <div class="stat-label">AMINO ACIDS</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">~2.2</div>
+        <div class="stat-label">kDa MW</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">SC/IV</div>
+        <div class="stat-label">ROUTE</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">mtDNA</div>
+        <div class="stat-label">ORIGIN</div>
+      </div>
+    </div>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">CLASSIFICATION</div>
+          <div class="info-value">Mitokine — a peptide encoded within mitochondrial DNA (12S rRNA region). First peptide discovered to be encoded by mitochondrial genome and function as a systemic hormone.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">MECHANISM</div>
+          <div class="info-value">Activates AMPK (AMP-activated protein kinase) — the master metabolic sensor. Inhibits DHFR (dihydrofolate reductase) → alters folate and methionine metabolism → activates AICAR → AMPK → glucose uptake, fatty acid oxidation, mitochondrial biogenesis. Translocates to nucleus during stress to regulate gene expression.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">DISCOVERY</div>
+          <div class="info-value">Chang Gyun Kim &amp; Pinchas Cohen, USC Davis School of Gerontology. Discovered in 2015 — identified as an exercise-induced mitokine that mediates some of the metabolic benefits of physical activity.</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">VIAL SIZES</div>
+          <div class="info-value"><strong style="color:var(--accent2);">10mg</strong> — standard maintenance vial<br><strong style="color:var(--accent2);">30mg</strong> — bulk/longer-cycle vial</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">SEQUENCE</div>
+          <div class="info-value" style="font-family:'Share Tech Mono',monospace;font-size:10px;">MRWQEMGYIFYPRKLR</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">KEY INSIGHT</div>
+          <div class="info-value">MOTS-c levels INCREASE with exercise and DECREASE with age. It is a primary mediator of "mitochondrial hormesis" — the cellular adaptation to metabolic stress. Exogenous administration replicates the hormetic signal.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 -->
+  <div class="section" style="animation-delay:0.15s;border-top-color:var(--accent2);">
+    <div class="section-num">02 / RESEARCH HISTORY</div>
+    <h2>Development Timeline</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-year">2015</div>
+        <div>Kim CG &amp; Cohen P (USC) publish discovery of MOTS-c in <em>Cell Metabolism</em>. First peptide found encoded within mitochondrial DNA (not nuclear DNA) that functions as a circulating hormone. Immediate recognition as breakthrough — the mitochondria "speak" to the rest of the body via peptide signaling.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2016–2018</div>
+        <div>Rodent studies: MOTS-c injection prevents diet-induced obesity, reverses insulin resistance, and increases physical endurance in old mice. Aged mice treated with MOTS-c show exercise capacity of young mice. Age-associated MOTS-c decline identified as potential contributor to metabolic aging.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2019</div>
+        <div>Lee C et al. (USC) show MOTS-c translocates to the nucleus during metabolic stress, where it directly regulates stress-response genes. MOTS-c is not just a hormone — it's also an intracellular signaling molecule that bridges mitochondrial and nuclear gene expression. <em>Nature Communications</em> publication.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2021</div>
+        <div>Reynolds JC et al. show MOTS-c extends lifespan in mice and specifically counteracts age-related physical decline. Injection of MOTS-c into aged mice restores mitochondrial respiration, reduces inflammatory markers, and improves grip strength — classic longevity biomarkers.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2022–2024</div>
+        <div>Human correlation studies: MOTS-c plasma levels in centenarians (100+ year olds) are significantly higher than age-matched controls. Genetic variant (K14Q) associated with longevity in East Asian populations produces more active MOTS-c variant. MOTS-c establishes itself as a legitimate longevity biomarker and therapeutic target.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 -->
+  <div class="section" style="animation-delay:0.2s;border-top-color:var(--accent3);">
+    <div class="section-num">03 / BENEFITS</div>
+    <h2>Primary Effects</h2>
+    <div class="benefit-item">
+      <div class="benefit-num">01</div>
+      <div>
+        <div class="benefit-title">Insulin Sensitivity &amp; Glucose Metabolism</div>
+        <div>MOTS-c's most well-established effect: dramatic improvement in insulin sensitivity via AMPK activation. Increases GLUT4 translocation to muscle cell membranes (glucose uptake without insulin). Prevents and reverses diet-induced insulin resistance in rodent models with high statistical significance.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">02</div>
+      <div>
+        <div class="benefit-title">Fat Loss — Metabolic Reprogramming</div>
+        <div>AMPK activation shifts cellular metabolism toward fatty acid oxidation. Combined with DHFR inhibition, MOTS-c redirects one-carbon metabolism (folate cycle) in ways that reduce fat storage and increase fat burning. Obese mice treated with MOTS-c lost weight WITHOUT caloric restriction.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">03</div>
+      <div>
+        <div class="benefit-title">Exercise Performance &amp; Endurance</div>
+        <div>MOTS-c replicates the cellular adaptation to aerobic exercise — particularly relevant for aging individuals whose exercise capacity has declined. Old mice on MOTS-c run as far as young mice. Mechanism: increased mitochondrial coupling efficiency and oxidative phosphorylation capacity in skeletal muscle.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">04</div>
+      <div>
+        <div class="benefit-title">Longevity &amp; Anti-Aging</div>
+        <div>MOTS-c levels in centenarians are elevated vs. controls — a direct association with extreme longevity. Extends lifespan in C. elegans and mice models. Targets the "mitochondrial-nuclear communication" axis that degrades with age. May be a primary reason why regular exercisers live longer — MOTS-c is the molecular signal exercise sends.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">05</div>
+      <div>
+        <div class="benefit-title">Stress Resistance &amp; Hormesis</div>
+        <div>MOTS-c activates the integrated stress response (ISR) at low levels — the same pathway activated by caloric restriction, exercise, and cold exposure. This hormetic activation upregulates cellular repair mechanisms, antioxidant defenses, and proteostasis (protein quality control).</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 -->
+  <div class="section" style="animation-delay:0.25s;border-top-color:var(--accent2);">
+    <div class="section-num">04 / RECONSTITUTION</div>
+    <h2>Preparation Protocol — Both Vial Sizes</h2>
+
+    <div class="recon-grid">
+      <div class="recon-box">
+        <div class="vial-label">10MG VIAL</div>
+        <div class="recon-title">// STANDARD VIAL</div>
+        <div class="recon-math">10,000 mcg ÷ 300 units = <span style="color:var(--accent2)">33.3 mcg/unit</span></div>
+        <div style="font-size:12px;color:var(--muted);margin-top:8px;">Add 3.0 mL BAC water to 10mg vial.</div>
+        <table class="dose-table" style="margin-top:12px;">
+          <thead><tr><th>DOSE</th><th>UNITS</th><th>VOLUME</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="dose-level">LOW</span><span class="dose-amount">300 mcg</span></td>
+              <td style="font-family:'Share Tech Mono',monospace;color:var(--white);">9u</td>
+              <td style="font-family:'Share Tech Mono',monospace;">0.09 mL</td>
+            </tr>
+            <tr>
+              <td><span class="dose-level">STD</span><span class="dose-amount">500 mcg</span></td>
+              <td style="font-family:'Share Tech Mono',monospace;color:var(--white);">15u</td>
+              <td style="font-family:'Share Tech Mono',monospace;">0.15 mL</td>
+            </tr>
+            <tr>
+              <td><span class="dose-level">HIGH</span><span class="dose-amount">1 mg</span></td>
+              <td style="font-family:'Share Tech Mono',monospace;color:var(--white);">30u</td>
+              <td style="font-family:'Share Tech Mono',monospace;">0.30 mL</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="recon-box">
+        <div class="vial-label">30MG VIAL</div>
+        <div class="recon-title">// BULK VIAL</div>
+        <div class="recon-math">30,000 mcg ÷ 300 units = <span style="color:var(--accent2)">100 mcg/unit</span></div>
+        <div style="font-size:12px;color:var(--muted);margin-top:8px;">Add 3.0 mL BAC water to 30mg vial.</div>
+        <table class="dose-table" style="margin-top:12px;">
+          <thead><tr><th>DOSE</th><th>UNITS</th><th>VOLUME</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="dose-level">LOW</span><span class="dose-amount">500 mcg</span></td>
+              <td style="font-family:'Share Tech Mono',monospace;color:var(--white);">5u</td>
+              <td style="font-family:'Share Tech Mono',monospace;">0.05 mL</td>
+            </tr>
+            <tr>
+              <td><span class="dose-level">STD</span><span class="dose-amount">5 mg</span></td>
+              <td style="font-family:'Share Tech Mono',monospace;color:var(--white);">50u</td>
+              <td style="font-family:'Share Tech Mono',monospace;">0.50 mL</td>
+            </tr>
+            <tr>
+              <td><span class="dose-level">HIGH</span><span class="dose-amount">10 mg</span></td>
+              <td style="font-family:'Share Tech Mono',monospace;color:var(--white);">100u</td>
+              <td style="font-family:'Share Tech Mono',monospace;">1.00 mL</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent2);">Storage:</strong> Lyophilized — refrigerate (2–8°C), protect from light. Reconstituted: refrigerate, use within 30 days. Do not freeze reconstituted. The 30mg vial provides approximately 3× more doses per vial at the same price point — preferred for ongoing protocols.
+    </div>
+  </div>
+
+  <!-- 05 -->
+  <div class="section" style="animation-delay:0.3s;border-top-color:var(--accent);">
+    <div class="section-num">05 / DOSING PROTOCOL</div>
+    <h2>Administration Guide</h2>
+    <table class="dose-table">
+      <thead>
+        <tr>
+          <th>PROTOCOL</th>
+          <th>DOSE</th>
+          <th>FREQUENCY</th>
+          <th>DURATION</th>
+          <th>CONTEXT</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="dose-level">INTRO</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;">500 mcg SC</td>
+          <td>Daily</td>
+          <td>2 weeks</td>
+          <td>Assess response; establish baseline</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">STANDARD</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;">5 mg SC</td>
+          <td>Daily</td>
+          <td>4–12 weeks</td>
+          <td>Metabolic reprogramming; exercise mimetic</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">LONGEVITY</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;">5–10 mg SC</td>
+          <td>3–5×/week</td>
+          <td>Ongoing</td>
+          <td>Anti-aging maintenance protocol</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">PERFORMANCE</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;">5–10 mg SC</td>
+          <td>Daily (pre-workout)</td>
+          <td>8–12 weeks</td>
+          <td>Endurance, fat loss, body recomp</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note-box">
+      <strong style="color:var(--accent);">Pre-workout injection:</strong> Inject 30–45 minutes before training. AMPK activation amplifies exercise-induced metabolic adaptations. The "stacking" of exogenous MOTS-c + exercise-induced endogenous MOTS-c provides a synergistic effect on mitochondrial biogenesis.
+    </div>
+  </div>
+
+  <!-- 06 -->
+  <div class="section" style="animation-delay:0.35s;border-top-color:var(--accent3);">
+    <div class="section-num">06 / TIMING</div>
+    <h2>Administration Timing</h2>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">PREFERRED WINDOW</div>
+          <div class="info-value">Morning fasted or pre-workout. Fasted state amplifies AMPK activation (low glucose + MOTS-c = maximal AMPK signaling → superior fat oxidation).</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">EXERCISE PAIRING</div>
+          <div class="info-value">Inject 30–45 min before training sessions. Particularly effective when paired with aerobic/cardio exercise — MOTS-c + aerobic training = compounding mitochondrial adaptations.</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">STACKING</div>
+          <div class="info-value">MOTS-c + SLU-PP-332 = complementary mitochondrial pathways (AMPK vs. ERR) with additive metabolic effects. Excellent with NAD+ (upstream NAD+ feeds AMPK activation). AOD-9604 for fat mobilization amplification.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">FREQUENCY</div>
+          <div class="info-value">Daily dosing shows best results in rodent studies. Human protocols suggest 5–7×/week for active cycles, 3×/week for maintenance. Continuous use preferred over cycling for longevity protocols.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 07 -->
+  <div class="section" style="animation-delay:0.4s;border-top-color:var(--accent);">
+    <div class="section-num">07 / BIOMARKERS</div>
+    <h2>Monitoring Panel</h2>
+
+    <div class="bio-category">
+      <div class="bio-category-title">// METABOLIC MARKERS</div>
+      <table class="bio-table">
+        <thead>
+          <tr><th>MARKER</th><th>TEST</th><th>CLINICAL RANGE</th><th>OPTIMAL</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">Fasting Glucose</span><span class="bio-test">FBG</span></td>
+            <td>Standard lab</td>
+            <td><span class="range-label range-clinical">CLIN</span>70–99 mg/dL</td>
+            <td><span class="range-label range-optimal">OPT</span>70–85 mg/dL</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Fasting Insulin / HOMA-IR</span><span class="bio-test">Insulin Resistance Index</span></td>
+            <td>Fasting lab draw</td>
+            <td><span class="range-label range-clinical">CLIN</span>HOMA-IR &lt;2.0</td>
+            <td><span class="range-label range-optimal">OPT</span>HOMA-IR &lt;1.0</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">HbA1c</span><span class="bio-test">3-Month Glucose Average</span></td>
+            <td>Standard lab</td>
+            <td><span class="range-label range-clinical">CLIN</span>&lt;5.7%</td>
+            <td><span class="range-label range-optimal">OPT</span>&lt;5.2%</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Triglycerides</span><span class="bio-test">Fasting Lipid Panel</span></td>
+            <td>Fasting lipid panel</td>
+            <td><span class="range-label range-clinical">CLIN</span>&lt;150 mg/dL</td>
+            <td><span class="range-label range-optimal">OPT</span>&lt;80 mg/dL</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">// MITOCHONDRIAL &amp; LONGEVITY</div>
+      <table class="bio-table">
+        <thead>
+          <tr><th>MARKER</th><th>TEST</th><th>CLINICAL RANGE</th><th>OPTIMAL</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">Lactate (resting)</span><span class="bio-test">Mitochondrial Function Proxy</span></td>
+            <td>Serum lactate</td>
+            <td><span class="range-label range-clinical">CLIN</span>0.5–2.0 mmol/L (resting)</td>
+            <td><span class="range-label range-optimal">OPT</span>&lt;1.0 mmol/L (efficient oxidative metabolism)</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">MOTS-c Plasma Level</span><span class="bio-test">Mitokine Panel</span></td>
+            <td>Specialty lab (USC-derived assay)</td>
+            <td><span class="range-label range-clinical">CLIN</span>Reference range being established</td>
+            <td><span class="range-label range-optimal">OPT</span>Elevated vs. age-matched baseline</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">hs-CRP</span><span class="bio-test">Inflammatory Aging</span></td>
+            <td>Standard lab</td>
+            <td><span class="range-label range-clinical">CLIN</span>&lt;3.0 mg/L</td>
+            <td><span class="range-label range-optimal">OPT</span>&lt;0.5 mg/L</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 08 -->
+  <div class="section" style="animation-delay:0.45s;border-top-color:var(--accent2);">
+    <div class="section-num">08 / CYCLE PROTOCOL</div>
+    <h2>Recommended Cycle</h2>
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-value">8–16</div>
+        <div class="stat-label">WEEKS ACTIVE</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">5–7</div>
+        <div class="stat-label">DAYS PER WEEK</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">4–8</div>
+        <div class="stat-label">WEEKS OFF</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">5 mg</div>
+        <div class="stat-label">STANDARD DOSE</div>
+      </div>
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent2);">Active Cycle (Weeks 1–12):</strong> 5mg SC daily, fasted mornings or pre-workout. Best results when combined with consistent aerobic and resistance training — MOTS-c amplifies exercise adaptations rather than replacing them. Fat loss, energy improvement, and insulin sensitivity improvements typically apparent within 3–4 weeks.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent2);">Longevity Protocol (Ongoing):</strong> 5mg SC 3–5×/week indefinitely. This is a maintenance approach to keep MOTS-c at "young" physiological levels. No known long-term toxicity in rodents — considered safe for extended use at research doses.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent);">Power Stack:</strong> MOTS-c 5mg + SLU-PP-332 1mg + AOD-9604 300mcg (all pre-workout, SC) = the triple metabolic/exercise-mimetic stack. Hits AMPK, ERR, and growth hormone receptor pathways simultaneously for maximum fat oxidation and mitochondrial upregulation.
+    </div>
+    <div class="disclaimer-box">
+      <strong style="color:var(--accent3);">Research Compound Notice:</strong> MOTS-c has no completed human clinical trials. All efficacy data is from rodent studies or human correlation/epidemiological studies. The compound shows a very favorable preclinical safety profile with no observed adverse effects in rodent longevity studies. Longevity claims are extrapolated from mechanistic and animal data. Not FDA approved. For research purposes.
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

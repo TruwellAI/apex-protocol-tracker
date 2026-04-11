@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tirzepatide — Apex Research Reference</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap');
+    :root{--bg:#080c10;--panel:#0d1318;--border:#1a2d3a;--accent:#00d4ff;--accent2:#00ff9d;--accent3:#ff6b35;--text:#c8dde8;--muted:#4a6272;--white:#eaf4f8;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;line-height:1.6;padding:40px 20px;}
+    body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 70% 10%,rgba(0,212,255,0.06) 0%,transparent 60%),radial-gradient(ellipse at 20% 90%,rgba(0,255,157,0.04) 0%,transparent 50%);pointer-events:none;z-index:0;}
+    .container{max-width:900px;margin:0 auto;position:relative;z-index:1;}
+    .header{margin-bottom:40px;border-bottom:1px solid var(--border);padding-bottom:24px;}
+    .peptide-label{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;}
+    .peptide-name{font-family:'Rajdhani',sans-serif;font-size:52px;font-weight:700;color:var(--white);line-height:1;margin-bottom:8px;}
+    .peptide-fullname{font-size:16px;color:var(--muted);margin-bottom:16px;}
+    .tag-row{display:flex;gap:8px;flex-wrap:wrap;}
+    .tag{background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.25);color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;padding:3px 10px;}
+    .section{background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--muted);padding:28px 32px;margin-bottom:16px;animation:fadeUp 0.4s ease both;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+    .section-num{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:8px;}
+    h2{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px;}
+    .stat-box{background:var(--bg);border:1px solid var(--border);padding:16px;text-align:center;}
+    .stat-value{font-family:'Rajdhani',sans-serif;font-size:30px;font-weight:700;color:var(--white);line-height:1;}
+    .stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-top:4px;}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+    .info-item{margin-bottom:14px;}
+    .info-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:4px;}
+    .info-value{color:var(--white);font-size:13px;line-height:1.5;}
+    .timeline{position:relative;padding-left:20px;}
+    .timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:var(--border);}
+    .timeline-item{position:relative;margin-bottom:20px;}
+    .timeline-item::before{content:'';position:absolute;left:-24px;top:5px;width:8px;height:8px;background:var(--accent);border-radius:50%;}
+    .timeline-year{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:4px;}
+    .benefit-item{display:flex;gap:14px;margin-bottom:16px;align-items:flex-start;}
+    .benefit-num{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent3);min-width:28px;padding-top:2px;}
+    .benefit-title{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;color:var(--white);margin-bottom:3px;}
+    .recon-box{background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--accent2);padding:20px 24px;margin-bottom:16px;}
+    .recon-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);margin-bottom:12px;}
+    .recon-math{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--white);margin-bottom:8px;}
+    .dose-table{width:100%;border-collapse:collapse;}
+    .dose-table th{background:rgba(0,212,255,0.08);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);}
+    .dose-table td{padding:12px 14px;border-bottom:1px solid rgba(26,45,58,0.5);vertical-align:top;font-size:13px;}
+    .dose-level{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);font-weight:700;}
+    .dose-amount{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--white);}
+    .dose-units{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent);display:block;margin-top:2px;}
+    .bio-table{width:100%;border-collapse:collapse;}
+    .bio-table th{background:rgba(0,212,255,0.06);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--muted);text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);}
+    .bio-table td{padding:10px 12px;border-bottom:1px solid rgba(26,45,58,0.4);vertical-align:top;font-size:12px;}
+    .bio-name{color:var(--white);font-weight:500;display:block;}
+    .bio-test{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);}
+    .range-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 6px;margin-right:4px;}
+    .range-clinical{background:rgba(74,98,114,0.3);color:var(--muted);}
+    .range-optimal{background:rgba(0,255,157,0.1);color:var(--accent2);}
+    .bio-category{margin-bottom:24px;}
+    .bio-category-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);margin-bottom:10px;}
+    .note-box{background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.15);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .highlight-box{background:rgba(0,255,157,0.04);border:1px solid rgba(0,255,157,0.2);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .warning-box{background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.25);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .disclaimer-box{background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.2);padding:14px 18px;margin-top:20px;font-size:12px;color:var(--text);line-height:1.5;}
+    .receptor-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0;}
+    .receptor-box{background:var(--bg);border:1px solid var(--border);padding:16px;text-align:center;}
+    .receptor-name{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);margin-bottom:6px;letter-spacing:1px;}
+    .receptor-action{font-size:12px;color:var(--text);}
+    .receptor-active{border-color:var(--accent2);background:rgba(0,255,157,0.04);}
+    .compare-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:16px 0;}
+    .compare-box{background:var(--bg);border:1px solid var(--border);padding:16px;}
+    .compare-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;margin-bottom:10px;}
+    .compare-stat{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--accent2);}
+    .compare-desc{font-size:12px;color:var(--muted);margin-top:4px;}
+  </style>
+</head>
+<body>
+<div class="container">
+<a href="index.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--muted);text-decoration:none;text-transform:uppercase;margin-bottom:28px;padding:8px 14px;border:1px solid var(--border);transition:all .2s;" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">← Back to Encyclopedia</a>
+
+  <div class="header">
+    <div class="peptide-label">Apex Research Reference</div>
+    <div class="peptide-name">TIRZEPATIDE</div>
+    <div class="peptide-fullname">Dual GLP-1R / GIPR Agonist — Mounjaro / Zepbound Active Compound</div>
+    <div class="tag-row">
+      <span class="tag">DUAL AGONIST</span>
+      <span class="tag">WEIGHT LOSS</span>
+      <span class="tag">METABOLIC</span>
+      <span class="tag">GLP-1R + GIPR</span>
+      <span class="tag">SUPERIOR TO SEMAGLUTIDE</span>
+      <span class="tag">DIABETES / T2DM</span>
+    </div>
+  </div>
+
+  <!-- 01 IDENTITY -->
+  <div class="section" style="animation-delay:0.1s;border-top-color:var(--accent);">
+    <div class="section-num">01 / IDENTITY</div>
+    <h2>Compound Profile</h2>
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-value">39</div>
+        <div class="stat-label">AMINO ACIDS</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">~4.8</div>
+        <div class="stat-label">kDa MW</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">SC</div>
+        <div class="stat-label">ROUTE</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">~5 days</div>
+        <div class="stat-label">HALF-LIFE</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">22.5%</div>
+        <div class="stat-label">PEAK WEIGHT LOSS</div>
+      </div>
+    </div>
+
+    <div class="receptor-grid">
+      <div class="receptor-box receptor-active">
+        <div class="receptor-name">GLP-1R AGONIST</div>
+        <div class="receptor-action">Insulin secretion · Appetite suppression · Gastric emptying · Cardioprotection</div>
+      </div>
+      <div class="receptor-box receptor-active">
+        <div class="receptor-name">GIPR AGONIST</div>
+        <div class="receptor-action">Enhanced insulin secretion · Adipose tissue remodeling · Central satiety · Lean mass preservation</div>
+      </div>
+      <div class="receptor-box">
+        <div class="receptor-name" style="color:var(--muted);">GCGR</div>
+        <div class="receptor-action" style="color:var(--muted);">Not activated (see Retatrutide for triple agonist)</div>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">ORIGIN</div>
+          <div class="info-value">Developed by Eli Lilly. Single synthetic peptide that activates both GLP-1R and GIPR with balanced affinity. Approved as Mounjaro (diabetes, 2022) and Zepbound (obesity, 2023). First dual incretin receptor agonist approved by FDA.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">WHY DUAL AGONISM WINS</div>
+          <div class="info-value">GIP (glucose-dependent insulinotropic polypeptide) works synergistically with GLP-1 in the pancreas and brain. Together: stronger insulin response, more potent appetite suppression, and GIPR activation in adipose tissue remodels fat distribution and may preserve muscle mass — an advantage vs. GLP-1 monotherapy.</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">HEAD-TO-HEAD VS SEMAGLUTIDE</div>
+          <div class="info-value">SURMOUNT-5 trial (2025): tirzepatide 15mg produces 20.2% weight loss vs. 13.7% for semaglutide 2.4mg — a 47% superior result. Tirzepatide has consistently outperformed semaglutide in every head-to-head measure across HbA1c, weight loss, and cardiometabolic markers.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">LEAN MASS ADVANTAGE</div>
+          <div class="info-value">GIPR activation appears to preserve lean muscle mass during weight loss vs. GLP-1 monotherapy. Body composition data shows higher percentage of fat vs. lean mass lost with tirzepatide — clinically significant for maintaining metabolic rate and functional capacity.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 RESEARCH -->
+  <div class="section" style="animation-delay:0.15s;border-top-color:var(--accent2);">
+    <div class="section-num">02 / RESEARCH HISTORY</div>
+    <h2>Development Timeline</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-year">2000s</div>
+        <div>Eli Lilly researchers explore the incretin axis beyond GLP-1. GIP identified as a second major incretin hormone with distinct receptor (GIPR) expressed in adipose tissue, brain, and pancreas. Hypothesis: dual activation may be synergistic.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2017–2019</div>
+        <div>Phase I/II trials establish safety and dose-response. GIPR co-activation shows unexpected enhancement of GLP-1R effects in the brain and pancreas — dual agonism produces non-additive (synergistic) results in appetite and insulin secretion.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2021</div>
+        <div>SURPASS trial series published: tirzepatide 15mg achieves 2.0–2.4% HbA1c reduction and 11–15% weight loss in T2DM. Outperforms semaglutide 1mg in SURPASS-2.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2022–2023</div>
+        <div>FDA approves Mounjaro (T2DM, 2022) and Zepbound (obesity, 2023). SURMOUNT-1: 22.5% weight loss at 72 weeks in non-diabetic obese adults — the largest weight loss ever recorded in a clinical trial for a pharmaceutical agent.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2025</div>
+        <div>SURMOUNT-5 head-to-head trial: tirzepatide 20.2% vs. semaglutide 13.7% weight loss. SURPASS-CVOT ongoing. GIPR mechanism in lean mass preservation increasingly studied. Compounding pharmacy versions emerge following shortage designations.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 BENEFITS -->
+  <div class="section" style="animation-delay:0.2s;border-top-color:var(--accent3);">
+    <div class="section-num">03 / BENEFITS & MECHANISMS</div>
+    <h2>Research-Supported Effects</h2>
+
+    <div class="compare-grid" style="margin-bottom:20px;">
+      <div class="compare-box">
+        <div class="compare-title" style="color:var(--accent2);">WEIGHT LOSS</div>
+        <div class="compare-stat">22.5%</div>
+        <div class="compare-desc">Mean at 15mg × 72 weeks (SURMOUNT-1). Best result of any drug in obesity trial history.</div>
+      </div>
+      <div class="compare-box">
+        <div class="compare-title" style="color:var(--accent2);">HbA1c REDUCTION</div>
+        <div class="compare-stat">2.4%</div>
+        <div class="compare-desc">At 15mg in T2DM patients. 40% of patients achieved near-normal HbA1c (&lt;5.7%).</div>
+      </div>
+      <div class="compare-box">
+        <div class="compare-title" style="color:var(--accent2);">LEAN MASS RETENTION</div>
+        <div class="compare-stat">Better</div>
+        <div class="compare-desc">GIPR activation in adipose tissue preferentially reduces fat mass over lean mass vs. GLP-1 alone.</div>
+      </div>
+    </div>
+
+    <div class="benefit-item">
+      <div class="benefit-num">01</div>
+      <div>
+        <div class="benefit-title">Superior Weight Loss vs. Any Prior Drug</div>
+        <div>SURMOUNT-1 (2022): 22.5% mean body weight reduction at tirzepatide 15mg × 72 weeks. 1 in 3 patients lost ≥25% of body weight. 57% of patients at 15mg achieved &lt;5% body weight — clinically defined as successful weight loss treatment. No pharmaceutical has produced these results before tirzepatide.</div>
+      </div>
+    </div>
+
+    <div class="benefit-item">
+      <div class="benefit-num">02</div>
+      <div>
+        <div class="benefit-title">Dual Incretin Synergy — More Than Additive</div>
+        <div>GLP-1R + GIPR co-activation at the hypothalamic level produces appetite suppression exceeding either receptor alone. GIPR in the arcuate nucleus amplifies GLP-1R satiety signaling — explaining why tirzepatide produces greater food intake reduction than equimolar semaglutide. The combination is synergistic, not merely additive.</div>
+      </div>
+    </div>
+
+    <div class="benefit-item">
+      <div class="benefit-num">03</div>
+      <div>
+        <div class="benefit-title">Adipose Tissue Remodeling</div>
+        <div>GIPR is highly expressed in adipocytes (fat cells). Tirzepatide's GIPR activation directly remodels adipose tissue — reducing adipocyte size, improving insulin sensitivity in fat tissue, and shifting fat distribution away from visceral depots. This mechanism is completely absent from GLP-1 monotherapy drugs.</div>
+      </div>
+    </div>
+
+    <div class="benefit-item">
+      <div class="benefit-num">04</div>
+      <div>
+        <div class="benefit-title">Sleep Apnea Resolution</div>
+        <div>SURMOUNT-OSA trial (2024): 63–79% reduction in apnea-hypopnea index (AHI) with tirzepatide. 42% of patients with moderate-severe OSA achieved complete remission. The degree of sleep apnea improvement was directly correlated with weight loss — the most impactful trial for OSA short of CPAP therapy.</div>
+      </div>
+    </div>
+
+    <div class="benefit-item">
+      <div class="benefit-num">05</div>
+      <div>
+        <div class="benefit-title">Heart Failure Improvement</div>
+        <div>SUMMIT trial (2024): tirzepatide significantly improved exercise capacity (6-minute walk test), quality of life, and reduced heart failure-related hospitalization in HFpEF (heart failure with preserved ejection fraction). GLP-1R expression in cardiac tissue + weight reduction + reduced inflammation are all contributing mechanisms.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 RECONSTITUTION -->
+  <div class="section" style="animation-delay:0.25s;border-top-color:var(--accent2);">
+    <div class="section-num">04 / RECONSTITUTION</div>
+    <h2>Vial Preparation</h2>
+    <div class="recon-box">
+      <div class="recon-title">COMPOUNDED TIRZEPATIDE — TYPICAL VIALS: 5mg, 10mg, 15mg</div>
+      <div class="recon-math">Standard: 10mg vial + 2.0 mL (200 units) bacteriostatic water</div>
+      <div class="recon-math" style="color:var(--accent2);">Concentration: 0.05 mg per unit (50 mcg per unit)</div>
+      <div style="margin-top:14px;">
+        <table class="dose-table">
+          <thead><tr><th>DOSE</th><th>mg</th><th>UNITS ON SYRINGE</th><th>VOLUME</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="dose-level">STARTING</span></td>
+              <td><span class="dose-amount">2.5</span><span class="dose-units">mg</span></td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:16px;color:var(--white);">50 units</td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:14px;">0.50 mL</td>
+            </tr>
+            <tr>
+              <td><span class="dose-level">STEP 2</span></td>
+              <td><span class="dose-amount">5.0</span><span class="dose-units">mg</span></td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:16px;color:var(--white);">100 units</td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:14px;">1.0 mL</td>
+            </tr>
+            <tr>
+              <td><span class="dose-level">STEP 3</span></td>
+              <td><span class="dose-amount">7.5</span><span class="dose-units">mg</span></td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:16px;color:var(--white);">150 units</td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:14px;">1.5 mL</td>
+            </tr>
+            <tr>
+              <td><span class="dose-level">STEP 4</span></td>
+              <td><span class="dose-amount">10.0</span><span class="dose-units">mg</span></td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:16px;color:var(--white);">200 units</td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:14px;">2.0 mL</td>
+            </tr>
+            <tr>
+              <td><span class="dose-level">TARGET MAX</span></td>
+              <td><span class="dose-amount">15.0</span><span class="dose-units">mg</span></td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:16px;color:var(--white);">Requires 15mg vial at appropriate concentration</td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:14px;">Per provider label</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="warning-box">
+      <strong style="color:var(--accent3);">⚠ Confirm Concentration on Every Vial:</strong> Compounded tirzepatide vial concentrations vary by pharmacy (common: 2.5mg/mL, 5mg/mL, 10mg/mL). Always verify the mg/mL concentration printed on your pharmacy label. Recalculate units for each new vial.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent);">Storage:</strong> Refrigerate (2–8°C). After reconstitution, use within 28 days. Protect from light. Do NOT freeze. Once-weekly injection — one vial covers several weeks of escalation dosing.
+    </div>
+  </div>
+
+  <!-- 05 DOSING ESCALATION -->
+  <div class="section" style="animation-delay:0.3s;border-top-color:var(--accent);">
+    <div class="section-num">05 / DOSE ESCALATION PROTOCOL</div>
+    <h2>Standard Escalation — Every 4 Weeks</h2>
+    <table class="dose-table">
+      <thead><tr><th>WEEKS</th><th>DOSE</th><th>FREQUENCY</th><th>CLINICAL NOTE</th></tr></thead>
+      <tbody>
+        <tr><td><span class="dose-level">1–4</span></td><td>2.5 mg</td><td>Once weekly SC</td><td>Tolerability phase. Mild nausea expected. Do not skip or reduce — adaptation requires exposure.</td></tr>
+        <tr><td><span class="dose-level">5–8</span></td><td>5.0 mg</td><td>Once weekly SC</td><td>First meaningful weight loss signal. Appetite noticeably suppressed. GI effects improving.</td></tr>
+        <tr><td><span class="dose-level">9–12</span></td><td>7.5 mg</td><td>Once weekly SC</td><td>Weight loss accelerating. Blood glucose improving in T2DM patients. HbA1c starting to shift.</td></tr>
+        <tr><td><span class="dose-level">13–16</span></td><td>10.0 mg</td><td>Once weekly SC</td><td>Strong fat loss phase. Most patients report dramatic reduction in food noise. Visceral fat reduces.</td></tr>
+        <tr><td><span class="dose-level">17–20</span></td><td>12.5 mg</td><td>Once weekly SC</td><td>Near-maximum dose. Significant body recomposition visible. Metabolic markers normalizing.</td></tr>
+        <tr><td><span class="dose-level">21+</span></td><td>15.0 mg</td><td>Once weekly SC (maintenance)</td><td>Maximum dose — SURMOUNT results achieved at this dose. 22.5% mean weight loss over 72 weeks.</td></tr>
+      </tbody>
+    </table>
+    <div class="highlight-box" style="margin-top:16px;">
+      <strong style="color:var(--accent2);">Maintenance Flexibility:</strong> Many patients find significant results at 5–10mg and do not need to escalate to 15mg. Dose to effect — the goal is maximum tolerated dose that produces target weight loss and metabolic normalization, not necessarily the maximum possible dose.
+    </div>
+  </div>
+
+  <!-- 06 TIMING -->
+  <div class="section" style="animation-delay:0.35s;border-top-color:var(--accent3);">
+    <div class="section-num">06 / TIMING & ADMINISTRATION</div>
+    <h2>Injection Protocol</h2>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">FREQUENCY</div>
+          <div class="info-value" style="color:var(--accent2);font-size:15px;">Once Weekly — Same Day</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">TIMING</div>
+          <div class="info-value">Any time of day — with or without food. Consistency of day matters more than time of day. Most patients choose AM on a fixed day (e.g., Sunday morning).</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">INJECTION SITES</div>
+          <div class="info-value">Abdomen (preferred), outer thigh, upper arm. Rotate sites weekly. Avoid 2-inch radius around navel.</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">GI MANAGEMENT</div>
+          <div class="info-value">More potent than semaglutide = slightly higher GI side effect profile. Same strategies apply: inject before bed, eat small low-fat meals injection day, avoid alcohol 24h. Nausea peaks 8–12h post-injection.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">OPTIMAL COMPANION STACK</div>
+          <div class="info-value">Tirzepatide + AOD-9604 500mcg AM (direct lipolysis) + MOTS-c 5mg AM (mitochondrial efficiency). For muscle preservation: add CJC/Ipamorelin blend bedtime to drive GH-mediated lean mass retention.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 07 BIOMARKERS -->
+  <div class="section" style="animation-delay:0.4s;border-top-color:var(--accent);">
+    <div class="section-num">07 / BIOMARKER MONITORING</div>
+    <h2>Recommended Lab Panel</h2>
+    <div class="bio-category">
+      <div class="bio-category-title">METABOLIC — PRIMARY</div>
+      <table class="bio-table">
+        <thead><tr><th>MARKER</th><th>CLINICAL RANGE</th><th>OPTIMAL TARGET</th><th>NOTES</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">HbA1c</span><span class="bio-test">hemoglobin A1c</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>&lt;5.7%</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>&lt;5.3%</td>
+            <td>Recheck at 12 weeks. 40% of diabetic patients achieve near-normal HbA1c at max dose.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Fasting Insulin + HOMA-IR</span><span class="bio-test">insulin resistance</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>HOMA-IR &lt;2.5</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>HOMA-IR &lt;1.5</td>
+            <td>GIPR activation in adipose tissue directly improves insulin sensitivity — track progressive improvement.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Adiponectin</span><span class="bio-test">adipokine</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>&gt;5 µg/mL</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>&gt;10 µg/mL</td>
+            <td>GIPR-specific: tirzepatide elevates adiponectin (the "good" fat hormone) via direct adipose remodeling. Rising adiponectin = improved fat tissue function. Unique biomarker vs. GLP-1 monotherapy.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Lipid Panel</span><span class="bio-test">TG, LDL, HDL</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>Standard</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>TG &lt;80 / LDL &lt;70</td>
+            <td>TG improvement is particularly pronounced with tirzepatide vs. semaglutide due to GIPR adipose effects.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="bio-category">
+      <div class="bio-category-title">BODY COMPOSITION</div>
+      <table class="bio-table">
+        <thead><tr><th>METHOD</th><th>TIMING</th><th>NOTES</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">DEXA Scan</span><span class="bio-test">dual-energy X-ray absorptiometry</span></td>
+            <td>Baseline → 16 weeks → 32 weeks</td>
+            <td>Lean mass vs. fat mass tracking. Confirm GIPR lean mass preservation effect. If lean mass is declining, add resistance training + protein + GH secretagogue.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 08 CYCLE -->
+  <div class="section" style="animation-delay:0.45s;border-top-color:var(--accent2);">
+    <div class="section-num">08 / CYCLE PROTOCOL</div>
+    <h2>Administration Schedule</h2>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">DURATION</div>
+          <div class="info-value" style="color:var(--white);font-size:18px;font-weight:600;">Ongoing Maintenance Therapy</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">LONG-TERM EVIDENCE</div>
+          <div class="info-value">SURMOUNT-4 extension: continued weight maintenance with ongoing therapy. Discontinuation leads to weight regain (~14% in 1 year off-drug). Current medical consensus: chronic therapy required for sustained benefit, similar to hypertension medication.</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">TIRZEPATIDE vs. SEMAGLUTIDE — CHOOSING</div>
+          <div class="info-value">Tirzepatide: superior weight loss, better lean mass outcomes, better TG reduction, higher cost. Semaglutide: longer safety record (6 years vs. 3), confirmed MACE benefit data, widely compounded. Patient factors: weight loss goal, metabolic profile, cost, and provider preference drive the choice.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">REQUIRES</div>
+          <div class="info-value">BAC water for reconstitution · Apex V3 Pen for precise weekly dosing · Refrigeration · Provider prescription for compounded access</div>
+        </div>
+      </div>
+    </div>
+    <div class="disclaimer-box">
+      ⚠ Research reference only. Compounded tirzepatide regulatory status differs from FDA-approved Mounjaro/Zepbound. Consult a licensed prescriber. Data sourced from SURPASS, SURMOUNT, SUMMIT, and SURMOUNT-OSA trial series.
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

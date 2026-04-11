@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LL-37 — Apex Research Reference</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap');
+    :root{--bg:#080c10;--panel:#0d1318;--border:#1a2d3a;--accent:#00d4ff;--accent2:#00ff9d;--accent3:#ff6b35;--text:#c8dde8;--muted:#4a6272;--white:#eaf4f8;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;line-height:1.6;padding:40px 20px;}
+    body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 70% 10%,rgba(0,212,255,0.06) 0%,transparent 60%),radial-gradient(ellipse at 20% 90%,rgba(255,107,53,0.04) 0%,transparent 50%);pointer-events:none;z-index:0;}
+    .container{max-width:900px;margin:0 auto;position:relative;z-index:1;}
+    .header{margin-bottom:40px;border-bottom:1px solid var(--border);padding-bottom:24px;}
+    .peptide-label{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;}
+    .peptide-name{font-family:'Rajdhani',sans-serif;font-size:52px;font-weight:700;color:var(--white);line-height:1;margin-bottom:8px;}
+    .peptide-fullname{font-size:16px;color:var(--muted);margin-bottom:16px;}
+    .tag-row{display:flex;gap:8px;flex-wrap:wrap;}
+    .tag{background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.25);color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;padding:3px 10px;}
+    .section{background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--muted);padding:28px 32px;margin-bottom:16px;animation:fadeUp 0.4s ease both;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+    .section-num{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:8px;}
+    h2{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px;}
+    .stat-box{background:var(--bg);border:1px solid var(--border);padding:16px;text-align:center;}
+    .stat-value{font-family:'Rajdhani',sans-serif;font-size:32px;font-weight:700;color:var(--white);line-height:1;}
+    .stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-top:4px;}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+    .info-item{margin-bottom:14px;}
+    .info-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:4px;}
+    .info-value{color:var(--white);font-size:13px;line-height:1.5;}
+    .timeline{position:relative;padding-left:20px;}
+    .timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:var(--border);}
+    .timeline-item{position:relative;margin-bottom:20px;}
+    .timeline-item::before{content:'';position:absolute;left:-24px;top:5px;width:8px;height:8px;background:var(--accent);border-radius:50%;}
+    .timeline-year{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:4px;}
+    .benefit-item{display:flex;gap:14px;margin-bottom:16px;align-items:flex-start;}
+    .benefit-num{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent3);min-width:28px;padding-top:2px;}
+    .benefit-title{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;color:var(--white);margin-bottom:3px;}
+    .recon-box{background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--accent2);padding:20px 24px;margin-bottom:16px;}
+    .recon-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);margin-bottom:12px;}
+    .recon-math{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--white);margin-bottom:8px;}
+    .dose-table{width:100%;border-collapse:collapse;}
+    .dose-table th{background:rgba(0,212,255,0.08);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);}
+    .dose-table td{padding:12px 14px;border-bottom:1px solid rgba(26,45,58,0.5);vertical-align:top;font-size:13px;}
+    .dose-level{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);font-weight:700;}
+    .dose-amount{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--white);}
+    .dose-units{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent);display:block;margin-top:2px;}
+    .bio-table{width:100%;border-collapse:collapse;}
+    .bio-table th{background:rgba(0,212,255,0.06);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--muted);text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);}
+    .bio-table td{padding:10px 12px;border-bottom:1px solid rgba(26,45,58,0.4);vertical-align:top;font-size:12px;}
+    .bio-name{color:var(--white);font-weight:500;display:block;}
+    .bio-test{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);}
+    .range-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 6px;margin-right:4px;}
+    .range-clinical{background:rgba(74,98,114,0.3);color:var(--muted);}
+    .range-optimal{background:rgba(0,255,157,0.1);color:var(--accent2);}
+    .bio-category{margin-bottom:24px;}
+    .bio-category-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);margin-bottom:10px;}
+    .note-box{background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.15);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .disclaimer-box{background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.2);padding:14px 18px;margin-top:20px;font-size:12px;color:var(--text);line-height:1.5;}
+  </style>
+</head>
+<body>
+<div class="container">
+<a href="index.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--muted);text-decoration:none;text-transform:uppercase;margin-bottom:28px;padding:8px 14px;border:1px solid var(--border);transition:all .2s;" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">← Back to Encyclopedia</a>
+
+  <div class="header">
+    <div class="peptide-label">Apex Research Reference</div>
+    <div class="peptide-name">LL-37</div>
+    <div class="peptide-fullname">Cathelicidin Antimicrobial Peptide — Human hCAP18 Fragment</div>
+    <div class="tag-row">
+      <span class="tag">ANTIMICROBIAL</span>
+      <span class="tag">IMMUNOMODULATORY</span>
+      <span class="tag">WOUND HEALING</span>
+      <span class="tag">ANTI-BIOFILM</span>
+      <span class="tag">ENDOGENOUS</span>
+    </div>
+  </div>
+
+  <!-- 01 -->
+  <div class="section" style="animation-delay:0.1s;border-top-color:var(--accent);">
+    <div class="section-num">01 — Identity</div>
+    <h2>What Is LL-37?</h2>
+    <div class="stat-grid">
+      <div class="stat-box"><div class="stat-value">1995</div><div class="stat-label">CHARACTERIZED</div></div>
+      <div class="stat-box"><div class="stat-value">37 AA</div><div class="stat-label">AMINO ACIDS</div></div>
+      <div class="stat-box"><div class="stat-value">Cathelicidin</div><div class="stat-label">PEPTIDE CLASS</div></div>
+      <div class="stat-box"><div class="stat-value">Endogenous</div><div class="stat-label">ORIGIN</div></div>
+    </div>
+    <div class="info-grid">
+      <div>
+        <div class="info-item"><div class="info-label">Origin</div><div class="info-value">The only human cathelicidin. Cleaved from the C-terminus of hCAP18 (human cationic antimicrobial protein 18) by protease 3. Produced by neutrophils, macrophages, mast cells, NK cells, and epithelial cells at sites of infection and inflammation.</div></div>
+        <div class="info-item"><div class="info-label">Chemical Class</div><div class="info-value">37-amino acid cationic amphipathic alpha-helical peptide. The "LL" designation refers to the two leucine residues at the N-terminus.</div></div>
+      </div>
+      <div>
+        <div class="info-item"><div class="info-label">Primary Use</div><div class="info-value">Broad-spectrum antimicrobial, anti-biofilm, wound healing acceleration, immune modulation. First-line innate immune defense peptide.</div></div>
+        <div class="info-item"><div class="info-label">Administration</div><div class="info-value">Subcutaneous injection for systemic effects. Topical spray or gel for wound healing. Intranasal for respiratory applications.</div></div>
+      </div>
+    </div>
+    <div class="note-box">LL-37 kills microorganisms by disrupting the integrity of microbial cell membranes — it inserts into the lipid bilayer and causes membrane depolarization and lysis. Critically, this mechanism targets bacterial membranes (negatively charged) over mammalian cell membranes (zwitterionic) — giving it broad antimicrobial activity with selectivity for pathogens over host cells.</div>
+  </div>
+
+  <!-- 02 -->
+  <div class="section" style="animation-delay:0.2s;">
+    <div class="section-num">02 — Research History</div>
+    <h2>Discovery & Research Timeline</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-year">1980s</div>
+        <div>Cathelicidin family identified in mammalian neutrophils. Multiple species found to express cathelicidins as innate immune defense peptides. The human version (hCAP18) is identified as a neutrophil granule protein.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">1995</div>
+        <div>Gudmundsson et al. fully characterize LL-37 as the C-terminal cleavage product of hCAP18. The 37-amino acid sequence and its broad-spectrum antimicrobial activity are documented. LL-37 confirmed as the only human cathelicidin peptide.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2003</div>
+        <div>Pivotal research demonstrates LL-37 disrupts and penetrates established bacterial biofilms — particularly Pseudomonas aeruginosa. Biofilm disruption is a critical advance since biofilms protect chronic wound bacteria from antibiotics.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2005</div>
+        <div>Wound healing studies show LL-37 stimulates keratinocyte migration and proliferation, promotes re-epithelialization, and induces angiogenesis. VEGF upregulation confirmed as a mechanism of LL-37-driven wound repair.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2012</div>
+        <div>Anti-cancer research reveals LL-37 selectively induces apoptosis in certain cancer cell lines (colon, lung, breast) while sparing normal epithelial cells. The mechanism involves mitochondrial membrane disruption in cancer cells.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2016–Present</div>
+        <div>Autoimmune research links LL-37 to lupus pathogenesis (anti-LL-37 antibodies found in SLE patients) and identifies immunomodulatory roles in psoriasis and rosacea. Research peptide community adopts LL-37 for wound healing, infection, and immune support protocols.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 -->
+  <div class="section" style="animation-delay:0.3s;">
+    <div class="section-num">03 — Primary Benefits</div>
+    <h2>Documented Effects</h2>
+    <div class="benefit-item"><div class="benefit-num">01</div><div><div class="benefit-title">Broad-Spectrum Antimicrobial</div><div>Kills gram-positive bacteria, gram-negative bacteria, fungi, enveloped viruses, and some protozoa by disrupting membrane integrity. Effective against both antibiotic-sensitive and antibiotic-resistant strains including MRSA.</div></div></div>
+    <div class="benefit-item"><div class="benefit-num">02</div><div><div class="benefit-title">Anti-Biofilm Activity</div><div>Penetrates and disrupts established bacterial biofilms — the protective matrix that makes chronic wound infections resistant to antibiotics. LL-37 is one of the few agents capable of penetrating mature P. aeruginosa biofilms.</div></div></div>
+    <div class="benefit-item"><div class="benefit-num">03</div><div><div class="benefit-title">Wound Healing Acceleration</div><div>Stimulates keratinocyte migration and proliferation for re-epithelialization. Upregulates VEGF for angiogenesis. Reduces biofilm burden at wound sites. One of the most potent peptides for chronic wound resolution.</div></div></div>
+    <div class="benefit-item"><div class="benefit-num">04</div><div><div class="benefit-title">Immune Modulation</div><div>Acts as a bidirectional immune regulator — pro-inflammatory at infection sites (recruits neutrophils and monocytes) and anti-inflammatory in non-infected tissue (reduces excessive cytokine production). Balances rather than simply stimulates immunity.</div></div></div>
+    <div class="benefit-item"><div class="benefit-num">05</div><div><div class="benefit-title">Respiratory Protection</div><div>Highly expressed in lung epithelium and airway secretions. Reduces bacterial burden in upper and lower respiratory infections. Studied in cystic fibrosis, COPD, and COVID-19 contexts for innate airway defense enhancement.</div></div></div>
+    <div class="benefit-item"><div class="benefit-num">06</div><div><div class="benefit-title">Anti-Cancer Activity</div><div>Selectively induces apoptosis in cancer cell lines (colon, lung, breast, ovarian) while sparing normal cells. Mechanism differs from chemotherapy — mitochondrial membrane disruption rather than DNA damage.</div></div></div>
+    <div class="benefit-item"><div class="benefit-num">07</div><div><div class="benefit-title">Angiogenesis Promotion</div><div>Promotes formation of new blood vessels via VEGF, FGF2, and direct endothelial cell stimulation. Relevant for wound healing, ischemic tissue repair, and recovery from vascular injury.</div></div></div>
+  </div>
+
+  <!-- 04 -->
+  <div class="section" style="animation-delay:0.4s;border-top-color:var(--accent2);">
+    <div class="section-num">04 — Reconstitution</div>
+    <h2>Mixing & Storage</h2>
+    <div class="recon-box">
+      <div class="recon-title">▸ Standard Reconstitution — 5mg Vial</div>
+      <div class="recon-math">5mg vial + 300 units BAC water = 16.7 mcg per unit on insulin syringe</div>
+      <div style="font-size:12px;color:var(--text);margin-top:6px;">5,000 mcg total per vial · Refrigerate after reconstitution · Use within 4–6 weeks · Protect from light</div>
+    </div>
+    <div class="note-box">LL-37 can also be used topically. For wound healing applications, dissolve in sterile saline at 50–100 mcg/mL and apply directly to wound bed. For injectable use, standard BAC water reconstitution applies. Some protocols combine topical + injectable for systemic + local effect.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;">
+      <div class="stat-box" style="text-align:left;padding:14px 16px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:6px;">UNRECONSTITUTED</div>
+        <div style="font-size:13px;color:var(--white);line-height:1.5;">Refrigerate at 2–8°C. Protect from light and humidity. Stable for shipping at room temp short-term.</div>
+      </div>
+      <div class="stat-box" style="text-align:left;padding:14px 16px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:6px;">RECONSTITUTED</div>
+        <div style="font-size:13px;color:var(--white);line-height:1.5;">Refrigerate at 2–8°C. Use within 4–6 weeks. Protect from light. Do not freeze liquid solution.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 05 -->
+  <div class="section" style="animation-delay:0.5s;border-top-color:var(--accent3);">
+    <div class="section-num">05 — Dosing Protocol</div>
+    <h2>Dose Levels & Unit Draws</h2>
+    <table class="dose-table">
+      <thead><tr><th>Level</th><th>Dose</th><th>Syringe Draw</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="dose-level">LOW</span></td>
+          <td><div class="dose-amount">100mcg</div><span class="dose-units">6 units on insulin syringe</span></td>
+          <td style="color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:12px;">6u</td>
+          <td>Immunomodulatory and general immune support dose. Conservative starting point. Assess tolerance — some users experience temporary redness at injection site.</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">STANDARD</span></td>
+          <td><div class="dose-amount">250–500mcg</div><span class="dose-units">15–30 units on insulin syringe</span></td>
+          <td style="color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:12px;">15–30u</td>
+          <td>Therapeutic dose for active infection support, wound healing, and anti-biofilm protocols. Daily SC injection for systemic effect.</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">HIGH</span></td>
+          <td><div class="dose-amount">500–1000mcg</div><span class="dose-units">30–60 units on insulin syringe</span></td>
+          <td style="color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:12px;">30–60u</td>
+          <td>Intensive antimicrobial or chronic wound healing protocol. Higher doses may cause increased injection site inflammation — manage with rotating sites.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note-box">For topical wound healing: dissolve reconstituted LL-37 to a concentration of 50–100 mcg/mL in sterile saline. Apply to clean wound bed 1–2× daily under dressing. Can be combined with systemic SC injection for dual-route delivery in chronic wounds or persistent infections.</div>
+  </div>
+
+  <!-- 06 -->
+  <div class="section" style="animation-delay:0.6s;">
+    <div class="section-num">06 — Timing & Frequency</div>
+    <h2>When & How Often</h2>
+    <table class="bio-table">
+      <thead><tr><th>Variable</th><th>Recommendation</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="bio-name">Frequency</span></td>
+          <td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent2);">Daily (acute) / Every other day (maintenance)</span></td>
+          <td style="font-size:12px;color:var(--text);">Active infection or wound healing: daily SC injection. Immune support maintenance: every other day is adequate given the immunomodulatory mechanism.</td>
+        </tr>
+        <tr>
+          <td><span class="bio-name">Time of Day</span></td>
+          <td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent2);">AM preferred</span></td>
+          <td style="font-size:12px;color:var(--text);">Innate immune activity is highest in the morning. AM dosing aligns with natural immune rhythm. Not a hard requirement.</td>
+        </tr>
+        <tr>
+          <td><span class="bio-name">Fasted vs Fed</span></td>
+          <td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted);">Either acceptable</span></td>
+          <td style="font-size:12px;color:var(--text);">LL-37 mechanism is not dependent on metabolic state. Food intake does not significantly affect efficacy.</td>
+        </tr>
+        <tr>
+          <td><span class="bio-name">Injection Site</span></td>
+          <td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent2);">Rotate sites — abdomen, thigh, arm</span></td>
+          <td style="font-size:12px;color:var(--text);">LL-37 can cause local inflammation at the injection site (part of its mechanism). Rotating sites prevents site-specific inflammation accumulation.</td>
+        </tr>
+        <tr>
+          <td><span class="bio-name">Topical Application</span></td>
+          <td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent2);">1–2× daily directly to wound</span></td>
+          <td style="font-size:12px;color:var(--text);">For wound healing protocols, topical application delivers LL-37 directly to the wound bed for local antimicrobial + healing effect. Can be combined with systemic SC dosing.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 07 -->
+  <div class="section" style="animation-delay:0.7s;">
+    <div class="section-num">07 — Biomarker Monitoring</div>
+    <h2>Lab Tests & Optimal Ranges</h2>
+    <div class="bio-category">
+      <div class="bio-category-title">▸ Immune Function</div>
+      <table class="bio-table">
+        <thead><tr><th>Biomarker</th><th>Lab Test</th><th>Clinical Range</th><th>Optimal Range</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">WBC Differential</span><br><span style="font-size:11px;color:var(--muted);">Immune cell baseline</span></td>
+            <td><span class="bio-test">CBC with differential</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span><span class="range-clinical">WBC 4.5–11.0 × 10³/µL</span></td>
+            <td><span class="range-label range-optimal">OPTIMAL</span><span class="range-optimal">WBC 4.5–6.0; neutrophil 50–65%</span></td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">hsCRP</span></td>
+            <td><span class="bio-test">High-Sensitivity CRP</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span><span class="range-clinical">&lt;3.0 mg/L</span></td>
+            <td><span class="range-label range-optimal">OPTIMAL</span><span class="range-optimal">&lt;0.5 mg/L</span></td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">IL-6</span></td>
+            <td><span class="bio-test">Serum IL-6</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span><span class="range-clinical">&lt;7.0 pg/mL</span></td>
+            <td><span class="range-label range-optimal">OPTIMAL</span><span class="range-optimal">&lt;1.5 pg/mL</span></td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">IL-10</span><br><span style="font-size:11px;color:var(--muted);">Anti-inflammatory cytokine</span></td>
+            <td><span class="bio-test">Serum IL-10</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span><span class="range-clinical">&lt;9.1 pg/mL</span></td>
+            <td><span class="range-label range-optimal">OPTIMAL</span><span class="range-optimal">Stable or rising with treatment</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="bio-category">
+      <div class="bio-category-title">▸ Safety Panel</div>
+      <table class="bio-table">
+        <thead><tr><th>Biomarker</th><th>Lab Test</th><th>Clinical Range</th><th>Optimal Range</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">AST / ALT</span></td>
+            <td><span class="bio-test">CMP</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span><span class="range-clinical">AST 10–40 / ALT 7–56 U/L</span></td>
+            <td><span class="range-label range-optimal">OPTIMAL</span><span class="range-optimal">AST &lt;26 / ALT &lt;26 U/L</span></td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Creatinine / eGFR</span></td>
+            <td><span class="bio-test">CMP</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span><span class="range-clinical">Creat 0.7–1.3 / eGFR &gt;60</span></td>
+            <td><span class="range-label range-optimal">OPTIMAL</span><span class="range-optimal">eGFR &gt;90</span></td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">CBC</span></td>
+            <td><span class="bio-test">Complete Blood Count</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span><span class="range-clinical">Standard ranges</span></td>
+            <td><span class="range-label range-optimal">OPTIMAL</span><span class="range-optimal">Mid-range; WBC 4.5–6.0</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="disclaimer-box">⚠ LL-37 is not FDA-approved for injectable use. Most research is in vitro and animal models. Human pharmacokinetic data for injectable LL-37 is limited. At infection sites LL-37 may cause transient local inflammation — this is part of its mechanism (innate immune recruitment) and is expected. Topical use for wound care has a strong clinical research base and is considered lower risk than systemic injection.</div>
+  </div>
+
+  <!-- 08 -->
+  <div class="section" style="animation-delay:0.8s;border-top-color:var(--accent);">
+    <div class="section-num">08 — Cycle Protocol</div>
+    <h2>Cycle Length, Frequency & Timing</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">
+      <div class="stat-box" style="text-align:left;padding:14px 16px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:6px;">ACUTE INFECTION / WOUND</div>
+        <div style="font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--white);line-height:1;">4–8 Weeks</div>
+        <div style="font-size:12px;color:var(--text);margin-top:6px;line-height:1.5;">Daily SC injection at 250–500mcg for active infection or wound healing protocol. Continue until resolution then taper.</div>
+      </div>
+      <div class="stat-box" style="text-align:left;padding:14px 16px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:6px;">IMMUNE SUPPORT</div>
+        <div style="font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--white);line-height:1;">8–12 Weeks</div>
+        <div style="font-size:12px;color:var(--text);margin-top:6px;line-height:1.5;">Every-other-day dosing at 100–250mcg for immune modulation and chronic inflammation support. 4-week break between cycles.</div>
+      </div>
+    </div>
+    <div style="background:rgba(0,255,157,0.05);border:1px solid rgba(0,255,157,0.2);padding:18px 20px;">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);margin-bottom:12px;">PROTOCOL SUMMARY</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;">
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);">
+          <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">4–12 wk</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">CYCLE LENGTH</div>
+        </div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);">
+          <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">Daily</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">ACUTE FREQ</div>
+        </div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);">
+          <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">EOD</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">MAINTENANCE FREQ</div>
+        </div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);">
+          <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">AM</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">TIMING</div>
+        </div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);">
+          <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">SC / Topical</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">ROUTE</div>
+        </div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);">
+          <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">4 wk</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">BREAK</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

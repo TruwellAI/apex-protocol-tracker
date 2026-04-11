@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sermorelin — Apex Research Reference</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap');
+    :root{--bg:#080c10;--panel:#0d1318;--border:#1a2d3a;--accent:#00d4ff;--accent2:#00ff9d;--accent3:#ff6b35;--text:#c8dde8;--muted:#4a6272;--white:#eaf4f8;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;line-height:1.6;padding:40px 20px;}
+    body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 70% 10%,rgba(0,212,255,0.06) 0%,transparent 60%),radial-gradient(ellipse at 20% 90%,rgba(255,107,53,0.04) 0%,transparent 50%);pointer-events:none;z-index:0;}
+    .container{max-width:900px;margin:0 auto;position:relative;z-index:1;}
+    .header{margin-bottom:40px;border-bottom:1px solid var(--border);padding-bottom:24px;}
+    .peptide-label{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;}
+    .peptide-name{font-family:'Rajdhani',sans-serif;font-size:52px;font-weight:700;color:var(--white);line-height:1;margin-bottom:8px;}
+    .peptide-fullname{font-size:16px;color:var(--muted);margin-bottom:16px;}
+    .tag-row{display:flex;gap:8px;flex-wrap:wrap;}
+    .tag{background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.25);color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;padding:3px 10px;}
+    .section{background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--muted);padding:28px 32px;margin-bottom:16px;animation:fadeUp 0.4s ease both;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+    .section-num{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:8px;}
+    h2{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px;}
+    .stat-box{background:var(--bg);border:1px solid var(--border);padding:16px;text-align:center;}
+    .stat-value{font-family:'Rajdhani',sans-serif;font-size:32px;font-weight:700;color:var(--white);line-height:1;}
+    .stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-top:4px;}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+    .info-item{margin-bottom:14px;}
+    .info-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:4px;}
+    .info-value{color:var(--white);font-size:13px;line-height:1.5;}
+    .timeline{position:relative;padding-left:20px;}
+    .timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:var(--border);}
+    .timeline-item{position:relative;margin-bottom:20px;}
+    .timeline-item::before{content:'';position:absolute;left:-24px;top:5px;width:8px;height:8px;background:var(--accent);border-radius:50%;}
+    .timeline-year{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:4px;}
+    .benefit-item{display:flex;gap:14px;margin-bottom:16px;align-items:flex-start;}
+    .benefit-num{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent3);min-width:28px;padding-top:2px;}
+    .benefit-title{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;color:var(--white);margin-bottom:3px;}
+    .recon-box{background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--accent2);padding:20px 24px;margin-bottom:16px;}
+    .recon-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);margin-bottom:12px;}
+    .recon-math{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--white);margin-bottom:8px;}
+    .dose-table{width:100%;border-collapse:collapse;}
+    .dose-table th{background:rgba(0,212,255,0.08);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);}
+    .dose-table td{padding:12px 14px;border-bottom:1px solid rgba(26,45,58,0.5);vertical-align:top;font-size:13px;}
+    .dose-level{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);font-weight:700;}
+    .dose-amount{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--white);}
+    .dose-units{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent);display:block;margin-top:2px;}
+    .bio-table{width:100%;border-collapse:collapse;}
+    .bio-table th{background:rgba(0,212,255,0.06);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--muted);text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);}
+    .bio-table td{padding:10px 12px;border-bottom:1px solid rgba(26,45,58,0.4);vertical-align:top;font-size:12px;}
+    .bio-name{color:var(--white);font-weight:500;display:block;}
+    .bio-test{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);}
+    .range-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 6px;margin-right:4px;}
+    .range-clinical{background:rgba(74,98,114,0.3);color:var(--muted);}
+    .range-optimal{background:rgba(0,255,157,0.1);color:var(--accent2);}
+    .bio-category{margin-bottom:24px;}
+    .bio-category-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);margin-bottom:10px;}
+    .note-box{background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.15);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .disclaimer-box{background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.2);padding:14px 18px;margin-top:20px;font-size:12px;color:var(--text);line-height:1.5;}
+  </style>
+</head>
+<body>
+<div class="container">
+<a href="index.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--muted);text-decoration:none;text-transform:uppercase;margin-bottom:28px;padding:8px 14px;border:1px solid var(--border);transition:all .2s;" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">← Back to Encyclopedia</a>
+
+  <div class="header">
+    <div class="peptide-label">Apex Research Reference</div>
+    <div class="peptide-name">Sermorelin</div>
+    <div class="peptide-fullname">Sermorelin Acetate — GHRH(1-29) Analog</div>
+    <div class="tag-row">
+      <span class="tag">GHRH ANALOG</span>
+      <span class="tag">GH SECRETAGOGUE</span>
+      <span class="tag">ANTI-AGING</span>
+      <span class="tag">PITUITARY</span>
+      <span class="tag">NIGHTLY PROTOCOL</span>
+    </div>
+  </div>
+
+  <!-- 01 -->
+  <div class="section" style="animation-delay:0.1s;border-top-color:var(--accent);">
+    <div class="section-num">01 — Identity</div>
+    <h2>What Is Sermorelin?</h2>
+    <div class="stat-grid">
+      <div class="stat-box"><div class="stat-value">1982</div><div class="stat-label">CHARACTERIZED</div></div>
+      <div class="stat-box"><div class="stat-value">GHRH 1-29</div><div class="stat-label">SEQUENCE</div></div>
+      <div class="stat-box"><div class="stat-value">Pituitary</div><div class="stat-label">TARGET ORGAN</div></div>
+      <div class="stat-box"><div class="stat-value">~12 min</div><div class="stat-label">HALF-LIFE</div></div>
+    </div>
+    <div class="info-grid">
+      <div>
+        <div class="info-item"><div class="info-label">Origin</div><div class="info-value">Synthetic analog of the first 29 amino acids of endogenous GHRH. FDA approved 1997 as Geref for pediatric GH deficiency. Withdrawn from market 2008 for business reasons — not safety.</div></div>
+        <div class="info-item"><div class="info-label">Chemical Class</div><div class="info-value">29-amino acid peptide. Linear. Acetate salt form. Synthetic analog of endogenous GHRH(1-44).</div></div>
+      </div>
+      <div>
+        <div class="info-item"><div class="info-label">Primary Use</div><div class="info-value">Stimulates the pituitary to produce and secrete its own growth hormone. Maintains natural pulsatile GH release. Anti-aging, body composition, sleep quality, recovery.</div></div>
+        <div class="info-item"><div class="info-label">Administration</div><div class="info-value">Subcutaneous injection. Nightly before bed — FASTED. Pituitary stimulation synchronized with natural GH pulse during slow-wave sleep.</div></div>
+      </div>
+    </div>
+    <div class="note-box">Key distinction: Sermorelin stimulates YOUR pituitary to make GH — it does not inject exogenous growth hormone. This preserves the natural pulsatile GH release pattern and does not suppress the pituitary axis. It's a fundamentally safer approach than direct HGH injection for long-term use.</div>
+  </div>
+
+  <!-- 02 -->
+  <div class="section" style="animation-delay:0.2s;">
+    <div class="section-num">02 — Research History</div>
+    <h2>Discovery & Research Timeline</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-year">1960s–1970s</div>
+        <div>GHRH (Growth Hormone Releasing Hormone) is hypothesized based on hypothalamic regulation studies. Scientists identify that the hypothalamus controls pituitary GH secretion via a releasing factor.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">1982</div>
+        <div>Human GHRH is isolated and sequenced. Multiple groups including Guillemin (Salk Institute) and Vale (Salk) characterize the full 44-amino acid sequence. Sermorelin — the bioactive 1-29 fragment — is identified as retaining full GH-stimulating potency.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">1990s</div>
+        <div>Sermorelin (Geref) enters clinical development for pediatric growth hormone deficiency. Shown to increase GH secretion, IGF-1 levels, and linear growth in GH-deficient children with excellent safety profile.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">1997</div>
+        <div>FDA approves Sermorelin acetate (Geref) for treatment of growth hormone deficiency in children. Becomes the first GHRH analog approved for clinical use in the United States.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2008</div>
+        <div>Geref withdrawn from commercial market by Serono — a business decision, not a safety withdrawal. Compounded Sermorelin continues in anti-aging and wellness medicine as GH optimization tool in adults.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2010–Present</div>
+        <div>Sermorelin becomes foundational to functional medicine GH optimization protocols. Widely compounded and used alongside GHRP agents (Ipamorelin) for synergistic GH pulse amplification. Foundation for all subsequent GHRH analogs (CJC-1295, Tesamorelin).</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 -->
+  <div class="section" style="animation-delay:0.3s;">
+    <div class="section-num">03 — Primary Benefits</div>
+    <h2>Documented Effects</h2>
+    <div class="benefit-item"><div class="benefit-num">01</div><div><div class="benefit-title">Pituitary GH Stimulation</div><div>Directly activates GHRH receptors on pituitary somatotrophs, triggering natural pulsatile GH secretion. Maintains the body's own GH rhythm rather than imposing an artificial exogenous pattern.</div></div></div>
+    <div class="benefit-item"><div class="benefit-num">02</div><div><div class="benefit-title">Body Composition</div><div>GH-driven IGF-1 increase promotes lipolysis (fat mobilization) and lean muscle preservation. Consistent 3–6 month cycles show measurable reductions in body fat percentage and improvements in lean mass.</div></div></div>
+    <div class="benefit-item"><div class="benefit-num">03</div><div><div class="benefit-title">Sleep Architecture Enhancement</div><div>GH pulses naturally peak during slow-wave (deep) sleep. Sermorelin amplifies the nightly GH pulse, improving slow-wave sleep duration and quality — users commonly report deeper, more restorative sleep within weeks.</div></div></div>
+    <div class="benefit-item"><div class="benefit-num">04</div><div><div class="benefit-title">Tissue Recovery</div><div>Elevated GH and downstream IGF-1 accelerate repair of muscle, tendon, and connective tissue. Recovery between training sessions improves with 4–8 weeks of consistent use.</div></div></div>
+    <div class="benefit-item"><div class="benefit-num">05</div><div><div class="benefit-title">Skin & Collagen</div><div>IGF-1 upregulates collagen synthesis in fibroblasts. Users report improvements in skin elasticity, reduced fine lines, and improved skin texture with sustained cycles.</div></div></div>
+    <div class="benefit-item"><div class="benefit-num">06</div><div><div class="benefit-title">Bone Density Support</div><div>GH/IGF-1 axis stimulates osteoblast activity. Long-term Sermorelin use associated with improved bone mineral density — relevant for aging populations at osteopenia risk.</div></div></div>
+    <div class="benefit-item"><div class="benefit-num">07</div><div><div class="benefit-title">Cognitive Clarity</div><div>GH receptors exist throughout the brain, including hippocampus and prefrontal cortex. Users commonly report improved mental sharpness, focus, and mood — particularly after 4–8 weeks of consistent nightly use.</div></div></div>
+  </div>
+
+  <!-- 04 -->
+  <div class="section" style="animation-delay:0.4s;border-top-color:var(--accent2);">
+    <div class="section-num">04 — Reconstitution</div>
+    <h2>Mixing & Storage</h2>
+    <div class="recon-box">
+      <div class="recon-title">▸ Standard Reconstitution — 10mg Vial</div>
+      <div class="recon-math">10mg vial + 300 units BAC water = 33.3 mcg per unit on insulin syringe</div>
+      <div style="font-size:12px;color:var(--text);margin-top:6px;">10,000 mcg total per vial · Refrigerate after reconstitution · Use within 4–6 weeks · Protect from light</div>
+    </div>
+    <div class="note-box">Add BAC water slowly by directing the stream down the side of the vial — do not inject directly onto the powder. Swirl gently; do not shake. Solution should be clear and colorless. Discard if cloudy or particulate matter present.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;">
+      <div class="stat-box" style="text-align:left;padding:14px 16px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:6px;">UNRECONSTITUTED</div>
+        <div style="font-size:13px;color:var(--white);line-height:1.5;">Refrigerate at 2–8°C. Stable for shipping at room temperature short-term. Do not freeze lyophilized powder.</div>
+      </div>
+      <div class="stat-box" style="text-align:left;padding:14px 16px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:6px;">RECONSTITUTED</div>
+        <div style="font-size:13px;color:var(--white);line-height:1.5;">Refrigerate at 2–8°C. Use within 4–6 weeks. Keep away from light. Do not freeze liquid solution.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 05 -->
+  <div class="section" style="animation-delay:0.5s;border-top-color:var(--accent3);">
+    <div class="section-num">05 — Dosing Protocol</div>
+    <h2>Dose Levels & Unit Draws</h2>
+    <table class="dose-table">
+      <thead><tr><th>Level</th><th>Dose</th><th>Syringe Draw</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="dose-level">LOW</span></td>
+          <td><div class="dose-amount">100mcg</div><span class="dose-units">3 units on insulin syringe</span></td>
+          <td style="color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:12px;">3u</td>
+          <td>Conservative anti-aging starting dose. Good for first-time users or those with GH sensitivity concerns. Nightly before bed, fasted.</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">STANDARD</span></td>
+          <td><div class="dose-amount">200–300mcg</div><span class="dose-units">6–9 units on insulin syringe</span></td>
+          <td style="color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:12px;">6–9u</td>
+          <td>Standard therapeutic range for GH optimization. Most clinical protocols and anti-aging practitioners use 200–300mcg nightly. Best balance of efficacy and tolerability.</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">HIGH</span></td>
+          <td><div class="dose-amount">500mcg</div><span class="dose-units">15 units on insulin syringe</span></td>
+          <td style="color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:12px;">15u</td>
+          <td>Upper range. Diminishing returns above 500mcg due to receptor saturation at the pituitary. Higher doses do not proportionally increase GH output.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note-box">⚠ <strong style="color:var(--white);">NIGHTLY FASTED ONLY.</strong> Sermorelin must be taken on an empty stomach — no food for 2–3 hours before injection. Insulin from recent meals directly blunts GH release at the pituitary level. This is the most critical timing rule for all GHRH analogs.</div>
+  </div>
+
+  <!-- 06 -->
+  <div class="section" style="animation-delay:0.6s;">
+    <div class="section-num">06 — Timing & Frequency</div>
+    <h2>When & How Often</h2>
+    <table class="bio-table">
+      <thead><tr><th>Variable</th><th>Recommendation</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="bio-name">Primary Timing</span></td>
+          <td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent2);">Nightly — 30–60 min before sleep</span></td>
+          <td style="font-size:12px;color:var(--text);">GH naturally pulses 60–90 minutes after sleep onset during slow-wave sleep. Sermorelin amplifies this natural pulse by priming the pituitary at sleep onset.</td>
+        </tr>
+        <tr>
+          <td><span class="bio-name">Fed State</span></td>
+          <td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent3);">FASTED — 2–3 hrs no food</span></td>
+          <td style="font-size:12px;color:var(--text);">Insulin is the primary inhibitor of GH release. Eating raises insulin, which directly suppresses the GH pulse Sermorelin is trying to amplify. No food after dinner if dosing at bedtime.</td>
+        </tr>
+        <tr>
+          <td><span class="bio-name">Frequency</span></td>
+          <td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent2);">Daily or 5 days on / 2 off</span></td>
+          <td style="font-size:12px;color:var(--text);">Daily nightly use is standard. Some practitioners use 5 days on / 2 days off (weekends off) to reduce receptor desensitization risk, though evidence for this in Sermorelin is limited.</td>
+        </tr>
+        <tr>
+          <td><span class="bio-name">Stack Timing</span></td>
+          <td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent2);">Combine with Ipamorelin</span></td>
+          <td style="font-size:12px;color:var(--text);">Sermorelin (GHRH) + Ipamorelin (GHRP) in the same nightly injection produces 2–3× the GH pulse of either alone. Synergistic — two different receptor pathways amplifying the same output.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 07 -->
+  <div class="section" style="animation-delay:0.7s;">
+    <div class="section-num">07 — Biomarker Monitoring</div>
+    <h2>Lab Tests & Optimal Ranges</h2>
+    <div class="bio-category">
+      <div class="bio-category-title">▸ GH Axis Efficacy</div>
+      <table class="bio-table">
+        <thead><tr><th>Biomarker</th><th>Lab Test</th><th>Clinical Range</th><th>Optimal Range</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">IGF-1</span><br><span style="font-size:11px;color:var(--muted);">Primary GH output marker</span></td>
+            <td><span class="bio-test">Serum IGF-1</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span><span class="range-clinical">Age-dependent</span></td>
+            <td><span class="range-label range-optimal">OPTIMAL</span><span class="range-optimal">Upper third of age range</span></td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">IGFBP-3</span><br><span style="font-size:11px;color:var(--muted);">GH/IGF-1 binding protein</span></td>
+            <td><span class="bio-test">Serum IGFBP-3</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span><span class="range-clinical">Age-dependent</span></td>
+            <td><span class="range-label range-optimal">OPTIMAL</span><span class="range-optimal">Upper third of age range</span></td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">GH (spot, AM fasting)</span></td>
+            <td><span class="bio-test">Serum GH</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span><span class="range-clinical">0–10 ng/mL</span></td>
+            <td><span class="range-label range-optimal">OPTIMAL</span><span class="range-optimal">Trending upward from baseline</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="bio-category">
+      <div class="bio-category-title">▸ Metabolic Safety Monitoring</div>
+      <table class="bio-table">
+        <thead><tr><th>Biomarker</th><th>Lab Test</th><th>Clinical Range</th><th>Optimal Range</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">Fasting Glucose</span></td>
+            <td><span class="bio-test">Fasting plasma glucose</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span><span class="range-clinical">70–100 mg/dL</span></td>
+            <td><span class="range-label range-optimal">OPTIMAL</span><span class="range-optimal">75–90 mg/dL</span></td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Fasting Insulin</span></td>
+            <td><span class="bio-test">Serum fasting insulin</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span><span class="range-clinical">2–25 µIU/mL</span></td>
+            <td><span class="range-label range-optimal">OPTIMAL</span><span class="range-optimal">2–6 µIU/mL</span></td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">HbA1c</span></td>
+            <td><span class="bio-test">Hemoglobin A1c</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span><span class="range-clinical">&lt;5.7%</span></td>
+            <td><span class="range-label range-optimal">OPTIMAL</span><span class="range-optimal">4.6–5.3%</span></td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">AST / ALT</span></td>
+            <td><span class="bio-test">CMP</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span><span class="range-clinical">AST 10–40 / ALT 7–56 U/L</span></td>
+            <td><span class="range-label range-optimal">OPTIMAL</span><span class="range-optimal">AST &lt;26 / ALT &lt;26 U/L</span></td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">CBC</span></td>
+            <td><span class="bio-test">Complete Blood Count</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span><span class="range-clinical">Standard ranges</span></td>
+            <td><span class="range-label range-optimal">OPTIMAL</span><span class="range-optimal">Mid-range; WBC 4.5–6.0</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="disclaimer-box">⚠ Sermorelin was FDA-approved as Geref but is no longer commercially available. Compounded Sermorelin is used for wellness/anti-aging under physician supervision. GH axis optimization warrants monitoring of glucose metabolism — elevated GH can reduce insulin sensitivity. Do not use in active malignancy. Thyroid function should be assessed before starting GH optimization protocols as hypothyroidism blunts GH response.</div>
+  </div>
+
+  <!-- 08 -->
+  <div class="section" style="animation-delay:0.8s;border-top-color:var(--accent);">
+    <div class="section-num">08 — Cycle Protocol</div>
+    <h2>Cycle Length, Frequency & Timing</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">
+      <div class="stat-box" style="text-align:left;padding:14px 16px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:6px;">STANDARD CYCLE</div>
+        <div style="font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--white);line-height:1;">3–6 Months</div>
+        <div style="font-size:12px;color:var(--text);margin-top:6px;line-height:1.5;">Nightly at 200–300mcg. IGF-1 typically rises measurably at 8 weeks, with full body composition effect at 3–6 months. Most practitioners run 6-month cycles.</div>
+      </div>
+      <div class="stat-box" style="text-align:left;padding:14px 16px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:6px;">BREAK</div>
+        <div style="font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--white);line-height:1;">1–2 Months</div>
+        <div style="font-size:12px;color:var(--text);margin-top:6px;line-height:1.5;">Allow the pituitary to reset after sustained stimulation. Some practitioners prefer 5 days on / 2 days off within cycles to reduce desensitization risk.</div>
+      </div>
+    </div>
+    <div style="background:rgba(0,255,157,0.05);border:1px solid rgba(0,255,157,0.2);padding:18px 20px;">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);margin-bottom:12px;">PROTOCOL SUMMARY</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;">
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);">
+          <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">3–6 mo</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">CYCLE LENGTH</div>
+        </div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);">
+          <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">Nightly</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">FREQUENCY</div>
+        </div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);">
+          <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">PM</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">TIMING</div>
+        </div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);">
+          <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">Fasted</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">FED STATE</div>
+        </div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);">
+          <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">1–2 mo</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">BREAK</div>
+        </div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);">
+          <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">SC</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">ROUTE</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

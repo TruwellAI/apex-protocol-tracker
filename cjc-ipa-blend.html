@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CJC-1295 / Ipamorelin Blend — Apex Research Reference</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap');
+    :root{--bg:#080c10;--panel:#0d1318;--border:#1a2d3a;--accent:#00d4ff;--accent2:#00ff9d;--accent3:#ff6b35;--text:#c8dde8;--muted:#4a6272;--white:#eaf4f8;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;line-height:1.6;padding:40px 20px;}
+    body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 70% 10%,rgba(0,212,255,0.06) 0%,transparent 60%),radial-gradient(ellipse at 20% 90%,rgba(0,255,157,0.04) 0%,transparent 50%);pointer-events:none;z-index:0;}
+    .container{max-width:900px;margin:0 auto;position:relative;z-index:1;}
+    .header{margin-bottom:40px;border-bottom:1px solid var(--border);padding-bottom:24px;}
+    .peptide-label{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;}
+    .peptide-name{font-family:'Rajdhani',sans-serif;font-size:46px;font-weight:700;color:var(--white);line-height:1;margin-bottom:8px;}
+    .peptide-fullname{font-size:16px;color:var(--muted);margin-bottom:16px;}
+    .tag-row{display:flex;gap:8px;flex-wrap:wrap;}
+    .tag{background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.25);color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;padding:3px 10px;}
+    .tag-stack{background:rgba(0,255,157,0.1);border:1px solid rgba(0,255,157,0.3);color:var(--accent2);}
+    .section{background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--muted);padding:28px 32px;margin-bottom:16px;animation:fadeUp 0.4s ease both;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+    .section-num{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:8px;}
+    h2{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;}
+    h3{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px;}
+    .stat-box{background:var(--bg);border:1px solid var(--border);padding:16px;text-align:center;}
+    .stat-value{font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--white);line-height:1;}
+    .stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-top:4px;}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+    .info-item{margin-bottom:14px;}
+    .info-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:4px;}
+    .info-value{color:var(--white);font-size:13px;line-height:1.5;}
+    .compound-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
+    .compound-card{background:var(--bg);border:1px solid var(--border);padding:20px 22px;}
+    .compound-card-title{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--white);margin-bottom:4px;}
+    .compound-card-sub{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:12px;letter-spacing:1px;}
+    .compound-role{display:inline-block;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.2);color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 8px;margin-bottom:12px;}
+    .compound-role-2{background:rgba(0,255,157,0.1);border:1px solid rgba(0,255,157,0.2);color:var(--accent2);}
+    .recon-box{background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--accent2);padding:20px 24px;margin-bottom:16px;}
+    .recon-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);margin-bottom:12px;}
+    .recon-math{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--white);margin-bottom:8px;}
+    .dose-table{width:100%;border-collapse:collapse;}
+    .dose-table th{background:rgba(0,212,255,0.08);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);}
+    .dose-table td{padding:12px 14px;border-bottom:1px solid rgba(26,45,58,0.5);vertical-align:top;font-size:13px;}
+    .dose-level{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);font-weight:700;}
+    .dose-amount{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--white);}
+    .dose-units{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent);display:block;margin-top:2px;}
+    .bio-table{width:100%;border-collapse:collapse;}
+    .bio-table th{background:rgba(0,212,255,0.06);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--muted);text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);}
+    .bio-table td{padding:10px 12px;border-bottom:1px solid rgba(26,45,58,0.4);vertical-align:top;font-size:12px;}
+    .bio-name{color:var(--white);font-weight:500;display:block;}
+    .bio-test{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);}
+    .range-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 6px;margin-right:4px;}
+    .range-clinical{background:rgba(74,98,114,0.3);color:var(--muted);}
+    .range-optimal{background:rgba(0,255,157,0.1);color:var(--accent2);}
+    .bio-category{margin-bottom:24px;}
+    .bio-category-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);margin-bottom:10px;}
+    .note-box{background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.15);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .highlight-box{background:rgba(0,255,157,0.04);border:1px solid rgba(0,255,157,0.2);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .warning-box{background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.25);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .disclaimer-box{background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.2);padding:14px 18px;margin-top:20px;font-size:12px;color:var(--text);line-height:1.5;}
+    .synergy-bar{display:flex;align-items:center;gap:16px;background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--accent);padding:14px 18px;margin-bottom:10px;}
+    .synergy-num{font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--accent);min-width:50px;}
+    .synergy-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:3px;}
+    .synergy-desc{font-size:13px;color:var(--white);}
+    .timing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0;}
+    .timing-box{background:var(--bg);border:1px solid var(--border);padding:14px;text-align:center;}
+    .timing-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:8px;}
+    .timing-active{border-color:var(--accent2);background:rgba(0,255,157,0.04);}
+    .timing-active .timing-label{color:var(--accent2);}
+    .timing-value{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;color:var(--white);}
+  </style>
+</head>
+<body>
+<div class="container">
+<a href="index.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--muted);text-decoration:none;text-transform:uppercase;margin-bottom:28px;padding:8px 14px;border:1px solid var(--border);transition:all .2s;" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">← Back to Encyclopedia</a>
+
+  <div class="header">
+    <div class="peptide-label">Apex Research Reference — Blend Stack</div>
+    <div class="peptide-name">CJC-1295 / IPAMORELIN</div>
+    <div class="peptide-fullname">Pre-Formulated GH Secretagogue Blend — Modified GRF(1-29) + Selective GHSR-1a Agonist</div>
+    <div class="tag-row">
+      <span class="tag tag-stack">BLEND STACK</span>
+      <span class="tag">GROWTH HORMONE</span>
+      <span class="tag">ANTI-AGING</span>
+      <span class="tag">RECOVERY</span>
+      <span class="tag">BODY RECOMP</span>
+      <span class="tag">SLEEP</span>
+      <span class="tag">SYNERGISTIC</span>
+    </div>
+  </div>
+
+  <!-- 01 IDENTITY -->
+  <div class="section" style="animation-delay:0.1s;border-top-color:var(--accent);">
+    <div class="section-num">01 / IDENTITY</div>
+    <h2>Compound Profile</h2>
+
+    <div class="highlight-box" style="margin-bottom:20px;">
+      <strong style="color:var(--accent2);">Pre-Mixed Blend Advantage:</strong> This vial contains both CJC-1295 No DAC and Ipamorelin pre-formulated at a 1:1 ratio. Single injection delivers both molecules simultaneously — maximizing pulsatile GH amplitude while minimizing injection frequency. The gold standard GH secretagogue protocol in one pen draw.
+    </div>
+
+    <div class="compound-grid">
+      <div class="compound-card">
+        <div class="compound-card-title">CJC-1295 No DAC</div>
+        <div class="compound-card-sub">MODIFIED GRF(1-29) · 29 AA · ~3.37 kDa</div>
+        <div class="compound-role">AMPLIFIER</div>
+        <div class="info-item">
+          <div class="info-label">MECHANISM</div>
+          <div class="info-value" style="font-size:12px;">GHRH receptor agonist. Signals pituitary to produce and release GH. Short half-life (30 min) preserves physiological pulsatile pattern.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">WHAT IT DOES</div>
+          <div class="info-value" style="font-size:12px;">Loads the pituitary somatotrophs with GH — primes them for maximum release upon GHSR stimulation.</div>
+        </div>
+      </div>
+      <div class="compound-card">
+        <div class="compound-card-title">Ipamorelin</div>
+        <div class="compound-card-sub">SELECTIVE GHRP · 5 AA · ~0.71 kDa</div>
+        <div class="compound-role compound-role-2">TRIGGER</div>
+        <div class="info-item">
+          <div class="info-label">MECHANISM</div>
+          <div class="info-value" style="font-size:12px;">GHSR-1a (ghrelin receptor) agonist. Triggers the GH pulse release — selectively, without spiking cortisol, prolactin, or ACTH.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">WHAT IT DOES</div>
+          <div class="info-value" style="font-size:12px;">Pulls the trigger on GH release from the loaded pituitary. The most selective GHRP available — zero off-target hormones.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-value">5mg</div>
+        <div class="stat-label">VIAL SIZE</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">2.5/2.5</div>
+        <div class="stat-label">mg CJC / IPA</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">SC</div>
+        <div class="stat-label">ROUTE</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">2–4×</div>
+        <div class="stat-label">GH PULSE AMP</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 SYNERGY -->
+  <div class="section" style="animation-delay:0.15s;border-top-color:var(--accent2);">
+    <div class="section-num">02 / SYNERGY MECHANISM</div>
+    <h2>Why This Combination Works</h2>
+
+    <div class="synergy-bar">
+      <div class="synergy-num">2–4×</div>
+      <div>
+        <div class="synergy-label">GH PULSE AMPLITUDE</div>
+        <div class="synergy-desc">CJC-1295 + Ipamorelin in combination produces 2–4× the GH pulse amplitude of either compound alone. Two separate receptor pathways (GHRH-R + GHSR-1a) act synergistically on the same pituitary somatotroph cell — the combined signal is multiplicative, not additive.</div>
+      </div>
+    </div>
+
+    <div class="synergy-bar" style="border-left-color:var(--accent2);">
+      <div class="synergy-num" style="color:var(--accent2);">0</div>
+      <div>
+        <div class="synergy-label">CORTISOL / PROLACTIN ELEVATION</div>
+        <div class="synergy-desc">Ipamorelin's selectivity for GHSR-1a means the amplified GH pulse carries none of the cortisol or prolactin side effects seen with GHRP-6 or GHRP-2. Maximum GH output. Zero stress hormone co-activation.</div>
+      </div>
+    </div>
+
+    <div class="synergy-bar" style="border-left-color:var(--accent3);">
+      <div class="synergy-num" style="color:var(--accent3);">30m</div>
+      <div>
+        <div class="synergy-label">CJC-1295 HALF-LIFE (NO DAC VERSION)</div>
+        <div class="synergy-desc">Short half-life preserves the pulsatile GH pattern that mimics natural physiology. GH surges, then clears — allowing IGF-1 to reset between doses. This is critical: continuous GH (DAC version) desensitizes receptors. Pulsatile GH keeps receptors sensitive and IGF-1 in optimal range.</div>
+      </div>
+    </div>
+
+    <div class="note-box" style="margin-top:16px;">
+      <strong style="color:var(--accent);">Analogy:</strong> CJC-1295 fills the pituitary's GH "tank." Ipamorelin opens the valve. Together — massive, clean, physiological GH pulse. Then it clears. Then you repeat. This is why this stack is called the gold standard of GH optimization.
+    </div>
+  </div>
+
+  <!-- 03 BENEFITS -->
+  <div class="section" style="animation-delay:0.2s;border-top-color:var(--accent3);">
+    <div class="section-num">03 / BENEFITS</div>
+    <h2>Research-Supported Effects</h2>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">BODY COMPOSITION</div>
+          <div class="info-value">Elevated GH drives lipolysis (fat breakdown) and promotes lean mass retention during caloric deficit. Visceral fat preferentially reduced.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">SLEEP QUALITY</div>
+          <div class="info-value">GH secretion peaks during slow-wave sleep (Stage 3). Bedtime dosing amplifies the natural nocturnal pulse — deeper sleep, more restorative recovery.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">RECOVERY</div>
+          <div class="info-value">GH stimulates collagen synthesis, tendon repair, and muscle protein synthesis. Injury recovery accelerated. Connective tissue integrity maintained over long cycles.</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">ANTI-AGING</div>
+          <div class="info-value">GH declines ~14% per decade after age 30 (somatopause). Secretagogue protocols restore youthful GH pulsatility without exogenous GH risks. IGF-1 optimizes in age-appropriate range.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">SKIN & COLLAGEN</div>
+          <div class="info-value">GH-stimulated IGF-1 drives dermal collagen production, skin thickness, and elasticity. Visible improvement typically noted at 8–12 weeks of consistent dosing.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">COGNITIVE CLARITY</div>
+          <div class="info-value">GH receptors are expressed in the brain. GH optimization associated with improved working memory, mood stability, and energy. Often reported as "mental sharpness" by users.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 RECONSTITUTION -->
+  <div class="section" style="animation-delay:0.25s;border-top-color:var(--accent2);">
+    <div class="section-num">04 / RECONSTITUTION</div>
+    <h2>Vial Preparation</h2>
+    <div class="recon-box">
+      <div class="recon-title">BLEND VIAL — 5mg TOTAL (2.5mg CJC + 2.5mg Ipamorelin)</div>
+      <div class="recon-math">5mg blend vial + 3.0 mL (300 units) bacteriostatic water</div>
+      <div class="recon-math" style="color:var(--accent2);">Concentration: 16.7 mcg per unit (0.01 mL) — TOTAL BLEND</div>
+      <div class="recon-math" style="color:var(--muted);font-size:12px;margin-top:4px;">= 8.35 mcg CJC-1295 + 8.35 mcg Ipamorelin per unit</div>
+      <div style="margin-top:16px;">
+        <table class="dose-table">
+          <thead>
+            <tr>
+              <th>DOSE LEVEL</th>
+              <th>TOTAL BLEND</th>
+              <th>UNITS ON SYRINGE</th>
+              <th>VOLUME</th>
+              <th>BREAKDOWN</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="dose-level">LOW</span></td>
+              <td><span class="dose-amount">167</span><span class="dose-units">mcg blend</span></td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:16px;color:var(--white);">10 units</td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:14px;">0.10 mL</td>
+              <td style="font-size:12px;color:var(--muted);">~83mcg CJC + 83mcg IPA</td>
+            </tr>
+            <tr>
+              <td><span class="dose-level">STANDARD</span></td>
+              <td><span class="dose-amount">250</span><span class="dose-units">mcg blend</span></td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:16px;color:var(--white);">15 units</td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:14px;">0.15 mL</td>
+              <td style="font-size:12px;color:var(--muted);">~125mcg CJC + 125mcg IPA</td>
+            </tr>
+            <tr>
+              <td><span class="dose-level">HIGH</span></td>
+              <td><span class="dose-amount">400</span><span class="dose-units">mcg blend</span></td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:16px;color:var(--white);">24 units</td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:14px;">0.24 mL</td>
+              <td style="font-size:12px;color:var(--muted);">~200mcg CJC + 200mcg IPA</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent);">Blend vs. Separate Vials:</strong> Pre-blended vials are identical in effect to separate CJC-1295 No DAC + Ipamorelin injections drawn and administered simultaneously. The blend format reduces injection count to one and simplifies preparation. Recommended for all users running the stack.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent);">Storage:</strong> Lyophilized powder stable at room temp up to 6 months. After reconstitution: refrigerate (2–8°C), use within 28 days. Protect from light. Do NOT freeze reconstituted solution.
+    </div>
+  </div>
+
+  <!-- 05 DOSING -->
+  <div class="section" style="animation-delay:0.3s;border-top-color:var(--accent);">
+    <div class="section-num">05 / DOSING PROTOCOL</div>
+    <h2>Administration Schedule</h2>
+    <table class="dose-table">
+      <thead>
+        <tr>
+          <th>PROTOCOL</th>
+          <th>DOSE</th>
+          <th>TIMING</th>
+          <th>USE CASE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="dose-level">ENTRY</span></td>
+          <td><span class="dose-amount">167</span><span class="dose-units">mcg blend / injection</span></td>
+          <td>Once daily — bedtime</td>
+          <td>First cycle, conservative start. Assess GH response.</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">STANDARD</span></td>
+          <td><span class="dose-amount">250</span><span class="dose-units">mcg blend / injection</span></td>
+          <td>Once daily — bedtime fasted</td>
+          <td>Most users. Best balance of effect vs. cost vs. IGF-1 optimization.</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">ADVANCED</span></td>
+          <td><span class="dose-amount">250</span><span class="dose-units">mcg × 2 / day</span></td>
+          <td>Bedtime + morning fasted</td>
+          <td>2x/day protocol. AM pulse for body comp, PM pulse for recovery/sleep.</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">HIGH OUTPUT</span></td>
+          <td><span class="dose-amount">400</span><span class="dose-units">mcg blend / injection</span></td>
+          <td>Once daily — bedtime</td>
+          <td>Experienced users seeking maximum GH pulse. Monitor IGF-1 closely.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 06 TIMING -->
+  <div class="section" style="animation-delay:0.35s;border-top-color:var(--accent3);">
+    <div class="section-num">06 / TIMING & ADMINISTRATION</div>
+    <h2>Injection Windows</h2>
+
+    <div class="timing-grid">
+      <div class="timing-box timing-active">
+        <div class="timing-label">PRIMARY — BEDTIME</div>
+        <div class="timing-value">30–60 min before sleep</div>
+      </div>
+      <div class="timing-box">
+        <div class="timing-label">SECONDARY — MORNING</div>
+        <div class="timing-value">Fasted · 2x/day protocol only</div>
+      </div>
+      <div class="timing-box">
+        <div class="timing-label">FASTED STATE</div>
+        <div class="timing-value">MANDATORY · 2–3h post-meal</div>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">WHY BEDTIME IS PRIMARY</div>
+          <div class="info-value">80% of natural GH secretion occurs during sleep (especially Stage 3). Dosing 30–60 min before sleep aligns the secretagogue-induced pulse with the body's existing GH architecture. Amplify what's already happening — don't fight circadian biology.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">WHY FASTED IS MANDATORY</div>
+          <div class="info-value">Insulin directly inhibits GH release. Eating → insulin spike → GH signal blocked at pituitary level. For best results: no food for 2–3 hours before injection. Wait 30 min post-injection before eating (morning protocol).</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">AVOID CARBS PRE-INJECTION</div>
+          <div class="info-value">Even modest carbohydrate intake raises insulin enough to blunt GH response 40–60%. If bedtime snacking is habitual, time it 2+ hours before injection.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">DO NOT INJECT POST-WORKOUT</div>
+          <div class="info-value">Post-workout GH is already elevated from exercise. Injecting at this window wastes the dose and may create receptor accommodation. Reserve injections for fasted/sleep windows.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 07 BIOMARKERS -->
+  <div class="section" style="animation-delay:0.4s;border-top-color:var(--accent);">
+    <div class="section-num">07 / BIOMARKER MONITORING</div>
+    <h2>Recommended Lab Panel</h2>
+
+    <div class="bio-category">
+      <div class="bio-category-title">GH AXIS — PRIMARY RESPONSE</div>
+      <table class="bio-table">
+        <thead>
+          <tr><th>MARKER</th><th>CLINICAL RANGE</th><th>OPTIMAL TARGET</th><th>NOTES</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">IGF-1</span><span class="bio-test">insulin-like growth factor 1</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>Age-adjusted</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>200–350 ng/mL</td>
+            <td>Primary readout of GH axis activity. Check at 6 weeks, then every 8–12 weeks. Should be in upper quartile for age.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">GH (fasting AM)</span><span class="bio-test">growth hormone — serum</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>0–10 ng/mL</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>1–5 ng/mL (basal)</td>
+            <td>Fasting AM basal GH — not a pulse measurement. Use as baseline. Pulsatile GH is not captured by standard draw.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">SAFETY MONITORING</div>
+      <table class="bio-table">
+        <thead>
+          <tr><th>MARKER</th><th>CLINICAL RANGE</th><th>OPTIMAL TARGET</th><th>NOTES</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">Fasting Glucose</span><span class="bio-test">blood glucose</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>70–99 mg/dL</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>72–90 mg/dL</td>
+            <td>Should remain stable. Elevated GH at supraphysiological levels can cause transient IR. Monitor.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Fasting Insulin</span><span class="bio-test">insulin</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>2–25 µIU/mL</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>3–8 µIU/mL</td>
+            <td>Track alongside glucose for HOMA-IR calculation. Stability confirms appropriate GH dosing.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Cortisol (AM)</span><span class="bio-test">serum cortisol</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>6–23 µg/dL</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>10–18 µg/dL</td>
+            <td>Should be UNCHANGED — confirms Ipamorelin selectivity. If elevated, check other stack components.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Prolactin</span><span class="bio-test">serum prolactin</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>2–18 ng/mL (M) / 2–29 ng/mL (F)</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>Baseline</td>
+            <td>Should be unchanged — verifies Ipamorelin's GHSR-1a selectivity (GHRP-6 elevates prolactin; Ipamorelin does not)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">BODY COMPOSITION TRACKING</div>
+      <table class="bio-table">
+        <thead>
+          <tr><th>MARKER</th><th>METHOD</th><th>NOTES</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">Body Composition</span><span class="bio-test">DEXA or InBody scan</span></td>
+            <td>Baseline → 8 weeks → 16 weeks</td>
+            <td>Lean mass gain + visceral fat reduction. DEXA is gold standard; InBody is practical alternative.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Collagen Biomarkers</span><span class="bio-test">P1NP (procollagen)</span></td>
+            <td>Optional — quarterly</td>
+            <td>Elevated P1NP confirms GH-driven collagen synthesis. Validates connective tissue response.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 08 CYCLE -->
+  <div class="section" style="animation-delay:0.45s;border-top-color:var(--accent2);">
+    <div class="section-num">08 / CYCLE PROTOCOL</div>
+    <h2>Administration Schedule</h2>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">CYCLE LENGTH</div>
+          <div class="info-value" style="color:var(--white);font-size:18px;font-weight:600;">12–24 Weeks</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">MINIMUM EFFECTIVE CYCLE</div>
+          <div class="info-value">8 weeks — IGF-1 elevation takes 4–6 weeks to stabilize. Most benefits (body comp, sleep, skin) become measurable at 12+ weeks.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">FREQUENCY</div>
+          <div class="info-value">7 days/week — or 5 days on / 2 off (weekend break). Both effective. Daily dosing is more consistent; 5/2 reduces cost without major efficacy loss.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">OFF PERIOD</div>
+          <div class="info-value">Some practitioners run year-round at low dose (125–167mcg). If cycling: 4–8 weeks off allows pituitary sensitization reset.</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">ADVANCED STACKS</div>
+          <div class="info-value">+ BPC-157 500mcg (recovery and GI) · + DSIP 250mcg bedtime (deepens SWS + synergistic GH pulse) · + Ibutamoren MK-677 (oral GH secretagogue to extend GH window) · + AOD-9604 500mcg AM (adds targeted lipolysis)</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">DSIP SYNERGY</div>
+          <div class="info-value">DSIP + CJC/Ipamorelin blend is the ultimate sleep stack. DSIP promotes Stage 3 sleep (when GH releases); CJC/Ipa amplifies the GH pulse. The combination creates a virtuous cycle of deeper sleep → larger GH burst → better recovery.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">REQUIRES</div>
+          <div class="info-value">Reconstitution with BAC water · Precise dosing with Apex V3 Pen · Refrigeration post-reconstitution · Fasted injection window</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="disclaimer-box">
+      ⚠ Research reference only. CJC-1295 No DAC and Ipamorelin are not FDA-approved for human therapeutic use. Information sourced from published clinical and preclinical literature. Consult a qualified medical provider before use.
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

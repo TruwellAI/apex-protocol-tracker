@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Glutathione — Apex Research Reference</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap');
+    :root{--bg:#080c10;--panel:#0d1318;--border:#1a2d3a;--accent:#00d4ff;--accent2:#00ff9d;--accent3:#ff6b35;--text:#c8dde8;--muted:#4a6272;--white:#eaf4f8;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;line-height:1.6;padding:40px 20px;}
+    body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 70% 10%,rgba(0,212,255,0.06) 0%,transparent 60%),radial-gradient(ellipse at 20% 90%,rgba(0,255,157,0.04) 0%,transparent 50%);pointer-events:none;z-index:0;}
+    .container{max-width:900px;margin:0 auto;position:relative;z-index:1;}
+    .header{margin-bottom:40px;border-bottom:1px solid var(--border);padding-bottom:24px;}
+    .peptide-label{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;}
+    .peptide-name{font-family:'Rajdhani',sans-serif;font-size:52px;font-weight:700;color:var(--white);line-height:1;margin-bottom:8px;}
+    .peptide-fullname{font-size:16px;color:var(--muted);margin-bottom:16px;}
+    .tag-row{display:flex;gap:8px;flex-wrap:wrap;}
+    .tag{background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.25);color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;padding:3px 10px;}
+    .section{background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--muted);padding:28px 32px;margin-bottom:16px;animation:fadeUp 0.4s ease both;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+    .section-num{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:8px;}
+    h2{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px;}
+    .stat-box{background:var(--bg);border:1px solid var(--border);padding:16px;text-align:center;}
+    .stat-value{font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--white);line-height:1;}
+    .stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-top:4px;}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+    .info-item{margin-bottom:14px;}
+    .info-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:4px;}
+    .info-value{color:var(--white);font-size:13px;line-height:1.5;}
+    .timeline{position:relative;padding-left:20px;}
+    .timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:var(--border);}
+    .timeline-item{position:relative;margin-bottom:20px;}
+    .timeline-item::before{content:'';position:absolute;left:-24px;top:5px;width:8px;height:8px;background:var(--accent);border-radius:50%;}
+    .timeline-year{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:4px;}
+    .benefit-item{display:flex;gap:14px;margin-bottom:16px;align-items:flex-start;}
+    .benefit-num{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent3);min-width:28px;padding-top:2px;}
+    .benefit-title{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;color:var(--white);margin-bottom:3px;}
+    .recon-box{background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--accent2);padding:20px 24px;margin-bottom:16px;}
+    .recon-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);margin-bottom:12px;}
+    .recon-math{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--white);margin-bottom:8px;}
+    .dose-table{width:100%;border-collapse:collapse;}
+    .dose-table th{background:rgba(0,212,255,0.08);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);}
+    .dose-table td{padding:12px 14px;border-bottom:1px solid rgba(26,45,58,0.5);vertical-align:top;font-size:13px;}
+    .dose-level{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);font-weight:700;}
+    .dose-amount{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--white);}
+    .dose-units{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent);display:block;margin-top:2px;}
+    .bio-table{width:100%;border-collapse:collapse;}
+    .bio-table th{background:rgba(0,212,255,0.06);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--muted);text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);}
+    .bio-table td{padding:10px 12px;border-bottom:1px solid rgba(26,45,58,0.4);vertical-align:top;font-size:12px;}
+    .bio-name{color:var(--white);font-weight:500;display:block;}
+    .bio-test{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);}
+    .range-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 6px;margin-right:4px;}
+    .range-clinical{background:rgba(74,98,114,0.3);color:var(--muted);}
+    .range-optimal{background:rgba(0,255,157,0.1);color:var(--accent2);}
+    .bio-category{margin-bottom:24px;}
+    .bio-category-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);margin-bottom:10px;}
+    .note-box{background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.15);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .highlight-box{background:rgba(0,255,157,0.04);border:1px solid rgba(0,255,157,0.2);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .warning-box{background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.25);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .disclaimer-box{background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.2);padding:14px 18px;margin-top:20px;font-size:12px;color:var(--text);line-height:1.5;}
+    .route-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0;}
+    .route-box{background:var(--bg);border:1px solid var(--border);padding:14px;text-align:center;}
+    .route-name{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);margin-bottom:6px;}
+    .route-bio{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--white);}
+    .route-note{font-size:11px;color:var(--muted);margin-top:4px;}
+    .route-best{border-color:var(--accent2);background:rgba(0,255,157,0.04);}
+    .route-best .route-name{color:var(--accent2);}
+  </style>
+</head>
+<body>
+<div class="container">
+<a href="index.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--muted);text-decoration:none;text-transform:uppercase;margin-bottom:28px;padding:8px 14px;border:1px solid var(--border);transition:all .2s;" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">← Back to Encyclopedia</a>
+
+  <div class="header">
+    <div class="peptide-label">Apex Research Reference</div>
+    <div class="peptide-name">GLUTATHIONE</div>
+    <div class="peptide-fullname">GSH — γ-Glutamyl-Cysteinyl-Glycine — Master Antioxidant & Detoxification Tripeptide</div>
+    <div class="tag-row">
+      <span class="tag">ANTIOXIDANT</span>
+      <span class="tag">DETOX</span>
+      <span class="tag">LIVER SUPPORT</span>
+      <span class="tag">IMMUNE MODULATION</span>
+      <span class="tag">SKIN BRIGHTENING</span>
+      <span class="tag">MITOCHONDRIAL</span>
+    </div>
+  </div>
+
+  <!-- 01 IDENTITY -->
+  <div class="section" style="animation-delay:0.1s;border-top-color:var(--accent);">
+    <div class="section-num">01 / IDENTITY</div>
+    <h2>Compound Profile</h2>
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-value">3</div>
+        <div class="stat-label">AMINO ACIDS</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">~0.31</div>
+        <div class="stat-label">kDa MW</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">IV / SC / Neb</div>
+        <div class="stat-label">ROUTES</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">~2–4h</div>
+        <div class="stat-label">IV HALF-LIFE</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">~10 mM</div>
+        <div class="stat-label">INTRACELLULAR CONC</div>
+      </div>
+    </div>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">STRUCTURE</div>
+          <div class="info-value" style="font-family:'Share Tech Mono',monospace;">γ-Glu — Cys — Gly<br>The cysteine thiol group (-SH) is the active antioxidant site. The γ-glutamyl bond is unusual — it protects GSH from peptidase degradation, extending intracellular half-life.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">ORIGIN — ENDOGENOUS MOLECULE</div>
+          <div class="info-value">Glutathione is not a foreign compound — it is produced by every cell in the human body via two-step enzymatic synthesis (glutamate + cysteine → γ-glutamylcysteine; + glycine → GSH). Highest concentrations in liver hepatocytes (~10 mM). Declines 1% per year after age 20 — by age 60, intracellular GSH is 30–40% below youthful levels.</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">MECHANISM — MASTER REDOX REGULATOR</div>
+          <div class="info-value">GSH is the cell's primary electron donor for neutralizing reactive oxygen species (ROS). The thiol group donates an electron to neutralize free radicals → GSH becomes oxidized glutathione (GSSG) → glutathione reductase regenerates GSH using NADPH. This GSH/GSSG cycle is the foundation of cellular antioxidant defense.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">WHY ORAL GLUTATHIONE FAILS</div>
+          <div class="info-value">Oral GSH is hydrolyzed in the GI tract by gamma-glutamyltransferase before absorption — the peptide bond is cleaved and individual amino acids are absorbed, not intact GSH. IV, SC, nebulized, or liposomal forms bypass GI hydrolysis. This is why injectable glutathione produces dramatically different clinical results than oral supplementation.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="route-grid">
+      <div class="route-box route-best">
+        <div class="route-name">INTRAVENOUS (IV)</div>
+        <div class="route-bio">~100%</div>
+        <div class="route-note">Gold standard · Immediate systemic availability · Requires clinical setting for initial doses</div>
+      </div>
+      <div class="route-box route-best">
+        <div class="route-name">SUBCUTANEOUS (SC)</div>
+        <div class="route-bio">~85–90%</div>
+        <div class="route-note">Excellent · At-home use with Apex pen · Slower absorption, sustained release · Preferred for routine use</div>
+      </div>
+      <div class="route-box">
+        <div class="route-name">NEBULIZED (INHALED)</div>
+        <div class="route-bio">~60–70%</div>
+        <div class="route-note">Pulmonary-specific · Used for lung conditions, Parkinson's symptom management</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 RESEARCH HISTORY -->
+  <div class="section" style="animation-delay:0.15s;border-top-color:var(--accent2);">
+    <div class="section-num">02 / RESEARCH HISTORY</div>
+    <h2>Development Timeline</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-year">1888</div>
+        <div>Glutathione first isolated by J. de Rey-Pailhade from yeast. Named "philothion" (sulfur-loving). The active thiol group identified as central to its biological activity.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">1921</div>
+        <div>Frederick Gowland Hopkins (Nobel Prize, 1929) establishes glutathione's structure and ubiquity in living cells. Recognizes it as a fundamental redox molecule — present in nearly all aerobic organisms.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">1950s–1970s</div>
+        <div>GSH's role in drug metabolism established. Phase II detoxification: GSH conjugates with toxic metabolites, heavy metals, and xenobiotics via glutathione-S-transferase (GST) → making them water-soluble for urinary excretion. Liver as the central GSH reservoir for systemic detoxification.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">1980s–1990s</div>
+        <div>IV glutathione enters clinical use for chemotherapy side effect management, acetaminophen overdose treatment (the gold standard antidote: NAC replenishes GSH), and liver disease. Italian researchers pioneer IV glutathione for Parkinson's disease symptom management.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2000s–Present</div>
+        <div>Liposomal and SC glutathione formulations developed for at-home use. Anti-aging applications studied: GSH decline correlated with accelerated aging, neurodegeneration, and cancer susceptibility. Skin brightening mechanism (melanin inhibition) documented in Asian clinical trials. NAD+ + Glutathione combination emerges as core longevity protocol.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 BENEFITS -->
+  <div class="section" style="animation-delay:0.2s;border-top-color:var(--accent3);">
+    <div class="section-num">03 / BENEFITS & MECHANISMS</div>
+    <h2>Research-Supported Effects</h2>
+    <div class="benefit-item">
+      <div class="benefit-num">01</div>
+      <div>
+        <div class="benefit-title">Master Antioxidant — Cellular ROS Neutralization</div>
+        <div>GSH is the primary intracellular antioxidant — directly neutralizing superoxide, hydroxyl radicals, and hydrogen peroxide. Also regenerates vitamins C and E from their oxidized forms (recycling the antioxidant network). When GSH is depleted, the entire antioxidant cascade collapses — oxidative damage accelerates exponentially. Restoring GSH supports every other antioxidant system simultaneously.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">02</div>
+      <div>
+        <div class="benefit-title">Phase II Liver Detoxification</div>
+        <div>The liver uses GSH as the primary conjugation substrate for Phase II detox. Glutathione-S-transferase (GST) enzymes attach GSH to lipophilic toxins (environmental chemicals, drug metabolites, heavy metals) → forming water-soluble conjugates → excreted in bile or urine. Low GSH = compromised detoxification capacity = toxin accumulation. IV/SC GSH rapidly restores hepatic detox capacity.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">03</div>
+      <div>
+        <div class="benefit-title">Mitochondrial Protection & Energy</div>
+        <div>Mitochondria are the primary site of ROS production — and mitochondrial GSH (mGSH) is the only antioxidant defense inside the mitochondria. mGSH depletion causes mitochondrial dysfunction, reduced ATP production, and accelerated cell death. GSH supplementation preferentially replenishes mGSH, protecting the energy-producing organelle and sustaining cellular energy output.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">04</div>
+      <div>
+        <div class="benefit-title">Skin Brightening — Melanin Inhibition</div>
+        <div>GSH inhibits tyrosinase — the rate-limiting enzyme in melanin synthesis. Less tyrosinase activity = less melanin production = lighter, more even skin tone. Simultaneously, GSH shifts melanin synthesis from dark eumelanin toward lighter pheomelanin. Multiple Asian clinical trials confirm: IV/SC glutathione produces measurable skin lightening and reversal of hyperpigmentation at consistent doses. One of the most clinically validated cosmetic benefits of any peptide.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">05</div>
+      <div>
+        <div class="benefit-title">Immune Modulation & Antiviral</div>
+        <div>GSH is essential for lymphocyte proliferation and T-cell activation — immune cells have among the highest GSH requirements of any cell type. Low GSH = impaired immune response. GSH also has direct antiviral activity: inhibits viral replication by preventing viral protein disulfide bond formation. Relevant for HIV, influenza, and herpes virus management. Pairs powerfully with Thymosin Alpha-1 for comprehensive immune support.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">06</div>
+      <div>
+        <div class="benefit-title">Neurological Protection — Parkinson's & Cognitive</div>
+        <div>The substantia nigra (Parkinson's-affected brain region) has the highest GSH concentration in the brain — and the greatest GSH depletion in Parkinson's patients. IV glutathione (Perlmutter protocol) shows symptom improvement in early Parkinson's. Broader neuroprotection: GSH protects neurons from oxidative stress, maintains myelin integrity, and supports neurotransmitter synthesis.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 RECONSTITUTION -->
+  <div class="section" style="animation-delay:0.25s;border-top-color:var(--accent2);">
+    <div class="section-num">04 / RECONSTITUTION</div>
+    <h2>Vial Preparation</h2>
+    <div class="recon-box">
+      <div class="recon-title">STANDARD VIAL — 600mg (SC/IV USE)</div>
+      <div class="recon-math">600mg vial + 3.0 mL (300 units) bacteriostatic water</div>
+      <div class="recon-math" style="color:var(--accent2);">Concentration: 2mg per unit (2,000 mcg per unit)</div>
+      <div class="recon-math" style="color:var(--muted);font-size:12px;margin-top:4px;">NOTE: Glutathione is mg-scale dosing — not mcg-scale like peptides</div>
+      <div style="margin-top:14px;">
+        <table class="dose-table">
+          <thead><tr><th>DOSE</th><th>mg</th><th>UNITS ON SYRINGE</th><th>VOLUME</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="dose-level">LOW (SC)</span></td>
+              <td><span class="dose-amount">200</span><span class="dose-units">mg</span></td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:16px;color:var(--white);">100 units</td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:14px;">1.0 mL</td>
+            </tr>
+            <tr>
+              <td><span class="dose-level">STANDARD (SC)</span></td>
+              <td><span class="dose-amount">400</span><span class="dose-units">mg</span></td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:16px;color:var(--white);">200 units</td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:14px;">2.0 mL</td>
+            </tr>
+            <tr>
+              <td><span class="dose-level">HIGH (SC)</span></td>
+              <td><span class="dose-amount">600</span><span class="dose-units">mg (full vial)</span></td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:16px;color:var(--white);">300 units</td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:14px;">3.0 mL</td>
+            </tr>
+            <tr>
+              <td><span class="dose-level">IV PUSH</span></td>
+              <td><span class="dose-amount">600–1,200</span><span class="dose-units">mg</span></td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:16px;color:var(--white);">Diluted in 50–100mL NS</span></td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:14px;">Clinical setting required</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="warning-box">
+      <strong style="color:var(--accent3);">⚠ SC Volume Consideration:</strong> SC injection of 2–3mL is a larger volume than typical peptide injections. Split into 2 injection sites if uncomfortable (1mL each). Use a slow injection rate — GSH SC can cause mild burning at injection site due to acidity. Can be pH-adjusted with sodium bicarbonate by compounding pharmacy.
+    </div>
+    <div class="warning-box">
+      <strong style="color:var(--accent3);">⚠ Stability Critical:</strong> Reconstituted glutathione oxidizes rapidly. Use within 1–2 hours of reconstitution for maximum potency. Some pharmacies supply pre-reduced glutathione with stabilizers — follow pharmacy label for shelf life. Protect from air exposure — draw dose immediately before injection.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent);">Storage:</strong> Lyophilized powder: refrigerate at 2–8°C, stable 12 months. Light sensitive — store in foil or dark vial. Do NOT freeze reconstituted glutathione. Ideal approach: reconstitute immediately before each injection.
+    </div>
+  </div>
+
+  <!-- 05 DOSING -->
+  <div class="section" style="animation-delay:0.3s;border-top-color:var(--accent);">
+    <div class="section-num">05 / DOSING PROTOCOL</div>
+    <h2>Dose Ranges</h2>
+    <table class="dose-table">
+      <thead><tr><th>PROTOCOL</th><th>DOSE</th><th>FREQUENCY</th><th>INDICATION</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="dose-level">MAINTENANCE</span></td>
+          <td><span class="dose-amount">200–400</span><span class="dose-units">mg SC / 2–3×/week</span></td>
+          <td>2–3× weekly</td>
+          <td>General antioxidant support, anti-aging, skin brightening maintenance</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">STANDARD</span></td>
+          <td><span class="dose-amount">400–600</span><span class="dose-units">mg SC / daily</span></td>
+          <td>Daily SC</td>
+          <td>Active detox protocol, liver support, skin brightening induction, immune restoration</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">INTENSIVE IV</span></td>
+          <td><span class="dose-amount">600–1,200</span><span class="dose-units">mg IV push</span></td>
+          <td>1–3×/week</td>
+          <td>Clinical protocols: Parkinson's, heavy metal detox, chemotherapy support, severe oxidative stress</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">SKIN BRIGHTENING</span></td>
+          <td><span class="dose-amount">600</span><span class="dose-units">mg SC or IV / 3×/week</span></td>
+          <td>3× weekly × 12–24 weeks</td>
+          <td>Melanin inhibition protocol. Tyrosinase inhibition builds over weeks — results visible at 8–16 weeks.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="highlight-box" style="margin-top:14px;">
+      <strong style="color:var(--accent2);">NAD+ + Glutathione Protocol:</strong> The most powerful anti-aging injection protocol: NAD+ 500mg IV/SC (cellular energy + sirtuin activation) + Glutathione 600mg IV/SC (master antioxidant + detox). Run sequentially on the same visit — NAD+ first, then GSH. The two compounds are synergistic: NAD+ drives cellular energy production (which generates ROS) and GSH neutralizes the ROS produced. They are the yin and yang of cellular health.
+    </div>
+  </div>
+
+  <!-- 06 TIMING -->
+  <div class="section" style="animation-delay:0.35s;border-top-color:var(--accent3);">
+    <div class="section-num">06 / TIMING & ADMINISTRATION</div>
+    <h2>Injection Protocol</h2>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">TIMING</div>
+          <div class="info-value">No fasting requirement. Morning preferred — supports liver detoxification activity which peaks in early AM. Evening acceptable. Avoid injection immediately post-intense exercise (oxidative stress is high — give GSH 1–2h to circulate before heavy training).</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">SC INJECTION TECHNIQUE</div>
+          <div class="info-value">Use a larger gauge needle (25–27g) for GSH given larger volumes. Inject slowly (30+ seconds) to minimize burning. Abdominal SC preferred — larger tissue volume accommodates 2–3mL comfortably. Can split dose across two sites (e.g., bilateral abdomen) for volumes over 2mL.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">NEBULIZATION PROTOCOL</div>
+          <div class="info-value">For respiratory/neurological indications: dilute 600mg GSH in 3mL sterile saline. Nebulize over 15–20 min via standard aerosol mask. Pulmonary delivery is direct and avoids systemic dilution. Used in Parkinson's, chronic lung disease, and respiratory viral infections.</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">POST-EXERCISE GSH CRASH</div>
+          <div class="info-value">Intense exercise acutely depletes GSH by 30–50% in muscle tissue. This is normal and contributes to training adaptation — but chronic depletion impairs recovery. Post-workout GSH injection (1–2h after training) accelerates GSH repletion, reduces muscle oxidative damage, and speeds recovery.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">ALCOHOL / ACETAMINOPHEN</div>
+          <div class="info-value">Both alcohol and acetaminophen heavily deplete hepatic GSH. GSH 400–600mg SC the morning after heavy alcohol consumption dramatically reduces hangover severity and liver oxidative stress. Pre/post acetaminophen dosing (within safe limits) with GSH reduces hepatotoxic metabolite accumulation.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">PRECURSOR STACK</div>
+          <div class="info-value">NAC (N-acetylcysteine) oral supplementation provides the rate-limiting precursor (cysteine) for endogenous GSH synthesis. NAC 600mg oral 2×/day + direct GSH injection = maximal approach combining precursor supply with exogenous replacement.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 07 BIOMARKERS -->
+  <div class="section" style="animation-delay:0.4s;border-top-color:var(--accent);">
+    <div class="section-num">07 / BIOMARKER MONITORING</div>
+    <h2>Recommended Lab Panel</h2>
+    <div class="bio-category">
+      <div class="bio-category-title">GLUTATHIONE STATUS — DIRECT</div>
+      <table class="bio-table">
+        <thead><tr><th>MARKER</th><th>CLINICAL RANGE</th><th>OPTIMAL TARGET</th><th>NOTES</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">Whole Blood Glutathione</span><span class="bio-test">GSH/GSSG ratio</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>Varies (lab-specific)</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>GSH/GSSG &gt;10:1</td>
+            <td>Direct measurement of reduced vs. oxidized glutathione. The ratio is more informative than absolute levels. &lt;5:1 indicates significant oxidative stress.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Erythrocyte GSH</span><span class="bio-test">red blood cell glutathione</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>1,000–1,500 µg/gHb</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>&gt;1,200 µg/gHb</td>
+            <td>Most reliable blood-based GSH measure. RBCs have no mitochondria — GSH here reflects systemic antioxidant status. Should improve with consistent SC supplementation.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="bio-category">
+      <div class="bio-category-title">OXIDATIVE STRESS — INDIRECT MARKERS</div>
+      <table class="bio-table">
+        <thead><tr><th>MARKER</th><th>CLINICAL RANGE</th><th>OPTIMAL TARGET</th><th>NOTES</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">8-OHdG</span><span class="bio-test">8-hydroxy-2-deoxyguanosine (urine)</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>&lt;15 ng/mg Cr</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>&lt;5 ng/mg Cr</td>
+            <td>Oxidative DNA damage marker — primary readout of systemic oxidative stress. Should decrease significantly with GSH supplementation.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Malondialdehyde (MDA)</span><span class="bio-test">lipid peroxidation</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>&lt;2.5 µmol/L</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>&lt;1.0 µmol/L</td>
+            <td>Lipid peroxidation marker — ROS damage to cell membranes. Decreasing MDA confirms GSH is protecting cellular membranes from oxidative attack.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">hs-CRP</span><span class="bio-test">C-reactive protein</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>&lt;3.0 mg/L</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>&lt;0.5 mg/L</td>
+            <td>Oxidative stress and inflammation are linked — GSH reduction of ROS should also reduce NF-κB activation and downstream CRP production.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="bio-category">
+      <div class="bio-category-title">LIVER FUNCTION</div>
+      <table class="bio-table">
+        <thead><tr><th>MARKER</th><th>CLINICAL RANGE</th><th>OPTIMAL TARGET</th><th>NOTES</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">ALT / AST</span><span class="bio-test">liver enzymes</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>ALT &lt;40 / AST &lt;40 U/L</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>ALT &lt;20 / AST &lt;20 U/L</td>
+            <td>Should improve or normalize with GSH — hepatoprotective effect via restored detoxification capacity. Track at 8-week intervals.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">GGT</span><span class="bio-test">gamma-glutamyltransferase</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>&lt;55 U/L (M) / &lt;38 U/L (F)</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>&lt;20 U/L</td>
+            <td>GGT is elevated when GSH turnover is high (body working to replenish depleted GSH). Normalizing GGT indicates restored GSH sufficiency. Excellent GSH status marker.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 08 CYCLE -->
+  <div class="section" style="animation-delay:0.45s;border-top-color:var(--accent2);">
+    <div class="section-num">08 / CYCLE PROTOCOL</div>
+    <h2>Administration Schedule</h2>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">CYCLE LENGTH</div>
+          <div class="info-value" style="color:var(--white);font-size:18px;font-weight:600;">Ongoing — Safe for Chronic Use</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">CONTINUOUS USE</div>
+          <div class="info-value">Unlike most peptides, glutathione is an endogenous molecule with no known tolerance, suppression of endogenous synthesis, or adverse effects from chronic use at therapeutic doses. It is safe for indefinite maintenance use. Most patients benefit from 2–3×/week as a minimum maintenance frequency.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">INTENSIVE LOADING PHASE</div>
+          <div class="info-value">For significant depletion states (liver disease, chemotherapy, heavy metal toxicity, post-COVID): daily 600mg SC or IV × 4–8 weeks. Then transition to 2–3×/week maintenance. Loading saturates tissue stores before transitioning to maintenance.</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">SKIN BRIGHTENING TIMELINE</div>
+          <div class="info-value">Tyrosinase inhibition accumulates over weeks. Visible results at 8–16 weeks of consistent 3×/week 600mg dosing. Maintenance 2×/week sustains results. Concurrent topical vitamin C amplifies the brightening effect.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">LONGEVITY PROTOCOL</div>
+          <div class="info-value">NAD+ 500mg + GSH 600mg 1–2×/week IV or SC. The ultimate cellular health maintenance protocol — energy production + antioxidant defense. Add MOTS-c 5mg AM daily for mitochondrial efficiency. This three-compound stack is the Apex longevity foundation protocol.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">REQUIRES</div>
+          <div class="info-value">Reconstitution with sterile or bacteriostatic water · Apex V3 Pen · Refrigeration · Fresh reconstitution recommended per-dose for maximum potency</div>
+        </div>
+      </div>
+    </div>
+    <div class="disclaimer-box">
+      ⚠ Research reference only. Injectable glutathione is available from compounding pharmacies and used extensively in clinical settings. IV administration should be performed by trained medical professionals for initial doses. Consult a qualified medical provider before use.
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AOD-9604 — Apex Research Reference</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap');
+    :root{--bg:#080c10;--panel:#0d1318;--border:#1a2d3a;--accent:#00d4ff;--accent2:#00ff9d;--accent3:#ff6b35;--text:#c8dde8;--muted:#4a6272;--white:#eaf4f8;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;line-height:1.6;padding:40px 20px;}
+    body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 70% 10%,rgba(0,212,255,0.06) 0%,transparent 60%),radial-gradient(ellipse at 20% 90%,rgba(255,107,53,0.04) 0%,transparent 50%);pointer-events:none;z-index:0;}
+    .container{max-width:900px;margin:0 auto;position:relative;z-index:1;}
+    .header{margin-bottom:40px;border-bottom:1px solid var(--border);padding-bottom:24px;}
+    .peptide-label{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;}
+    .peptide-name{font-family:'Rajdhani',sans-serif;font-size:52px;font-weight:700;color:var(--white);line-height:1;margin-bottom:8px;}
+    .peptide-fullname{font-size:16px;color:var(--muted);margin-bottom:16px;}
+    .tag-row{display:flex;gap:8px;flex-wrap:wrap;}
+    .tag{background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.25);color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;padding:3px 10px;}
+    .section{background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--muted);padding:28px 32px;margin-bottom:16px;animation:fadeUp 0.4s ease both;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+    .section-num{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:8px;}
+    h2{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px;}
+    .stat-box{background:var(--bg);border:1px solid var(--border);padding:16px;text-align:center;}
+    .stat-value{font-family:'Rajdhani',sans-serif;font-size:32px;font-weight:700;color:var(--white);line-height:1;}
+    .stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-top:4px;}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+    .info-item{margin-bottom:14px;}
+    .info-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:4px;}
+    .info-value{color:var(--white);font-size:13px;line-height:1.5;}
+    .timeline{position:relative;padding-left:20px;}
+    .timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:var(--border);}
+    .timeline-item{position:relative;margin-bottom:20px;}
+    .timeline-item::before{content:'';position:absolute;left:-24px;top:5px;width:8px;height:8px;background:var(--accent);border-radius:50%;}
+    .timeline-year{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:4px;}
+    .benefit-item{display:flex;gap:14px;margin-bottom:16px;align-items:flex-start;}
+    .benefit-num{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent3);min-width:28px;padding-top:2px;}
+    .benefit-title{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;color:var(--white);margin-bottom:3px;}
+    .recon-box{background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--accent2);padding:20px 24px;margin-bottom:16px;}
+    .recon-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);margin-bottom:12px;}
+    .recon-math{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--white);margin-bottom:8px;}
+    .dose-table{width:100%;border-collapse:collapse;}
+    .dose-table th{background:rgba(0,212,255,0.08);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);}
+    .dose-table td{padding:12px 14px;border-bottom:1px solid rgba(26,45,58,0.5);vertical-align:top;font-size:13px;}
+    .dose-level{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);font-weight:700;}
+    .dose-amount{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--white);}
+    .dose-units{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent);display:block;margin-top:2px;}
+    .bio-table{width:100%;border-collapse:collapse;}
+    .bio-table th{background:rgba(0,212,255,0.06);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--muted);text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);}
+    .bio-table td{padding:10px 12px;border-bottom:1px solid rgba(26,45,58,0.4);vertical-align:top;font-size:12px;}
+    .bio-name{color:var(--white);font-weight:500;display:block;}
+    .bio-test{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);}
+    .range-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 6px;margin-right:4px;}
+    .range-clinical{background:rgba(74,98,114,0.3);color:var(--muted);}
+    .range-optimal{background:rgba(0,255,157,0.1);color:var(--accent2);}
+    .bio-category{margin-bottom:24px;}
+    .bio-category-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);margin-bottom:10px;}
+    .note-box{background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.15);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .highlight-box{background:rgba(0,255,157,0.04);border:1px solid rgba(0,255,157,0.2);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .warning-box{background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.25);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;color:var(--text);}
+    .disclaimer-box{background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.2);padding:14px 18px;margin-top:20px;font-size:12px;color:var(--text);line-height:1.5;}
+    .compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0;}
+    .compare-box{background:var(--bg);border:1px solid var(--border);padding:18px 20px;}
+    .compare-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;margin-bottom:12px;}
+    .compare-yes{color:var(--accent2);}
+    .compare-no{color:var(--accent3);}
+    .check-item{font-size:13px;margin-bottom:6px;padding-left:16px;position:relative;}
+    .check-item::before{content:'▸';position:absolute;left:0;color:var(--accent);}
+  </style>
+</head>
+<body>
+<div class="container">
+<a href="index.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--muted);text-decoration:none;text-transform:uppercase;margin-bottom:28px;padding:8px 14px;border:1px solid var(--border);transition:all .2s;" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">← Back to Encyclopedia</a>
+
+  <div class="header">
+    <div class="peptide-label">Apex Research Reference</div>
+    <div class="peptide-name">AOD-9604</div>
+    <div class="peptide-fullname">Advanced Obesity Drug 9604 — C-Terminal Fragment of Human Growth Hormone (hGH 176-191)</div>
+    <div class="tag-row">
+      <span class="tag">FAT LOSS</span>
+      <span class="tag">LIPOLYSIS</span>
+      <span class="tag">METABOLIC</span>
+      <span class="tag">GH FRAGMENT</span>
+      <span class="tag">NO GH SIDE EFFECTS</span>
+      <span class="tag">CARTILAGE REPAIR</span>
+    </div>
+  </div>
+
+  <!-- 01 IDENTITY -->
+  <div class="section" style="animation-delay:0.1s;border-top-color:var(--accent);">
+    <div class="section-num">01 / IDENTITY</div>
+    <h2>Compound Profile</h2>
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-value">16</div>
+        <div class="stat-label">AMINO ACIDS</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">~1.82</div>
+        <div class="stat-label">kDa MW</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">SC</div>
+        <div class="stat-label">ROUTE</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">~30m</div>
+        <div class="stat-label">HALF-LIFE</div>
+      </div>
+    </div>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">SEQUENCE</div>
+          <div class="info-value" style="font-family:'Share Tech Mono',monospace;font-size:11px;">Tyr-Leu-Arg-Ile-Val-Gln-Cys-Arg-Ser-Val-Glu-Gly-Ser-Cys-Gly-Phe</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">ORIGIN</div>
+          <div class="info-value">Isolated C-terminal fragment of human GH (residues 176–191). Contains the fat-mobilizing domain with disulfide bridge intact. Developed by Metabolic Pharmaceuticals (Australia).</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">MECHANISM</div>
+          <div class="info-value">Binds β3-adrenergic receptors in adipose tissue. Stimulates lipolysis (fat breakdown) and inhibits lipogenesis (fat storage) — without engaging IGF-1 axis or GH receptor pathways.</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">PRIMARY EFFECT</div>
+          <div class="info-value">Targeted lipolysis — preferentially mobilizes visceral and subcutaneous adipose fat. Does NOT affect glucose metabolism or cause insulin resistance like full-length GH.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">KEY DISTINCTION</div>
+          <div class="info-value">Retains the fat-burning domain of GH with NONE of the anabolic, glucose, or IGF-1 side effects. No water retention, no insulin resistance, no musculoskeletal overgrowth.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">SECONDARY BENEFIT</div>
+          <div class="info-value">Chondroprotective — FDA granted Orphan Drug designation for osteoarthritis treatment. Stimulates cartilage and bone repair independent of fat loss effects.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight-box" style="margin-top:16px;">
+      <strong style="color:var(--accent2);">Why AOD-9604 over GH for fat loss:</strong> Full-length GH causes IGF-1 elevation, insulin resistance, and water retention at fat-burning doses. AOD-9604 isolates only the lipolytic domain — you get the fat loss effect with the safety profile of a peptide, not a hormone.
+    </div>
+  </div>
+
+  <!-- 02 RESEARCH HISTORY -->
+  <div class="section" style="animation-delay:0.15s;border-top-color:var(--accent2);">
+    <div class="section-num">02 / RESEARCH HISTORY</div>
+    <h2>Development Timeline</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-year">1990s</div>
+        <div>Researchers at Monash University (Australia) identify that the C-terminal fragment of hGH (residues 176–191) contains the fat-mobilizing domain. Full GH is too broad — this fragment isolates the mechanism.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2001</div>
+        <div>Metabolic Pharmaceuticals (Australia) begins clinical development. Phase I trials confirm safety and no effect on blood glucose or IGF-1 — validating the fragment approach.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2004–2007</div>
+        <div>Phase IIa/IIb trials in obese adults. Oral AOD-9604 (MK-0677) shows statistically significant fat reduction vs. placebo. SC formulation advances as more bioavailable route.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2014</div>
+        <div>FDA grants Orphan Drug designation for AOD-9604 in osteoarthritis — recognizing cartilage repair mechanism. Expands clinical profile beyond metabolic use.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2015–Present</div>
+        <div>Compounding pharmacies adopt AOD-9604 as part of metabolic/anti-obesity protocols. Widely stacked with GLP-1 agonists, peptides, and lifestyle interventions. Ongoing cartilage research continues.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 BENEFITS -->
+  <div class="section" style="animation-delay:0.2s;border-top-color:var(--accent3);">
+    <div class="section-num">03 / BENEFITS & MECHANISMS</div>
+    <h2>Research-Supported Effects</h2>
+
+    <div class="benefit-item">
+      <div class="benefit-num">01</div>
+      <div>
+        <div class="benefit-title">Targeted Lipolysis — Visceral & Subcutaneous Fat</div>
+        <div>Binds β3-adrenergic receptors in adipose tissue to activate hormone-sensitive lipase (HSL). Preferentially breaks down stored triglycerides into free fatty acids — especially effective on visceral (deep belly) fat that resists diet and exercise.</div>
+      </div>
+    </div>
+
+    <div class="benefit-item">
+      <div class="benefit-num">02</div>
+      <div>
+        <div class="benefit-title">Lipogenesis Inhibition — Stops Fat Storage</div>
+        <div>Simultaneously inhibits acetyl-CoA carboxylase (ACC), the rate-limiting enzyme in fat synthesis. Dual action: breaks down existing fat AND prevents new fat from being stored from dietary intake.</div>
+      </div>
+    </div>
+
+    <div class="benefit-item">
+      <div class="benefit-num">03</div>
+      <div>
+        <div class="benefit-title">Glucose & Insulin Neutral — No Metabolic Penalty</div>
+        <div>Unlike full-length hGH, AOD-9604 does NOT activate IGF-1 pathways or impair insulin sensitivity. Fasting glucose and HbA1c remain stable. Critical distinction for metabolic syndrome patients and diabetics.</div>
+      </div>
+    </div>
+
+    <div class="benefit-item">
+      <div class="benefit-num">04</div>
+      <div>
+        <div class="benefit-title">Chondroprotection — Cartilage & Joint Repair</div>
+        <div>Independent mechanism via TGF-β stimulation. Promotes proteoglycan synthesis in articular cartilage, reduces joint space narrowing in animal osteoarthritis models. FDA Orphan Drug status validates this pathway. Particularly valuable stacked with BPC-157 or TB-500.</div>
+      </div>
+    </div>
+
+    <div class="benefit-item">
+      <div class="benefit-num">05</div>
+      <div>
+        <div class="benefit-title">Clean Tolerability Profile</div>
+        <div>No water retention (no aldosterone pathway activation). No carpal tunnel risk. No gynecomastia risk. No suppression of endogenous GH. No impact on thyroid panel. Injection site reactions are mild and transient.</div>
+      </div>
+    </div>
+
+    <div class="compare-grid" style="margin-top:20px;">
+      <div class="compare-box">
+        <div class="compare-title compare-yes">AOD-9604 ✓</div>
+        <div class="check-item">Fat breakdown (lipolysis) ✓</div>
+        <div class="check-item">Lipogenesis inhibition ✓</div>
+        <div class="check-item">Cartilage repair ✓</div>
+        <div class="check-item">Glucose neutral ✓</div>
+        <div class="check-item">No IGF-1 elevation ✓</div>
+        <div class="check-item">No water retention ✓</div>
+      </div>
+      <div class="compare-box">
+        <div class="compare-title compare-no">Full hGH — Fat Loss Dose</div>
+        <div class="check-item">Fat breakdown ✓</div>
+        <div class="check-item">IGF-1 elevation (anabolic) ⚠</div>
+        <div class="check-item">Insulin resistance risk ⚠</div>
+        <div class="check-item">Water retention ⚠</div>
+        <div class="check-item">Carpal tunnel risk ⚠</div>
+        <div class="check-item">Expensive + controlled ⚠</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 RECONSTITUTION -->
+  <div class="section" style="animation-delay:0.25s;border-top-color:var(--accent2);">
+    <div class="section-num">04 / RECONSTITUTION</div>
+    <h2>Vial Preparation</h2>
+    <div class="recon-box">
+      <div class="recon-title">STANDARD VIAL — 10mg</div>
+      <div class="recon-math">10mg vial + 3.0 mL (300 units) bacteriostatic water</div>
+      <div class="recon-math" style="color:var(--accent2);">Concentration: 33.3 mcg per unit (0.01 mL)</div>
+      <div style="margin-top:12px;">
+        <table class="dose-table">
+          <thead>
+            <tr>
+              <th>DOSE</th>
+              <th>MCG</th>
+              <th>UNITS (on syringe)</th>
+              <th>VOLUME</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="dose-level">LOW</span></td>
+              <td><span class="dose-amount">250</span><span class="dose-units">mcg</span></td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:16px;color:var(--white);">7.5 units</td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--text);">0.075 mL</td>
+            </tr>
+            <tr>
+              <td><span class="dose-level">STANDARD</span></td>
+              <td><span class="dose-amount">500</span><span class="dose-units">mcg</span></td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:16px;color:var(--white);">15 units</td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--text);">0.15 mL</td>
+            </tr>
+            <tr>
+              <td><span class="dose-level">HIGH</span></td>
+              <td><span class="dose-amount">750</span><span class="dose-units">mcg</span></td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:16px;color:var(--white);">22.5 units</td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--text);">0.225 mL</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent);">Storage:</strong> Lyophilized powder stable at room temp up to 6 months. Refrigerate (2–8°C) for long-term storage. After reconstitution: refrigerate, use within 30 days. Protect from light. Do NOT freeze reconstituted vial.
+    </div>
+  </div>
+
+  <!-- 05 DOSING -->
+  <div class="section" style="animation-delay:0.3s;border-top-color:var(--accent);">
+    <div class="section-num">05 / DOSING PROTOCOL</div>
+    <h2>Dose Ranges</h2>
+    <table class="dose-table">
+      <thead>
+        <tr>
+          <th>LEVEL</th>
+          <th>DOSE</th>
+          <th>FREQUENCY</th>
+          <th>USE CASE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="dose-level">LOW</span></td>
+          <td><span class="dose-amount">250</span><span class="dose-units">mcg / day</span></td>
+          <td>Daily</td>
+          <td>Sensitive individuals, first cycle, maintenance</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">STANDARD</span></td>
+          <td><span class="dose-amount">500</span><span class="dose-units">mcg / day</span></td>
+          <td>Daily</td>
+          <td>Active fat loss phase — most users start here</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">HIGH</span></td>
+          <td><span class="dose-amount">750</span><span class="dose-units">mcg / day</span></td>
+          <td>Daily</td>
+          <td>Accelerated protocol, upper research dose range</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="note-box" style="margin-top:16px;">
+      <strong style="color:var(--accent);">Oral vs. SC:</strong> Early Metabolic Pharmaceuticals trials used oral delivery — SC injection is significantly more bioavailable and is the standard for compounding pharmacy protocols. Oral AOD-9604 requires 10× higher doses to achieve equivalent plasma levels.
+    </div>
+
+    <div class="note-box">
+      <strong style="color:var(--accent);">GLP-1 Stack Protocol:</strong> AOD-9604 + Semaglutide or Tirzepatide is a powerful combination. GLP-1s reduce appetite and caloric intake; AOD-9604 drives direct lipolysis. The two mechanisms are additive, not redundant. Standard: 500mcg AOD-9604 AM fasted + GLP-1 injection per individual protocol.
+    </div>
+  </div>
+
+  <!-- 06 TIMING -->
+  <div class="section" style="animation-delay:0.35s;border-top-color:var(--accent3);">
+    <div class="section-num">06 / TIMING & ADMINISTRATION</div>
+    <h2>Injection Protocol</h2>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">OPTIMAL WINDOW</div>
+          <div class="info-value" style="color:var(--accent2);font-size:15px;font-weight:600;">Morning — Fasted State</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">WHY FASTED</div>
+          <div class="info-value">Lipolysis is maximized when insulin is at baseline. Eating raises insulin → insulin blocks HSL (the fat-burning enzyme) → AOD-9604 effectiveness drops significantly. Inject 30–60 min before breakfast.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">WAIT POST-INJECTION</div>
+          <div class="info-value">Wait 30–60 minutes before eating. During this window, free fatty acids mobilized by AOD-9604 enter circulation and are available for oxidation (especially if light cardio is performed).</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">INJECTION SITE</div>
+          <div class="info-value">Subcutaneous — abdomen (periumbilical region preferred for visceral fat targeting), outer thigh, or lateral deltoid. Rotate sites to prevent fibrosis.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">PRE-WORKOUT OPTION</div>
+          <div class="info-value">Some protocols use 30–45 min pre-fasted cardio. The mobilized fatty acids serve as fuel during exercise — a potent combination for body recomposition. Not required; morning fasted alone is effective.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">CARTILAGE PROTOCOL</div>
+          <div class="info-value">For joint/cartilage indication: timing less critical — AM or PM both effective. Consistent daily dosing is more important than precise timing window.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 07 BIOMARKERS -->
+  <div class="section" style="animation-delay:0.4s;border-top-color:var(--accent);">
+    <div class="section-num">07 / BIOMARKER MONITORING</div>
+    <h2>Recommended Lab Panel</h2>
+
+    <div class="bio-category">
+      <div class="bio-category-title">METABOLIC — PRIMARY EFFECT MARKERS</div>
+      <table class="bio-table">
+        <thead>
+          <tr><th>MARKER</th><th>CLINICAL RANGE</th><th>OPTIMAL TARGET</th><th>NOTES</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">Fasting Glucose</span><span class="bio-test">glucose (fasting)</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>70–99 mg/dL</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>72–90 mg/dL</td>
+            <td>Should remain unchanged on AOD-9604 — divergence suggests stacking issue</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Fasting Insulin</span><span class="bio-test">insulin (fasting)</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>2–25 µIU/mL</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>3–8 µIU/mL</td>
+            <td>Stability confirms no IR development; improvement expected over fat loss cycle</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">HbA1c</span><span class="bio-test">hemoglobin A1c</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>&lt;5.7%</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>&lt;5.3%</td>
+            <td>Baseline; should not elevate. Fat loss may improve over course of cycle.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">HOMA-IR</span><span class="bio-test">calculated index</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>&lt;2.5</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>&lt;1.5</td>
+            <td>Insulin resistance index — calculate from glucose + insulin. Should improve.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">SAFETY — GH AXIS CONFIRMATION</div>
+      <table class="bio-table">
+        <thead>
+          <tr><th>MARKER</th><th>CLINICAL RANGE</th><th>OPTIMAL TARGET</th><th>NOTES</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">IGF-1</span><span class="bio-test">insulin-like growth factor 1</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>Age-adjusted</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>Stable</td>
+            <td>Should NOT elevate — confirms AOD-9604 is not activating GH receptor axis</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Lipid Panel</span><span class="bio-test">total cholesterol, LDL, HDL, TG</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>Standard reference</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>TG &lt;80 mg/dL</td>
+            <td>TG and LDL may improve as visceral fat mobilizes. Monitor for trajectory.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">CRP (hs)</span><span class="bio-test">high-sensitivity C-reactive protein</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>&lt;3.0 mg/L</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>&lt;1.0 mg/L</td>
+            <td>Visceral fat reduction drives systemic inflammation down — track improvement</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">JOINT / CARTILAGE (if using for osteoarthritis)</div>
+      <table class="bio-table">
+        <thead>
+          <tr><th>MARKER</th><th>CLINICAL RANGE</th><th>NOTES</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">Cartilage Oligomeric Matrix Protein</span><span class="bio-test">COMP</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>&lt;10 µg/mL</td>
+            <td>Elevated in active cartilage breakdown — reduction indicates chondroprotection</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">MRI Joint Assessment</span><span class="bio-test">radiographic</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>—</td>
+            <td>Pre/post MRI at 12+ weeks for cartilage volume and joint space changes</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 08 CYCLE PROTOCOL -->
+  <div class="section" style="animation-delay:0.45s;border-top-color:var(--accent2);">
+    <div class="section-num">08 / CYCLE PROTOCOL</div>
+    <h2>Administration Schedule</h2>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">CYCLE LENGTH</div>
+          <div class="info-value" style="color:var(--white);font-size:18px;font-weight:600;">12–16 Weeks</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">FREQUENCY</div>
+          <div class="info-value">Daily (7 days/week). Consistent daily dosing outperforms 5-on/2-off for fat loss — metabolic effect is cumulative.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">OFF PERIOD</div>
+          <div class="info-value">4–8 weeks off between cycles. No clinical evidence of tolerance, but cycling prevents receptor accommodation and allows metabolic assessment.</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">GOLD STACK: FAT LOSS</div>
+          <div class="info-value">AOD-9604 500mcg AM + Semaglutide (per protocol) + MOTS-c 5mg AM. Triple metabolic attack: lipolysis + appetite + mitochondrial efficiency.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">GOLD STACK: JOINT + FAT</div>
+          <div class="info-value">AOD-9604 500mcg + BPC-157 500mcg + TB-500 2mg (2x/week). Fat mobilization with full joint and tissue repair support.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">REQUIRES</div>
+          <div class="info-value">Reconstitution with BAC water · Precise dosing with Apex V3 Pen · Refrigeration post-reconstitution</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="disclaimer-box">
+      ⚠ Research reference only. AOD-9604 is not FDA-approved for human therapeutic use. Information sourced from published clinical and preclinical literature. Consult a qualified medical provider before use.
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5-Amino-1MQ — Peptide Reference</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#080c10;--panel:#0d1318;--border:#1a2d3a;--accent:#00d4ff;--accent2:#00ff9d;--accent3:#ff6b35;--text:#c8dde8;--muted:#4a6272;--white:#eaf4f8;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-weight:300;min-height:100vh;padding:32px 20px;position:relative;overflow-x:hidden;}
+  body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse 60% 40% at 80% 10%,rgba(0,212,255,0.06) 0%,transparent 60%),radial-gradient(ellipse 40% 50% at 10% 80%,rgba(0,255,157,0.04) 0%,transparent 60%);pointer-events:none;z-index:0;}
+  .container{max-width:720px;margin:0 auto;position:relative;z-index:1;}
+  .header{border-left:3px solid var(--accent3);padding-left:20px;margin-bottom:40px;animation:fadeSlide 0.6s ease both;}
+  .header .label{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:4px;color:var(--accent3);text-transform:uppercase;margin-bottom:6px;}
+  .header h1{font-family:'Rajdhani',sans-serif;font-size:clamp(42px,10vw,72px);font-weight:700;color:var(--white);line-height:1;letter-spacing:2px;}
+  .header .subtitle{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted);margin-top:8px;letter-spacing:2px;}
+  .section{margin-bottom:28px;background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--accent);padding:24px 26px;animation:fadeSlide 0.6s ease both;}
+  .section-num{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:4px;}
+  .section h2{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:600;letter-spacing:1px;color:var(--white);margin-bottom:16px;text-transform:uppercase;}
+  .section p{font-size:15px;line-height:1.7;color:var(--text);margin-bottom:10px;}
+  .section p:last-child{margin-bottom:0;}
+  .timeline{display:flex;flex-direction:column;gap:12px;}
+  .tl-item{display:grid;grid-template-columns:90px 1fr;gap:16px;align-items:start;}
+  .tl-year{font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--accent2);padding-top:2px;letter-spacing:1px;}
+  .tl-text{font-size:14px;line-height:1.6;color:var(--text);border-left:1px solid var(--border);padding-left:14px;}
+  .benefits-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .benefit-item{background:rgba(255,107,53,0.04);border:1px solid rgba(255,107,53,0.12);padding:12px 14px;display:flex;gap:10px;align-items:flex-start;}
+  .benefit-dot{width:6px;height:6px;border-radius:50%;background:var(--accent3);margin-top:6px;flex-shrink:0;}
+  .benefit-text{font-size:13px;line-height:1.5;color:var(--text);}
+  .recon-box{background:rgba(0,255,157,0.04);border:1px solid rgba(0,255,157,0.15);padding:18px 20px;margin-bottom:16px;}
+  .recon-box .big{font-family:'Rajdhani',sans-serif;font-size:36px;font-weight:700;color:var(--accent2);line-height:1;}
+  .recon-box .big-label{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:2px;margin-top:4px;}
+  .recon-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px;}
+  .stat-box{background:var(--bg);border:1px solid var(--border);padding:12px;text-align:center;}
+  .stat-val{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:600;color:var(--white);}
+  .stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;margin-top:2px;}
+  .dose-table{width:100%;border-collapse:collapse;}
+  .dose-table th{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);}
+  .dose-table td{font-size:14px;padding:10px 12px;border-bottom:1px solid rgba(26,45,58,0.6);color:var(--text);}
+  .dose-table tr:last-child td{border-bottom:none;}
+  .dose-table tr:hover td{background:rgba(0,212,255,0.03);}
+  .dose-units{font-family:'Share Tech Mono',monospace;font-size:15px;color:var(--accent3);font-weight:bold;}
+  .dose-tag{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;padding:2px 8px;background:rgba(0,255,157,0.1);border:1px solid rgba(0,255,157,0.25);color:var(--accent2);border-radius:2px;}
+  .note-box{margin-top:16px;background:rgba(255,107,53,0.06);border-left:3px solid var(--accent3);padding:12px 16px;font-size:13px;line-height:1.6;color:var(--text);}
+  .bio-category{margin-bottom:24px;}
+  .bio-category-title{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--accent3);text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(255,107,53,0.2);}
+  .bio-table{width:100%;border-collapse:collapse;}
+  .bio-table th{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;text-align:left;padding:7px 10px;border-bottom:1px solid var(--border);background:rgba(0,212,255,0.04);}
+  .bio-table td{font-size:13px;padding:9px 10px;border-bottom:1px solid rgba(26,45,58,0.5);color:var(--text);vertical-align:top;line-height:1.5;}
+  .bio-table tr:last-child td{border-bottom:none;}
+  .bio-table tr:hover td{background:rgba(0,212,255,0.025);}
+  .bio-name{font-weight:500;color:var(--white);font-size:13px;}
+  .bio-test{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);display:block;margin-top:2px;}
+  .range-clinical{color:var(--muted);font-size:12px;}
+  .range-optimal{color:var(--accent2);font-size:12px;font-weight:500;}
+  .range-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;display:block;margin-bottom:2px;opacity:0.7;}
+  .disclaimer-box{margin-top:20px;background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.12);padding:14px 16px;font-size:12px;line-height:1.7;color:var(--muted);font-style:italic;}
+  @keyframes fadeSlide{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+  @media(max-width:480px){.benefits-grid{grid-template-columns:1fr;}.recon-stats{grid-template-columns:1fr 1fr;}.tl-item{grid-template-columns:70px 1fr;}.bio-table th,.bio-table td{padding:7px 6px;font-size:12px;}}
+</style>
+</head>
+<body>
+<div class="container">
+<a href="index.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--muted);text-decoration:none;text-transform:uppercase;margin-bottom:28px;padding:8px 14px;border:1px solid var(--border);transition:all .2s;" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">← Back to Encyclopedia</a>
+
+  <div class="header">
+    <div class="label">Peptide Reference Sheet</div>
+    <h1>5-Amino-1MQ</h1>
+    <div class="subtitle">5-AMINO-1-METHYLQUINOLINIUM &nbsp;|&nbsp; NNMT INHIBITOR / FAT LOSS SMALL MOLECULE</div>
+  </div>
+
+  <!-- 01 -->
+  <div class="section" style="animation-delay:0.1s;border-top-color:var(--accent3);">
+    <div class="section-num">01 — Identity</div>
+    <h2>Name & Classification</h2>
+    <p><strong style="color:var(--white)">5-Amino-1-Methylquinolinium (5-Amino-1MQ)</strong> is technically a small molecule rather than a peptide, but is widely categorized alongside research peptides in the longevity and metabolic optimization space. Its chemical designation is <span style="font-family:'Share Tech Mono',monospace;color:var(--accent);font-size:13px;">5-amino-1-methylquinolinium</span>.</p>
+    <p>It is a <strong style="color:var(--white)">selective inhibitor of NNMT (Nicotinamide N-methyltransferase)</strong> — an enzyme highly expressed in fat tissue that consumes SAM (S-adenosylmethionine) and reduces NAD⁺ precursor availability. By blocking NNMT, 5-Amino-1MQ effectively boosts intracellular NAD⁺, activates SIRT1, and shifts fat cells toward energy expenditure rather than storage.</p>
+  </div>
+
+  <!-- 02 -->
+  <div class="section" style="animation-delay:0.2s;border-top-color:var(--accent);">
+    <div class="section-num">02 — Origin</div>
+    <h2>When It Was Developed</h2>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-year">2010s</div><div class="tl-text">NNMT identified as a key regulator of fat cell metabolism. Initial research at <strong style="color:var(--white)">Weill Cornell Medicine</strong> and other institutions established NNMT overexpression as a driver of obesity and insulin resistance.</div></div>
+      <div class="tl-item"><div class="tl-year">2015</div><div class="tl-text">5-Amino-1MQ first described as a potent, cell-permeable NNMT inhibitor. Early cell culture studies showed it dramatically reduced fat accumulation and increased energy expenditure in adipocytes.</div></div>
+      <div class="tl-item"><div class="tl-year">2018–2021</div><div class="tl-text">Animal studies published showing 5-Amino-1MQ reduced body weight, fat mass, and metabolic disease markers in diet-induced obese mice without caloric restriction. Showed NAD⁺ elevation as primary mechanism.</div></div>
+      <div class="tl-item"><div class="tl-year">2021–Present</div><div class="tl-text">Growing use in the longevity and metabolic optimization space. Oral bioavailability established. No human clinical trials published to date; classified as a research chemical.</div></div>
+    </div>
+  </div>
+
+  <!-- 03 -->
+  <div class="section" style="animation-delay:0.3s;border-top-color:var(--accent2);">
+    <div class="section-num">03 — Research History</div>
+    <h2>Research Background</h2>
+    <p>The core insight behind 5-Amino-1MQ is that NNMT acts as a <strong style="color:var(--white)">metabolic brake</strong> in fat tissue — it consumes methyl donors and NAD⁺ precursors, suppressing the very pathways that drive fat burning. In obese individuals, NNMT is chronically overexpressed in adipose tissue, creating a feedback loop that perpetuates fat storage.</p>
+    <p>By inhibiting NNMT, 5-Amino-1MQ restores the SAM/SAH ratio, elevates intracellular NAD⁺, and activates SIRT1 — the longevity-associated deacetylase that promotes mitochondrial biogenesis and fat oxidation. Studies in obese mice showed decreases in body fat of 7–10% without any change in food intake, and significant improvements in insulin sensitivity.</p>
+    <p>Unlike NMN or NR (which boost NAD⁺ by adding precursors), 5-Amino-1MQ boosts NAD⁺ by <strong style="color:var(--white)">stopping its consumption</strong> — a fundamentally different and potentially more targeted approach, especially in adipose tissue.</p>
+  </div>
+
+  <!-- 04 -->
+  <div class="section" style="animation-delay:0.4s;border-top-color:var(--accent3);">
+    <div class="section-num">04 — Key Benefits</div>
+    <h2>Proposed Benefits</h2>
+    <div class="benefits-grid">
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Inhibits NNMT — reduces fat storage drive in adipocytes</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Elevates intracellular NAD⁺ by blocking NAD⁺ precursor consumption</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Activates SIRT1 — promotes fat oxidation and mitochondrial biogenesis</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Reduces body fat and adipocyte size in animal models</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Improves insulin sensitivity and glucose metabolism</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Subcutaneous injectable — 50mg vial, precise mcg dosing</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Increases energy expenditure without reducing food intake</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Complementary to NMN/NR — different mechanism, additive NAD⁺ effect</div></div>
+    </div>
+  </div>
+
+  <!-- 05 -->
+  <div class="section" style="animation-delay:0.5s;border-top-color:var(--accent);">
+    <div class="section-num">05 — Reconstitution</div>
+    <h2>50mg Vial — Subcutaneous Injectable</h2>
+    <div class="recon-box">
+      <div class="big">50mg + 3.0mL BAC</div>
+      <div class="big-label">subcutaneous injection — 166.7 mcg per unit (0.01 mL)</div>
+    </div>
+    <div class="recon-stats">
+      <div class="stat-box"><div class="stat-val">50 mg</div><div class="stat-label">vial size</div></div>
+      <div class="stat-box"><div class="stat-val">SC Inj</div><div class="stat-label">route of admin</div></div>
+      <div class="stat-box"><div class="stat-val">2–8°C</div><div class="stat-label">storage (recon)</div></div>
+    </div>
+    <div class="note-box" style="margin-top:14px;">Reconstitute 50mg vial with 3.0mL bacteriostatic water = 166.7 mcg/unit. Inject subcutaneously — abdomen or outer thigh. Refrigerate after reconstitution, use within 30 days. Do not freeze reconstituted vial.</div>
+  </div>
+
+  <!-- 06 -->
+  <div class="section" style="animation-delay:0.6s;border-top-color:var(--accent2);">
+    <div class="section-num">06 — Dosage</div>
+    <h2>Dosage Reference (SC Injectable — 50mg/3.0mL = 166.7 mcg/unit)</h2>
+    <table class="dose-table">
+      <thead><tr><th>Level</th><th>Dose</th><th>Units (syringe)</th><th>Context</th></tr></thead>
+      <tbody>
+        <tr><td><span class="dose-tag">LOW</span></td><td><span class="dose-units">150 mcg</span></td><td>~1 unit</td><td>Conservative start — sensitive individuals or first cycle</td></tr>
+        <tr><td><span class="dose-tag">STANDARD</span></td><td><span class="dose-units">250 mcg</span></td><td>~1.5 units</td><td>Most common research dose — active metabolic optimization</td></tr>
+        <tr><td><span class="dose-tag">HIGH</span></td><td><span class="dose-units">500 mcg</span></td><td>~3 units</td><td>Aggressive protocol — monitor methylation markers closely</td></tr>
+      </tbody>
+    </table>
+    <div class="note-box">Start at 150mcg daily and titrate up based on response. Monitor homocysteine and methylation markers — NNMT inhibition affects the SAM/methionine cycle. Individual sensitivity varies significantly.</div>
+  </div>
+
+  <!-- 07 -->
+  <div class="section" style="animation-delay:0.7s;border-top-color:var(--accent3);">
+    <div class="section-num">07 — Monitoring</div>
+    <h2>Biomarkers, Lab Tests & Ranges</h2>
+    <p style="font-size:13px;margin-bottom:20px;">5-Amino-1MQ primarily affects NAD⁺ metabolism, fat mass, insulin sensitivity, and methylation status. Monitor the following before, at 6 weeks, and at end of cycle.</p>
+
+    <div class="bio-category">
+      <div class="bio-category-title">▸ NAD⁺ & Metabolic</div>
+      <table class="bio-table">
+        <thead><tr><th>Biomarker</th><th>Lab Test</th><th>Clinical Range</th><th>Optimal Range</th></tr></thead>
+        <tbody>
+          <tr><td><span class="bio-name">NAD⁺ (whole blood)</span></td><td><span class="bio-test">Intracellular NAD⁺ (Jinfiniti)</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">No standard reference</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">&gt;40 µM whole blood</span></td></tr>
+          <tr><td><span class="bio-name">Fasting Insulin</span></td><td><span class="bio-test">Serum Insulin (fasting)</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">2–25 µIU/mL</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">2–6 µIU/mL</span></td></tr>
+          <tr><td><span class="bio-name">Fasting Glucose</span></td><td><span class="bio-test">Fasting Blood Glucose</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">70–99 mg/dL</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">75–90 mg/dL</span></td></tr>
+          <tr><td><span class="bio-name">HbA1c</span></td><td><span class="bio-test">Hemoglobin A1c</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">&lt;5.7%</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">4.6–5.3%</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">▸ Body Composition & Lipids</div>
+      <table class="bio-table">
+        <thead><tr><th>Biomarker</th><th>Lab Test</th><th>Clinical Range</th><th>Optimal Range</th></tr></thead>
+        <tbody>
+          <tr><td><span class="bio-name">Triglycerides</span></td><td><span class="bio-test">Lipid Panel</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">&lt;150 mg/dL</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">&lt;80 mg/dL</span></td></tr>
+          <tr><td><span class="bio-name">HDL Cholesterol</span></td><td><span class="bio-test">Lipid Panel</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">&gt;40 (M) / &gt;50 (F) mg/dL</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">55–80 mg/dL</span></td></tr>
+          <tr><td><span class="bio-name">Body Fat % (DEXA)</span></td><td><span class="bio-test">DEXA Scan</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">M: &lt;25% / F: &lt;32%</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">M: 10–18% / F: 18–24%</span></td></tr>
+          <tr><td><span class="bio-name">Adiponectin</span></td><td><span class="bio-test">Serum Adiponectin</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">3–30 µg/mL</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">&gt;15 µg/mL</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">▸ Methylation & Safety</div>
+      <table class="bio-table">
+        <thead><tr><th>Biomarker</th><th>Lab Test</th><th>Clinical Range</th><th>Optimal Range</th></tr></thead>
+        <tbody>
+          <tr><td><span class="bio-name">Homocysteine</span><br><span style="font-size:11px;color:var(--muted);">Methylation status proxy</span></td><td><span class="bio-test">Serum Homocysteine</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">&lt;15 µmol/L</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">5–8 µmol/L</span></td></tr>
+          <tr><td><span class="bio-name">SAM / SAH ratio</span><br><span style="font-size:11px;color:var(--muted);">Methylation capacity</span></td><td><span class="bio-test">Plasma SAM/SAH (specialty labs)</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">SAM/SAH &gt;4.5</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">SAM/SAH &gt;6.0</span></td></tr>
+          <tr><td><span class="bio-name">AST / ALT</span></td><td><span class="bio-test">CMP</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">AST 10–40 / ALT 7–56 U/L</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">AST &lt;26 / ALT &lt;26 U/L</span></td></tr>
+          <tr><td><span class="bio-name">CBC</span></td><td><span class="bio-test">Complete Blood Count</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">Standard ranges</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">Mid-range; WBC 4.5–6.0</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="disclaimer-box">⚠ 5-Amino-1MQ has no published human clinical trials. Optimal ranges are functional medicine targets. Monitor methylation markers (homocysteine) closely — NNMT inhibition affects the methionine cycle. Consult a qualified practitioner.</div>
+  </div>
+
+  <!-- 08 -->
+  <div class="section" style="animation-delay:0.8s;border-top-color:var(--accent);">
+    <div class="section-num">08 — Cycle Protocol</div>
+    <h2>Cycle Length, Frequency & Timing</h2>
+
+    <div style="margin-bottom:22px;">
+      <div class="bio-category-title" style="color:var(--accent2);">▸ How Long to Cycle</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+        <div class="stat-box" style="text-align:left;padding:14px 16px;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:6px;">ANIMAL RESEARCH</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--white);line-height:1;">8–12 Weeks</div>
+          <div style="font-size:12px;color:var(--text);margin-top:6px;line-height:1.5;">Mouse studies showing fat loss ran 8–12 weeks of continuous daily dosing with significant body composition changes observed from week 4 onward.</div>
+        </div>
+        <div class="stat-box" style="text-align:left;padding:14px 16px;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:6px;">PRACTITIONER CONSENSUS</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--white);line-height:1;">8–16 Weeks</div>
+          <div style="font-size:12px;color:var(--text);margin-top:6px;line-height:1.5;">Practitioners commonly use 8–16 week cycles given the oral route and favorable safety profile. Off-period of 4–8 weeks between cycles is advised to assess methylation markers.</div>
+        </div>
+      </div>
+      <div class="note-box" style="margin-top:0;">Because 5-Amino-1MQ affects the SAM/methionine cycle, <strong style="color:var(--white)">methylation status should be monitored</strong> (homocysteine, SAM/SAH) especially in individuals with MTHFR variants or high homocysteine at baseline. Consider pairing with methylated B vitamins (methylfolate, methylcobalamin).</div>
+    </div>
+
+    <div style="margin-bottom:22px;">
+      <div class="bio-category-title" style="color:var(--accent2);">▸ Frequency & Timing</div>
+      <table class="bio-table">
+        <thead><tr><th>Variable</th><th>Recommendation</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><span class="bio-name">Frequency</span></td><td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent2);">Daily (1–2×/day)</span></td><td><span style="font-size:12px;color:var(--text);line-height:1.5;">Animal studies used daily dosing. Some practitioners split dose AM/PM for more consistent NNMT inhibition across the day.</span></td></tr>
+          <tr><td><span class="bio-name">Fasted vs Fed</span></td><td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent2);">Fed state acceptable</span></td><td><span style="font-size:12px;color:var(--text);line-height:1.5;">Fasting not required — inject AM with or without food. No insulin interaction concerns at these doses.</span></td></tr>
+          <tr><td><span class="bio-name">Morning (AM)</span></td><td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent2);">✓ Preferred</span></td><td><span style="font-size:12px;color:var(--text);line-height:1.5;">AM injection aligns with peak metabolic activity and fat oxidation windows.</span></td></tr>
+          <tr><td><span class="bio-name">Injection Site</span></td><td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent2);">SC abdomen or thigh</span></td><td><span style="font-size:12px;color:var(--text);line-height:1.5;">Subcutaneous injection — rotate sites daily to prevent fibrosis. Abdomen or outer thigh preferred.</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="background:rgba(255,107,53,0.05);border:1px solid rgba(255,107,53,0.2);padding:18px 20px;">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent3);margin-bottom:12px;">PROTOCOL SUMMARY</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;">
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);"><div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">8–16 wk</div><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">CYCLE LENGTH</div></div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);"><div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">Daily</div><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">FREQUENCY</div></div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);"><div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">AM</div><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">TIMING</div></div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);"><div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">SC Inj</div><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">ROUTE</div></div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);"><div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">4–8 wk</div><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">BREAK</div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

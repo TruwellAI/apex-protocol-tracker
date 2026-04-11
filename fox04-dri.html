@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FOX04-DRI — Apex Research Reference</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap');
+    :root{--bg:#080c10;--panel:#0d1318;--border:#1a2d3a;--accent:#00d4ff;--accent2:#00ff9d;--accent3:#ff6b35;--text:#c8dde8;--muted:#4a6272;--white:#eaf4f8;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;line-height:1.6;padding:40px 20px;}
+    body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 70% 10%,rgba(0,212,255,0.06) 0%,transparent 60%),radial-gradient(ellipse at 20% 90%,rgba(255,107,53,0.04) 0%,transparent 50%);pointer-events:none;z-index:0;}
+    .container{max-width:900px;margin:0 auto;position:relative;z-index:1;}
+    .header{margin-bottom:40px;border-bottom:1px solid var(--border);padding-bottom:24px;}
+    .peptide-label{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;}
+    .peptide-name{font-family:'Rajdhani',sans-serif;font-size:52px;font-weight:700;color:var(--white);line-height:1;margin-bottom:8px;}
+    .peptide-fullname{font-size:16px;color:var(--muted);margin-bottom:16px;}
+    .tag-row{display:flex;gap:8px;flex-wrap:wrap;}
+    .tag{background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.25);color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;padding:3px 10px;}
+    .section{background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--muted);padding:28px 32px;margin-bottom:16px;animation:fadeUp 0.4s ease both;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+    .section-num{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:8px;}
+    h2{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px;}
+    .stat-box{background:var(--bg);border:1px solid var(--border);padding:16px;text-align:center;}
+    .stat-value{font-family:'Rajdhani',sans-serif;font-size:32px;font-weight:700;color:var(--white);line-height:1;}
+    .stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-top:4px;}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+    .info-item{margin-bottom:14px;}
+    .info-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:4px;}
+    .info-value{color:var(--white);font-size:13px;line-height:1.5;}
+    .timeline{position:relative;padding-left:20px;}
+    .timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:var(--border);}
+    .timeline-item{position:relative;margin-bottom:20px;}
+    .timeline-item::before{content:'';position:absolute;left:-24px;top:5px;width:8px;height:8px;background:var(--accent);border-radius:50%;}
+    .timeline-year{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:4px;}
+    .benefit-item{display:flex;gap:14px;margin-bottom:16px;align-items:flex-start;}
+    .benefit-num{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent3);min-width:28px;padding-top:2px;}
+    .benefit-title{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;color:var(--white);margin-bottom:3px;}
+    .recon-box{background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--accent2);padding:20px 24px;margin-bottom:16px;}
+    .recon-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);margin-bottom:12px;}
+    .recon-math{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--white);margin-bottom:8px;}
+    .dose-table{width:100%;border-collapse:collapse;}
+    .dose-table th{background:rgba(0,212,255,0.08);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);}
+    .dose-table td{padding:12px 14px;border-bottom:1px solid rgba(26,45,58,0.5);vertical-align:top;font-size:13px;}
+    .dose-level{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);font-weight:700;}
+    .dose-amount{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--white);}
+    .dose-units{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent);display:block;margin-top:2px;}
+    .bio-table{width:100%;border-collapse:collapse;}
+    .bio-table th{background:rgba(0,212,255,0.06);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--muted);text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);}
+    .bio-table td{padding:10px 12px;border-bottom:1px solid rgba(26,45,58,0.4);vertical-align:top;font-size:12px;}
+    .bio-name{color:var(--white);font-weight:500;display:block;}
+    .bio-test{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);}
+    .range-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 6px;margin-right:4px;}
+    .range-clinical{background:rgba(74,98,114,0.3);color:var(--muted);}
+    .range-optimal{background:rgba(0,255,157,0.1);color:var(--accent2);}
+    .bio-category{margin-bottom:24px;}
+    .bio-category-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);margin-bottom:10px;}
+    .note-box{background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.15);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .disclaimer-box{background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.2);padding:14px 18px;margin-top:20px;font-size:12px;color:var(--text);line-height:1.5;}
+  </style>
+</head>
+<body>
+<div class="container">
+<a href="index.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--muted);text-decoration:none;text-transform:uppercase;margin-bottom:28px;padding:8px 14px;border:1px solid var(--border);transition:all .2s;" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">← Back to Encyclopedia</a>
+
+  <div class="header">
+    <div class="peptide-label">Apex Research Reference</div>
+    <div class="peptide-name">FOX04-DRI</div>
+    <div class="peptide-fullname">FOXO4-p53 Disruptor Peptide — D-Retro-Inverso Senolytic</div>
+    <div class="tag-row">
+      <span class="tag">SENOLYTIC</span>
+      <span class="tag">ANTI-AGING</span>
+      <span class="tag">LONGEVITY</span>
+      <span class="tag">D-RETRO-INVERSO</span>
+      <span class="tag">PULSED PROTOCOL</span>
+    </div>
+  </div>
+
+  <!-- 01 -->
+  <div class="section" style="animation-delay:0.1s;border-top-color:var(--accent);">
+    <div class="section-num">01 — Identity</div>
+    <h2>What Is FOX04-DRI?</h2>
+    <div class="stat-grid">
+      <div class="stat-box"><div class="stat-value">2017</div><div class="stat-label">PUBLISHED</div></div>
+      <div class="stat-box"><div class="stat-value">D-Retro</div><div class="stat-label">PEPTIDE TYPE</div></div>
+      <div class="stat-box"><div class="stat-value">FOXO4-p53</div><div class="stat-label">TARGET</div></div>
+      <div class="stat-box"><div class="stat-value">Senolytic</div><div class="stat-label">MECHANISM CLASS</div></div>
+    </div>
+    <div class="info-grid">
+      <div>
+        <div class="info-item"><div class="info-label">Origin</div><div class="info-value">Developed by Dr. Peter de Keizer at Erasmus MC Rotterdam, Netherlands. Published in Cell, 2017.</div></div>
+        <div class="info-item"><div class="info-label">Chemical Class</div><div class="info-value">D-retro-inverso peptide — uses D-amino acids in reverse sequence, conferring protease resistance and cell-penetrating ability.</div></div>
+      </div>
+      <div>
+        <div class="info-item"><div class="info-label">Primary Use</div><div class="info-value">Selective elimination of senescent ("zombie") cells. Targets the FOXO4-p53 survival mechanism unique to senescent cells.</div></div>
+        <div class="info-item"><div class="info-label">Administration</div><div class="info-value">Subcutaneous injection. Pulsed protocol — NOT daily. 2x per week for 3 weeks on, then 6-month (26-week) break off.</div></div>
+      </div>
+    </div>
+    <div class="note-box">FOX04-DRI works by mimicking the FOXO4 binding domain. In senescent cells, FOXO4 traps p53 in the nucleus — preventing the cell from dying. FOX04-DRI disrupts this interaction, freeing p53 to trigger apoptosis specifically in senescent cells. Normal healthy cells are spared because they don't rely on FOXO4-p53 nuclear retention for survival.</div>
+  </div>
+
+  <!-- 02 -->
+  <div class="section" style="animation-delay:0.2s;">
+    <div class="section-num">02 — Research History</div>
+    <h2>Discovery & Research Timeline</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-year">2004–2014</div>
+        <div>Research into cellular senescence matures. The "senescence-associated secretory phenotype" (SASP) — the toxic inflammatory cocktail secreted by zombie cells — is characterized by Judith Campisi's lab at the Buck Institute. Senescent cells are identified as drivers of aging, cancer risk, and chronic disease.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2016</div>
+        <div>Dr. Peter de Keizer's lab at Erasmus MC identifies FOXO4 as the survival factor keeping senescent cells alive. Senescent cells uniquely upregulate FOXO4, which sequesters p53 in the nucleus — blocking the apoptosis signal. Normal cells do not depend on this mechanism.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2017</div>
+        <div>Landmark Cell paper published: "Targeted Apoptosis of Senescent Cells Restores Tissue Homeostasis in Response to Chemotoxicity and Aging." FOX04-DRI injections in naturally aged mice and chemotherapy-treated mice restore physical fitness, fur density, and organ histology. Median lifespan extension observed.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2018–2020</div>
+        <div>Follow-up research confirms FOX04-DRI clears senescent cells in liver fibrosis models, renal aging models, and hair follicle senescence. Collaborating groups attempt to identify optimal dosing windows and pulse frequency.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2021–2024</div>
+        <div>Research peptide community adopts FOX04-DRI as a longevity protocol compound. Anecdotal human use grows. No human clinical trials published. Dr. de Keizer's group continues preclinical work; commercialization pathway remains unclear.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 -->
+  <div class="section" style="animation-delay:0.3s;">
+    <div class="section-num">03 — Primary Benefits</div>
+    <h2>Documented Effects</h2>
+    <div class="benefit-item"><div class="benefit-num">01</div><div><div class="benefit-title">Senescent Cell Clearance</div><div>Selectively eliminates FOXO4-expressing senescent cells via targeted apoptosis — without harming healthy, non-senescent cells. The most targeted senolytic mechanism identified to date.</div></div></div>
+    <div class="benefit-item"><div class="benefit-num">02</div><div><div class="benefit-title">SASP Reduction</div><div>Removes the source of the senescence-associated secretory phenotype — the pro-inflammatory cytokine storm (IL-6, IL-8, MMP-3, PAI-1) that drives systemic aging and tissue dysfunction.</div></div></div>
+    <div class="benefit-item"><div class="benefit-num">03</div><div><div class="benefit-title">Physical Function Restoration</div><div>Aged mice treated with FOX04-DRI showed significant improvements in running speed, grip strength, and endurance — reverting to phenotypes resembling younger animals.</div></div></div>
+    <div class="benefit-item"><div class="benefit-num">04</div><div><div class="benefit-title">Organ Histology Improvement</div><div>Liver and kidney tissue from treated mice showed reduced fibrosis and normalized cellular architecture compared to untreated age-matched controls.</div></div></div>
+    <div class="benefit-item"><div class="benefit-num">05</div><div><div class="benefit-title">Hair Follicle Regeneration</div><div>Clearance of senescent cells in hair follicle niches allowed dormant follicles to re-enter the growth phase. Fur density restoration was one of the most visually striking findings in the 2017 paper.</div></div></div>
+    <div class="benefit-item"><div class="benefit-num">06</div><div><div class="benefit-title">Chemotherapy Recovery</div><div>Mice with chemotherapy-induced senescence burden showed accelerated recovery of physical function and reduced frailty after FOX04-DRI treatment — suggesting a post-cancer application.</div></div></div>
+    <div class="benefit-item"><div class="benefit-num">07</div><div><div class="benefit-title">Anti-Fibrotic</div><div>Senescent cells are major drivers of organ fibrosis. FOX04-DRI reduces liver and kidney fibrosis in animal models by clearing the senescent fibroblasts responsible for excess collagen deposition.</div></div></div>
+  </div>
+
+  <!-- 04 -->
+  <div class="section" style="animation-delay:0.4s;border-top-color:var(--accent2);">
+    <div class="section-num">04 — Reconstitution</div>
+    <h2>Mixing & Storage</h2>
+    <div class="recon-box">
+      <div class="recon-title">▸ Standard Reconstitution — 10mg Vial</div>
+      <div class="recon-math">10mg vial + 300 units BAC water = 33.3 mcg per unit on insulin syringe</div>
+      <div style="font-size:12px;color:var(--text);margin-top:6px;">10,000 mcg total per vial · Refrigerate after reconstitution · Use within 4–6 weeks · Protect from light</div>
+    </div>
+    <div class="note-box">FOX04-DRI is a D-retro-inverso peptide — it uses D-amino acids which are more resistant to protease degradation than standard L-amino acid peptides. This contributes to its stability in solution. Still handle with standard peptide storage protocols.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;">
+      <div class="stat-box" style="text-align:left;padding:14px 16px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:6px;">UNRECONSTITUTED</div>
+        <div style="font-size:13px;color:var(--white);line-height:1.5;">Refrigerate at 2–8°C. Stable at room temperature for short-term shipping. Do not freeze lyophilized powder.</div>
+      </div>
+      <div class="stat-box" style="text-align:left;padding:14px 16px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:6px;">RECONSTITUTED</div>
+        <div style="font-size:13px;color:var(--white);line-height:1.5;">Refrigerate at 2–8°C. Use within 4–6 weeks. Keep away from light. Do not freeze liquid solution.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 05 -->
+  <div class="section" style="animation-delay:0.5s;border-top-color:var(--accent3);">
+    <div class="section-num">05 — Dosing Protocol</div>
+    <h2>Dose Levels & Unit Draws</h2>
+    <table class="dose-table">
+      <thead><tr><th>Level</th><th>Dose</th><th>Syringe Draw</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="dose-level">LOW</span></td>
+          <td><div class="dose-amount">1mg</div><span class="dose-units">30 units on insulin syringe</span></td>
+          <td style="color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:12px;">30u</td>
+          <td>Starting/exploratory dose. Assess tolerance and response. Good for first pulse cycle.</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">STANDARD</span></td>
+          <td><div class="dose-amount">2mg</div><span class="dose-units">60 units on insulin syringe</span></td>
+          <td style="color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:12px;">60u</td>
+          <td>Most commonly referenced research dose. Used in de Keizer lab protocols and most anecdotal human reports.</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">HIGH</span></td>
+          <td><div class="dose-amount">5mg</div><span class="dose-units">150 units on insulin syringe</span></td>
+          <td style="color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:12px;">150u</td>
+          <td>Intensive senolytic protocol. Used 3 consecutive days per pulse. Higher dose may increase apoptotic burden — monitor inflammatory response (temporary SASP flare possible).</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note-box">⚠ <strong style="color:var(--white);">PULSED PROTOCOL ONLY — NOT DAILY.</strong> FOX04-DRI is administered 2x per week for 3 weeks on, followed by a 26-week (6-month) break before repeating. Continuous daily use is not the protocol and may cause excessive apoptotic burden. Think of it as a periodic cellular "cleanup" — not a daily maintenance peptide.</div>
+  </div>
+
+  <!-- 06 -->
+  <div class="section" style="animation-delay:0.6s;">
+    <div class="section-num">06 — Timing & Frequency</div>
+    <h2>When & How Often</h2>
+    <table class="bio-table">
+      <thead><tr><th>Variable</th><th>Recommendation</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="bio-name">Injection Frequency</span></td>
+          <td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent2);">2x per week</span></td>
+          <td style="font-size:12px;color:var(--text);">Dose twice per week (e.g. Monday/Thursday) during the active cycle phase. This spaced-pulse approach allows adequate clearance between doses while maintaining consistent senolytic pressure across the 3-week cycle window.</td>
+        </tr>
+        <tr>
+          <td><span class="bio-name">Cycle Duration</span></td>
+          <td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent2);">3 weeks on</span></td>
+          <td style="font-size:12px;color:var(--text);">Active dosing continues for 3 weeks (6 total injections at 2x/week), providing a sustained senolytic window to clear the current population of senescent cells.</td>
+        </tr>
+        <tr>
+          <td><span class="bio-name">Break Between Cycles</span></td>
+          <td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent2);">26 weeks off (6 months)</span></td>
+          <td style="font-size:12px;color:var(--text);">A 6-month recovery break allows the body to fully clear apoptotic debris, resolve any transient inflammatory response (SASP flare), and allow new senescent cells to accumulate to a meaningful threshold before the next cycle.</td>
+        </tr>
+        <tr>
+          <td><span class="bio-name">Annual Frequency</span></td>
+          <td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent2);">~2 cycles/year</span></td>
+          <td style="font-size:12px;color:var(--text);">With a 3-week on / 26-week off structure, approximately 2 full cycles fit within a calendar year. This conservative schedule reflects the slow rate of senescent cell re-accumulation and the need for adequate inter-cycle recovery.</td>
+        </tr>
+        <tr>
+          <td><span class="bio-name">Time of Day</span></td>
+          <td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent2);">AM preferred</span></td>
+          <td style="font-size:12px;color:var(--text);">No strong mechanistic rationale for specific timing. AM dosing is conventional and allows observation of any immediate response.</td>
+        </tr>
+        <tr>
+          <td><span class="bio-name">Fasted vs Fed</span></td>
+          <td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted);">Either acceptable</span></td>
+          <td style="font-size:12px;color:var(--text);">FOX04-DRI mechanism is not dependent on insulin or metabolic state. Fasted AM is conventional but not required.</td>
+        </tr>
+        <tr>
+          <td><span class="bio-name">Injection Site</span></td>
+          <td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent2);">SC abdomen or thigh</span></td>
+          <td style="font-size:12px;color:var(--text);">Subcutaneous injection. Distributes systemically — no need for site-specific targeting. Rotate sites across the 3 days.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 07 -->
+  <div class="section" style="animation-delay:0.7s;">
+    <div class="section-num">07 — Biomarker Monitoring</div>
+    <h2>Lab Tests & Optimal Ranges</h2>
+
+    <div class="bio-category">
+      <div class="bio-category-title">▸ Senescence Markers</div>
+      <table class="bio-table">
+        <thead><tr><th>Biomarker</th><th>Lab Test</th><th>Clinical Range</th><th>Optimal Range</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">GDF-15</span><br><span style="font-size:11px;color:var(--muted);">Mitochondrial/senescence stress</span></td>
+            <td><span class="bio-test">Serum GDF-15</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span><span class="range-clinical">&lt;1200 pg/mL</span></td>
+            <td><span class="range-label range-optimal">OPTIMAL</span><span class="range-optimal">&lt;400 pg/mL</span></td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">p21 / CDKN1A</span><br><span style="font-size:11px;color:var(--muted);">Senescent cell cycle arrest marker</span></td>
+            <td><span class="bio-test">Research panel (specialty lab)</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span><span class="range-clinical">Lab-dependent</span></td>
+            <td><span class="range-label range-optimal">OPTIMAL</span><span class="range-optimal">Declining with treatment</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">▸ Inflammatory / SASP Panel</div>
+      <table class="bio-table">
+        <thead><tr><th>Biomarker</th><th>Lab Test</th><th>Clinical Range</th><th>Optimal Range</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">hsCRP</span></td>
+            <td><span class="bio-test">High-Sensitivity CRP</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span><span class="range-clinical">&lt;3.0 mg/L</span></td>
+            <td><span class="range-label range-optimal">OPTIMAL</span><span class="range-optimal">&lt;0.5 mg/L</span></td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">IL-6</span></td>
+            <td><span class="bio-test">Serum IL-6</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span><span class="range-clinical">&lt;7.0 pg/mL</span></td>
+            <td><span class="range-label range-optimal">OPTIMAL</span><span class="range-optimal">&lt;1.5 pg/mL</span></td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">TNF-alpha</span></td>
+            <td><span class="bio-test">Serum TNF-α</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span><span class="range-clinical">&lt;8.1 pg/mL</span></td>
+            <td><span class="range-label range-optimal">OPTIMAL</span><span class="range-optimal">&lt;2.0 pg/mL</span></td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Fibrinogen</span><br><span style="font-size:11px;color:var(--muted);">SASP-driven coagulation marker</span></td>
+            <td><span class="bio-test">Serum fibrinogen</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span><span class="range-clinical">200–400 mg/dL</span></td>
+            <td><span class="range-label range-optimal">OPTIMAL</span><span class="range-optimal">&lt;250 mg/dL</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">▸ Safety Panel</div>
+      <table class="bio-table">
+        <thead><tr><th>Biomarker</th><th>Lab Test</th><th>Clinical Range</th><th>Optimal Range</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">AST / ALT</span></td>
+            <td><span class="bio-test">CMP</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span><span class="range-clinical">AST 10–40 / ALT 7–56 U/L</span></td>
+            <td><span class="range-label range-optimal">OPTIMAL</span><span class="range-optimal">AST &lt;26 / ALT &lt;26 U/L</span></td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">CBC</span></td>
+            <td><span class="bio-test">Complete Blood Count</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span><span class="range-clinical">Standard ranges</span></td>
+            <td><span class="range-label range-optimal">OPTIMAL</span><span class="range-optimal">Mid-range; WBC 4.5–6.0</span></td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Creatinine / eGFR</span></td>
+            <td><span class="bio-test">CMP</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span><span class="range-clinical">Creat 0.7–1.3 / eGFR &gt;60</span></td>
+            <td><span class="range-label range-optimal">OPTIMAL</span><span class="range-optimal">Creat 0.8–1.1 / eGFR &gt;90</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="disclaimer-box">⚠ FOX04-DRI is experimental. The landmark 2017 Cell paper used mouse models. No published human clinical trials exist. The SASP inflammatory burden may transiently increase immediately after a pulse cycle as dying senescent cells release their contents — this is expected and resolves within days. Monitor hsCRP and IL-6 before and 1–2 weeks after each pulse. Individuals with autoimmune conditions should consult a physician before use.</div>
+  </div>
+
+  <!-- 08 -->
+  <div class="section" style="animation-delay:0.8s;border-top-color:var(--accent);">
+    <div class="section-num">08 — Cycle Protocol</div>
+    <h2>Pulse Schedule & Protocol</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">
+      <div class="stat-box" style="text-align:left;padding:14px 16px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:6px;">GENERAL LONGEVITY</div>
+        <div style="font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--white);line-height:1;">3 Days On</div>
+        <div style="font-size:12px;color:var(--text);margin-top:6px;line-height:1.5;">3 consecutive daily injections (Day 1, 2, 3) at 1–2mg per day. Then 4–6 weeks off. Repeat 3–4 times per year for longevity maintenance.</div>
+      </div>
+      <div class="stat-box" style="text-align:left;padding:14px 16px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:6px;">INTENSIVE SENOLYTIC</div>
+        <div style="font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--white);line-height:1;">3 Days × 5mg</div>
+        <div style="font-size:12px;color:var(--text);margin-top:6px;line-height:1.5;">High-dose 3-day pulse at 5mg/day for accelerated clearance. Minimum 6-week break. Monitor inflammatory markers post-pulse. Max 2–3 cycles per year at this dose.</div>
+      </div>
+    </div>
+    <div class="note-box">FOX04-DRI should NOT be stacked with other pro-apoptotic compounds during the pulse window. It can be run alongside daily longevity peptides (SS-31, GHK-Cu, Epitalon) during the off weeks — just pause those during the 3-day pulse to avoid confounding inflammatory signals.</div>
+    <div style="background:rgba(0,255,157,0.05);border:1px solid rgba(0,255,157,0.2);padding:18px 20px;">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);margin-bottom:12px;">PROTOCOL SUMMARY</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;">
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);">
+          <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">3 Days</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">PULSE DURATION</div>
+        </div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);">
+          <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">4–6 wk</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">BREAK</div>
+        </div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);">
+          <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">3–6×</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">PER YEAR</div>
+        </div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);">
+          <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">AM</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">TIMING</div>
+        </div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);">
+          <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">SC</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">ROUTE</div>
+        </div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);">
+          <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">1–5mg</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">DOSE RANGE</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

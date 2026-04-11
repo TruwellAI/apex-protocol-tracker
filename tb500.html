@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TB-500 — Peptide Reference</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#080c10;--panel:#0d1318;--border:#1a2d3a;--accent:#00d4ff;--accent2:#00ff9d;--accent3:#ff6b35;--text:#c8dde8;--muted:#4a6272;--white:#eaf4f8;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-weight:300;min-height:100vh;padding:32px 20px;position:relative;overflow-x:hidden;}
+  body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse 60% 40% at 80% 10%,rgba(0,212,255,0.06) 0%,transparent 60%),radial-gradient(ellipse 40% 50% at 10% 80%,rgba(0,255,157,0.04) 0%,transparent 60%);pointer-events:none;z-index:0;}
+  .container{max-width:720px;margin:0 auto;position:relative;z-index:1;}
+  .header{border-left:3px solid var(--accent2);padding-left:20px;margin-bottom:40px;animation:fadeSlide 0.6s ease both;}
+  .header .label{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:4px;color:var(--accent2);text-transform:uppercase;margin-bottom:6px;}
+  .header h1{font-family:'Rajdhani',sans-serif;font-size:clamp(42px,10vw,72px);font-weight:700;color:var(--white);line-height:1;letter-spacing:2px;}
+  .header .subtitle{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted);margin-top:8px;letter-spacing:2px;}
+  .section{margin-bottom:28px;background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--accent);padding:24px 26px;animation:fadeSlide 0.6s ease both;}
+  .section-num{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:4px;}
+  .section h2{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:600;letter-spacing:1px;color:var(--white);margin-bottom:16px;text-transform:uppercase;}
+  .section p{font-size:15px;line-height:1.7;color:var(--text);margin-bottom:10px;}
+  .section p:last-child{margin-bottom:0;}
+  .timeline{display:flex;flex-direction:column;gap:12px;}
+  .tl-item{display:grid;grid-template-columns:90px 1fr;gap:16px;align-items:start;}
+  .tl-year{font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--accent2);padding-top:2px;letter-spacing:1px;}
+  .tl-text{font-size:14px;line-height:1.6;color:var(--text);border-left:1px solid var(--border);padding-left:14px;}
+  .benefits-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .benefit-item{background:rgba(0,255,157,0.04);border:1px solid rgba(0,255,157,0.12);padding:12px 14px;display:flex;gap:10px;align-items:flex-start;}
+  .benefit-dot{width:6px;height:6px;border-radius:50%;background:var(--accent2);margin-top:6px;flex-shrink:0;}
+  .benefit-text{font-size:13px;line-height:1.5;color:var(--text);}
+  .recon-box{background:rgba(0,255,157,0.04);border:1px solid rgba(0,255,157,0.15);padding:18px 20px;margin-bottom:16px;}
+  .recon-box .big{font-family:'Rajdhani',sans-serif;font-size:36px;font-weight:700;color:var(--accent2);line-height:1;}
+  .recon-box .big-label{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:2px;margin-top:4px;}
+  .recon-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px;}
+  .stat-box{background:var(--bg);border:1px solid var(--border);padding:12px;text-align:center;}
+  .stat-val{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:600;color:var(--white);}
+  .stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;margin-top:2px;}
+  .dose-table{width:100%;border-collapse:collapse;}
+  .dose-table th{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);}
+  .dose-table td{font-size:14px;padding:10px 12px;border-bottom:1px solid rgba(26,45,58,0.6);color:var(--text);}
+  .dose-table tr:last-child td{border-bottom:none;}
+  .dose-table tr:hover td{background:rgba(0,212,255,0.03);}
+  .dose-units{font-family:'Share Tech Mono',monospace;font-size:15px;color:var(--accent3);font-weight:bold;}
+  .dose-tag{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;padding:2px 8px;background:rgba(0,255,157,0.1);border:1px solid rgba(0,255,157,0.25);color:var(--accent2);border-radius:2px;}
+  .note-box{margin-top:16px;background:rgba(255,107,53,0.06);border-left:3px solid var(--accent3);padding:12px 16px;font-size:13px;line-height:1.6;color:var(--text);}
+  .bio-category{margin-bottom:24px;}
+  .bio-category-title{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--accent3);text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(255,107,53,0.2);}
+  .bio-table{width:100%;border-collapse:collapse;}
+  .bio-table th{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;text-align:left;padding:7px 10px;border-bottom:1px solid var(--border);background:rgba(0,212,255,0.04);}
+  .bio-table td{font-size:13px;padding:9px 10px;border-bottom:1px solid rgba(26,45,58,0.5);color:var(--text);vertical-align:top;line-height:1.5;}
+  .bio-table tr:last-child td{border-bottom:none;}
+  .bio-table tr:hover td{background:rgba(0,212,255,0.025);}
+  .bio-name{font-weight:500;color:var(--white);font-size:13px;}
+  .bio-test{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);display:block;margin-top:2px;}
+  .range-clinical{color:var(--muted);font-size:12px;}
+  .range-optimal{color:var(--accent2);font-size:12px;font-weight:500;}
+  .range-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;display:block;margin-bottom:2px;opacity:0.7;}
+  .disclaimer-box{margin-top:20px;background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.12);padding:14px 16px;font-size:12px;line-height:1.7;color:var(--muted);font-style:italic;}
+  @keyframes fadeSlide{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+  @media(max-width:480px){.benefits-grid{grid-template-columns:1fr;}.recon-stats{grid-template-columns:1fr 1fr;}.tl-item{grid-template-columns:70px 1fr;}.bio-table th,.bio-table td{padding:7px 6px;font-size:12px;}}
+</style>
+</head>
+<body>
+<div class="container">
+<a href="index.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--muted);text-decoration:none;text-transform:uppercase;margin-bottom:28px;padding:8px 14px;border:1px solid var(--border);transition:all .2s;" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">← Back to Encyclopedia</a>
+
+  <div class="header">
+    <div class="label">Peptide Reference Sheet</div>
+    <h1>TB-500</h1>
+    <div class="subtitle">THYMOSIN BETA-4 FRAGMENT &nbsp;|&nbsp; ACTIN-SEQUESTERING / SYSTEMIC HEALING PEPTIDE</div>
+  </div>
+
+  <!-- 01 -->
+  <div class="section" style="animation-delay:0.1s;border-top-color:var(--accent2);">
+    <div class="section-num">01 — Identity</div>
+    <h2>Name & Classification</h2>
+    <p>TB-500 is a synthetic peptide corresponding to the <strong style="color:var(--white)">actin-binding domain of Thymosin Beta-4 (Tβ4)</strong>, specifically the fragment <span style="font-family:'Share Tech Mono',monospace;color:var(--accent);font-size:13px;">Ac-LKKTETQ (residues 17–23 of Tβ4)</span>. It is often used interchangeably with full-length Thymosin Beta-4, though TB-500 refers specifically to this active fragment.</p>
+    <p>Thymosin Beta-4 is a naturally occurring 43-amino acid protein present in virtually every cell of the human body and at particularly high concentrations in platelets and wound fluid. It is classified as an <strong style="color:var(--white)">actin-sequestering peptide</strong> — it binds G-actin monomers, regulating the dynamic assembly and disassembly of actin filaments that govern cell migration, proliferation, and tissue repair.</p>
+    <p>Also known as: <span style="font-family:'Share Tech Mono',monospace;color:var(--accent);font-size:13px;">Tβ4 fragment &nbsp;|&nbsp; Thymosin β4 (17-23)</span></p>
+  </div>
+
+  <!-- 02 -->
+  <div class="section" style="animation-delay:0.2s;border-top-color:var(--accent);">
+    <div class="section-num">02 — Origin</div>
+    <h2>When It Was Developed</h2>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-year">1960s</div>
+        <div class="tl-text">Thymosin fraction 5 isolated from bovine thymus by <strong style="color:var(--white)">Dr. Allan Goldstein</strong> at the Albert Einstein College of Medicine as part of thymus hormone research. Thymosin Beta-4 later identified as a key component.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1981</div>
+        <div class="tl-text">Thymosin Beta-4 fully sequenced and characterized. Identified as the most abundant intracellular peptide in mammalian cells — present at concentrations of 200–500 µM in platelets.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1990s–2000s</div>
+        <div class="tl-text">Role in wound healing, cell migration, and angiogenesis established. Research groups at <strong style="color:var(--white)">RegeneRx Biopharmaceuticals</strong> began clinical development of full-length Tβ4 for corneal wound healing, dry eye, and cardiac repair.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">2004–2012</div>
+        <div class="tl-text">The Ac-LKKTETQ fragment (TB-500) identified as the minimal sequence responsible for most of Tβ4's actin-binding, cell migration, and wound-healing activity. Began use as research peptide in veterinary and human performance contexts.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">2010s–Present</div>
+        <div class="tl-text">Widely adopted in sports medicine and injury recovery for tendon, muscle, and ligament healing. Cardiac repair research ongoing — Tβ4 shown to reactivate dormant cardiac progenitor cells after myocardial infarction. No FDA approval as a drug; research peptide status.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 -->
+  <div class="section" style="animation-delay:0.3s;border-top-color:var(--accent2);">
+    <div class="section-num">03 — Research History</div>
+    <h2>Research Background</h2>
+    <p>TB-500's core mechanism centers on actin regulation. By sequestering G-actin monomers, it promotes the rapid migration of repair cells — keratinocytes, fibroblasts, endothelial cells — into wound sites. This is critical because tissue repair speed is largely limited by how fast cells can reach and fill the damaged area. TB-500 essentially removes the brake on cell migration.</p>
+    <p>Beyond its actin-binding role, TB-500 promotes <strong style="color:var(--white)">angiogenesis</strong> (new blood vessel formation) in ischemic tissue, reduces inflammatory cytokines (particularly in cardiac tissue), and activates the PI3K/Akt survival pathway that protects cells from apoptosis in hypoxic conditions. This combination makes it particularly valuable for both acute injury and chronic ischemic conditions.</p>
+    <p>The cardiac research is especially compelling: studies in rodent myocardial infarction models showed that Tβ4/TB-500 reactivated epicardial progenitor cells that are normally dormant in adult hearts, prompting regeneration of cardiomyocytes. It also significantly reduced infarct scar size and preserved ejection fraction. Human cardiac trials are in early stages. Neurological research suggests TB-500 crosses the blood-brain barrier and promotes remyelination and neuronal survival after injury.</p>
+  </div>
+
+  <!-- 04 -->
+  <div class="section" style="animation-delay:0.4s;border-top-color:var(--accent3);">
+    <div class="section-num">04 — Key Benefits</div>
+    <h2>Proposed Benefits</h2>
+    <div class="benefits-grid">
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Accelerates repair of tendons, ligaments, and muscle tissue</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Promotes cell migration via actin-sequestering mechanism</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Stimulates angiogenesis — new vessel formation in injured tissue</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Reduces systemic inflammation and inflammatory cytokines</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Cardiac protection — progenitor cell activation, scar reduction</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Promotes flexibility — reduces connective tissue adhesions</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Crosses blood-brain barrier — neuronal repair and remyelination</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Activates PI3K/Akt pathway — cytoprotection in hypoxic conditions</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Compatible with BPC-157 — synergistic injury healing combination</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Systemic distribution — heals distant injuries from single injection site</div></div>
+    </div>
+  </div>
+
+  <!-- 05 -->
+  <div class="section" style="animation-delay:0.5s;border-top-color:var(--accent);">
+    <div class="section-num">05 — Reconstitution</div>
+    <h2>10 mg Vial + 300 Units BAC Water</h2>
+    <div class="recon-box">
+      <div class="big">33.3 mcg</div>
+      <div class="big-label">per unit drawn on insulin syringe</div>
+    </div>
+    <div class="recon-stats">
+      <div class="stat-box"><div class="stat-val">10,000</div><div class="stat-label">mcg total</div></div>
+      <div class="stat-box"><div class="stat-val">0.3 mL</div><div class="stat-label">total volume</div></div>
+      <div class="stat-box"><div class="stat-val">4–6 wk</div><div class="stat-label">shelf life (fridge)</div></div>
+    </div>
+    <div class="note-box" style="margin-top:14px;">Store refrigerated at 2–8°C after reconstitution. TB-500 is a relatively stable peptide in solution. Inject subcutaneously anywhere on the body — it distributes systemically and does not need to be injected near the injury site (unlike BPC-157 local protocols). Do not freeze reconstituted vial. Light-protect if storing for extended periods.</div>
+  </div>
+
+  <!-- 06 -->
+  <div class="section" style="animation-delay:0.6s;border-top-color:var(--accent2);">
+    <div class="section-num">06 — Dosage</div>
+    <h2>Dosage Reference</h2>
+    <table class="dose-table">
+      <thead><tr><th>Dose</th><th>Units to Draw</th><th>Context</th></tr></thead>
+      <tbody>
+        <tr><td>2.0 mg / injection</td><td><span class="dose-units">~60 u</span></td><td><span class="dose-tag">LOW / INTRO</span></td></tr>
+        <tr><td>2.5 mg / injection</td><td><span class="dose-units">~75 u</span></td><td><span class="dose-tag">COMMON</span></td></tr>
+        <tr><td>5.0 mg / injection</td><td><span class="dose-units">~150 u</span></td><td><span class="dose-tag">STANDARD</span></td></tr>
+        <tr><td>7.5–10 mg / injection</td><td><span class="dose-units">~225–300 u</span></td><td><span class="dose-tag">HIGH</span></td></tr>
+      </tbody>
+    </table>
+    <div class="note-box">TB-500 is typically dosed at <strong style="color:var(--white)">2–5 mg per injection, 2–3× per week</strong> during a loading phase, then reduced to weekly maintenance dosing. Unlike most peptides, the weekly or twice-weekly injection schedule reflects its longer systemic action. Higher single doses (5–10 mg) are used by some practitioners for acute injury recovery. 300 units on a U-100 syringe = 0.3 mL = the entire reconstituted vial volume.</div>
+  </div>
+
+  <!-- 07 -->
+  <div class="section" style="animation-delay:0.7s;border-top-color:var(--accent3);">
+    <div class="section-num">07 — Monitoring</div>
+    <h2>Biomarkers, Lab Tests & Ranges</h2>
+    <p style="font-size:13px;margin-bottom:20px;">TB-500 primarily impacts connective tissue repair, angiogenesis, inflammation, and cardiac markers. Monitor the following before, at 6 weeks, and at cycle end.</p>
+
+    <!-- TISSUE REPAIR -->
+    <div class="bio-category">
+      <div class="bio-category-title">▸ Tissue Repair & Connective Tissue</div>
+      <table class="bio-table">
+        <thead><tr><th>Biomarker</th><th>Lab Test</th><th>Clinical Range</th><th>Optimal Range</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">IGF-1</span><br><span style="font-size:11px;color:var(--muted);">Repair growth factor</span></td>
+            <td><span class="bio-test">Serum IGF-1</span></td>
+            <td><span class="range-label">CLINICAL</span><span class="range-clinical">~115–355 ng/mL (adult)</span></td>
+            <td><span class="range-label">OPTIMAL</span><span class="range-optimal">Upper 1/3 for age (~200–300 ng/mL)</span></td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">COMP</span><br><span style="font-size:11px;color:var(--muted);">Cartilage & tendon matrix turnover</span></td>
+            <td><span class="bio-test">Serum COMP</span></td>
+            <td><span class="range-label">CLINICAL</span><span class="range-clinical">&lt;12 U/L</span></td>
+            <td><span class="range-label">OPTIMAL</span><span class="range-optimal">&lt;8 U/L (stable or declining)</span></td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">P1NP</span><br><span style="font-size:11px;color:var(--muted);">Collagen synthesis marker</span></td>
+            <td><span class="bio-test">Serum Procollagen Type I N-terminal</span></td>
+            <td><span class="range-label">CLINICAL</span><span class="range-clinical">M: 20–76 / F: 15–59 µg/L</span></td>
+            <td><span class="range-label">OPTIMAL</span><span class="range-optimal">Upper half of age range; trending up</span></td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">VEGF</span><br><span style="font-size:11px;color:var(--muted);">Angiogenesis marker</span></td>
+            <td><span class="bio-test">Serum VEGF</span></td>
+            <td><span class="range-label">CLINICAL</span><span class="range-clinical">62–707 pg/mL</span></td>
+            <td><span class="range-label">OPTIMAL</span><span class="range-optimal">Mid-to-upper range during active healing</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- CARDIAC -->
+    <div class="bio-category">
+      <div class="bio-category-title">▸ Cardiac Health</div>
+      <table class="bio-table">
+        <thead><tr><th>Biomarker</th><th>Lab Test</th><th>Clinical Range</th><th>Optimal Range</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">NT-proBNP</span><br><span style="font-size:11px;color:var(--muted);">Cardiac wall stress marker</span></td>
+            <td><span class="bio-test">Serum NT-proBNP</span></td>
+            <td><span class="range-label">CLINICAL</span><span class="range-clinical">&lt;125 pg/mL (&lt;75 yrs)</span></td>
+            <td><span class="range-label">OPTIMAL</span><span class="range-optimal">&lt;50 pg/mL</span></td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Troponin I / T</span></td>
+            <td><span class="bio-test">High-sensitivity Troponin</span></td>
+            <td><span class="range-label">CLINICAL</span><span class="range-clinical">&lt;0.04 ng/mL (standard)</span></td>
+            <td><span class="range-label">OPTIMAL</span><span class="range-optimal">Undetectable / baseline stable</span></td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">hsCRP</span></td>
+            <td><span class="bio-test">High-sensitivity CRP</span></td>
+            <td><span class="range-label">CLINICAL</span><span class="range-clinical">&lt;3.0 mg/L</span></td>
+            <td><span class="range-label">OPTIMAL</span><span class="range-optimal">&lt;0.5 mg/L</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- INFLAMMATION -->
+    <div class="bio-category">
+      <div class="bio-category-title">▸ Inflammation & Immune</div>
+      <table class="bio-table">
+        <thead><tr><th>Biomarker</th><th>Lab Test</th><th>Clinical Range</th><th>Optimal Range</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">IL-6</span></td>
+            <td><span class="bio-test">Serum Interleukin-6</span></td>
+            <td><span class="range-label">CLINICAL</span><span class="range-clinical">&lt;7.0 pg/mL</span></td>
+            <td><span class="range-label">OPTIMAL</span><span class="range-optimal">&lt;1.5 pg/mL</span></td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">TNF-α</span></td>
+            <td><span class="bio-test">Serum TNF-alpha</span></td>
+            <td><span class="range-label">CLINICAL</span><span class="range-clinical">&lt;8.1 pg/mL</span></td>
+            <td><span class="range-label">OPTIMAL</span><span class="range-optimal">&lt;2.0 pg/mL</span></td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">WBC differential</span><br><span style="font-size:11px;color:var(--muted);">Immune activation check</span></td>
+            <td><span class="bio-test">CBC with differential</span></td>
+            <td><span class="range-label">CLINICAL</span><span class="range-clinical">WBC 4.5–11.0 × 10³/µL</span></td>
+            <td><span class="range-label">OPTIMAL</span><span class="range-optimal">WBC 4.5–6.0; neutrophil % 50–65%</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SAFETY -->
+    <div class="bio-category">
+      <div class="bio-category-title">▸ Safety Panel</div>
+      <table class="bio-table">
+        <thead><tr><th>Biomarker</th><th>Lab Test</th><th>Clinical Range</th><th>Optimal Range</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">AST / ALT</span></td>
+            <td><span class="bio-test">CMP</span></td>
+            <td><span class="range-label">CLINICAL</span><span class="range-clinical">AST 10–40 / ALT 7–56 U/L</span></td>
+            <td><span class="range-label">OPTIMAL</span><span class="range-optimal">AST &lt;26 / ALT &lt;26 U/L</span></td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Creatinine / eGFR</span></td>
+            <td><span class="bio-test">CMP</span></td>
+            <td><span class="range-label">CLINICAL</span><span class="range-clinical">Creat 0.7–1.3 / eGFR &gt;60</span></td>
+            <td><span class="range-label">OPTIMAL</span><span class="range-optimal">Creat 0.8–1.1 / eGFR &gt;90</span></td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">CBC</span></td>
+            <td><span class="bio-test">Complete Blood Count</span></td>
+            <td><span class="range-label">CLINICAL</span><span class="range-clinical">Standard ranges</span></td>
+            <td><span class="range-label">OPTIMAL</span><span class="range-optimal">Mid-range; WBC 4.5–6.0</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="disclaimer-box">⚠ TB-500 is not FDA-approved. No human clinical trials are published for this fragment specifically; data derives from Thymosin Beta-4 research and real-world use. One theoretical concern: TB-500 promotes angiogenesis (VEGF upregulation) — individuals with a history of cancer or pre-cancerous conditions should consult an oncologist before use, as pro-angiogenic peptides may promote tumor vascularity. All other users: standard monitoring applies.</div>
+  </div>
+
+  <!-- 08 -->
+  <div class="section" style="animation-delay:0.8s;border-top-color:var(--accent);">
+    <div class="section-num">08 — Cycle Protocol</div>
+    <h2>Cycle Length, Frequency & Timing</h2>
+
+    <div style="margin-bottom:22px;">
+      <div class="bio-category-title" style="color:var(--accent2);">▸ How Long to Cycle</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+        <div class="stat-box" style="text-align:left;padding:14px 16px;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:6px;">ACUTE INJURY</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--white);line-height:1;">6–8 Weeks</div>
+          <div style="font-size:12px;color:var(--text);margin-top:6px;line-height:1.5;">For acute injuries (tendon tears, muscle strains, ligament damage), a loading phase of 2× weekly for 4–6 weeks followed by 1× weekly maintenance is the standard approach.</div>
+        </div>
+        <div class="stat-box" style="text-align:left;padding:14px 16px;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:6px;">LONGEVITY / PREVENTION</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--white);line-height:1;">10–12 Weeks</div>
+          <div style="font-size:12px;color:var(--text);margin-top:6px;line-height:1.5;">For systemic anti-inflammatory, connective tissue maintenance, or cardiac support protocols, 10–12 week cycles at lower frequency with a 6–8 week break between cycles.</div>
+        </div>
+      </div>
+      <div class="note-box" style="margin-top:0;">TB-500 is commonly paired with <strong style="color:var(--white)">BPC-157</strong> for injury recovery — the two peptides work via complementary, non-overlapping mechanisms. BPC-157 upregulates GH receptors and drives VEGF locally; TB-500 promotes systemic cell migration and angiogenesis. The combination is considered the most powerful injury recovery stack in the research peptide space.</div>
+    </div>
+
+    <div style="margin-bottom:22px;">
+      <div class="bio-category-title" style="color:var(--accent2);">▸ Frequency & Timing</div>
+      <table class="bio-table">
+        <thead><tr><th>Variable</th><th>Recommendation</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">Loading Phase</span></td>
+            <td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent2);">2–3× / week for 4–6 wks</span></td>
+            <td><span style="font-size:12px;color:var(--text);line-height:1.5;">Higher frequency during loading ensures rapid saturation of systemic Tβ4 receptor sites and maximal cell migration signal during the acute healing window.</span></td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Maintenance Phase</span></td>
+            <td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent2);">1× / week</span></td>
+            <td><span style="font-size:12px;color:var(--text);line-height:1.5;">Once the acute phase resolves, weekly maintenance dosing sustains the angiogenic and anti-inflammatory signal at a lower dose burden. TB-500 has a longer effective action window than daily peptides.</span></td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Fasted vs Fed</span></td>
+            <td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted);">~ Either acceptable</span></td>
+            <td><span style="font-size:12px;color:var(--text);line-height:1.5;">TB-500's mechanism is not insulin- or glucose-dependent. Food intake does not meaningfully affect its efficacy. AM fasted is conventional but not required for TB-500 specifically.</span></td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Injection site</span></td>
+            <td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent2);">✓ SC anywhere — distributes systemically</span></td>
+            <td><span style="font-size:12px;color:var(--text);line-height:1.5;">Unlike BPC-157, TB-500 does not need to be injected near the injury. It distributes systemically after any SC injection. Abdomen or thigh are standard sites.</span></td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Timing</span></td>
+            <td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent2);">AM preferred, any day</span></td>
+            <td><span style="font-size:12px;color:var(--text);line-height:1.5;">Morning dosing is conventional. Given the weekly/twice-weekly schedule, day of week matters less than consistency — inject on the same scheduled days each week.</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SUMMARY TILES -->
+    <div style="background:rgba(0,255,157,0.05);border:1px solid rgba(0,255,157,0.2);padding:18px 20px;">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);margin-bottom:12px;">PROTOCOL SUMMARY</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;">
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);">
+          <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">6–12 wk</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">CYCLE LENGTH</div>
+        </div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);">
+          <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">2–3× → 1×</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">LOAD → MAINTAIN</div>
+        </div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);">
+          <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">AM</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">TIMING</div>
+        </div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);">
+          <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">Either</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">FED STATE</div>
+        </div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);">
+          <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">SC anywhere</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">INJECTION SITE</div>
+        </div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);">
+          <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">6–8 wk</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">BREAK</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KLOW Stack — Apex Research Reference</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap');
+    :root{--bg:#080c10;--panel:#0d1318;--border:#1a2d3a;--accent:#00d4ff;--accent2:#00ff9d;--accent3:#ff6b35;--text:#c8dde8;--muted:#4a6272;--white:#eaf4f8;--purple:#a78bfa;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;line-height:1.6;padding:40px 20px;}
+    body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 60% 0%,rgba(167,139,250,0.06) 0%,transparent 60%),radial-gradient(ellipse at 20% 90%,rgba(0,255,157,0.04) 0%,transparent 50%);pointer-events:none;z-index:0;}
+    .container{max-width:900px;margin:0 auto;position:relative;z-index:1;}
+    .header{margin-bottom:40px;border-bottom:1px solid var(--border);padding-bottom:24px;}
+    .stack-label{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--purple);text-transform:uppercase;margin-bottom:8px;}
+    .stack-name{font-family:'Rajdhani',sans-serif;font-size:80px;font-weight:700;color:var(--white);line-height:1;margin-bottom:8px;}
+    .stack-sub{font-size:16px;color:var(--muted);margin-bottom:4px;}
+    .stack-tagline{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--purple);letter-spacing:2px;margin-bottom:16px;}
+    .tag-row{display:flex;gap:8px;flex-wrap:wrap;}
+    .tag{background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.3);color:var(--purple);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;padding:3px 10px;}
+    .tag-green{background:rgba(0,255,157,0.1);border:1px solid rgba(0,255,157,0.3);color:var(--accent2);}
+    .tag-blue{background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.25);color:var(--accent);}
+    .section{background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--muted);padding:28px 32px;margin-bottom:16px;animation:fadeUp 0.4s ease both;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+    .section-num{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:8px;}
+    h2{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;}
+    .compound-grid-4{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+    .compound-card{background:var(--bg);border:1px solid var(--border);border-top:2px solid var(--purple);padding:18px 20px;}
+    .compound-name{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--white);margin-bottom:2px;}
+    .compound-dose{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);margin-bottom:8px;}
+    .compound-role-badge{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 8px;margin-bottom:10px;}
+    .role-1{background:rgba(255,107,53,0.1);border:1px solid rgba(255,107,53,0.3);color:var(--accent3);}
+    .role-2{background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.2);color:var(--accent);}
+    .role-3{background:rgba(0,255,157,0.1);border:1px solid rgba(0,255,157,0.2);color:var(--accent2);}
+    .role-4{background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2);color:var(--purple);}
+    .compound-mech{font-size:12px;color:var(--text);line-height:1.5;}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:20px;}
+    .stat-box{background:var(--bg);border:1px solid var(--border);padding:16px;text-align:center;}
+    .stat-value{font-family:'Rajdhani',sans-serif;font-size:26px;font-weight:700;color:var(--white);line-height:1;}
+    .stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-top:4px;}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+    .info-item{margin-bottom:14px;}
+    .info-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:4px;}
+    .info-value{color:var(--white);font-size:13px;line-height:1.5;}
+    .recon-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
+    .recon-box{background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--accent2);padding:18px 20px;}
+    .recon-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);margin-bottom:10px;}
+    .recon-math{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--white);margin-bottom:5px;}
+    .dose-table{width:100%;border-collapse:collapse;}
+    .dose-table th{background:rgba(167,139,250,0.08);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--purple);text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);}
+    .dose-table td{padding:11px 14px;border-bottom:1px solid rgba(26,45,58,0.5);vertical-align:top;font-size:13px;}
+    .dose-level{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);font-weight:700;}
+    .dose-amount{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--white);}
+    .dose-units{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);display:block;margin-top:2px;}
+    .bio-table{width:100%;border-collapse:collapse;}
+    .bio-table th{background:rgba(0,212,255,0.06);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--muted);text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);}
+    .bio-table td{padding:10px 12px;border-bottom:1px solid rgba(26,45,58,0.4);vertical-align:top;font-size:12px;}
+    .bio-name{color:var(--white);font-weight:500;display:block;}
+    .bio-test{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);}
+    .range-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 6px;margin-right:4px;}
+    .range-clinical{background:rgba(74,98,114,0.3);color:var(--muted);}
+    .range-optimal{background:rgba(0,255,157,0.1);color:var(--accent2);}
+    .bio-category{margin-bottom:24px;}
+    .bio-category-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);margin-bottom:10px;}
+    .note-box{background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.15);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .highlight-box{background:rgba(167,139,250,0.04);border:1px solid rgba(167,139,250,0.2);padding:16px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .disclaimer-box{background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.2);padding:14px 18px;margin-top:20px;font-size:12px;color:var(--text);line-height:1.5;}
+    .layer-row{display:flex;align-items:flex-start;gap:14px;background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--purple);padding:14px 18px;margin-bottom:10px;}
+    .layer-num{font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;color:var(--purple);min-width:36px;}
+    .layer-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:3px;}
+    .layer-desc{font-size:13px;color:var(--white);}
+    .schedule-row{display:grid;grid-template-columns:140px 1fr 1fr;gap:0;border:1px solid var(--border);margin-bottom:2px;}
+    .schedule-row > div{padding:10px 14px;border-right:1px solid var(--border);font-size:13px;}
+    .schedule-row > div:last-child{border-right:none;}
+    .schedule-head{background:rgba(167,139,250,0.08);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--purple);}
+    .schedule-peptide{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;color:var(--white);}
+    .check{color:var(--accent2);}
+  </style>
+</head>
+<body>
+<div class="container">
+<a href="index.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--muted);text-decoration:none;text-transform:uppercase;margin-bottom:28px;padding:8px 14px;border:1px solid var(--border);transition:all .2s;" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">← Back to Encyclopedia</a>
+
+  <div class="header">
+    <div class="stack-label">Apex Curated Stack — Comprehensive Recovery</div>
+    <div class="stack-name">KLOW</div>
+    <div class="stack-sub">KPV + TB-500 + BPC-157 + GHK-Cu</div>
+    <div class="stack-tagline">Anti-Inflammatory · Tissue Repair · Gut Health · Skin & Collagen</div>
+    <div class="tag-row">
+      <span class="tag">FLAGSHIP STACK</span>
+      <span class="tag tag-green">ANTI-INFLAMMATORY</span>
+      <span class="tag tag-green">GUT REPAIR</span>
+      <span class="tag tag-blue">TISSUE REGENERATION</span>
+      <span class="tag tag-blue">SKIN & COLLAGEN</span>
+      <span class="tag">4-COMPOUND SYNERGY</span>
+    </div>
+  </div>
+
+  <!-- 01 OVERVIEW -->
+  <div class="section" style="animation-delay:0.1s;border-top-color:var(--purple);">
+    <div class="section-num">01 / STACK OVERVIEW</div>
+    <h2>The KLOW Protocol</h2>
+
+    <div class="highlight-box">
+      <strong style="color:var(--purple);">KLOW</strong> is Apex's flagship 4-compound recovery and anti-inflammatory stack. Where the Wolverine Stack (BPC-157 + TB-500) targets musculoskeletal injury, KLOW expands the coverage to include the gut, mucosal barriers, skin, and the entire inflammatory cascade. Four peptides, four distinct mechanisms, one coordinated protocol. This is the stack for systemic restoration.
+    </div>
+
+    <div class="compound-grid-4">
+      <div class="compound-card">
+        <div class="compound-name">KPV</div>
+        <div class="compound-dose">20mg vial · 66.7 mcg/unit</div>
+        <div class="compound-role-badge role-1">GUT + MUCOSAL REPAIR</div>
+        <div class="compound-mech">Tripeptide (Lys-Pro-Val) derived from α-MSH C-terminus. Potent anti-inflammatory — directly inhibits NF-κB and blocks pro-inflammatory cytokine production (TNF-α, IL-1β, IL-6). Penetrates GI epithelium and crosses the blood-brain barrier. Heals leaky gut, colitis, inflammatory bowel disease, and skin inflammation.</div>
+      </div>
+      <div class="compound-card">
+        <div class="compound-name">TB-500</div>
+        <div class="compound-dose">20mg vial · 66.7 mcg/unit</div>
+        <div class="compound-role-badge role-2">SYSTEMIC REPAIR + STEM CELLS</div>
+        <div class="compound-mech">Thymosin Beta-4 fragment. Binds actin, promotes stem cell mobilization to injury sites, reduces systemic inflammation via NF-κB pathway. Works throughout the entire body — muscles, tendons, ligaments, cardiac tissue, neurological tissue. The systemic amplifier of the stack.</div>
+      </div>
+      <div class="compound-card">
+        <div class="compound-name">BPC-157</div>
+        <div class="compound-dose">20mg vial · 66.7 mcg/unit</div>
+        <div class="compound-role-badge role-3">LOCAL REPAIR + GI PROTECTION</div>
+        <div class="compound-mech">Body Protection Compound — activates VEGFR2, FGFR, and EGF receptors at injury sites. Accelerates angiogenesis, tendon-to-bone attachment, gut lining regeneration. Hepatoprotective (protects liver). Neuroprotective. Works locally — inject near target tissue.</div>
+      </div>
+      <div class="compound-card">
+        <div class="compound-name">GHK-Cu</div>
+        <div class="compound-dose">50mg vial · 166.7 mcg/unit</div>
+        <div class="compound-role-badge role-4">COLLAGEN + SKIN + LONGEVITY</div>
+        <div class="compound-mech">Copper tripeptide — naturally occurring in plasma, saliva, and urine. Activates 31 collagen/elastin genes, promotes wound closure, upregulates antioxidant enzymes (SOD, catalase). Anti-aging: resets gene expression toward a younger profile. Skin, hair follicle activation, bone density support.</div>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-value">80mg</div>
+        <div class="stat-label">TOTAL STACK</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">4</div>
+        <div class="stat-label">VIALS</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">4</div>
+        <div class="stat-label">MECHANISMS</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">12w</div>
+        <div class="stat-label">CYCLE LENGTH</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">Full</div>
+        <div class="stat-label">BODY COVERAGE</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 SYNERGY LAYERS -->
+  <div class="section" style="animation-delay:0.15s;border-top-color:var(--accent2);">
+    <div class="section-num">02 / SYNERGY LAYERS</div>
+    <h2>Four Layers of Recovery</h2>
+
+    <div class="layer-row">
+      <div class="layer-num">1</div>
+      <div>
+        <div class="layer-label">UPSTREAM INFLAMMATION CONTROL — KPV</div>
+        <div class="layer-desc">KPV halts the inflammatory cascade at the source. NF-κB inhibition cuts off TNF-α, IL-1β, and IL-6 production — the upstream signals that drive chronic inflammation. Without this layer, the repair work done by BPC-157 and TB-500 constantly fights an active inflammatory environment. KPV creates the quiet the other peptides need to rebuild.</div>
+      </div>
+    </div>
+
+    <div class="layer-row">
+      <div class="layer-num">2</div>
+      <div>
+        <div class="layer-label">SYSTEMIC CELLULAR REPAIR — TB-500</div>
+        <div class="layer-desc">With inflammation suppressed by KPV, TB-500 mobilizes stem cells and repair machinery throughout the entire body. Actin binding drives cellular motility — cells move to where they're needed. Every damaged tissue in the body gets reinforcements simultaneously. This is the systemic amplification layer.</div>
+      </div>
+    </div>
+
+    <div class="layer-row">
+      <div class="layer-num">3</div>
+      <div>
+        <div class="layer-label">LOCAL TISSUE RECONSTRUCTION — BPC-157</div>
+        <div class="layer-desc">While TB-500 sends the army, BPC-157 directs the battle at the local level. VEGF-driven angiogenesis creates new blood supply to damaged tissue. Growth factor activation rebuilds the extracellular matrix. Tendon, gut wall, muscle, bone — BPC-157 leads local reconstruction at each specific site.</div>
+      </div>
+    </div>
+
+    <div class="layer-row" style="border-left-color:var(--accent2);">
+      <div class="layer-num" style="color:var(--accent2);">4</div>
+      <div>
+        <div class="layer-label">STRUCTURAL MATRIX + LONGEVITY — GHK-Cu</div>
+        <div class="layer-desc">Once the acute repair is underway, GHK-Cu rebuilds the structural collagen and elastin matrix that gives repaired tissue its integrity and resilience. Simultaneously resets gene expression toward a younger, more regenerative profile. The finishing layer — not just repair, but rejuvenation of the entire extracellular architecture.</div>
+      </div>
+    </div>
+
+    <div class="note-box">
+      <strong style="color:var(--accent);">Net Effect:</strong> Inflammation off → repair cells mobilized → local reconstruction directed → structural matrix rebuilt. Each compound hands off to the next in a logical biological sequence. This is why KLOW outperforms any single peptide or two-peptide combination for systemic recovery.
+    </div>
+  </div>
+
+  <!-- 03 RECONSTITUTION -->
+  <div class="section" style="animation-delay:0.2s;border-top-color:var(--accent2);">
+    <div class="section-num">03 / RECONSTITUTION</div>
+    <h2>Vial Preparation — All Four Compounds</h2>
+    <div class="recon-grid">
+      <div class="recon-box">
+        <div class="recon-title">KPV — 20mg VIAL</div>
+        <div class="recon-math">20mg + 3.0 mL BAC water</div>
+        <div class="recon-math" style="color:var(--accent2);">66.7 mcg per unit</div>
+        <div style="margin-top:10px;font-size:12px;">
+          <div style="margin-bottom:5px;"><span style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;">500mcg:</span> <span style="color:var(--white);">7.5 units / 0.075 mL</span></div>
+          <div style="margin-bottom:5px;"><span style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;">1mg:</span> <span style="color:var(--white);">15 units / 0.15 mL</span></div>
+          <div><span style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;">2mg:</span> <span style="color:var(--white);">30 units / 0.30 mL</span></div>
+        </div>
+      </div>
+      <div class="recon-box">
+        <div class="recon-title">TB-500 — 20mg VIAL</div>
+        <div class="recon-math">20mg + 3.0 mL BAC water</div>
+        <div class="recon-math" style="color:var(--accent2);">66.7 mcg per unit</div>
+        <div style="margin-top:10px;font-size:12px;">
+          <div style="margin-bottom:5px;"><span style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;">1mg:</span> <span style="color:var(--white);">15 units / 0.15 mL</span></div>
+          <div style="margin-bottom:5px;"><span style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;">2mg:</span> <span style="color:var(--white);">30 units / 0.30 mL</span></div>
+          <div><span style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;">4mg:</span> <span style="color:var(--white);">60 units / 0.60 mL</span></div>
+        </div>
+      </div>
+      <div class="recon-box">
+        <div class="recon-title">BPC-157 — 20mg VIAL</div>
+        <div class="recon-math">20mg + 3.0 mL BAC water</div>
+        <div class="recon-math" style="color:var(--accent2);">66.7 mcg per unit</div>
+        <div style="margin-top:10px;font-size:12px;">
+          <div style="margin-bottom:5px;"><span style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;">250mcg:</span> <span style="color:var(--white);">3.75 units / 0.0375 mL</span></div>
+          <div style="margin-bottom:5px;"><span style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;">500mcg:</span> <span style="color:var(--white);">7.5 units / 0.075 mL</span></div>
+          <div><span style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;">1mg:</span> <span style="color:var(--white);">15 units / 0.15 mL</span></div>
+        </div>
+      </div>
+      <div class="recon-box">
+        <div class="recon-title">GHK-Cu — 50mg VIAL</div>
+        <div class="recon-math">50mg + 3.0 mL BAC water</div>
+        <div class="recon-math" style="color:var(--accent2);">166.7 mcg per unit</div>
+        <div style="margin-top:10px;font-size:12px;">
+          <div style="margin-bottom:5px;"><span style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;">500mcg:</span> <span style="color:var(--white);">3 units / 0.03 mL</span></div>
+          <div style="margin-bottom:5px;"><span style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;">1mg:</span> <span style="color:var(--white);">6 units / 0.06 mL</span></div>
+          <div><span style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;">2mg:</span> <span style="color:var(--white);">12 units / 0.12 mL</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent);">Storage (all vials):</strong> Lyophilized stable at room temp 6 months. Post-reconstitution: refrigerate (2–8°C), use within 28–30 days. Protect from light. Do NOT freeze reconstituted vials. GHK-Cu may have blue-green color from copper — this is normal.
+    </div>
+  </div>
+
+  <!-- 04 DOSING -->
+  <div class="section" style="animation-delay:0.25s;border-top-color:var(--accent);">
+    <div class="section-num">04 / DOSING PROTOCOL</div>
+    <h2>Dose Ranges — All Four Compounds</h2>
+
+    <table class="dose-table">
+      <thead>
+        <tr>
+          <th>COMPOUND</th>
+          <th>LOW DOSE</th>
+          <th>STANDARD DOSE</th>
+          <th>HIGH DOSE</th>
+          <th>FREQUENCY</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="dose-level">KPV</span></td>
+          <td>500mcg/day</td>
+          <td><strong style="color:var(--white);">1mg/day</strong></td>
+          <td>2mg/day</td>
+          <td>Daily SC or oral (stable in stomach)</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">TB-500</span></td>
+          <td>1mg/week</td>
+          <td><strong style="color:var(--white);">2mg/week</strong></td>
+          <td>4mg/week</td>
+          <td>1–2 injections per week</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">BPC-157</span></td>
+          <td>250mcg/day</td>
+          <td><strong style="color:var(--white);">500mcg/day</strong></td>
+          <td>750mcg/day</td>
+          <td>Daily (split AM/PM at high dose)</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">GHK-Cu</span></td>
+          <td>500mcg/day</td>
+          <td><strong style="color:var(--white);">1mg/day</strong></td>
+          <td>2mg/day</td>
+          <td>Daily SC (or topical concurrent)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="note-box" style="margin-top:16px;">
+      <strong style="color:var(--accent);">KPV Oral Note:</strong> KPV is uniquely stable to gastric acid — oral capsule form (from compounding pharmacy) is effective for gut/GI conditions. SC injection preferred for systemic anti-inflammatory effect. Both routes can be run concurrently.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent);">GHK-Cu Topical Concurrent:</strong> Topical GHK-Cu cream can be used alongside SC injections for skin-specific goals. Topical reaches dermal layers directly; SC provides systemic collagen gene activation. Not redundant — additive for skin and wound healing outcomes.
+    </div>
+  </div>
+
+  <!-- 05 SCHEDULE -->
+  <div class="section" style="animation-delay:0.3s;border-top-color:var(--purple);">
+    <div class="section-num">05 / INJECTION SCHEDULE</div>
+    <h2>Weekly Protocol</h2>
+
+    <div class="schedule-row">
+      <div class="schedule-head">COMPOUND</div>
+      <div class="schedule-head">DAILY SCHEDULE</div>
+      <div class="schedule-head">SITE / NOTES</div>
+    </div>
+    <div class="schedule-row">
+      <div class="schedule-peptide">KPV</div>
+      <div><span class="check">✓</span> 1mg every AM</div>
+      <div style="font-size:12px;color:var(--muted);">SC abdominal / oral capsule for GI targeting</div>
+    </div>
+    <div class="schedule-row">
+      <div class="schedule-peptide">BPC-157</div>
+      <div><span class="check">✓</span> 500mcg every AM (near injury site)</div>
+      <div style="font-size:12px;color:var(--muted);">SC near damaged tissue; rotate periumbilical otherwise</div>
+    </div>
+    <div class="schedule-row">
+      <div class="schedule-peptide">TB-500</div>
+      <div><span class="check">✓</span> 1mg Mon + 1mg Thu</div>
+      <div style="font-size:12px;color:var(--muted);">Any SC site — systemic distribution, rotate locations</div>
+    </div>
+    <div class="schedule-row">
+      <div class="schedule-peptide">GHK-Cu</div>
+      <div><span class="check">✓</span> 1mg every PM</div>
+      <div style="font-size:12px;color:var(--muted);">SC any site; topical cream concurrent for skin goals</div>
+    </div>
+
+    <div class="note-box" style="margin-top:16px;">
+      <strong style="color:var(--accent);">AM/PM Split:</strong> KPV + BPC-157 in the morning maximizes daytime tissue repair activity. GHK-Cu in the evening allows collagen gene upregulation during overnight regenerative sleep. TB-500 twice weekly — timing relative to other injections is flexible.
+    </div>
+  </div>
+
+  <!-- 06 BIOMARKERS -->
+  <div class="section" style="animation-delay:0.35s;border-top-color:var(--accent);">
+    <div class="section-num">06 / BIOMARKER MONITORING</div>
+    <h2>Recommended Lab Panel</h2>
+
+    <div class="bio-category">
+      <div class="bio-category-title">INFLAMMATION — PRIMARY KLOW RESPONSE</div>
+      <table class="bio-table">
+        <thead><tr><th>MARKER</th><th>CLINICAL RANGE</th><th>OPTIMAL TARGET</th><th>NOTES</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">hs-CRP</span><span class="bio-test">C-reactive protein (high-sensitivity)</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>&lt;3.0 mg/L</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>&lt;0.5 mg/L</td>
+            <td>KPV + BPC-157 dual NF-κB inhibition should drive significant reduction. Recheck at 4 and 8 weeks.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">IL-6</span><span class="bio-test">interleukin-6</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>&lt;7 pg/mL</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>&lt;1.8 pg/mL</td>
+            <td>KPV directly blocks IL-6 production. Most sensitive marker of KPV efficacy.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">TNF-α</span><span class="bio-test">tumor necrosis factor alpha</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>&lt;8.1 pg/mL</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>&lt;2 pg/mL</td>
+            <td>KPV's primary target cytokine. Reduction here is the most direct readout of anti-inflammatory efficacy.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">GUT & MUCOSAL HEALTH (KPV-SPECIFIC)</div>
+      <table class="bio-table">
+        <thead><tr><th>MARKER</th><th>CLINICAL RANGE</th><th>OPTIMAL TARGET</th><th>NOTES</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">Calprotectin</span><span class="bio-test">fecal calprotectin</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>&lt;50 µg/g</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>&lt;25 µg/g</td>
+            <td>GI inflammation marker. Elevated in IBD, colitis. KPV should drive significant reduction in GI conditions.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Zonulin</span><span class="bio-test">intestinal permeability</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>&lt;47 ng/mL</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>&lt;30 ng/mL</td>
+            <td>Leaky gut marker — KPV + BPC-157 together seal tight junctions and heal gut epithelium. Should improve.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">sIgA</span><span class="bio-test">secretory immunoglobulin A</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>51–204 mg/dL</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>Upper normal</td>
+            <td>Mucosal immune defense marker — improvement indicates gut barrier restoration.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">SKIN & COLLAGEN (GHK-Cu SPECIFIC)</div>
+      <table class="bio-table">
+        <thead><tr><th>MARKER</th><th>METHOD</th><th>NOTES</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">P1NP</span><span class="bio-test">procollagen type I N-terminal propeptide</span></td>
+            <td>Serum — baseline + 8 weeks</td>
+            <td>Collagen synthesis marker. GHK-Cu drives this up — confirms active collagen production at matrix level.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Skin Elasticity</span><span class="bio-test">cutometer or visual assessment</span></td>
+            <td>Photography baseline + 8–12 weeks</td>
+            <td>Objective skin assessment — standardized lighting, same angle. GHK-Cu effects visible at 8–12 weeks.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Serum Copper</span><span class="bio-test">copper — serum</span></td>
+            <td>Baseline only</td>
+            <td>Confirm baseline copper status. GHK-Cu micro-doses copper — relevant if copper deficiency exists.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">SAFETY PANEL</div>
+      <table class="bio-table">
+        <thead><tr><th>MARKER</th><th>CLINICAL RANGE</th><th>NOTES</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">CBC + CMP</span><span class="bio-test">complete blood count + metabolic panel</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>Standard</td>
+            <td>Baseline + 8 weeks. BPC-157 is hepatoprotective — liver values should remain stable or improve.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 07 CYCLE -->
+  <div class="section" style="animation-delay:0.4s;border-top-color:var(--accent2);">
+    <div class="section-num">07 / CYCLE PROTOCOL</div>
+    <h2>Administration Schedule</h2>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">CYCLE LENGTH</div>
+          <div class="info-value" style="color:var(--white);font-size:18px;font-weight:600;">12 Weeks</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">LOADING PHASE (Wks 1–4)</div>
+          <div class="info-value">All 4 compounds at standard doses. TB-500 loading: 2mg 2×/week. KPV + BPC-157 daily. GHK-Cu daily. Prioritize inflammation control first — KPV sets the stage.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">MAINTENANCE PHASE (Wks 5–12)</div>
+          <div class="info-value">TB-500: 2mg 1×/week. All others continue at standard dose. Body is now in active repair and rebuilding mode. GHK-Cu effect on collagen genes becomes measurable in this window.</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">OFF PERIOD</div>
+          <div class="info-value">4–8 weeks between full cycles. KPV and BPC-157 may be continued at low maintenance doses (500mcg/day each) for chronic inflammatory or GI conditions.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">BEST CANDIDATES</div>
+          <div class="info-value">Autoimmune conditions · Inflammatory bowel disease · Leaky gut / food sensitivities · Chronic musculoskeletal injury · Post-surgical recovery · Anti-aging / skin optimization · Active athletes seeking systemic restoration</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">REQUIRES</div>
+          <div class="info-value">4 vials + BAC water + Apex V3 Pen. 2 injections per day (AM: KPV + BPC-157 · PM: GHK-Cu) + TB-500 2×/week = ~16 injections/week total. Manageable with Apex pen system.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="disclaimer-box">
+      ⚠ Research reference only. KPV, TB-500, BPC-157, and GHK-Cu are not FDA-approved for human therapeutic use. Information sourced from published clinical and preclinical literature. Consult a qualified medical provider before use.
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

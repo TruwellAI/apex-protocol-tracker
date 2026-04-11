@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dihexa — Apex Peptide Reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#080c10;
+    --panel:#0d1318;
+    --border:#1a2d3a;
+    --accent:#00d4ff;
+    --accent2:#00ff9d;
+    --accent3:#ff6b35;
+    --text:#c8dde8;
+    --muted:#4a6272;
+    --white:#eaf4f8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:15px;line-height:1.65;}
+  .hero{background:linear-gradient(135deg,#080c10 0%,#0a1520 50%,#080c10 100%);border-bottom:1px solid var(--border);padding:56px 48px 40px;}
+  .hero-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.25em;color:var(--accent);text-transform:uppercase;margin-bottom:16px;}
+  .hero h1{font-family:'Rajdhani',sans-serif;font-size:72px;font-weight:700;color:var(--white);letter-spacing:-1px;line-height:1;}
+  .hero-sub{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:500;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-top:14px;}
+  .hero-sub span{color:var(--accent3);}
+  .container{max-width:1100px;margin:0 auto;padding:0 32px 80px;}
+  .section{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:40px;margin-top:32px;}
+  .section-tag{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:20px;}
+  .section h2{font-family:'Rajdhani',sans-serif;font-size:26px;font-weight:700;color:var(--accent2);letter-spacing:.05em;text-transform:uppercase;margin-bottom:20px;}
+  .section h3{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:600;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin:28px 0 14px;border-bottom:1px solid var(--border);padding-bottom:8px;}
+  p{margin-bottom:14px;color:var(--text);}
+  .highlight-box{background:#0a1f2e;border:2px solid var(--accent3);border-radius:4px;padding:28px;margin:20px 0;text-align:center;}
+  .highlight-box .big-stat{font-family:'Rajdhani',sans-serif;font-size:64px;font-weight:700;color:var(--accent3);line-height:1;}
+  .highlight-box .stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-top:8px;}
+  .highlight-box .stat-desc{font-size:13px;color:var(--text);margin-top:12px;font-style:italic;}
+  .timeline{display:flex;flex-direction:column;gap:0;}
+  .timeline-item{display:grid;grid-template-columns:120px 1fr;gap:0;border-bottom:1px solid var(--border);padding:18px 0;}
+  .timeline-item:last-child{border-bottom:none;}
+  .timeline-year{font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--accent2);font-weight:700;padding-top:2px;}
+  .timeline-text{font-size:14px;color:var(--text);}
+  .benefits-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px;}
+  .benefit-card{background:#0a1520;border:1px solid var(--border);border-radius:3px;padding:16px 18px;font-size:13px;color:var(--text);}
+  .warning-box{background:#1a0e08;border:2px solid var(--accent3);border-radius:4px;padding:24px 28px;margin:24px 0;}
+  .warning-box .warn-title{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.18em;color:var(--accent3);text-transform:uppercase;margin-bottom:10px;}
+  .warning-box p{color:#e0a07a;font-size:13px;margin-bottom:0;}
+  .info-box{background:#0a1520;border-left:3px solid var(--accent);padding:16px 20px;margin:20px 0;font-size:13px;color:var(--text);}
+  /* Format cards for oral/topical */
+  .format-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:20px 0;}
+  .format-card{background:#0a1520;border:1px solid var(--border);border-radius:4px;padding:22px;text-align:center;}
+  .format-card .f-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;}
+  .format-card .f-value{font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;color:var(--accent2);}
+  .format-card .f-sub{font-size:11px;color:var(--muted);margin-top:4px;}
+  /* Dosage table */
+  table{width:100%;border-collapse:collapse;margin-top:16px;font-size:13px;}
+  th{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;text-align:left;padding:10px 14px;border-bottom:2px solid var(--border);}
+  td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:top;}
+  tr:last-child td{border-bottom:none;}
+  .freq-badge{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;color:var(--accent3);}
+  .ctx-badge{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.12em;padding:3px 8px;border-radius:2px;text-transform:uppercase;border:1px solid var(--muted);color:var(--muted);}
+  .ctx-badge.common{border-color:var(--accent2);color:var(--accent2);}
+  .ctx-badge.standard{border-color:var(--accent);color:var(--accent);}
+  .ctx-badge.caution{border-color:var(--accent3);color:var(--accent3);}
+  /* Biomarker tables */
+  .bm-section-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.2em;color:var(--accent);text-transform:uppercase;margin:24px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+  .bm-table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:20px;}
+  .bm-table th{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;text-align:left;padding:9px 12px;border-bottom:2px solid var(--border);}
+  .bm-table td{padding:12px 12px;border-bottom:1px solid var(--border);vertical-align:top;}
+  .bm-table tr:last-child td{border-bottom:none;}
+  .bm-name{font-weight:600;color:var(--white);display:block;}
+  .bm-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+  .lab-test{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);background:#0a1f2e;padding:3px 8px;border-radius:2px;}
+  .range-clinical{font-size:11px;color:var(--muted);background:#111820;padding:4px 8px;border-radius:2px;display:inline-block;}
+  .range-optimal{font-size:11px;color:var(--accent2);background:#0a1f15;padding:4px 8px;border-radius:2px;display:inline-block;}
+  .range-warn{font-size:11px;color:var(--accent3);background:#1a0e08;padding:4px 8px;border-radius:2px;display:inline-block;}
+  /* Cycle */
+  .cycle-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0;}
+  .cycle-card{background:#0a1520;border:1px solid var(--border);border-radius:4px;padding:24px;}
+  .cycle-card .c-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;}
+  .cycle-card .c-value{font-family:'Rajdhani',sans-serif;font-size:36px;font-weight:700;color:var(--white);line-height:1;}
+  .cycle-card .c-sub{font-size:13px;color:var(--text);margin-top:10px;}
+  .timing-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:16px;}
+  .timing-table th{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;padding:9px 12px;text-align:left;border-bottom:2px solid var(--border);}
+  .timing-table td{padding:12px 12px;border-bottom:1px solid var(--border);vertical-align:top;}
+  .timing-table tr:last-child td{border-bottom:none;}
+  .rec{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);font-weight:600;}
+  .rec.warn{color:var(--accent3);}
+  .protocol-summary{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:24px;background:#0a1520;border:1px solid var(--border);padding:24px;border-radius:4px;}
+  .ps-item{text-align:center;}
+  .ps-item .ps-value{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);}
+  .ps-item .ps-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;margin-top:4px;}
+  .mech-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0;}
+  .mech-card{background:#0a1520;border:1px solid var(--border);border-radius:4px;padding:20px;}
+  .mech-card .mc-title{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--accent2);margin-bottom:4px;}
+  .mech-card .mc-sub{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;margin-bottom:10px;}
+  .mech-card p{font-size:13px;margin:0;}
+  .onco-warning{background:#1a0505;border:3px solid #ff3333;border-radius:4px;padding:28px;margin:24px 0;}
+  .onco-warning .ow-title{font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.2em;color:#ff3333;text-transform:uppercase;margin-bottom:12px;}
+  .onco-warning p{color:#e08080;font-size:13px;margin-bottom:0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="container">
+<a href="index.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--muted);text-decoration:none;text-transform:uppercase;margin-bottom:28px;padding:8px 14px;border:1px solid var(--border);transition:all .2s;" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">← Back to Encyclopedia</a>
+    <div class="hero-label">Apex Peptide Reference</div>
+    <h1>Dihexa</h1>
+    <div class="hero-sub">HGF / Met System Agonist &nbsp;|&nbsp; <span>Most Potent Nootropic Peptide Known</span> &nbsp;|&nbsp; Synaptogenic</div>
+  </div>
+</div>
+
+<div class="container">
+<a href="index.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--muted);text-decoration:none;text-transform:uppercase;margin-bottom:28px;padding:8px 14px;border:1px solid var(--border);transition:all .2s;" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">← Back to Encyclopedia</a>
+
+  <!-- 01 IDENTITY -->
+  <div class="section">
+    <div class="section-tag">01 — Identity</div>
+    <h2>Name &amp; Classification</h2>
+    <p>Dihexa (also known as PNB-0408) is a synthetic small peptide derived from Angiotensin IV, developed by Dr. John Wright at Washington State University. Its sequence is a modified hexapeptide: <span style="font-family:'Share Tech Mono',monospace;color:var(--accent);">N-hexanoic-Tyr-Ile-His-Pro-Phe-OH</span>.</p>
+    <p>It is classified as an HGF/c-Met system potentiator and synaptogenic nootropic. Dihexa works by enhancing the activity of Hepatocyte Growth Factor (HGF) at its receptor c-Met — a signaling axis critical for synapse formation, dendritic spine growth, and neuronal survival. It is currently the most potent pro-cognitive compound ever described in the scientific literature on a per-dose basis.</p>
+
+    <div class="highlight-box">
+      <div class="big-stat">10,000,000×</div>
+      <div class="stat-label">More Potent Than BDNF at Crossing the Blood-Brain Barrier</div>
+      <div class="stat-desc">Dihexa crosses the BBB with extraordinary efficiency and drives de novo synapse formation at concentrations where BDNF has no measurable effect. Published in <em>Journal of Pharmacology and Experimental Therapeutics</em> by Wright et al. — this figure refers to the dose required to produce equivalent cognitive rescue in aged rats.</div>
+    </div>
+  </div>
+
+  <!-- 02 ORIGIN -->
+  <div class="section">
+    <div class="section-tag">02 — Origin</div>
+    <h2>Research Timeline</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-year">1990s</div>
+        <div class="timeline-text">Angiotensin IV (AT4) identified as having cognitive-enhancing properties through an unknown receptor. Dr. John Wright's lab at Washington State University began isolating the active mechanism.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2000s</div>
+        <div class="timeline-text">HGF/c-Met signaling axis identified as the target through which AT4 and its analogues enhance cognition. c-Met activation in hippocampal neurons shown to drive new synapse formation and dendritic spine density increases.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">~2011</div>
+        <div class="timeline-text">Dihexa synthesized as an optimized, metabolically stable HGF/Met potentiator. Published data showed it reversed cognitive deficits in aged rats to levels indistinguishable from young animals — at extraordinarily low doses.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2013</div>
+        <div class="timeline-text">Landmark paper published comparing Dihexa to BDNF — showing Dihexa required 10 million times less dose to achieve equivalent cognitive rescue. Oral and topical bioavailability confirmed.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2015–Present</div>
+        <div class="timeline-text">Adopted in high-performance and longevity communities. No human clinical trials published. Available as oral, intranasal, and transdermal (cream) formulations from research suppliers. Considered one of the most important nootropic discoveries of the past two decades.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 RESEARCH HISTORY -->
+  <div class="section">
+    <div class="section-tag">03 — Research History</div>
+    <h2>Research Background</h2>
+    <p>Dihexa's mechanism is fundamentally different from every other nootropic in this library. Rather than modulating neurotransmitter levels (serotonin, dopamine, GABA) or upregulating growth factors (BDNF, NGF), Dihexa works directly at the level of synapse formation. It potentiates HGF binding to the c-Met receptor on hippocampal neurons, triggering the intracellular cascade that drives dendritic spine formation — the physical structural substrate of memory and learning.</p>
+    <p>In aged rat models, a single course of Dihexa restored the dendritic spine density and synaptic connectivity of the hippocampus to levels seen in young animals — a structural reversal of age-related cognitive decline that no other compound has achieved at comparable doses. Cognitive improvements were measurable in Morris Water Maze and other validated memory tests within days and persisted for weeks after treatment ended, suggesting durable structural brain changes rather than transient neurochemical modulation.</p>
+    <p>The oral and transdermal bioavailability is a significant practical advantage. Unlike many nootropic peptides that require intranasal or injectable delivery to reach the CNS, Dihexa's lipophilic structure allows meaningful absorption through both oral and skin routes — making it uniquely accessible.</p>
+
+    <div class="mech-grid">
+      <div class="mech-card">
+        <div class="mc-title">HGF / c-Met Potentiation</div>
+        <div class="mc-sub">Primary Mechanism</div>
+        <p>Enhances HGF binding efficiency at the c-Met receptor on hippocampal neurons — the signaling axis that drives synaptogenesis and dendritic spine growth.</p>
+      </div>
+      <div class="mech-card">
+        <div class="mc-title">De Novo Synapse Formation</div>
+        <div class="mc-sub">Structural Neuroplasticity</div>
+        <p>Triggers formation of entirely new synapses — not just potentiation of existing ones. Increases dendritic spine density to levels seen in young animals.</p>
+      </div>
+      <div class="mech-card">
+        <div class="mc-title">BBB Penetration</div>
+        <div class="mc-sub">Lipophilic Advantage</div>
+        <p>Lipophilic hexapeptide structure enables efficient CNS entry via oral, transdermal, and intranasal routes — no injection required.</p>
+      </div>
+      <div class="mech-card">
+        <div class="mc-title">Durable Structural Change</div>
+        <div class="mc-sub">Post-Cycle Persistence</div>
+        <p>Cognitive benefits persist weeks after dosing ends — consistent with actual synaptic structural remodeling rather than transient neurochemical effect.</p>
+      </div>
+    </div>
+
+    <div class="warning-box">
+      <div class="warn-title">⚠ Critical Safety Note — HGF/c-Met &amp; Oncology</div>
+      <p>The same HGF/c-Met axis that drives synapse formation also plays a role in tumor growth and metastasis. c-Met is overexpressed in many cancers. The long-term safety of sustained Dihexa use in humans is completely unknown, and this oncological concern demands serious caution — especially in anyone with cancer history or elevated cancer risk markers.</p>
+    </div>
+  </div>
+
+  <!-- 04 KEY BENEFITS -->
+  <div class="section">
+    <div class="section-tag">04 — Key Benefits</div>
+    <h2>Proposed Benefits</h2>
+    <div class="benefits-grid">
+      <div class="benefit-card">Most potent nootropic compound known — 10 million× more BBB-efficient than BDNF</div>
+      <div class="benefit-card">Drives de novo synapse formation via HGF/c-Met activation</div>
+      <div class="benefit-card">Increases dendritic spine density in hippocampus</div>
+      <div class="benefit-card">Reverses age-related cognitive decline in animal models</div>
+      <div class="benefit-card">Durable structural brain changes — effects persist after dosing ends</div>
+      <div class="benefit-card">Oral and transdermal bioavailability — no injection required</div>
+      <div class="benefit-card">Improves spatial memory, learning, and recall in rodent models</div>
+      <div class="benefit-card">Potential Alzheimer's and dementia intervention target</div>
+    </div>
+  </div>
+
+  <!-- 05 FORMAT / STORAGE -->
+  <div class="section">
+    <div class="section-tag">05 — Format &amp; Storage</div>
+    <h2>Oral / Transdermal / Intranasal</h2>
+
+    <div class="highlight-box" style="text-align:left;padding:20px 28px;">
+      <div style="font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--accent2);">ORAL or TOPICAL — No Injection Required</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.18em;color:var(--muted);margin-top:6px;">LIPOPHILIC SMALL MOLECULE — CROSSES BBB EFFICIENTLY BY MULTIPLE ROUTES</div>
+    </div>
+
+    <div class="format-grid">
+      <div class="format-card">
+        <div class="f-label">Dose Range</div>
+        <div class="f-value">5–30 mg</div>
+        <div class="f-sub">typical dose range (route-dependent)</div>
+      </div>
+      <div class="format-card">
+        <div class="f-label">Available Routes</div>
+        <div class="f-value" style="font-size:18px;">Oral / Nasal / Topical</div>
+        <div class="f-sub">transdermal cream most common</div>
+      </div>
+      <div class="format-card">
+        <div class="f-label">Short-Term Storage</div>
+        <div class="f-value" style="font-size:16px;color:var(--accent);">Room Temp OK</div>
+        <div class="f-sub">fridge recommended long-term</div>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <strong style="color:var(--accent);">REFRIGERATION — RECOMMENDED</strong><br><br>
+      <strong>Powder / capsule:</strong> Room temperature (15–25°C) acceptable for weeks; 2–8°C (fridge) recommended for longer storage.<br>
+      <strong>Transdermal cream / solution:</strong> 2–8°C refrigerated; do not freeze.<br>
+      <strong>Intranasal solution:</strong> 2–8°C refrigerated.<br><br>
+      Dihexa is a lipophilic small molecule — more stable than larger peptides at room temperature, but refrigeration extends potency and shelf life significantly. Protect from light and moisture in all forms. Avoid heat above 30°C.
+    </div>
+
+    <p>Transdermal is the most commonly used route in the nootropic community — it bypasses first-pass metabolism and provides steady absorption over hours. Typical transdermal concentration is 5–10 mg per application, applied to the inner wrist or forearm. Oral is convenient but bioavailability is variable. Intranasal provides fastest CNS onset.</p>
+  </div>
+
+  <!-- 06 DOSAGE -->
+  <div class="section">
+    <div class="section-tag">06 — Dosage</div>
+    <h2>Dosage Reference</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Route</th>
+          <th>Dose</th>
+          <th>Frequency</th>
+          <th>Context</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Transdermal (inner wrist/forearm)</td>
+          <td>5–10 mg</td>
+          <td><span class="freq-badge">Daily or EOD</span></td>
+          <td><span class="ctx-badge common">Common</span></td>
+        </tr>
+        <tr>
+          <td>Oral capsule</td>
+          <td>10–20 mg</td>
+          <td><span class="freq-badge">Daily</span></td>
+          <td><span class="ctx-badge standard">Standard</span></td>
+        </tr>
+        <tr>
+          <td>Intranasal solution</td>
+          <td>2–5 mg</td>
+          <td><span class="freq-badge">Daily</span></td>
+          <td><span class="ctx-badge standard">Fastest Onset</span></td>
+        </tr>
+        <tr>
+          <td>High / Research</td>
+          <td>30 mg</td>
+          <td><span class="freq-badge">Daily</span></td>
+          <td><span class="ctx-badge caution">High / Caution</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="info-box" style="margin-top:20px;">
+      No established human dose. The extraordinary potency means human-equivalent doses are extremely small. Most users report effects beginning at 10–15 mg oral or 5–10 mg transdermal. Given the HGF/c-Met safety concern, <strong>every-other-day (EOD) dosing is preferred</strong> over daily to reduce cumulative c-Met stimulation. Short cycles with long breaks are strongly advised. Start with transdermal 5 mg EOD and assess over 2 weeks before increasing.
+    </div>
+  </div>
+
+  <!-- 07 MONITORING -->
+  <div class="section">
+    <div class="section-tag">07 — Monitoring</div>
+    <h2>Biomarkers, Lab Tests &amp; Ranges</h2>
+    <p>Given the HGF/c-Met oncological concern, Dihexa requires the most comprehensive safety monitoring of any CNS peptide in this library. Do not skip these panels.</p>
+
+    <div class="bm-section-title">▸ Cognitive / Neuroplasticity</div>
+    <table class="bm-table">
+      <thead>
+        <tr><th>Biomarker</th><th>Lab Test</th><th>Clinical Range</th><th>Optimal Range</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="bm-name">BDNF</span><span class="bm-sub">Indirect neuroplasticity marker</span></td>
+          <td><span class="lab-test">Serum BDNF (fasting AM)</span></td>
+          <td><span class="range-clinical">~10,000–30,000 pg/mL</span></td>
+          <td><span class="range-optimal">Upper half of range; indirect marker of neuroplastic activity</span></td>
+        </tr>
+        <tr>
+          <td><span class="bm-name">HGF</span><span class="bm-sub">Direct Dihexa target — monitor for excess</span></td>
+          <td><span class="lab-test">Serum HGF</span></td>
+          <td><span class="range-clinical">0.1–0.4 ng/mL</span></td>
+          <td><span class="range-optimal">Stable vs baseline; significant elevation warrants caution</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="bm-section-title">▸ Cancer Risk Monitoring (Critical for Dihexa)</div>
+    <table class="bm-table">
+      <thead>
+        <tr><th>Biomarker</th><th>Lab Test</th><th>Clinical Range</th><th>Optimal Range</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="bm-name">PSA</span><span class="bm-sub">Prostate — males</span></td>
+          <td><span class="lab-test">Serum PSA</span></td>
+          <td><span class="range-clinical">&lt;4.0 ng/mL</span></td>
+          <td><span class="range-warn">&lt;1.5 ng/mL; any rising trend on cycle — stop immediately</span></td>
+        </tr>
+        <tr>
+          <td><span class="bm-name">AFP</span><span class="bm-sub">Liver / germ cell cancer</span></td>
+          <td><span class="lab-test">Alpha-fetoprotein</span></td>
+          <td><span class="range-clinical">&lt;10 ng/mL</span></td>
+          <td><span class="range-warn">Undetectable / stable; HGF is a hepatocyte growth factor — monitor liver markers</span></td>
+        </tr>
+        <tr>
+          <td><span class="bm-name">CEA</span><span class="bm-sub">General cancer marker</span></td>
+          <td><span class="lab-test">Carcinoembryonic Antigen</span></td>
+          <td><span class="range-clinical">&lt;3.0 ng/mL (non-smoker)</span></td>
+          <td><span class="range-warn">Stable vs baseline; any rise warrants investigation before continuing</span></td>
+        </tr>
+        <tr>
+          <td><span class="bm-name">AST / ALT</span><span class="bm-sub">Liver — primary HGF target organ</span></td>
+          <td><span class="lab-test">CMP</span></td>
+          <td><span class="range-clinical">AST 10–40 / ALT 7–56 U/L</span></td>
+          <td><span class="range-optimal">AST &lt;26 / ALT &lt;26 U/L; liver is primary HGF target organ</span></td>
+        </tr>
+        <tr>
+          <td><span class="bm-name">CBC with Differential</span><span class="bm-sub">Watch for unexpected changes</span></td>
+          <td><span class="lab-test">Complete Blood Count</span></td>
+          <td><span class="range-clinical">Standard ranges</span></td>
+          <td><span class="range-optimal">Stable; watch for unexpected WBC or platelet changes</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="bm-section-title">▸ Inflammation</div>
+    <table class="bm-table">
+      <thead>
+        <tr><th>Biomarker</th><th>Lab Test</th><th>Clinical Range</th><th>Optimal Range</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="bm-name">hsCRP</span></td>
+          <td><span class="lab-test">High-sensitivity CRP</span></td>
+          <td><span class="range-clinical">&lt;3.0 mg/L</span></td>
+          <td><span class="range-optimal">&lt;0.5 mg/L</span></td>
+        </tr>
+        <tr>
+          <td><span class="bm-name">IL-6</span></td>
+          <td><span class="lab-test">Serum IL-6</span></td>
+          <td><span class="range-clinical">&lt;7.0 pg/mL</span></td>
+          <td><span class="range-optimal">&lt;1.5 pg/mL</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="onco-warning">
+      <div class="ow-title">⛔ Critical Safety Warning — Oncological Contraindication</div>
+      <p>Dihexa acts on the HGF/c-Met axis. c-Met is a known proto-oncogene — overexpressed in lung, gastric, colorectal, liver, and kidney cancers. Dihexa is <strong>ABSOLUTELY CONTRAINDICATED</strong> in anyone with a personal or family history of any cancer. Comprehensive cancer marker panel (PSA, AFP, CEA, CBC) is MANDATORY before starting and every 4 weeks during use. If any marker trends upward — stop immediately and consult an oncologist. No human clinical trials exist. This is one of the highest-risk nootropic compounds in this library from a long-term safety standpoint despite its extraordinary efficacy profile in animal models.</p>
+    </div>
+  </div>
+
+  <!-- 08 CYCLE PROTOCOL -->
+  <div class="section">
+    <div class="section-tag">08 — Cycle Protocol</div>
+    <h2>Cycle Length, Frequency &amp; Timing</h2>
+
+    <h3>How Long to Cycle</h3>
+    <div class="cycle-grid">
+      <div class="cycle-card">
+        <div class="c-label">Conservative Cycle</div>
+        <div class="c-value">2–4 Weeks</div>
+        <div class="c-sub">Given the c-Met oncological concern, short cycles of 2–4 weeks maximum with comprehensive bloodwork before and after are the only responsible protocol.</div>
+      </div>
+      <div class="cycle-card">
+        <div class="c-label">Required Break</div>
+        <div class="c-value" style="color:var(--accent3);">8–12 Weeks</div>
+        <div class="c-sub">Extended off periods mandatory. The durable structural effects of Dihexa mean cognitive benefits persist well into the break period — a long break is both safe practice and unnecessary from an efficacy standpoint.</div>
+      </div>
+    </div>
+
+    <div class="info-box">
+      The extraordinary potency of Dihexa is a double-edged sword — the synaptogenic effect that makes it so compelling cognitively is the same mechanism that raises oncological concern. Every-other-day (EOD) dosing during cycles reduces cumulative c-Met receptor stimulation while maintaining cognitive benefit — this is the preferred approach over daily dosing.
+    </div>
+
+    <h3>Frequency &amp; Timing</h3>
+    <table class="timing-table">
+      <thead>
+        <tr><th>Variable</th><th>Recommendation</th><th>Why</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Frequency</td>
+          <td><span class="rec">Every Other Day (EOD)</span></td>
+          <td>EOD preferred over daily — reduces total c-Met receptor exposure while still maintaining synaptic remodeling stimulus. The structural changes induced take 24–48 hrs to consolidate anyway.</td>
+        </tr>
+        <tr>
+          <td>Timing</td>
+          <td><span class="rec">AM Preferred</span></td>
+          <td>Morning dosing aligns synaptic remodeling with peak hippocampal learning activity. Unlike Semax, Dihexa is not specifically stimulating — it can be taken at other times if needed.</td>
+        </tr>
+        <tr>
+          <td>Route</td>
+          <td><span class="rec">Transdermal Preferred</span></td>
+          <td>Transdermal provides the most consistent absorption, bypasses first-pass liver metabolism, and allows steady-state brain delivery over several hours. Apply to inner wrist or forearm — rotate sites.</td>
+        </tr>
+        <tr>
+          <td>Fasted vs Fed</td>
+          <td><span class="rec">Route-Dependent</span></td>
+          <td>Transdermal: food irrelevant. Oral: fasted state may improve absorption — take 30 min before food. Intranasal: food irrelevant.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="protocol-summary">
+      <div class="ps-item">
+        <div class="ps-value">2–4 wk</div>
+        <div class="ps-label">Max Cycle</div>
+      </div>
+      <div class="ps-item">
+        <div class="ps-value">EOD</div>
+        <div class="ps-label">Every Other Day</div>
+      </div>
+      <div class="ps-item">
+        <div class="ps-value">AM</div>
+        <div class="ps-label">Timing</div>
+      </div>
+      <div class="ps-item">
+        <div class="ps-value" style="font-size:16px;">Transdermal</div>
+        <div class="ps-label">Preferred Route</div>
+      </div>
+      <div class="ps-item">
+        <div class="ps-value" style="color:var(--accent3);">8–12 wk</div>
+        <div class="ps-label">Break (Min)</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IGF-1 LR3 — Apex Research Reference</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap');
+    :root{--bg:#080c10;--panel:#0d1318;--border:#1a2d3a;--accent:#00d4ff;--accent2:#00ff9d;--accent3:#ff6b35;--text:#c8dde8;--muted:#4a6272;--white:#eaf4f8;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;line-height:1.6;padding:40px 20px;}
+    body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 70% 10%,rgba(0,212,255,0.06) 0%,transparent 60%),radial-gradient(ellipse at 20% 90%,rgba(255,107,53,0.04) 0%,transparent 50%);pointer-events:none;z-index:0;}
+    .container{max-width:900px;margin:0 auto;position:relative;z-index:1;}
+    .header{margin-bottom:40px;border-bottom:1px solid var(--border);padding-bottom:24px;}
+    .peptide-label{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;}
+    .peptide-name{font-family:'Rajdhani',sans-serif;font-size:52px;font-weight:700;color:var(--white);line-height:1;margin-bottom:8px;}
+    .peptide-fullname{font-size:16px;color:var(--muted);margin-bottom:16px;}
+    .tag-row{display:flex;gap:8px;flex-wrap:wrap;}
+    .tag{background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.25);color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;padding:3px 10px;}
+    .section{background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--muted);padding:28px 32px;margin-bottom:16px;animation:fadeUp 0.4s ease both;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+    .section-num{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:8px;}
+    h2{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px;}
+    .stat-box{background:var(--bg);border:1px solid var(--border);padding:16px;text-align:center;}
+    .stat-value{font-family:'Rajdhani',sans-serif;font-size:32px;font-weight:700;color:var(--white);line-height:1;}
+    .stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-top:4px;}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+    .info-item{margin-bottom:14px;}
+    .info-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:4px;}
+    .info-value{color:var(--white);font-size:13px;line-height:1.5;}
+    .timeline{position:relative;padding-left:20px;}
+    .timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:var(--border);}
+    .timeline-item{position:relative;margin-bottom:20px;}
+    .timeline-item::before{content:'';position:absolute;left:-24px;top:5px;width:8px;height:8px;background:var(--accent);border-radius:50%;}
+    .timeline-year{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:4px;}
+    .benefit-item{display:flex;gap:14px;margin-bottom:16px;align-items:flex-start;}
+    .benefit-num{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent3);min-width:28px;padding-top:2px;}
+    .benefit-title{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;color:var(--white);margin-bottom:3px;}
+    .recon-box{background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--accent2);padding:20px 24px;margin-bottom:16px;}
+    .recon-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);margin-bottom:12px;}
+    .recon-math{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--white);margin-bottom:8px;}
+    .dose-table{width:100%;border-collapse:collapse;}
+    .dose-table th{background:rgba(0,212,255,0.08);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);}
+    .dose-table td{padding:12px 14px;border-bottom:1px solid rgba(26,45,58,0.5);vertical-align:top;font-size:13px;}
+    .dose-level{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);font-weight:700;}
+    .dose-amount{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--white);}
+    .dose-units{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent);display:block;margin-top:2px;}
+    .bio-table{width:100%;border-collapse:collapse;}
+    .bio-table th{background:rgba(0,212,255,0.06);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--muted);text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);}
+    .bio-table td{padding:10px 12px;border-bottom:1px solid rgba(26,45,58,0.4);vertical-align:top;font-size:12px;}
+    .bio-name{color:var(--white);font-weight:500;display:block;}
+    .bio-test{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);}
+    .range-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 6px;margin-right:4px;}
+    .range-clinical{background:rgba(74,98,114,0.3);color:var(--muted);}
+    .range-optimal{background:rgba(0,255,157,0.1);color:var(--accent2);}
+    .bio-category{margin-bottom:24px;}
+    .bio-category-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);margin-bottom:10px;}
+    .note-box{background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.15);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .warning-box{background:rgba(255,107,53,0.08);border:1px solid rgba(255,107,53,0.3);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .disclaimer-box{background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.2);padding:14px 18px;margin-top:20px;font-size:12px;color:var(--text);line-height:1.5;}
+    .precision-badge{display:inline-block;background:rgba(255,107,53,0.12);border:1px solid rgba(255,107,53,0.4);color:var(--accent3);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;padding:4px 12px;margin-bottom:16px;}
+  </style>
+</head>
+<body>
+<div class="container">
+<a href="index.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--muted);text-decoration:none;text-transform:uppercase;margin-bottom:28px;padding:8px 14px;border:1px solid var(--border);transition:all .2s;" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">← Back to Encyclopedia</a>
+
+  <div class="header">
+    <div class="peptide-label">Apex Research Reference</div>
+    <div class="peptide-name">IGF-1 LR3</div>
+    <div class="peptide-fullname">Insulin-like Growth Factor-1 Long Arg3 — Extended Half-Life Anabolic Growth Factor</div>
+    <div class="tag-row">
+      <span class="tag">ANABOLIC</span>
+      <span class="tag">MUSCLE GROWTH</span>
+      <span class="tag">RECOVERY</span>
+      <span class="tag">SATELLITE CELLS</span>
+      <span class="tag">GH AXIS</span>
+      <span class="tag">PRECISION DOSING</span>
+    </div>
+  </div>
+
+  <!-- 01 -->
+  <div class="section" style="animation-delay:0.1s;border-top-color:var(--accent);">
+    <div class="section-num">01 / IDENTITY</div>
+    <h2>Compound Profile</h2>
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-value">83</div>
+        <div class="stat-label">AMINO ACIDS</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">~9.1</div>
+        <div class="stat-label">kDa MW</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">SC/IM</div>
+        <div class="stat-label">ROUTE</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">20–30h</div>
+        <div class="stat-label">HALF-LIFE</div>
+      </div>
+    </div>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">CLASSIFICATION</div>
+          <div class="info-value">Recombinant IGF-1 analog. LR3 = "Long Arg3" — glutamic acid at position 3 replaced with arginine (reduces IGFBP binding 1000×); 13-amino-acid N-terminal extension (increases half-life from 15 min → 20–30 hours).</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">MECHANISM</div>
+          <div class="info-value">Binds IGF-1 receptor (IGF-1R) with high affinity → activates PI3K/Akt/mTOR (anabolic growth) and Ras/ERK (proliferation) pathways. Downstream of GH axis: liver produces IGF-1 in response to GH; IGF-1 LR3 mimics this but at higher circulating concentration and longer duration due to reduced IGFBP binding.</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">VIAL SIZE</div>
+          <div class="info-value">1 mg (1,000 mcg) — precision dosing required. This is a HIGH-POTENCY compound. Very small volumes per dose.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">vs. NATIVE IGF-1</div>
+          <div class="info-value">Native IGF-1: 15-minute half-life (bound by IGFBPs). IGF-1 LR3: 20–30 hour half-life (resists IGFBP binding). Result: dramatically more bioavailability and sustained receptor activation from the same dose.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">DEVELOPER</div>
+          <div class="info-value">Originally developed by Gropep Ltd (Australia); licensed for research use. Never FDA-approved for clinical use (unlike mecasermin/Increlex which is native IGF-1).</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 -->
+  <div class="section" style="animation-delay:0.15s;border-top-color:var(--accent2);">
+    <div class="section-num">02 / RESEARCH HISTORY</div>
+    <h2>Development Timeline</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-year">1957–1970s</div>
+        <div>William Daughaday (Washington University) characterizes "sulfation factor" as the mediator of growth hormone's anabolic effects — later renamed Somatomedin-C, then IGF-1. The GH → liver → IGF-1 → tissue growth axis established as the primary anabolic endocrine pathway.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">1987</div>
+        <div>Recombinant IGF-1 synthesis achieved. Therapeutic trials begin for growth hormone insensitivity syndrome (Laron syndrome) — children who cannot respond to GH but can respond to direct IGF-1 treatment. FDA approval of mecasermin (Increlex) follows in 2005 for Laron syndrome.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">1992</div>
+        <div>Gropep (Australia) develops IGF-1 LR3 — a modified analog with 13-amino-acid extension and Arg3 substitution. Half-life extends from 15 minutes to 20–30+ hours. 1000× reduction in IGFBP-3 binding affinity. Purpose: research tool to study IGF-1 signaling with sustained receptor activation. Becomes available for cell culture and in vivo research.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2000–2010</div>
+        <div>IGF-1 LR3 enters bodybuilding/performance community. Significant underground research accumulated on muscle satellite cell activation, localized (intramuscular) effects, and systemic dosing protocols. Recognized as distinct from GH — works directly at muscle tissue without hepatic conversion step.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2010–2024</div>
+        <div>Continued research into IGF-1's role in muscle satellite cell biology, tendon repair, and neurological regeneration. IGF-1 LR3 used as research tool in studies of muscle wasting, ALS, and spinal cord injury models. Performance applications well-characterized in community research despite lack of clinical trials.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 -->
+  <div class="section" style="animation-delay:0.2s;border-top-color:var(--accent3);">
+    <div class="section-num">03 / BENEFITS</div>
+    <h2>Primary Effects</h2>
+    <div class="benefit-item">
+      <div class="benefit-num">01</div>
+      <div>
+        <div class="benefit-title">Muscle Satellite Cell Activation</div>
+        <div>The most unique and powerful effect of IGF-1 LR3 vs. other anabolic agents: direct activation of skeletal muscle satellite cells — the stem cells that repair and grow muscle fibers. IGF-1 signaling through IGF-1R → PI3K/Akt → MyoD/myogenin transcription factors → satellite cell proliferation and differentiation into new myofibers. This is actual new muscle cell generation, not just hypertrophy of existing cells.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">02</div>
+      <div>
+        <div class="benefit-title">mTOR Activation — Protein Synthesis</div>
+        <div>IGF-1R → Akt → mTORC1 is the most potent anabolic signaling cascade in skeletal muscle. IGF-1 LR3 sustains this activation for 20–30 hours per dose (vs. 15 minutes with native IGF-1), creating a prolonged anabolic window. Dramatically increases protein synthesis rate and nitrogen retention.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">03</div>
+      <div>
+        <div class="benefit-title">Anti-Catabolic Protection</div>
+        <div>IGF-1/Akt signaling phosphorylates and inhibits FoxO transcription factors — the primary drivers of muscle protein catabolism (atrophy genes). IGF-1 LR3 provides 24-hour protection against muscle breakdown, particularly valuable during caloric deficit or high-volume training phases.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">04</div>
+      <div>
+        <div class="benefit-title">Tissue Repair — Tendons, Ligaments, Cartilage</div>
+        <div>IGF-1 receptors are present in tendons, ligaments, and cartilage. IGF-1 LR3 stimulates collagen synthesis and fibroblast proliferation in these tissues. Often stacked with BPC-157 and TB-500 for enhanced tendon/ligament repair — complementary but distinct mechanisms.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">05</div>
+      <div>
+        <div class="benefit-title">Neuroregeneration &amp; Neuroprotection</div>
+        <div>Brain and peripheral nervous system express high levels of IGF-1R. IGF-1 promotes neuronal survival, axonal sprouting, and myelination. IGF-1 LR3 crosses the blood-brain barrier at lower efficiency than native IGF-1 but still exerts neurological effects — improved cognitive function and faster nerve injury recovery reported.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">06</div>
+      <div>
+        <div class="benefit-title">Fat Loss — Lipolytic and Anti-Lipogenic</div>
+        <div>IGF-1 signaling in adipose tissue promotes lipolysis and inhibits de novo lipogenesis. Paradoxically, despite being a "growth" factor, optimized IGF-1 levels are associated with lower body fat — consistent with the observation that GH-deficient adults are fat and IGF-1-replete athletes are lean.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 -->
+  <div class="section" style="animation-delay:0.25s;border-top-color:var(--accent2);">
+    <div class="section-num">04 / RECONSTITUTION</div>
+    <h2>Preparation Protocol — PRECISION CRITICAL</h2>
+
+    <div class="precision-badge">⚠ PRECISION DOSING — 1mg VIAL — READ CAREFULLY</div>
+
+    <div class="recon-box">
+      <div class="recon-title">// 1MG VIAL — PRECISION RECONSTITUTION</div>
+      <div class="recon-math">1,000 mcg ÷ 300 units BAC water = <span style="color:var(--accent2)">3.33 mcg per unit</span></div>
+      <div style="font-size:13px;margin-top:8px;color:var(--muted);">Add 3.0 mL (300 units) bacteriostatic water to 1mg lyophilized vial.</div>
+    </div>
+    <div class="warning-box">
+      <strong style="color:var(--accent3);">CRITICAL — Very Small Volumes:</strong> At 3.33 mcg/unit, a 50mcg dose = 15 units = 0.15 mL. A 100mcg dose = 30 units = 0.30 mL. Use a 1mL insulin syringe for accuracy. The total vial contains only 1mg — miscalculation wastes expensive product or causes overdose. Triple-check your math before drawing.
+    </div>
+    <table class="dose-table">
+      <thead>
+        <tr>
+          <th>TARGET DOSE</th>
+          <th>UNITS TO DRAW</th>
+          <th>VOLUME</th>
+          <th>NOTE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="dose-level">LOW</span><span class="dose-amount">20 mcg</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--white);">6 units</td>
+          <td style="font-family:'Share Tech Mono',monospace;">0.06 mL</td>
+          <td>Women / first use / conservative</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">STANDARD</span><span class="dose-amount">50 mcg</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--white);">15 units</td>
+          <td style="font-family:'Share Tech Mono',monospace;">0.15 mL</td>
+          <td>Standard male protocol</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">HIGH</span><span class="dose-amount">100 mcg</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--white);">30 units</td>
+          <td style="font-family:'Share Tech Mono',monospace;">0.30 mL</td>
+          <td>Experienced users; upper range</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">MAX</span><span class="dose-amount">150 mcg</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--white);">45 units</td>
+          <td style="font-family:'Share Tech Mono',monospace;">0.45 mL</td>
+          <td>Not recommended; hypoglycemia risk</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note-box" style="margin-top:16px;">
+      <strong style="color:var(--accent2);">Alternative Reconstitution for Higher Concentrations:</strong> To make doses easier to measure, reconstitute with 1.0 mL BAC water instead of 3.0 mL → concentration = 1 mcg/unit (1,000 mcg/mL). Then: 50mcg = 50 units = 0.50 mL. Easier to measure but uses more BAC water per draw; shelf life may be slightly shorter.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent2);">Storage:</strong> Lyophilized — refrigerate (4°C), protect from light. Reconstituted: refrigerate (4°C), use within 30 days. IGF-1 LR3 is somewhat less stable than many peptides once reconstituted — do not leave at room temperature for extended periods.
+    </div>
+  </div>
+
+  <!-- 05 -->
+  <div class="section" style="animation-delay:0.3s;border-top-color:var(--accent);">
+    <div class="section-num">05 / DOSING PROTOCOL</div>
+    <h2>Administration Guide</h2>
+    <table class="dose-table">
+      <thead>
+        <tr>
+          <th>PROTOCOL</th>
+          <th>DOSE</th>
+          <th>FREQUENCY</th>
+          <th>DURATION</th>
+          <th>CONTEXT</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="dose-level">INTRO</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;">20–30 mcg SC</td>
+          <td>Daily</td>
+          <td>1 week</td>
+          <td>Assess hypoglycemia sensitivity</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">STANDARD</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;">50–80 mcg SC/IM</td>
+          <td>Daily (post-workout)</td>
+          <td>4–8 weeks</td>
+          <td>Muscle growth, satellite cell activation</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">ADVANCED</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;">80–100 mcg SC/IM</td>
+          <td>Daily</td>
+          <td>4–6 weeks</td>
+          <td>Maximum anabolic phase; monitor BG</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">REPAIR</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;">40–60 mcg SC (local)</td>
+          <td>Daily</td>
+          <td>4–8 weeks</td>
+          <td>Localized tissue repair with BPC-157/TB-500</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="warning-box">
+      <strong style="color:var(--accent3);">Hypoglycemia Risk:</strong> IGF-1 LR3 has significant insulin-mimetic activity at the cellular level. Risk of symptomatic hypoglycemia — especially if injected without eating. ALWAYS have fast-acting carbohydrates on hand. Inject post-workout with a carbohydrate/protein meal, never fasted. Symptoms: sweating, dizziness, confusion, shakiness. Treat immediately with glucose.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent);">IM vs. SC:</strong> Intramuscular injection (into target muscle, post-workout) delivers IGF-1 LR3 directly to recently-trained tissue where IGF-1R upregulation is highest. Produces localized hypertrophy effect. Subcutaneous is more convenient and still effective for systemic anabolic/recovery effects.
+    </div>
+  </div>
+
+  <!-- 06 -->
+  <div class="section" style="animation-delay:0.35s;border-top-color:var(--accent3);">
+    <div class="section-num">06 / TIMING</div>
+    <h2>Administration Timing</h2>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">CRITICAL — POST-WORKOUT ONLY</div>
+          <div class="info-value">Inject immediately post-workout (within 30 minutes) while IGF-1R expression is elevated from training stimulus. This is when satellite cells are most receptive. DO NOT inject fasted.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">FOOD TIMING</div>
+          <div class="info-value">Always pair with carbohydrates + protein immediately after injection. 30–50g fast carbs + 30–40g protein. This manages hypoglycemia risk while providing substrates for the mTOR-driven protein synthesis that IGF-1 initiates.</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">HALF-LIFE NOTE</div>
+          <div class="info-value">20–30 hour half-life means once-daily dosing maintains elevated IGF-1 receptor activity throughout the day. Some users prefer twice-daily (split dose: post-workout + morning) — reduces hypoglycemia risk per injection vs. single higher dose.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">STACKING</div>
+          <div class="info-value">Synergistic with GH peptides (Ipamorelin/CJC — they stimulate endogenous GH → liver IGF-1 production; exogenous IGF-1 LR3 amplifies the downstream effect). BPC-157 + IGF-1 LR3 = powerful tissue repair combination.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 07 -->
+  <div class="section" style="animation-delay:0.4s;border-top-color:var(--accent);">
+    <div class="section-num">07 / BIOMARKERS</div>
+    <h2>Monitoring Panel</h2>
+
+    <div class="bio-category">
+      <div class="bio-category-title">// IGF-1 AXIS</div>
+      <table class="bio-table">
+        <thead>
+          <tr><th>MARKER</th><th>TEST</th><th>CLINICAL RANGE</th><th>TARGET ON IGF-1 LR3</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">IGF-1 (Total)</span><span class="bio-test">Serum IGF-1</span></td>
+            <td>Morning serum draw</td>
+            <td><span class="range-label range-clinical">CLIN</span>Age-dependent (20s: 115–307 ng/mL)</td>
+            <td><span class="range-label range-optimal">NOTE</span>IGF-1 LR3 does NOT elevate standard IGF-1 assay reliably (IGFBP changes confound results)</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">IGFBP-3</span><span class="bio-test">IGF Binding Protein 3</span></td>
+            <td>Serum</td>
+            <td><span class="range-label range-clinical">CLIN</span>1.6–6.1 mg/L (adult)</td>
+            <td><span class="range-label range-optimal">NOTE</span>May decrease on IGF-1 LR3 (competitive displacement)</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Fasting Insulin</span><span class="bio-test">Insulin Resistance</span></td>
+            <td>Fasting AM draw</td>
+            <td><span class="range-label range-clinical">CLIN</span>2–25 µIU/mL</td>
+            <td><span class="range-label range-optimal">OPT</span>&lt;6 µIU/mL — monitor for suppression (IGF-1 may lower insulin requirements)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">// SAFETY — GLUCOSE &amp; ONCOLOGY MARKERS</div>
+      <table class="bio-table">
+        <thead>
+          <tr><th>MARKER</th><th>TEST</th><th>CLINICAL RANGE</th><th>MONITOR FOR</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">Fasting Blood Glucose</span><span class="bio-test">FBG</span></td>
+            <td>Daily home glucometer</td>
+            <td><span class="range-label range-clinical">CLIN</span>70–99 mg/dL</td>
+            <td><span class="range-label range-optimal">FLAG</span>&lt;70 mg/dL = hypoglycemia event → treat &amp; reduce dose</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">PSA (males)</span><span class="bio-test">Prostate-Specific Antigen</span></td>
+            <td>Standard cancer marker</td>
+            <td><span class="range-label range-clinical">CLIN</span>&lt;4.0 ng/mL (age &lt;50)</td>
+            <td><span class="range-label range-optimal">FLAG</span>IGF-1 is a growth factor — monitor PSA in males 45+. Any rise → discontinue &amp; evaluate</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">CEA</span><span class="bio-test">Carcinoembryonic Antigen</span></td>
+            <td>Standard tumor marker</td>
+            <td><span class="range-label range-clinical">CLIN</span>&lt;2.5 ng/mL (non-smoker)</td>
+            <td><span class="range-label range-optimal">FLAG</span>Growth factor potential — baseline + annual monitoring recommended for extended use</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">// PERFORMANCE TRACKING</div>
+      <table class="bio-table">
+        <thead>
+          <tr><th>MARKER</th><th>TEST</th><th>BASELINE</th><th>EXPECTED CHANGE</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">DEXA Body Composition</span><span class="bio-test">Lean Mass / Fat Mass</span></td>
+            <td>DEXA scan (pre + post cycle)</td>
+            <td><span class="range-label range-clinical">BASE</span>Pre-cycle scan</td>
+            <td><span class="range-label range-optimal">EXP</span>+1–3 lbs lean mass / 4–8 week cycle typical</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Strength Testing</span><span class="bio-test">1RM Compound Lifts</span></td>
+            <td>Gym tracking</td>
+            <td><span class="range-label range-clinical">BASE</span>Pre-cycle 1RM</td>
+            <td><span class="range-label range-optimal">EXP</span>5–15% strength increase over 6–8 weeks</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 08 -->
+  <div class="section" style="animation-delay:0.45s;border-top-color:var(--accent2);">
+    <div class="section-num">08 / CYCLE PROTOCOL</div>
+    <h2>Recommended Cycle</h2>
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-value">4–8</div>
+        <div class="stat-label">WEEKS ACTIVE</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">7</div>
+        <div class="stat-label">DAYS PER WEEK</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">4–8</div>
+        <div class="stat-label">WEEKS OFF</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">Post-WO</div>
+        <div class="stat-label">INJECTION TIME</div>
+      </div>
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent2);">Weeks 1 (Intro):</strong> 20–30 mcg SC daily post-workout. Assess for hypoglycemia — note blood glucose 30 min, 60 min, and 90 min post-injection. If stable, proceed to full protocol.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent2);">Weeks 2–8 (Active Phase):</strong> 50–100 mcg SC or IM post-workout daily. Always with carbs + protein post-injection. Training intensity should be high — IGF-1 LR3 requires mechanical stimulus to drive satellite cell activation. Higher training volume = better results.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent2);">Off Period:</strong> Minimum 4 weeks off (equal to cycle length). IGF-1 LR3 downregulates its own receptor with chronic exposure — cycling maintains receptor sensitivity. During off-cycle, continue GH peptides (Ipamorelin/CJC) to maintain endogenous IGF-1 production.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent);">Stack Protocol:</strong> Ipamorelin 200mcg + CJC-1295 200mcg (bedtime, fasted) PLUS IGF-1 LR3 50–80mcg (post-workout) = complete GH axis stimulation at both the pituitary level (Ipa/CJC) and the tissue level (LR3). Add BPC-157 for connective tissue protection during high-intensity training.
+    </div>
+    <div class="disclaimer-box">
+      <strong style="color:var(--accent3);">Important Research Compound Notice:</strong> IGF-1 LR3 is a high-potency anabolic growth factor. It has NOT been approved for human use by the FDA. It carries a real hypoglycemia risk — always dose post-workout with food. Due to IGF-1's role in cellular growth, there is a theoretical cancer promotion risk with supraphysiological levels — this compound is contraindicated if you have a personal history of cancer or are at high risk. Mandatory cancer marker monitoring for any extended use protocol. Consult a qualified healthcare provider before use.
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

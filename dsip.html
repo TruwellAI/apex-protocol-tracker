@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DSIP — Apex Research Reference</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap');
+    :root{--bg:#080c10;--panel:#0d1318;--border:#1a2d3a;--accent:#00d4ff;--accent2:#00ff9d;--accent3:#ff6b35;--text:#c8dde8;--muted:#4a6272;--white:#eaf4f8;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;line-height:1.6;padding:40px 20px;}
+    body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 70% 10%,rgba(0,212,255,0.06) 0%,transparent 60%),radial-gradient(ellipse at 20% 90%,rgba(255,107,53,0.04) 0%,transparent 50%);pointer-events:none;z-index:0;}
+    .container{max-width:900px;margin:0 auto;position:relative;z-index:1;}
+    .header{margin-bottom:40px;border-bottom:1px solid var(--border);padding-bottom:24px;}
+    .peptide-label{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;}
+    .peptide-name{font-family:'Rajdhani',sans-serif;font-size:52px;font-weight:700;color:var(--white);line-height:1;margin-bottom:8px;}
+    .peptide-fullname{font-size:16px;color:var(--muted);margin-bottom:16px;}
+    .tag-row{display:flex;gap:8px;flex-wrap:wrap;}
+    .tag{background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.25);color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;padding:3px 10px;}
+    .section{background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--muted);padding:28px 32px;margin-bottom:16px;animation:fadeUp 0.4s ease both;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+    .section-num{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:8px;}
+    h2{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px;}
+    .stat-box{background:var(--bg);border:1px solid var(--border);padding:16px;text-align:center;}
+    .stat-value{font-family:'Rajdhani',sans-serif;font-size:32px;font-weight:700;color:var(--white);line-height:1;}
+    .stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-top:4px;}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+    .info-item{margin-bottom:14px;}
+    .info-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:4px;}
+    .info-value{color:var(--white);font-size:13px;line-height:1.5;}
+    .timeline{position:relative;padding-left:20px;}
+    .timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:var(--border);}
+    .timeline-item{position:relative;margin-bottom:20px;}
+    .timeline-item::before{content:'';position:absolute;left:-24px;top:5px;width:8px;height:8px;background:var(--accent);border-radius:50%;}
+    .timeline-year{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:4px;}
+    .benefit-item{display:flex;gap:14px;margin-bottom:16px;align-items:flex-start;}
+    .benefit-num{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent3);min-width:28px;padding-top:2px;}
+    .benefit-title{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;color:var(--white);margin-bottom:3px;}
+    .recon-box{background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--accent2);padding:20px 24px;margin-bottom:16px;}
+    .recon-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);margin-bottom:12px;}
+    .recon-math{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--white);margin-bottom:8px;}
+    .dose-table{width:100%;border-collapse:collapse;}
+    .dose-table th{background:rgba(0,212,255,0.08);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);}
+    .dose-table td{padding:12px 14px;border-bottom:1px solid rgba(26,45,58,0.5);vertical-align:top;font-size:13px;}
+    .dose-level{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);font-weight:700;}
+    .dose-amount{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--white);}
+    .dose-units{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent);display:block;margin-top:2px;}
+    .bio-table{width:100%;border-collapse:collapse;}
+    .bio-table th{background:rgba(0,212,255,0.06);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--muted);text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);}
+    .bio-table td{padding:10px 12px;border-bottom:1px solid rgba(26,45,58,0.4);vertical-align:top;font-size:12px;}
+    .bio-name{color:var(--white);font-weight:500;display:block;}
+    .bio-test{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);}
+    .range-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 6px;margin-right:4px;}
+    .range-clinical{background:rgba(74,98,114,0.3);color:var(--muted);}
+    .range-optimal{background:rgba(0,255,157,0.1);color:var(--accent2);}
+    .bio-category{margin-bottom:24px;}
+    .bio-category-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);margin-bottom:10px;}
+    .note-box{background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.15);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .disclaimer-box{background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.2);padding:14px 18px;margin-top:20px;font-size:12px;color:var(--text);line-height:1.5;}
+  </style>
+</head>
+<body>
+<div class="container">
+<a href="index.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--muted);text-decoration:none;text-transform:uppercase;margin-bottom:28px;padding:8px 14px;border:1px solid var(--border);transition:all .2s;" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">← Back to Encyclopedia</a>
+
+  <div class="header">
+    <div class="peptide-label">Apex Research Reference</div>
+    <div class="peptide-name">DSIP</div>
+    <div class="peptide-fullname">Delta Sleep-Inducing Peptide — Endogenous Neuropeptide &amp; Stress Modulator</div>
+    <div class="tag-row">
+      <span class="tag">SLEEP</span>
+      <span class="tag">RECOVERY</span>
+      <span class="tag">STRESS</span>
+      <span class="tag">GH PULSATION</span>
+      <span class="tag">NEUROPEPTIDE</span>
+      <span class="tag">LH MODULATION</span>
+    </div>
+  </div>
+
+  <!-- 01 -->
+  <div class="section" style="animation-delay:0.1s;border-top-color:var(--accent);">
+    <div class="section-num">01 / IDENTITY</div>
+    <h2>Compound Profile</h2>
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-value">9</div>
+        <div class="stat-label">AMINO ACIDS</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">~0.85</div>
+        <div class="stat-label">kDa MW</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">SC</div>
+        <div class="stat-label">ROUTE</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">Endogenous</div>
+        <div class="stat-label">ORIGIN</div>
+      </div>
+    </div>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">SEQUENCE</div>
+          <div class="info-value" style="font-family:'Share Tech Mono',monospace;">Trp-Ala-Gly-Gly-Asp-Ala-Ser-Gly-Glu</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">CLASSIFICATION</div>
+          <div class="info-value">Endogenous nonapeptide first isolated from rabbit brain. Naturally produced in the hypothalamus and found in human blood. Crosses the blood-brain barrier. Modulates sleep architecture, GH secretion, stress response, and LH pulsatility.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">MECHANISM</div>
+          <div class="info-value">Multiple mechanisms: promotes slow-wave (delta) sleep via hypothalamic modulation; stimulates GH pulsatile release; inhibits corticotrophin (ACTH) and reduces cortisol stress response; modulates LH pulsatility (relevant for testosterone in males); antioxidant properties via direct ROS scavenging.</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">DISCOVERED</div>
+          <div class="info-value">Marcel Monnier, University of Basel, 1977 — isolated from rabbit cerebral venous blood during slow-wave sleep. Named for its ability to induce delta-wave EEG patterns when administered to test animals.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">VIAL SIZE</div>
+          <div class="info-value">10mg lyophilized powder</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">UNIQUE PROPERTY</div>
+          <div class="info-value">Unlike sedatives/hypnotics, DSIP improves sleep quality without causing sedation as a side effect. It normalizes sleep architecture rather than forcing sleep via CNS depression. Non-habit forming. No morning grogginess.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 -->
+  <div class="section" style="animation-delay:0.15s;border-top-color:var(--accent2);">
+    <div class="section-num">02 / RESEARCH HISTORY</div>
+    <h2>Development Timeline</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-year">1977</div>
+        <div>Marcel Monnier and Ludwig Schoenenberger at the University of Basel publish the discovery of DSIP — isolated from the cerebral venous blood of rabbits during induced slow-wave sleep. EEG recording confirms the isolated peptide induces delta-wave sleep when administered to naive recipient animals. Named Delta Sleep-Inducing Peptide.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">1980s</div>
+        <div>DSIP identified in human blood, urine, and CSF — confirming it is an endogenous human neuropeptide, not just a rabbit protein. Research expands: DSIP found in pituitary, hypothalamus, adrenal glands, testes, and pancreas — suggesting systemic functions beyond sleep. Multiple research groups in Europe and USSR investigate.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">1984–1990</div>
+        <div>Valdman AV and colleagues (USSR) establish DSIP's anti-stress properties — reduces cortisol, normalizes ACTH response to stress, and prevents stress-induced pathology in animal models. Soviet military research into DSIP for stress resilience documented. Simultaneously, Schoenenberger's group publishes GH-stimulating effects.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">1990–2005</div>
+        <div>Human clinical studies in Europe for insomnia, opiate withdrawal (DSIP reduces withdrawal severity), and chronic pain. Small but consistent results. Limited pharmaceutical interest due to short half-life and low oral bioavailability — large pharma moves toward synthetic small molecule sleep aids instead (Z-drugs).</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2010–present</div>
+        <div>Performance and longevity community adopts DSIP for sleep quality improvement, GH pulsation enhancement, and cortisol management. Recognized as safer alternative to sleep medications for athletes. Stacking with GH peptides (Ipamorelin/CJC-1295) for synergistic sleep + GH pulse protocol becomes popular.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 -->
+  <div class="section" style="animation-delay:0.2s;border-top-color:var(--accent3);">
+    <div class="section-num">03 / BENEFITS</div>
+    <h2>Primary Effects</h2>
+    <div class="benefit-item">
+      <div class="benefit-num">01</div>
+      <div>
+        <div class="benefit-title">Slow-Wave Sleep Enhancement</div>
+        <div>DSIP increases the proportion of slow-wave (delta) sleep — the deepest, most restorative sleep stage. SWS is when GH secretion peaks, tissue repair occurs, and memory consolidation happens. DSIP does this by normalizing sleep architecture, not sedating — users wake feeling genuinely rested, not groggy. Particularly effective for those with poor SWS due to age, stress, or overtraining.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">02</div>
+      <div>
+        <div class="benefit-title">GH Pulse Amplification</div>
+        <div>DSIP stimulates pituitary GH secretion in a pulsatile pattern. The largest natural GH pulse occurs 60–90 minutes after sleep onset during the first SWS cycle. DSIP both deepens SWS and directly stimulates GH release — creating a compounding effect. Synergistic when combined with Ipamorelin or CJC-1295 at bedtime.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">03</div>
+      <div>
+        <div class="benefit-title">Stress Response Normalization</div>
+        <div>DSIP inhibits ACTH-induced cortisol release. In chronically stressed individuals (elevated cortisol patterns), DSIP normalizes the HPA axis. This stress-buffering effect is documented across multiple species and some human data — reducing both acute stress response magnitude and restoring normal diurnal cortisol rhythms.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">04</div>
+      <div>
+        <div class="benefit-title">LH Pulsatility &amp; Testosterone Support</div>
+        <div>DSIP modulates hypothalamic GnRH pulsatility, which directly affects LH secretion. LH is the primary driver of testicular testosterone production. Improved LH pulsatility → normalized testosterone production. Relevant for post-cycle support and age-related testosterone decline.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">05</div>
+      <div>
+        <div class="benefit-title">Antioxidant Activity</div>
+        <div>DSIP has direct antioxidant properties — scavenges superoxide and hydroxyl radicals. Reduces lipid peroxidation in neuronal membranes. Neuroprotective in oxidative stress models. An underappreciated aspect of its recovery-enhancing profile.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">06</div>
+      <div>
+        <div class="benefit-title">Opiate &amp; Alcohol Withdrawal Support</div>
+        <div>Human clinical data shows DSIP reduces the severity of opiate and alcohol withdrawal symptoms. Mechanism: normalizes dysregulated HPA axis and sleep architecture that are severely disrupted in withdrawal states. Used in some European addiction medicine protocols.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 -->
+  <div class="section" style="animation-delay:0.25s;border-top-color:var(--accent2);">
+    <div class="section-num">04 / RECONSTITUTION</div>
+    <h2>Preparation Protocol</h2>
+    <div class="recon-box">
+      <div class="recon-title">// 10MG VIAL — STANDARD RECONSTITUTION</div>
+      <div class="recon-math">10,000 mcg ÷ 300 units BAC water = <span style="color:var(--accent2)">33.3 mcg per unit</span></div>
+      <div style="font-size:13px;margin-top:8px;color:var(--muted);">Add 3.0 mL (300 units) bacteriostatic water to 10mg lyophilized vial.</div>
+    </div>
+    <table class="dose-table">
+      <thead>
+        <tr>
+          <th>TARGET DOSE</th>
+          <th>UNITS TO DRAW</th>
+          <th>VOLUME</th>
+          <th>NOTE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="dose-level">LOW</span><span class="dose-amount">100 mcg</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--white);">3 units</td>
+          <td style="font-family:'Share Tech Mono',monospace;">0.03 mL</td>
+          <td>Sensitive users; first-time use</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">STANDARD</span><span class="dose-amount">250 mcg</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--white);">7.5 units</td>
+          <td style="font-family:'Share Tech Mono',monospace;">0.075 mL</td>
+          <td>Most common dose in clinical studies</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">HIGH</span><span class="dose-amount">500 mcg</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--white);">15 units</td>
+          <td style="font-family:'Share Tech Mono',monospace;">0.15 mL</td>
+          <td>Upper dose; refractory insomnia protocols</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note-box" style="margin-top:16px;">
+      <strong style="color:var(--accent2);">Storage:</strong> Lyophilized — refrigerate (2–8°C), protect from light and moisture. Reconstituted: refrigerate, use within 30 days. DSIP is relatively stable once reconstituted.
+    </div>
+  </div>
+
+  <!-- 05 -->
+  <div class="section" style="animation-delay:0.3s;border-top-color:var(--accent);">
+    <div class="section-num">05 / DOSING PROTOCOL</div>
+    <h2>Administration Guide</h2>
+    <table class="dose-table">
+      <thead>
+        <tr>
+          <th>PROTOCOL</th>
+          <th>DOSE</th>
+          <th>TIMING</th>
+          <th>DURATION</th>
+          <th>CONTEXT</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="dose-level">SLEEP ONLY</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;">250 mcg SC</td>
+          <td>30 min before bed</td>
+          <td>Ongoing / nightly</td>
+          <td>Sleep quality improvement, recovery</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">GH STACK</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;">250 mcg SC</td>
+          <td>With Ipa/CJC at bedtime</td>
+          <td>8–12 weeks</td>
+          <td>GH pulse + SWS synergy</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">STRESS</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;">100–250 mcg SC</td>
+          <td>Evening (cortisol correction)</td>
+          <td>4–8 weeks</td>
+          <td>HPA axis normalization, overtraining recovery</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">CYCLING</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;">250 mcg SC</td>
+          <td>5 nights on / 2 off</td>
+          <td>Ongoing</td>
+          <td>Long-term use without tolerance</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note-box">
+      <strong style="color:var(--accent);">No sedation side effect:</strong> DSIP does not cause daytime drowsiness, cognitive impairment, or dependence. Unlike benzodiazepines or Z-drugs, DSIP works with your natural sleep biology. Users report feeling genuinely rested rather than artificially sedated.
+    </div>
+  </div>
+
+  <!-- 06 -->
+  <div class="section" style="animation-delay:0.35s;border-top-color:var(--accent3);">
+    <div class="section-num">06 / TIMING</div>
+    <h2>Administration Timing</h2>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">INJECTION TIME</div>
+          <div class="info-value">30–60 minutes before intended sleep time. Aligns with natural DSIP release patterns. Allows time for hypothalamic effects before the first SWS cycle begins.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">FASTED STATE</div>
+          <div class="info-value">Inject fasted or 2+ hours after last meal. Food (especially carbohydrates) raises insulin which can blunt the GH pulse that DSIP helps generate. Consistent with the broader Ipamorelin/CJC fasting protocol.</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">STACKING TIMING</div>
+          <div class="info-value">Co-administer with Ipamorelin (200mcg) + CJC-1295 no DAC (200mcg) at bedtime for maximal GH pulse. All three in one injection is acceptable — use separate syringe if mixing, or inject simultaneously at same site.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">FREQUENCY</div>
+          <div class="info-value">Nightly for 5 nights, 2 nights off OR every night. No tolerance development has been documented in DSIP use. Unlike melatonin, tolerance to DSIP's sleep effects does not appear to occur.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 07 -->
+  <div class="section" style="animation-delay:0.4s;border-top-color:var(--accent);">
+    <div class="section-num">07 / BIOMARKERS</div>
+    <h2>Monitoring Panel</h2>
+
+    <div class="bio-category">
+      <div class="bio-category-title">// SLEEP &amp; RECOVERY MARKERS</div>
+      <table class="bio-table">
+        <thead>
+          <tr><th>MARKER</th><th>TEST</th><th>CLINICAL RANGE</th><th>OPTIMAL ON DSIP</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">SWS Duration (slow-wave sleep)</span><span class="bio-test">Sleep Architecture</span></td>
+            <td>Wearable (Oura Ring, Whoop) or PSG</td>
+            <td><span class="range-label range-clinical">CLIN</span>20–25% of total sleep time</td>
+            <td><span class="range-label range-optimal">OPT</span>25–30% SWS; increasing trend on DSIP</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">HRV (Heart Rate Variability)</span><span class="bio-test">Autonomic Recovery</span></td>
+            <td>Wearable (Oura, Garmin, Polar)</td>
+            <td><span class="range-label range-clinical">CLIN</span>Individual baseline dependent</td>
+            <td><span class="range-label range-optimal">OPT</span>Improving trend vs. personal baseline; &gt;+5ms from pre-DSIP</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Sleep Efficiency</span><span class="bio-test">Time Asleep/Time in Bed</span></td>
+            <td>Wearable tracker</td>
+            <td><span class="range-label range-clinical">CLIN</span>&gt;85%</td>
+            <td><span class="range-label range-optimal">OPT</span>&gt;90%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">// HORMONAL MARKERS</div>
+      <table class="bio-table">
+        <thead>
+          <tr><th>MARKER</th><th>TEST</th><th>CLINICAL RANGE</th><th>OPTIMAL</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">AM Cortisol</span><span class="bio-test">Morning Cortisol Peak</span></td>
+            <td>AM serum (8 AM)</td>
+            <td><span class="range-label range-clinical">CLIN</span>6–23 mcg/dL</td>
+            <td><span class="range-label range-optimal">OPT</span>10–18 mcg/dL (robust but not elevated) — DSIP normalizes HPA pattern</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">PM Cortisol</span><span class="bio-test">Evening Cortisol Trough</span></td>
+            <td>PM serum or salivary (4–8 PM)</td>
+            <td><span class="range-label range-clinical">CLIN</span>&lt;5 mcg/dL (evening)</td>
+            <td><span class="range-label range-optimal">OPT</span>&lt;3 mcg/dL (deep evening trough = good rhythm)</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">IGF-1</span><span class="bio-test">GH Axis Proxy</span></td>
+            <td>AM serum</td>
+            <td><span class="range-label range-clinical">CLIN</span>Age-adjusted normal range</td>
+            <td><span class="range-label range-optimal">OPT</span>Upper-normal for age (reflects improved GH pulsation during sleep)</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">LH</span><span class="bio-test">Luteinizing Hormone</span></td>
+            <td>Morning serum</td>
+            <td><span class="range-label range-clinical">CLIN</span>1.7–8.6 IU/L (males)</td>
+            <td><span class="range-label range-optimal">OPT</span>Normalized pulsatility; mid-normal to upper range</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 08 -->
+  <div class="section" style="animation-delay:0.45s;border-top-color:var(--accent2);">
+    <div class="section-num">08 / CYCLE PROTOCOL</div>
+    <h2>Recommended Cycle</h2>
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-value">Ongoing</div>
+        <div class="stat-label">DURATION</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">5–7×</div>
+        <div class="stat-label">NIGHTS/WEEK</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">None</div>
+        <div class="stat-label">REQUIRED OFF</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">Night</div>
+        <div class="stat-label">INJECTION TIME</div>
+      </div>
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent2);">Standard Protocol:</strong> 250mcg SC, 30 minutes before sleep, 5–7 nights per week. No required off period — DSIP does not cause downregulation or tolerance. Many users run continuously during training blocks or periods of high stress/poor sleep.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent2);">GH Stack Protocol:</strong> 250mcg DSIP + 200mcg Ipamorelin + 200mcg CJC-1295 no DAC, all subcutaneous, fasted, 30–60 min before bed. This is one of the most effective recovery-optimization stacks available — deep SWS + maximal GH pulse + cortisol normalization all in one bedtime protocol.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent);">Stress/Overtraining Recovery:</strong> Athletes experiencing overtraining syndrome (elevated resting HR, poor sleep, mood disruption, performance decline) often respond dramatically to DSIP. Run 250mcg nightly for 3–4 weeks alongside a deload phase. Restores normal HPA rhythms and sleep architecture faster than rest alone.
+    </div>
+    <div class="disclaimer-box">
+      <strong style="color:var(--accent3);">Research Compound Notice:</strong> DSIP is an endogenous human peptide with human clinical data for sleep improvement and opiate withdrawal. It has not been approved by the FDA as a drug. The existing human clinical data is from small European studies, primarily 1980s–1990s. Long-term safety profile is considered favorable given its endogenous nature and lack of reported adverse effects across decades of research and clinical use. Consult a healthcare provider.
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BPC-157 — Peptide Reference</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#080c10;--panel:#0d1318;--border:#1a2d3a;--accent:#00d4ff;--accent2:#00ff9d;--accent3:#ff6b35;--text:#c8dde8;--muted:#4a6272;--white:#eaf4f8;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-weight:300;min-height:100vh;padding:32px 20px;position:relative;overflow-x:hidden;}
+  body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse 60% 40% at 80% 10%,rgba(0,212,255,0.06) 0%,transparent 60%),radial-gradient(ellipse 40% 50% at 10% 80%,rgba(255,107,53,0.03) 0%,transparent 60%);pointer-events:none;z-index:0;}
+  .container{max-width:720px;margin:0 auto;position:relative;z-index:1;}
+  .header{border-left:3px solid var(--accent);padding-left:20px;margin-bottom:40px;animation:fadeSlide 0.6s ease both;}
+  .header .label{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:4px;color:var(--accent);text-transform:uppercase;margin-bottom:6px;}
+  .header h1{font-family:'Rajdhani',sans-serif;font-size:clamp(42px,10vw,72px);font-weight:700;color:var(--white);line-height:1;letter-spacing:2px;}
+  .header .subtitle{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted);margin-top:8px;letter-spacing:2px;}
+  .section{margin-bottom:28px;background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--accent);padding:24px 26px;animation:fadeSlide 0.6s ease both;}
+  .section-num{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:4px;}
+  .section h2{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:600;letter-spacing:1px;color:var(--white);margin-bottom:16px;text-transform:uppercase;}
+  .section p{font-size:15px;line-height:1.7;color:var(--text);margin-bottom:10px;}
+  .section p:last-child{margin-bottom:0;}
+  .timeline{display:flex;flex-direction:column;gap:12px;}
+  .tl-item{display:grid;grid-template-columns:90px 1fr;gap:16px;align-items:start;}
+  .tl-year{font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--accent2);padding-top:2px;letter-spacing:1px;}
+  .tl-text{font-size:14px;line-height:1.6;color:var(--text);border-left:1px solid var(--border);padding-left:14px;}
+  .benefits-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .benefit-item{background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.12);padding:12px 14px;display:flex;gap:10px;align-items:flex-start;}
+  .benefit-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);margin-top:6px;flex-shrink:0;}
+  .benefit-text{font-size:13px;line-height:1.5;color:var(--text);}
+  .recon-box{background:rgba(0,255,157,0.04);border:1px solid rgba(0,255,157,0.15);padding:18px 20px;margin-bottom:16px;}
+  .recon-box .big{font-family:'Rajdhani',sans-serif;font-size:36px;font-weight:700;color:var(--accent2);line-height:1;}
+  .recon-box .big-label{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:2px;margin-top:4px;}
+  .recon-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px;}
+  .stat-box{background:var(--bg);border:1px solid var(--border);padding:12px;text-align:center;}
+  .stat-val{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:600;color:var(--white);}
+  .stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;margin-top:2px;}
+  .dose-table{width:100%;border-collapse:collapse;}
+  .dose-table th{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);}
+  .dose-table td{font-size:14px;padding:10px 12px;border-bottom:1px solid rgba(26,45,58,0.6);color:var(--text);}
+  .dose-table tr:last-child td{border-bottom:none;}
+  .dose-table tr:hover td{background:rgba(0,212,255,0.03);}
+  .dose-units{font-family:'Share Tech Mono',monospace;font-size:15px;color:var(--accent3);font-weight:bold;}
+  .dose-tag{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;padding:2px 8px;background:rgba(0,255,157,0.1);border:1px solid rgba(0,255,157,0.25);color:var(--accent2);border-radius:2px;}
+  .note-box{margin-top:16px;background:rgba(255,107,53,0.06);border-left:3px solid var(--accent3);padding:12px 16px;font-size:13px;line-height:1.6;color:var(--text);}
+  .bio-category{margin-bottom:24px;}
+  .bio-category-title{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--accent3);text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(255,107,53,0.2);}
+  .bio-table{width:100%;border-collapse:collapse;}
+  .bio-table th{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;text-align:left;padding:7px 10px;border-bottom:1px solid var(--border);background:rgba(0,212,255,0.04);}
+  .bio-table td{font-size:13px;padding:9px 10px;border-bottom:1px solid rgba(26,45,58,0.5);color:var(--text);vertical-align:top;line-height:1.5;}
+  .bio-table tr:last-child td{border-bottom:none;}
+  .bio-table tr:hover td{background:rgba(0,212,255,0.025);}
+  .bio-name{font-weight:500;color:var(--white);font-size:13px;}
+  .bio-test{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);display:block;margin-top:2px;}
+  .range-clinical{color:var(--muted);font-size:12px;}
+  .range-optimal{color:var(--accent2);font-size:12px;font-weight:500;}
+  .range-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;display:block;margin-bottom:2px;opacity:0.7;}
+  .disclaimer-box{margin-top:20px;background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.12);padding:14px 16px;font-size:12px;line-height:1.7;color:var(--muted);font-style:italic;}
+  @keyframes fadeSlide{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+  @media(max-width:480px){.benefits-grid{grid-template-columns:1fr;}.recon-stats{grid-template-columns:1fr 1fr;}.tl-item{grid-template-columns:70px 1fr;}.bio-table th,.bio-table td{padding:7px 6px;font-size:12px;}}
+</style>
+</head>
+<body>
+<div class="container">
+<a href="index.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--muted);text-decoration:none;text-transform:uppercase;margin-bottom:28px;padding:8px 14px;border:1px solid var(--border);transition:all .2s;" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">← Back to Encyclopedia</a>
+
+  <div class="header">
+    <div class="label">Peptide Reference Sheet</div>
+    <h1>BPC-157</h1>
+    <div class="subtitle">BODY PROTECTION COMPOUND 157 &nbsp;|&nbsp; GASTRIC PENTADECAPEPTIDE / HEALING PEPTIDE</div>
+  </div>
+
+  <div class="section" style="animation-delay:0.1s;border-top-color:var(--accent);">
+    <div class="section-num">01 — Identity</div>
+    <h2>Name & Classification</h2>
+    <p>BPC-157 stands for <strong style="color:var(--white)">Body Protection Compound 157</strong>. It is a synthetic pentadecapeptide (15 amino acids) derived from a sequence found in human gastric juice — specifically a partial sequence of Body Protection Compound, an endogenous protein produced in the stomach.</p>
+    <p>Its chemical designation is <span style="font-family:'Share Tech Mono',monospace;color:var(--accent);font-size:13px;">Gly-Glu-Pro-Pro-Pro-Gly-Lys-Pro-Ala-Asp-Asp-Ala-Gly-Leu-Val</span>. It is classified as a <strong style="color:var(--white)">cytoprotective and regenerative peptide</strong> with systemic healing effects spanning musculoskeletal tissue, gut, CNS, and vascular endothelium.</p>
+    <p>One of the most extensively researched peptides in animal models, with over 100 published studies demonstrating remarkable healing and protective properties across multiple organ systems.</p>
+  </div>
+
+  <div class="section" style="animation-delay:0.2s;border-top-color:var(--accent2);">
+    <div class="section-num">02 — Origin</div>
+    <h2>When It Was Developed</h2>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-year">1993</div><div class="tl-text">BPC-157 first described by <strong style="color:var(--white)">Dr. Predrag Sikiric</strong> and colleagues at the University of Zagreb, Croatia. Isolated from human gastric juice protein as part of research into gastrointestinal cytoprotection.</div></div>
+      <div class="tl-item"><div class="tl-year">1990s–2000s</div><div class="tl-text">Prolific animal research from the Zagreb group demonstrated healing across an extraordinary range of tissues: tendons, ligaments, muscles, bone, gut mucosa, peripheral nerves, and brain. Published in peer-reviewed journals.</div></div>
+      <div class="tl-item"><div class="tl-year">2000s</div><div class="tl-text">Mechanism research revealed BPC-157 upregulates growth hormone receptors, stimulates VEGF-mediated angiogenesis, modulates nitric oxide, and activates FAK-paxillin signaling in tendon fibroblasts.</div></div>
+      <div class="tl-item"><div class="tl-year">2010s</div><div class="tl-text">Widespread adoption in sports medicine and injury recovery. Neuroprotective properties studied in TBI and addiction models. FDA granted orphan drug status consideration for IBD-related indications.</div></div>
+      <div class="tl-item"><div class="tl-year">2022–Present</div><div class="tl-text">One of the most popular research peptides globally. <strong style="color:var(--white)">FDA removed BPC-157 from bulk compounding list in 2022</strong> — availability through compounding pharmacies restricted in the US; remains available as research chemical.</div></div>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:0.3s;border-top-color:var(--accent);">
+    <div class="section-num">03 — Research History</div>
+    <h2>Research Background</h2>
+    <p>BPC-157 has the deepest animal research base of any peptide in the wellness space — with studies demonstrating healing effects on virtually every tissue type examined. Its healing mechanisms are multifactorial: it upregulates growth hormone receptor expression (making the body more responsive to its own GH), stimulates VEGF to grow new blood vessels into damaged tissue, and activates the FAK-paxillin pathway in fibroblasts to accelerate tendon and ligament repair.</p>
+    <p>Gastrointestinal effects are particularly robust — BPC-157 heals gastric ulcers, protects against NSAID-induced gut damage, repairs intestinal fistulas, and reverses short bowel syndrome in rat models. It is believed to be part of the stomach's endogenous self-repair system.</p>
+    <p>Neurological effects have become a major area of research: BPC-157 accelerates recovery from traumatic brain injury, protects against neurotoxins, modulates dopamine and serotonin systems (showing promise in addiction and mood dysregulation models), and reverses drug-induced movement disorders in rats. No human clinical trials have been completed and published to date.</p>
+  </div>
+
+  <div class="section" style="animation-delay:0.4s;border-top-color:var(--accent3);">
+    <div class="section-num">04 — Key Benefits</div>
+    <h2>Proposed Benefits</h2>
+    <div class="benefits-grid">
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Accelerates tendon, ligament, and muscle repair</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Heals gastric ulcers and protects gut mucosa</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Stimulates angiogenesis (VEGF) in damaged tissue</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Upregulates growth hormone receptor expression</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Accelerates bone healing and fracture repair</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Neuroprotective — TBI recovery and nerve regeneration</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Modulates dopamine/serotonin — addiction and mood support</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Anti-inflammatory via NF-κB and nitric oxide pathways</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Protects against NSAID and alcohol-induced GI damage</div></div>
+      <div class="benefit-item"><div class="benefit-dot"></div><div class="benefit-text">Oral bioavailability for gut-targeted protocols</div></div>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:0.5s;border-top-color:var(--accent2);">
+    <div class="section-num">05 — Reconstitution</div>
+    <h2>10 mg Vial + 300 Units BAC Water</h2>
+    <div class="recon-box">
+      <div class="big">33.3 mcg</div>
+      <div class="big-label">per unit drawn on insulin syringe</div>
+    </div>
+    <div class="recon-stats">
+      <div class="stat-box"><div class="stat-val">10,000</div><div class="stat-label">mcg total</div></div>
+      <div class="stat-box"><div class="stat-val">0.3 mL</div><div class="stat-label">total volume</div></div>
+      <div class="stat-box"><div class="stat-val">4–6 wk</div><div class="stat-label">shelf life (fridge)</div></div>
+    </div>
+    <div class="note-box" style="margin-top:14px;">BPC-157 is also available in oral capsule form (typically 250–500 mcg) for gut-focused protocols. Injectable is preferred for systemic and musculoskeletal applications. Some practitioners inject locally near the injury site for concentrated healing effect. Store refrigerated; do not freeze reconstituted vial.</div>
+  </div>
+
+  <div class="section" style="animation-delay:0.6s;border-top-color:var(--accent);">
+    <div class="section-num">06 — Dosage</div>
+    <h2>Dosage Reference</h2>
+    <table class="dose-table">
+      <thead><tr><th>Dose</th><th>Units to Draw</th><th>Context</th></tr></thead>
+      <tbody>
+        <tr><td>200–250 mcg SC</td><td><span class="dose-units">6–7.5 u</span></td><td><span class="dose-tag">LOW / INTRO</span></td></tr>
+        <tr><td>500 mcg SC</td><td><span class="dose-units">15 u</span></td><td><span class="dose-tag">COMMON</span></td></tr>
+        <tr><td>500 mcg–1 mg oral</td><td><span class="dose-units">1–2 capsules</span></td><td><span class="dose-tag">GUT PROTOCOL</span></td></tr>
+        <tr><td>1,000 mcg (1 mg) SC</td><td><span class="dose-units">30 u</span></td><td><span class="dose-tag">STANDARD</span></td></tr>
+        <tr><td>10 mcg/kg (research)</td><td><span class="dose-units">weight-based</span></td><td><span class="dose-tag">ANIMAL EQUIVALENT</span></td></tr>
+      </tbody>
+    </table>
+    <div class="note-box">Most protocols use <strong style="color:var(--white)">250–500 mcg once or twice daily</strong>. For injury recovery, some practitioners inject subcutaneously near the injury site (not directly into tendons). For gut conditions, oral is preferred. Once-daily dosing is most common; twice-daily for acute injury. BPC-157 has an exceptional safety profile in all animal studies with no identified LD50.</div>
+  </div>
+
+  <div class="section" style="animation-delay:0.7s;border-top-color:var(--accent3);">
+    <div class="section-num">07 — Monitoring</div>
+    <h2>Biomarkers, Lab Tests & Ranges</h2>
+    <p style="font-size:13px;margin-bottom:20px;">BPC-157 acts across multiple systems. Key monitoring targets connective tissue healing, gut health, inflammation, and angiogenic activity.</p>
+
+    <div class="bio-category">
+      <div class="bio-category-title">▸ Tissue Repair & Healing</div>
+      <table class="bio-table">
+        <thead><tr><th>Biomarker</th><th>Lab Test</th><th>Clinical Range</th><th>Optimal Range</th></tr></thead>
+        <tbody>
+          <tr><td><span class="bio-name">IGF-1</span><br><span style="font-size:11px;color:var(--muted);">Tissue repair growth factor</span></td><td><span class="bio-test">Serum IGF-1</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">~115–355 ng/mL (adult)</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">Upper 1/3 of age range</span></td></tr>
+          <tr><td><span class="bio-name">VEGF</span><br><span style="font-size:11px;color:var(--muted);">Vascular endothelial growth factor</span></td><td><span class="bio-test">Serum VEGF</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">62–707 pg/mL</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">Trending up from baseline during healing phase</span></td></tr>
+          <tr><td><span class="bio-name">COMP</span><br><span style="font-size:11px;color:var(--muted);">Cartilage / tendon matrix marker</span></td><td><span class="bio-test">Serum COMP</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">&lt;12 U/L</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">&lt;8 U/L (stable/declining)</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">▸ Gut Health</div>
+      <table class="bio-table">
+        <thead><tr><th>Biomarker</th><th>Lab Test</th><th>Clinical Range</th><th>Optimal Range</th></tr></thead>
+        <tbody>
+          <tr><td><span class="bio-name">Calprotectin</span></td><td><span class="bio-test">Stool Calprotectin</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">&lt;50 µg/g</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">&lt;25 µg/g</span></td></tr>
+          <tr><td><span class="bio-name">Zonulin</span></td><td><span class="bio-test">Serum or Stool Zonulin</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">&lt;107 ng/mL</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">&lt;40 ng/mL</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">▸ Inflammation & Safety</div>
+      <table class="bio-table">
+        <thead><tr><th>Biomarker</th><th>Lab Test</th><th>Clinical Range</th><th>Optimal Range</th></tr></thead>
+        <tbody>
+          <tr><td><span class="bio-name">hsCRP</span></td><td><span class="bio-test">High-sensitivity CRP</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">&lt;3.0 mg/L</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">&lt;0.5 mg/L</span></td></tr>
+          <tr><td><span class="bio-name">IL-6</span></td><td><span class="bio-test">Serum IL-6</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">&lt;7.0 pg/mL</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">&lt;1.5 pg/mL</span></td></tr>
+          <tr><td><span class="bio-name">AST / ALT</span></td><td><span class="bio-test">CMP</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">AST 10–40 / ALT 7–56 U/L</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">AST &lt;26 / ALT &lt;26 U/L</span></td></tr>
+          <tr><td><span class="bio-name">CBC</span></td><td><span class="bio-test">Complete Blood Count</span></td><td><span class="range-label">CLINICAL</span><span class="range-clinical">Standard ranges</span></td><td><span class="range-label">OPTIMAL</span><span class="range-optimal">Mid-range; WBC 4.5–6.0</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="disclaimer-box">⚠ BPC-157 has no completed human clinical trials. Animal data is extensive and uniformly positive. No LD50 has been established — it is considered among the safest research peptides. FDA removed it from US compounding lists in 2022; source from reputable research suppliers and consult a practitioner.</div>
+  </div>
+
+  <div class="section" style="animation-delay:0.8s;border-top-color:var(--accent2);">
+    <div class="section-num">08 — Cycle Protocol</div>
+    <h2>Cycle Length, Frequency & Timing</h2>
+
+    <div style="margin-bottom:22px;">
+      <div class="bio-category-title" style="color:var(--accent2);">▸ How Long to Cycle</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+        <div class="stat-box" style="text-align:left;padding:14px 16px;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:6px;">INJURY RECOVERY</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--white);line-height:1;">4–8 Weeks</div>
+          <div style="font-size:12px;color:var(--text);margin-top:6px;line-height:1.5;">For acute injury recovery, 4–8 week cycles are typical — aligned with tissue healing timelines. Many users report significant improvement within 2–4 weeks.</div>
+        </div>
+        <div class="stat-box" style="text-align:left;padding:14px 16px;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:6px;">GUT / CHRONIC USE</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--white);line-height:1;">12–16 Weeks</div>
+          <div style="font-size:12px;color:var(--text);margin-top:6px;line-height:1.5;">For IBD, leaky gut, or systemic anti-inflammatory use, longer 12–16 week cycles are common with a 4–8 week break before re-cycling if needed.</div>
+        </div>
+      </div>
+      <div class="note-box" style="margin-top:0;">BPC-157 has no established receptor desensitization or tolerance in the literature. Its extraordinary safety profile means longer cycles are not considered high-risk. However, cycling with breaks allows proper biomarker re-assessment and is considered best practice.</div>
+    </div>
+
+    <div style="margin-bottom:22px;">
+      <div class="bio-category-title" style="color:var(--accent2);">▸ Frequency & Timing</div>
+      <table class="bio-table">
+        <thead><tr><th>Variable</th><th>Recommendation</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><span class="bio-name">Frequency</span></td><td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent2);">Daily or twice daily</span></td><td><span style="font-size:12px;color:var(--text);line-height:1.5;">Once daily is standard for maintenance and gut healing. Twice daily (AM + PM) used for acute injuries to maintain consistent healing signal throughout the day.</span></td></tr>
+          <tr><td><span class="bio-name">Fasted (injectable)</span></td><td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent2);">✓ Preferred but flexible</span></td><td><span style="font-size:12px;color:var(--text);line-height:1.5;">AM fasted injection is conventional and most common. BPC-157 absorption is not strongly food-dependent but fasted state minimizes competition with digestive processes.</span></td></tr>
+          <tr><td><span class="bio-name">Oral (gut protocol)</span></td><td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent2);">✓ With food or fasted</span></td><td><span style="font-size:12px;color:var(--text);line-height:1.5;">For GI conditions, taking orally on an empty stomach may improve direct mucosal contact. Some prefer with food for tolerability — both approaches are used in practice.</span></td></tr>
+          <tr><td><span class="bio-name">Local injection</span></td><td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent2);">✓ Near injury site (SC)</span></td><td><span style="font-size:12px;color:var(--text);line-height:1.5;">For tendon/ligament injuries, injecting subcutaneously near (not into) the injury site is a common approach to concentrate healing activity. Do not inject into tendons directly.</span></td></tr>
+          <tr><td><span class="bio-name">Timing</span></td><td><span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent2);">AM preferred</span></td><td><span style="font-size:12px;color:var(--text);line-height:1.5;">Morning dosing is most common. For twice-daily, AM and PM split is standard. No strong circadian timing dependency has been identified in BPC-157 research.</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.2);padding:18px 20px;">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent);margin-bottom:12px;">PROTOCOL SUMMARY</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;">
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);"><div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">4–16 wk</div><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">CYCLE (use case)</div></div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);"><div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">1–2×</div><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">DAILY</div></div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);"><div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">AM</div><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">TIMING</div></div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);"><div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">SC or Oral</div><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">ROUTE</div></div>
+        <div style="text-align:center;padding:10px;background:var(--bg);border:1px solid var(--border);"><div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);">4–8 wk</div><div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px;">BREAK</div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

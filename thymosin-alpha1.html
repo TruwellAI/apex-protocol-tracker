@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thymosin Alpha-1 — Apex Research Reference</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap');
+    :root{--bg:#080c10;--panel:#0d1318;--border:#1a2d3a;--accent:#00d4ff;--accent2:#00ff9d;--accent3:#ff6b35;--text:#c8dde8;--muted:#4a6272;--white:#eaf4f8;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;line-height:1.6;padding:40px 20px;}
+    body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 70% 10%,rgba(0,212,255,0.06) 0%,transparent 60%),radial-gradient(ellipse at 20% 90%,rgba(0,255,157,0.04) 0%,transparent 50%);pointer-events:none;z-index:0;}
+    .container{max-width:900px;margin:0 auto;position:relative;z-index:1;}
+    .header{margin-bottom:40px;border-bottom:1px solid var(--border);padding-bottom:24px;}
+    .peptide-label{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;}
+    .peptide-name{font-family:'Rajdhani',sans-serif;font-size:44px;font-weight:700;color:var(--white);line-height:1;margin-bottom:8px;}
+    .peptide-fullname{font-size:16px;color:var(--muted);margin-bottom:16px;}
+    .tag-row{display:flex;gap:8px;flex-wrap:wrap;}
+    .tag{background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.25);color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;padding:3px 10px;}
+    .section{background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--muted);padding:28px 32px;margin-bottom:16px;animation:fadeUp 0.4s ease both;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+    .section-num{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:8px;}
+    h2{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px;}
+    .stat-box{background:var(--bg);border:1px solid var(--border);padding:16px;text-align:center;}
+    .stat-value{font-family:'Rajdhani',sans-serif;font-size:30px;font-weight:700;color:var(--white);line-height:1;}
+    .stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-top:4px;}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+    .info-item{margin-bottom:14px;}
+    .info-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:4px;}
+    .info-value{color:var(--white);font-size:13px;line-height:1.5;}
+    .timeline{position:relative;padding-left:20px;}
+    .timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:var(--border);}
+    .timeline-item{position:relative;margin-bottom:20px;}
+    .timeline-item::before{content:'';position:absolute;left:-24px;top:5px;width:8px;height:8px;background:var(--accent);border-radius:50%;}
+    .timeline-year{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:4px;}
+    .benefit-item{display:flex;gap:14px;margin-bottom:16px;align-items:flex-start;}
+    .benefit-num{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent3);min-width:28px;padding-top:2px;}
+    .benefit-title{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;color:var(--white);margin-bottom:3px;}
+    .recon-box{background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--accent2);padding:20px 24px;margin-bottom:16px;}
+    .recon-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);margin-bottom:12px;}
+    .recon-math{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--white);margin-bottom:8px;}
+    .dose-table{width:100%;border-collapse:collapse;}
+    .dose-table th{background:rgba(0,212,255,0.08);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);}
+    .dose-table td{padding:12px 14px;border-bottom:1px solid rgba(26,45,58,0.5);vertical-align:top;font-size:13px;}
+    .dose-level{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);font-weight:700;}
+    .dose-amount{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--white);}
+    .dose-units{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent);display:block;margin-top:2px;}
+    .bio-table{width:100%;border-collapse:collapse;}
+    .bio-table th{background:rgba(0,212,255,0.06);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--muted);text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);}
+    .bio-table td{padding:10px 12px;border-bottom:1px solid rgba(26,45,58,0.4);vertical-align:top;font-size:12px;}
+    .bio-name{color:var(--white);font-weight:500;display:block;}
+    .bio-test{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);}
+    .range-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 6px;margin-right:4px;}
+    .range-clinical{background:rgba(74,98,114,0.3);color:var(--muted);}
+    .range-optimal{background:rgba(0,255,157,0.1);color:var(--accent2);}
+    .bio-category{margin-bottom:24px;}
+    .bio-category-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);margin-bottom:10px;}
+    .note-box{background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.15);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .highlight-box{background:rgba(0,255,157,0.04);border:1px solid rgba(0,255,157,0.2);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .disclaimer-box{background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.2);padding:14px 18px;margin-top:20px;font-size:12px;color:var(--text);line-height:1.5;}
+    .approval-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:16px 0;}
+    .approval-box{background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--accent2);padding:14px 16px;}
+    .approval-country{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent2);margin-bottom:4px;}
+    .approval-use{font-size:12px;color:var(--white);}
+  </style>
+</head>
+<body>
+<div class="container">
+<a href="index.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--muted);text-decoration:none;text-transform:uppercase;margin-bottom:28px;padding:8px 14px;border:1px solid var(--border);transition:all .2s;" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">← Back to Encyclopedia</a>
+
+  <div class="header">
+    <div class="peptide-label">Apex Research Reference</div>
+    <div class="peptide-name">THYMOSIN ALPHA-1</div>
+    <div class="peptide-fullname">TA-1 / Tα1 — Thymic Immunomodulatory Peptide (Zadaxin)</div>
+    <div class="tag-row">
+      <span class="tag">IMMUNE SUPPORT</span>
+      <span class="tag">ANTIVIRAL</span>
+      <span class="tag">ANTI-TUMOR</span>
+      <span class="tag">AUTOIMMUNE MODULATION</span>
+      <span class="tag">FDA-APPROVED (ORPHAN)</span>
+      <span class="tag">LONGEVITY</span>
+    </div>
+  </div>
+
+  <!-- 01 IDENTITY -->
+  <div class="section" style="animation-delay:0.1s;border-top-color:var(--accent);">
+    <div class="section-num">01 / IDENTITY</div>
+    <h2>Compound Profile</h2>
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-value">28</div>
+        <div class="stat-label">AMINO ACIDS</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">~3.1</div>
+        <div class="stat-label">kDa MW</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">SC</div>
+        <div class="stat-label">ROUTE</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">~2h</div>
+        <div class="stat-label">HALF-LIFE</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">37+</div>
+        <div class="stat-label">COUNTRIES APPROVED</div>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">ORIGIN</div>
+          <div class="info-value">Naturally occurring in the thymus gland — the master organ of immune maturation. First isolated from thymic tissue by Goldstein et al. (1972). Synthetic form (Zadaxin) developed by SciClone Pharmaceuticals. Approved in 37+ countries for hepatitis B, hepatitis C, and as a vaccine adjuvant. FDA Orphan Drug status in the US.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">MECHANISM — BROAD IMMUNE ORCHESTRATION</div>
+          <div class="info-value">Acts as a master immune regulator: ① Promotes T-cell differentiation and maturation from thymic precursors ② Upregulates MHC class I and II expression (makes cancer cells visible to immune system) ③ Activates dendritic cells ④ Enhances NK (natural killer) cell cytotoxicity ⑤ Stimulates interferon production (antiviral defense) ⑥ Modulates Th1/Th2 balance (relevant for autoimmune disease)</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">KEY DISTINCTION — MODULATOR NOT STIMULATOR</div>
+          <div class="info-value">TA-1 does not simply stimulate the immune system (which would worsen autoimmune disease). It modulates it — enhancing immune function where it is suppressed (cancer, viral infection, immunodeficiency) while normalizing overactivation in autoimmune states. This bidirectional property is unique and clinically significant.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">THYMUS DECLINE WITH AGE</div>
+          <div class="info-value">The thymus involutes (shrinks) progressively from puberty — by age 65, thymic tissue is largely replaced by fat. Thymic output of naive T-cells declines, leaving the immune system increasingly dependent on memory cells. TA-1 partially restores thymic function and T-cell maturation even in elderly individuals.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="approval-grid">
+      <div class="approval-box">
+        <div class="approval-country">EUROPE / ASIA (37+ COUNTRIES)</div>
+        <div class="approval-use">Hepatitis B & C treatment · Vaccine adjuvant · Immunodeficiency</div>
+      </div>
+      <div class="approval-box">
+        <div class="approval-country">USA — FDA ORPHAN DRUG</div>
+        <div class="approval-use">DiGeorge syndrome · Various cancer immunotherapy indications</div>
+      </div>
+      <div class="approval-box">
+        <div class="approval-country">COVID-19 EVIDENCE</div>
+        <div class="approval-use">Used in China/Italy for severe COVID — reduced mortality in ICU patients in multiple studies</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 RESEARCH HISTORY -->
+  <div class="section" style="animation-delay:0.15s;border-top-color:var(--accent2);">
+    <div class="section-num">02 / RESEARCH HISTORY</div>
+    <h2>Development Timeline</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-year">1972</div>
+        <div>Dr. Allan Goldstein at the Albert Einstein College of Medicine isolates thymosin fraction 5 from calf thymus tissue. The thymus-immune connection is confirmed — peptides from this gland can restore immune function in athymic (nude) mice.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">1977</div>
+        <div>Thymosin Alpha-1 specifically identified as the most immunologically active component within thymosin fraction 5. 28 amino acid sequence determined.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">1985–2000s</div>
+        <div>Italian-led Phase II/III trials in chronic hepatitis B and C. Zadaxin approved in Italy (1993) — the first approval. Subsequent approvals in China, Singapore, Philippines, and 30+ other countries. Used alongside interferon therapy for viral hepatitis.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2000s</div>
+        <div>Cancer immunotherapy studies: TA-1 used in lung cancer, melanoma, hepatocellular carcinoma. Mechanism: upregulates MHC class I — making cancer cells visible to cytotoxic T-cells. Used as adjuvant to chemotherapy to preserve immune function and reduce infection mortality.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2020–2021</div>
+        <div>COVID-19 pandemic: TA-1 used in ICU patients in China and Italy. Chinese RCT (COVID-19): TA-1 1.6mg SC twice weekly reduced mortality in severe patients vs. standard of care. Confirmed antiviral mechanism via interferon-α induction.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 BENEFITS -->
+  <div class="section" style="animation-delay:0.2s;border-top-color:var(--accent3);">
+    <div class="section-num">03 / BENEFITS & MECHANISMS</div>
+    <h2>Research-Supported Effects</h2>
+    <div class="benefit-item">
+      <div class="benefit-num">01</div>
+      <div>
+        <div class="benefit-title">T-Cell Activation & Maturation</div>
+        <div>TA-1's primary mechanism: drives differentiation of immature thymocytes into functional CD4+ helper and CD8+ cytotoxic T-cells. In immunocompromised or elderly individuals with low T-cell output, TA-1 partially restores the naive T-cell pool — increasing immune repertoire diversity and capacity to respond to new pathogens.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">02</div>
+      <div>
+        <div class="benefit-title">Antiviral Defense — Interferon-α Induction</div>
+        <div>TA-1 stimulates TLR9 (Toll-like receptor 9) on dendritic cells and macrophages, triggering interferon-α and interferon-γ production — the first-line antiviral defense. This mechanism is the basis of its hepatitis B/C efficacy and COVID-19 benefit. Also relevant for chronic EBV, CMV, and other persistent viral infections.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">03</div>
+      <div>
+        <div class="benefit-title">NK Cell Cytotoxicity Enhancement</div>
+        <div>Natural killer cells are the immune system's first-responders against cancer cells and virally infected cells — they kill without requiring prior sensitization. TA-1 significantly increases NK cell activity and cytotoxic capacity. This is why TA-1 is used in cancer immunotherapy — restoring NK surveillance that tumors evade via MHC I downregulation.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">04</div>
+      <div>
+        <div class="benefit-title">Autoimmune Modulation — Bidirectional Balance</div>
+        <div>TA-1 promotes regulatory T-cell (Treg) activity — the immune cells that prevent autoimmune attacks. In overactive immune states (lupus, rheumatoid arthritis, MS), TA-1 can normalize Th1/Th2 balance and reduce autoreactive T-cell activity. This bidirectional immunomodulation — enhancing immunity when suppressed, calming when overactive — is the compound's most clinically unique property.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">05</div>
+      <div>
+        <div class="benefit-title">Longevity & Immune Aging (Immunosenescence)</div>
+        <div>Immunosenescence — the age-related decline in immune function — is a primary driver of infectious disease mortality and cancer susceptibility in the elderly. TA-1 partially reverses thymic atrophy effects, restores naive T-cell output, and reduces the inflammatory "inflammaging" cytokine profile (TNF-α, IL-6) associated with biological aging. Considered one of the most evidence-based immune anti-aging interventions.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 RECONSTITUTION -->
+  <div class="section" style="animation-delay:0.25s;border-top-color:var(--accent2);">
+    <div class="section-num">04 / RECONSTITUTION</div>
+    <h2>Vial Preparation</h2>
+    <div class="recon-box">
+      <div class="recon-title">STANDARD VIAL — 5mg</div>
+      <div class="recon-math">5mg vial + 3.0 mL (300 units) bacteriostatic water</div>
+      <div class="recon-math" style="color:var(--accent2);">Concentration: 16.7 mcg per unit (0.01 mL)</div>
+      <div style="margin-top:14px;">
+        <table class="dose-table">
+          <thead><tr><th>DOSE</th><th>MCG/mg</th><th>UNITS ON SYRINGE</th><th>VOLUME</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="dose-level">STANDARD</span></td>
+              <td><span class="dose-amount">1.6</span><span class="dose-units">mg (1,600 mcg)</span></td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:16px;color:var(--white);">96 units</td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:14px;">0.96 mL</td>
+            </tr>
+            <tr>
+              <td><span class="dose-level">HIGH</span></td>
+              <td><span class="dose-amount">3.2</span><span class="dose-units">mg (3,200 mcg)</span></td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:16px;color:var(--white);">192 units</td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:14px;">1.92 mL</td>
+            </tr>
+            <tr>
+              <td><span class="dose-level">LONGEVITY / MAINTENANCE</span></td>
+              <td><span class="dose-amount">0.8</span><span class="dose-units">mg (800 mcg)</span></td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:16px;color:var(--white);">48 units</td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:14px;">0.48 mL</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent);">Storage:</strong> Lyophilized powder stable at room temp 6 months. After reconstitution: refrigerate (2–8°C), use within 28 days. Light sensitive — store in original vial, protect from direct light.
+    </div>
+  </div>
+
+  <!-- 05 DOSING -->
+  <div class="section" style="animation-delay:0.3s;border-top-color:var(--accent);">
+    <div class="section-num">05 / DOSING PROTOCOL</div>
+    <h2>Dose Ranges</h2>
+    <table class="dose-table">
+      <thead><tr><th>PROTOCOL</th><th>DOSE</th><th>FREQUENCY</th><th>INDICATION</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="dose-level">HEPATITIS / ANTIVIRAL</span></td>
+          <td><span class="dose-amount">1.6</span><span class="dose-units">mg SC</span></td>
+          <td>Twice weekly × 6 months</td>
+          <td>FDA/international approved protocol for HBV/HCV. Used with interferon in non-responders.</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">CANCER ADJUVANT</span></td>
+          <td><span class="dose-amount">1.6–3.2</span><span class="dose-units">mg SC</span></td>
+          <td>Twice weekly</td>
+          <td>Immune restoration during chemotherapy. Reduces infectious complications, preserves NK activity.</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">LONGEVITY / MAINTENANCE</span></td>
+          <td><span class="dose-amount">0.8–1.6</span><span class="dose-units">mg SC</span></td>
+          <td>1–2× weekly or monthly</td>
+          <td>Immune aging prevention. Thymic support. Annual preventive cycles or perennial low-dose maintenance.</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">ACUTE IMMUNE SUPPORT</span></td>
+          <td><span class="dose-amount">1.6</span><span class="dose-units">mg SC</span></td>
+          <td>Daily × 5–7 days</td>
+          <td>Active viral infection, post-surgery immune support, severe illness. Short intensive course.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 06 TIMING -->
+  <div class="section" style="animation-delay:0.35s;border-top-color:var(--accent3);">
+    <div class="section-num">06 / TIMING & ADMINISTRATION</div>
+    <h2>Injection Protocol</h2>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">TIMING RELATIVE TO MEALS</div>
+          <div class="info-value">No fasting requirement. Inject any time of day. Morning injection preferred for consistency and to allow daylight observation of injection site reactions (rare but possible).</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">INJECTION SITE</div>
+          <div class="info-value">Subcutaneous — abdomen, outer thigh, upper arm. Rotate sites with each injection. TA-1 SC injection is well-tolerated; local reactions (redness, mild swelling) are rare and transient.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">VACCINE ADJUVANT USE</div>
+          <div class="info-value">TA-1 injected 24–48h before influenza, pneumococcal, or other vaccines significantly increases antibody titers and T-cell response to the vaccine. One of the most evidence-based uses — particularly valuable in elderly or immunocompromised patients with poor vaccine response history.</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">OPTIMAL COMPANION STACK</div>
+          <div class="info-value">TA-1 + Epitalon: TA-1 restores T-cell maturation; Epitalon activates telomerase. Together: comprehensive immune anti-aging and cellular longevity protocol. Stack timing: TA-1 1.6mg 2×/week concurrent with Epitalon 10mg daily × 10 days per quarter.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">SEASONAL PROTOCOL</div>
+          <div class="info-value">Preventive immune seasonal protocol: 6-week cycle (1.6mg 2×/week) in early fall before flu season. Supports thymic function entering the high-risk winter months. Repeat in late winter/early spring as needed.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">AUTOIMMUNE CAUTION</div>
+          <div class="info-value">While TA-1 is modulatory (not purely stimulatory), patients with active severe autoimmune disease should consult with an immunologist before use. The Treg-promoting effects are generally beneficial, but clinical oversight is warranted.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 07 BIOMARKERS -->
+  <div class="section" style="animation-delay:0.4s;border-top-color:var(--accent);">
+    <div class="section-num">07 / BIOMARKER MONITORING</div>
+    <h2>Recommended Lab Panel</h2>
+    <div class="bio-category">
+      <div class="bio-category-title">IMMUNE FUNCTION — PRIMARY</div>
+      <table class="bio-table">
+        <thead><tr><th>MARKER</th><th>CLINICAL RANGE</th><th>OPTIMAL TARGET</th><th>NOTES</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">CD4+ T-Cell Count</span><span class="bio-test">flow cytometry</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>500–1,500 cells/µL</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>700–1,200 cells/µL</td>
+            <td>Primary TA-1 response marker. CD4+ cells should increase with sustained use. Low baseline predicts better response.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">CD8+ Cytotoxic T-Cells</span><span class="bio-test">flow cytometry</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>200–800 cells/µL</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>300–600 cells/µL</td>
+            <td>TA-1 increases CD8+ cytotoxic activity — key for antiviral and anti-tumor immunity.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">NK Cell Activity</span><span class="bio-test">NK cytotoxicity assay</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>Varies</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>Increasing vs. baseline</td>
+            <td>NK cytotoxicity should increase. Important anti-cancer surveillance marker. More relevant in high-risk populations.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">CD4/CD8 Ratio</span><span class="bio-test">calculated</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>1.0–3.5</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>1.5–2.5</td>
+            <td>Helper-to-killer T-cell balance. Inverted ratio (&lt;1.0) indicates immune dysfunction. TA-1 should normalize this over a 12-week cycle.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="bio-category">
+      <div class="bio-category-title">INFLAMMATION & AGING</div>
+      <table class="bio-table">
+        <thead><tr><th>MARKER</th><th>CLINICAL RANGE</th><th>OPTIMAL TARGET</th><th>NOTES</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">IL-6</span><span class="bio-test">interleukin-6</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>&lt;7 pg/mL</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>&lt;1.8 pg/mL</td>
+            <td>"Inflammaging" marker — TA-1 suppresses this chronic low-grade inflammatory signal.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Interferon-α</span><span class="bio-test">IFN-α serum</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>Typically undetectable</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>Detectable increase</td>
+            <td>TA-1's antiviral mechanism confirmation. IFN-α elevation post-injection confirms TLR9 activation. Optional but informative marker.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 08 CYCLE -->
+  <div class="section" style="animation-delay:0.45s;border-top-color:var(--accent2);">
+    <div class="section-num">08 / CYCLE PROTOCOL</div>
+    <h2>Administration Schedule</h2>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">STANDARD CYCLE</div>
+          <div class="info-value" style="color:var(--white);font-size:18px;font-weight:600;">6 Months (Antiviral) / 6–12 Weeks (Longevity)</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">HEPATITIS / VIRAL PROTOCOL</div>
+          <div class="info-value">1.6mg SC twice weekly × 6 months. This is the international approved protocol for HBV/HCV. Used as monotherapy or combined with interferon-α for non-responders.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">LONGEVITY CYCLE</div>
+          <div class="info-value">1.6mg SC twice weekly × 6–12 weeks, 1–2 cycles per year. Off-period allows immune system to consolidate gains. Annual immune function testing guides retreatment decisions.</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">CANCER ADJUVANT PROTOCOL</div>
+          <div class="info-value">1.6–3.2mg SC twice weekly, concurrent with chemotherapy or immunotherapy. Continue throughout treatment course. Reduces chemotherapy-induced immunosuppression and infectious mortality.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">EXCELLENT SAFETY PROFILE</div>
+          <div class="info-value">30+ years of clinical use across 37 countries. No serious adverse events attributed to TA-1 in thousands of treated patients. No organ toxicity, no addiction potential, no suppression of endogenous immune function. One of the safest peptides in the catalog.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">REQUIRES</div>
+          <div class="info-value">Reconstitution with BAC water · Apex V3 Pen for precise dosing · Refrigeration post-reconstitution</div>
+        </div>
+      </div>
+    </div>
+    <div class="disclaimer-box">
+      ⚠ Research reference only. Thymosin Alpha-1 (Zadaxin) is approved in 37+ countries but holds FDA Orphan Drug status only in the United States. Information sourced from published clinical trial literature. Consult a qualified medical provider before use.
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SLU-PP-332 — Apex Research Reference</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap');
+    :root{--bg:#080c10;--panel:#0d1318;--border:#1a2d3a;--accent:#00d4ff;--accent2:#00ff9d;--accent3:#ff6b35;--text:#c8dde8;--muted:#4a6272;--white:#eaf4f8;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;line-height:1.6;padding:40px 20px;}
+    body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 70% 10%,rgba(0,212,255,0.06) 0%,transparent 60%),radial-gradient(ellipse at 20% 90%,rgba(255,107,53,0.04) 0%,transparent 50%);pointer-events:none;z-index:0;}
+    .container{max-width:900px;margin:0 auto;position:relative;z-index:1;}
+    .header{margin-bottom:40px;border-bottom:1px solid var(--border);padding-bottom:24px;}
+    .peptide-label{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;}
+    .peptide-name{font-family:'Rajdhani',sans-serif;font-size:52px;font-weight:700;color:var(--white);line-height:1;margin-bottom:8px;}
+    .peptide-fullname{font-size:16px;color:var(--muted);margin-bottom:16px;}
+    .tag-row{display:flex;gap:8px;flex-wrap:wrap;}
+    .tag{background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.25);color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;padding:3px 10px;}
+    .section{background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--muted);padding:28px 32px;margin-bottom:16px;animation:fadeUp 0.4s ease both;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+    .section-num{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:8px;}
+    h2{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px;}
+    .stat-box{background:var(--bg);border:1px solid var(--border);padding:16px;text-align:center;}
+    .stat-value{font-family:'Rajdhani',sans-serif;font-size:32px;font-weight:700;color:var(--white);line-height:1;}
+    .stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-top:4px;}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+    .info-item{margin-bottom:14px;}
+    .info-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:4px;}
+    .info-value{color:var(--white);font-size:13px;line-height:1.5;}
+    .timeline{position:relative;padding-left:20px;}
+    .timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:var(--border);}
+    .timeline-item{position:relative;margin-bottom:20px;}
+    .timeline-item::before{content:'';position:absolute;left:-24px;top:5px;width:8px;height:8px;background:var(--accent);border-radius:50%;}
+    .timeline-year{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:4px;}
+    .benefit-item{display:flex;gap:14px;margin-bottom:16px;align-items:flex-start;}
+    .benefit-num{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent3);min-width:28px;padding-top:2px;}
+    .benefit-title{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;color:var(--white);margin-bottom:3px;}
+    .recon-box{background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--accent2);padding:20px 24px;margin-bottom:16px;}
+    .recon-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);margin-bottom:12px;}
+    .recon-math{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--white);margin-bottom:8px;}
+    .dose-table{width:100%;border-collapse:collapse;}
+    .dose-table th{background:rgba(0,212,255,0.08);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);}
+    .dose-table td{padding:12px 14px;border-bottom:1px solid rgba(26,45,58,0.5);vertical-align:top;font-size:13px;}
+    .dose-level{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);font-weight:700;}
+    .dose-amount{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--white);}
+    .dose-units{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent);display:block;margin-top:2px;}
+    .bio-table{width:100%;border-collapse:collapse;}
+    .bio-table th{background:rgba(0,212,255,0.06);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--muted);text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);}
+    .bio-table td{padding:10px 12px;border-bottom:1px solid rgba(26,45,58,0.4);vertical-align:top;font-size:12px;}
+    .bio-name{color:var(--white);font-weight:500;display:block;}
+    .bio-test{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);}
+    .range-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 6px;margin-right:4px;}
+    .range-clinical{background:rgba(74,98,114,0.3);color:var(--muted);}
+    .range-optimal{background:rgba(0,255,157,0.1);color:var(--accent2);}
+    .bio-category{margin-bottom:24px;}
+    .bio-category-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);margin-bottom:10px;}
+    .note-box{background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.15);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .disclaimer-box{background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.2);padding:14px 18px;margin-top:20px;font-size:12px;color:var(--text);line-height:1.5;}
+    .alert-box{background:rgba(0,255,157,0.04);border:1px solid rgba(0,255,157,0.2);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+  </style>
+</head>
+<body>
+<div class="container">
+<a href="index.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--muted);text-decoration:none;text-transform:uppercase;margin-bottom:28px;padding:8px 14px;border:1px solid var(--border);transition:all .2s;" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">← Back to Encyclopedia</a>
+
+  <div class="header">
+    <div class="peptide-label">Apex Research Reference</div>
+    <div class="peptide-name">SLU-PP-332</div>
+    <div class="peptide-fullname">ERRα/ERRγ Agonist — Exercise Mimetic &amp; Metabolic Activator</div>
+    <div class="tag-row">
+      <span class="tag">EXERCISE MIMETIC</span>
+      <span class="tag">METABOLIC</span>
+      <span class="tag">FAT LOSS</span>
+      <span class="tag">ENDURANCE</span>
+      <span class="tag">MITOCHONDRIAL</span>
+    </div>
+  </div>
+
+  <!-- 01 -->
+  <div class="section" style="animation-delay:0.1s;border-top-color:var(--accent);">
+    <div class="section-num">01 / IDENTITY</div>
+    <h2>Compound Profile</h2>
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-value">SC/IP</div>
+        <div class="stat-label">ROUTE</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">ERRα/γ</div>
+        <div class="stat-label">TARGET</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">5mg</div>
+        <div class="stat-label">VIAL SIZE</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">~6h</div>
+        <div class="stat-label">HALF-LIFE EST.</div>
+      </div>
+    </div>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">CLASSIFICATION</div>
+          <div class="info-value">Small molecule nuclear receptor agonist — Estrogen-Related Receptor alpha and gamma (ERRα/ERRγ) activator</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">MECHANISM</div>
+          <div class="info-value">Directly activates ERRα and ERRγ nuclear receptors → triggers PGC-1α transcription → massively upregulates mitochondrial biogenesis, fatty acid oxidation, and aerobic capacity genes. Mimics the cellular signature of sustained aerobic exercise WITHOUT physical activity.</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">DEVELOPER</div>
+          <div class="info-value">Thomas Burris lab, Saint Louis University (SLU) School of Pharmacy — hence "SLU-PP"</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">KEY PUBLICATION</div>
+          <div class="info-value"><em>Journal of Medicinal Chemistry</em> (2023) — Burris et al.; <em>Nature Communications</em> (2024) — expanded metabolic phenotype data</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">NOTE ON NAME</div>
+          <div class="info-value">Often written SLU-PP-332 or SLU-PP-322 in community use — the Burris lab series compound is formally SLU-PP-332. Same compound.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 -->
+  <div class="section" style="animation-delay:0.15s;border-top-color:var(--accent2);">
+    <div class="section-num">02 / RESEARCH HISTORY</div>
+    <h2>Development Timeline</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-year">2010–2017</div>
+        <div>Thomas Burris lab at Saint Louis University identifies Estrogen-Related Receptors (ERRα, ERRβ, ERRγ) as master regulators of mitochondrial oxidative metabolism. These "orphan" nuclear receptors have no known endogenous ligand but their activation mimics exercise-induced gene expression changes.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2019–2021</div>
+        <div>Development of SLU-PP series — high-affinity synthetic ERR pan-agonists. Early compounds show dramatic upregulation of PGC-1α, TFAM, and oxidative phosphorylation genes in skeletal muscle cells — same gene signature as 6 weeks of endurance training, triggered by a single compound dose.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2023</div>
+        <div><em>Journal of Medicinal Chemistry</em> publishes SLU-PP-332 data: rodent models show 50% improvement in treadmill endurance, 45% reduction in weight gain on high-fat diet, and dramatic increase in slow-twitch (Type I) muscle fiber percentage — all without exercise. Obesity research community takes notice.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2024</div>
+        <div><em>Nature Communications</em> expanded study: SLU-PP-332 treated mice show resistance to diet-induced obesity, improved insulin sensitivity, reduced hepatic fat accumulation (NAFLD model), and cardiac protection. Cardiac tissue showed increased mitochondrial density and improved function — a potential therapeutic angle for heart failure.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2024–2025</div>
+        <div>Rapid adoption in performance research community. Formulated for SC injection (5mg vials). Human pharmacokinetics unknown; extrapolations from rodent data used for community dosing protocols. No human clinical trials yet — all data is preclinical.</div>
+      </div>
+    </div>
+    <div class="alert-box">
+      <strong style="color:var(--accent2);">Research Stage Notice:</strong> SLU-PP-332 has NO human clinical trial data. All efficacy and dosing information is extrapolated from rodent studies. This is a cutting-edge research compound at very early stage. Approach accordingly.
+    </div>
+  </div>
+
+  <!-- 03 -->
+  <div class="section" style="animation-delay:0.2s;border-top-color:var(--accent3);">
+    <div class="section-num">03 / BENEFITS</div>
+    <h2>Primary Effects (Preclinical Data)</h2>
+    <div class="benefit-item">
+      <div class="benefit-num">01</div>
+      <div>
+        <div class="benefit-title">Endurance &amp; Aerobic Capacity Enhancement</div>
+        <div>The most dramatic finding: SLU-PP-332 treated mice ran 50% farther on treadmill tests than controls — without any exercise training. The compound programs muscle cells to operate aerobically, increasing VO2 max proxy measures and fatigue resistance.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">02</div>
+      <div>
+        <div class="benefit-title">Fat Loss — Fatty Acid Oxidation Upregulation</div>
+        <div>ERRα/γ activation drives massive upregulation of CPT1 (carnitine palmitoyltransferase) and fatty acid oxidation enzymes. Result: fat is preferentially burned for fuel. High-fat diet mice treated with SLU-PP-332 gained 45% less weight vs. controls despite identical caloric intake.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">03</div>
+      <div>
+        <div class="benefit-title">Mitochondrial Biogenesis</div>
+        <div>Activates the PGC-1α → ERR → NRF1/2 → TFAM cascade — the master pathway for building new mitochondria. Increased mitochondrial density in skeletal muscle means more ATP capacity, better oxygen utilization, and improved metabolic efficiency. Type I (slow-twitch, endurance) fiber conversion documented.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">04</div>
+      <div>
+        <div class="benefit-title">Insulin Sensitivity &amp; Anti-Diabetic Effects</div>
+        <div>Improved HOMA-IR and glucose tolerance in rodent models. Reduced hepatic glucose output and improved peripheral glucose uptake. Mechanism distinct from GLP-1 agonists — works directly at the mitochondrial/metabolic gene level rather than via incretin signaling.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">05</div>
+      <div>
+        <div class="benefit-title">Cardiac Protection &amp; Function</div>
+        <div>Heart failure models showed SLU-PP-332 improved cardiac output and mitochondrial density in cardiomyocytes. The heart runs almost exclusively on fatty acid oxidation — ERR activation is particularly impactful in cardiac tissue. Potential for heart failure prevention/treatment.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">06</div>
+      <div>
+        <div class="benefit-title">Liver Health (NAFLD/NASH)</div>
+        <div>Reduced hepatic fat accumulation (steatosis) in high-fat diet models. ERR activation in liver increases fatty acid oxidation and reduces de novo lipogenesis. Relevant for metabolic syndrome patients with elevated liver enzymes.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 -->
+  <div class="section" style="animation-delay:0.25s;border-top-color:var(--accent2);">
+    <div class="section-num">04 / RECONSTITUTION</div>
+    <h2>Preparation Protocol</h2>
+    <div class="recon-box">
+      <div class="recon-title">// 50MG VIAL — SUBCUTANEOUS INJECTABLE</div>
+      <div class="recon-math">50,000 mcg ÷ 300 units BAC water = <span style="color:var(--accent2)">166.7 mcg per unit</span></div>
+      <div style="font-size:13px;margin-top:8px;color:var(--muted);">Add 3.0 mL bacteriostatic water to 50mg lyophilized vial.</div>
+    </div>
+    <div class="note-box" style="margin-top:0;margin-bottom:16px;border-left-color:var(--accent3);">
+      <strong style="color:var(--accent3);">⚠ Solubility Note:</strong> SLU-PP-332 has limited water solubility. If powder does not fully dissolve in BAC water alone, add 2–3 drops of pharmaceutical-grade DMSO first, swirl to dissolve, then add BAC water to volume. Do not use if solution remains visibly cloudy.
+    </div>
+    <table class="dose-table">
+      <thead>
+        <tr>
+          <th>TARGET DOSE</th>
+          <th>UNITS TO DRAW</th>
+          <th>VOLUME</th>
+          <th>NOTE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="dose-level">LOW</span><span class="dose-amount">300 mcg</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--white);">~2 units</td>
+          <td style="font-family:'Share Tech Mono',monospace;">0.02 mL</td>
+          <td>Conservative start — assess tolerance</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">STANDARD</span><span class="dose-amount">500 mcg</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--white);">3 units</td>
+          <td style="font-family:'Share Tech Mono',monospace;">0.03 mL</td>
+          <td>Most common research dose</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">HIGH</span><span class="dose-amount">750 mcg</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--white);">4.5 units</td>
+          <td style="font-family:'Share Tech Mono',monospace;">0.045 mL</td>
+          <td>Aggressive — monitor resting HR closely</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note-box" style="margin-top:16px;">
+      <strong style="color:var(--accent3);">No human clinical trials exist.</strong> All dose extrapolations come from rodent IP injection studies. SC bioavailability in humans is unconfirmed. Start low, titrate carefully. Cardiovascular monitoring recommended — some users report elevated resting HR at higher doses.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent2);">Storage:</strong> Lyophilized powder — room temperature, light-protected. Reconstituted: refrigerate (2–8°C), use within 28 days.
+    </div>
+  </div>
+
+  <!-- 05 -->
+  <div class="section" style="animation-delay:0.3s;border-top-color:var(--accent);">
+    <div class="section-num">05 / DOSING PROTOCOL</div>
+    <h2>Administration Guide</h2>
+    <table class="dose-table">
+      <thead>
+        <tr>
+          <th>PROTOCOL</th>
+          <th>DOSE</th>
+          <th>FREQUENCY</th>
+          <th>DURATION</th>
+          <th>CONTEXT</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="dose-level">INTRO</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;">500 mcg SC</td>
+          <td>Every other day</td>
+          <td>2 weeks</td>
+          <td>Sensitivity assessment; watch HR, BP</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">STANDARD</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;">1 mg SC</td>
+          <td>Daily</td>
+          <td>4–8 weeks</td>
+          <td>Metabolic reprogramming phase</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">PERFORMANCE</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;">1–2 mg SC</td>
+          <td>Daily pre-training</td>
+          <td>6–12 weeks</td>
+          <td>Endurance enhancement, concurrent training</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">METABOLIC</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;">1 mg SC</td>
+          <td>5×/week</td>
+          <td>8–12 weeks</td>
+          <td>Fat loss, insulin sensitivity</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note-box">
+      <strong style="color:var(--accent);">Pre-workout timing:</strong> Most community users inject 30–60 minutes before training. ERR activation takes ~2–4 hours for transcriptional effects, but acute signaling changes occur within 1 hour.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent3);">Monitor during use:</strong> Resting HR, blood pressure. Some users report mild tachycardia at higher doses — the cardiac metabolic upregulation can increase baseline heart rate. If resting HR rises &gt;10 bpm above baseline, reduce dose.
+    </div>
+  </div>
+
+  <!-- 06 -->
+  <div class="section" style="animation-delay:0.35s;border-top-color:var(--accent3);">
+    <div class="section-num">06 / TIMING</div>
+    <h2>Administration Timing</h2>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">PREFERRED WINDOW</div>
+          <div class="info-value">Pre-workout (30–60 min before training). On non-training days, morning fasted to maximize fatty acid oxidation during the post-injection window.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">FOOD STATE</div>
+          <div class="info-value">Fasted state may amplify fat oxidation effects. Rodent studies show enhanced free fatty acid release when combined with caloric restriction. However, post-workout with food is also acceptable.</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">STACKING</div>
+          <div class="info-value">Highly complementary with MOTS-c (separate mitochondrial pathway — additive). Pairs with AOD-9604 for fat mobilization amplification. Can stack with GH peptides for body recomposition.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">CYCLE TIMING</div>
+          <div class="info-value">Best run continuously for 8–12 weeks to allow full PGC-1α-driven mitochondrial adaptation. Benefits (fiber type conversion) persist after cessation but require cycling to maintain.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 07 -->
+  <div class="section" style="animation-delay:0.4s;border-top-color:var(--accent);">
+    <div class="section-num">07 / BIOMARKERS</div>
+    <h2>Monitoring Panel</h2>
+
+    <div class="bio-category">
+      <div class="bio-category-title">// METABOLIC &amp; MITOCHONDRIAL FUNCTION</div>
+      <table class="bio-table">
+        <thead>
+          <tr><th>MARKER</th><th>TEST</th><th>CLINICAL RANGE</th><th>OPTIMAL (TARGET)</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">Fasting Glucose</span><span class="bio-test">FBG</span></td>
+            <td>Standard lab</td>
+            <td><span class="range-label range-clinical">CLIN</span>70–99 mg/dL</td>
+            <td><span class="range-label range-optimal">OPT</span>70–85 mg/dL</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Fasting Insulin / HOMA-IR</span><span class="bio-test">Insulin Resistance</span></td>
+            <td>Fasting insulin + glucose</td>
+            <td><span class="range-label range-clinical">CLIN</span>HOMA-IR &lt;2.0</td>
+            <td><span class="range-label range-optimal">OPT</span>HOMA-IR &lt;1.0</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Triglycerides</span><span class="bio-test">Lipid Panel</span></td>
+            <td>Fasting lipid panel</td>
+            <td><span class="range-label range-clinical">CLIN</span>&lt;150 mg/dL</td>
+            <td><span class="range-label range-optimal">OPT</span>&lt;80 mg/dL</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Free Fatty Acids</span><span class="bio-test">NEFA</span></td>
+            <td>Metabolic panel (specialty)</td>
+            <td><span class="range-label range-clinical">CLIN</span>0.1–0.9 mEq/L (fasted)</td>
+            <td><span class="range-label range-optimal">OPT</span>Elevated fasted (indicates FAO upregulation)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">// CARDIAC &amp; PERFORMANCE</div>
+      <table class="bio-table">
+        <thead>
+          <tr><th>MARKER</th><th>TEST</th><th>CLINICAL RANGE</th><th>MONITOR FOR</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">Resting Heart Rate</span><span class="bio-test">HR</span></td>
+            <td>Wearable / clinical</td>
+            <td><span class="range-label range-clinical">CLIN</span>60–100 bpm</td>
+            <td><span class="range-label range-optimal">FLAG</span>&gt;10 bpm rise from baseline → reduce dose</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Blood Pressure</span><span class="bio-test">BP</span></td>
+            <td>Home monitor</td>
+            <td><span class="range-label range-clinical">CLIN</span>&lt;120/80 mmHg</td>
+            <td><span class="range-label range-optimal">OPT</span>No change or mild decrease (improved cardiac efficiency)</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Troponin I</span><span class="bio-test">Cardiac stress marker</span></td>
+            <td>Standard cardiac panel</td>
+            <td><span class="range-label range-clinical">CLIN</span>&lt;0.04 ng/mL</td>
+            <td><span class="range-label range-optimal">FLAG</span>Any elevation — discontinue immediately</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">// LIVER SAFETY</div>
+      <table class="bio-table">
+        <thead>
+          <tr><th>MARKER</th><th>TEST</th><th>CLINICAL RANGE</th><th>OPTIMAL</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">ALT / AST</span><span class="bio-test">Liver Enzymes</span></td>
+            <td>CMP / Liver panel</td>
+            <td><span class="range-label range-clinical">CLIN</span>ALT &lt;56 | AST &lt;40 U/L</td>
+            <td><span class="range-label range-optimal">OPT</span>ALT &lt;25 | AST &lt;22 U/L</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">GGT</span><span class="bio-test">Hepatic stress marker</span></td>
+            <td>Liver panel</td>
+            <td><span class="range-label range-clinical">CLIN</span>&lt;55 U/L</td>
+            <td><span class="range-label range-optimal">OPT</span>&lt;25 U/L</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 08 -->
+  <div class="section" style="animation-delay:0.45s;border-top-color:var(--accent2);">
+    <div class="section-num">08 / CYCLE PROTOCOL</div>
+    <h2>Recommended Cycle</h2>
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-value">8–12</div>
+        <div class="stat-label">WEEKS ACTIVE</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">5–7</div>
+        <div class="stat-label">DAYS PER WEEK</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">4–6</div>
+        <div class="stat-label">WEEKS OFF</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">Pre-WO</div>
+        <div class="stat-label">BEST TIMING</div>
+      </div>
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent2);">Weeks 1–2 (Intro):</strong> 500 mcg SC every other day. Monitor resting HR daily. Assess GI tolerance — some users report mild nausea in the first week as mitochondrial flux increases.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent2);">Weeks 3–8 (Active):</strong> 1 mg SC daily pre-workout. Expect progressive improvement in workout endurance, reduced perceived exertion, and measurable improvements in training volume. Weight loss typically noticeable by week 4–6.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent2);">Weeks 9–12 (Peak):</strong> Continue at 1–2 mg. Mitochondrial adaptations accumulate — fiber type conversion measurable via VO2 max testing. Some users extend to 16 weeks; no long-term human safety data exists.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent);">Best Stack:</strong> SLU-PP-332 + MOTS-c (complementary mitochondrial pathways) + AOD-9604 (lipolytic amplification) + Ipamorelin/CJC (body recomp) = comprehensive metabolic performance stack.
+    </div>
+    <div class="disclaimer-box">
+      <strong style="color:var(--accent3);">Research Compound Notice:</strong> SLU-PP-332 has not undergone human clinical trials. All human protocols are extrapolated from preclinical data. No human safety, toxicology, or pharmacokinetic data is available. Cardiac monitoring is strongly recommended. This is strictly for research and educational purposes. Not approved by FDA.
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

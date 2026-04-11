@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Semaglutide — Apex Research Reference</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap');
+    :root{--bg:#080c10;--panel:#0d1318;--border:#1a2d3a;--accent:#00d4ff;--accent2:#00ff9d;--accent3:#ff6b35;--text:#c8dde8;--muted:#4a6272;--white:#eaf4f8;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;line-height:1.6;padding:40px 20px;}
+    body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 70% 10%,rgba(0,212,255,0.06) 0%,transparent 60%),radial-gradient(ellipse at 20% 90%,rgba(0,255,157,0.04) 0%,transparent 50%);pointer-events:none;z-index:0;}
+    .container{max-width:900px;margin:0 auto;position:relative;z-index:1;}
+    .header{margin-bottom:40px;border-bottom:1px solid var(--border);padding-bottom:24px;}
+    .peptide-label{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;}
+    .peptide-name{font-family:'Rajdhani',sans-serif;font-size:52px;font-weight:700;color:var(--white);line-height:1;margin-bottom:8px;}
+    .peptide-fullname{font-size:16px;color:var(--muted);margin-bottom:16px;}
+    .tag-row{display:flex;gap:8px;flex-wrap:wrap;}
+    .tag{background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.25);color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;padding:3px 10px;}
+    .section{background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--muted);padding:28px 32px;margin-bottom:16px;animation:fadeUp 0.4s ease both;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+    .section-num{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:8px;}
+    h2{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px;}
+    .stat-box{background:var(--bg);border:1px solid var(--border);padding:16px;text-align:center;}
+    .stat-value{font-family:'Rajdhani',sans-serif;font-size:32px;font-weight:700;color:var(--white);line-height:1;}
+    .stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-top:4px;}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+    .info-item{margin-bottom:14px;}
+    .info-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:4px;}
+    .info-value{color:var(--white);font-size:13px;line-height:1.5;}
+    .timeline{position:relative;padding-left:20px;}
+    .timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:var(--border);}
+    .timeline-item{position:relative;margin-bottom:20px;}
+    .timeline-item::before{content:'';position:absolute;left:-24px;top:5px;width:8px;height:8px;background:var(--accent);border-radius:50%;}
+    .timeline-year{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:4px;}
+    .benefit-item{display:flex;gap:14px;margin-bottom:16px;align-items:flex-start;}
+    .benefit-num{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent3);min-width:28px;padding-top:2px;}
+    .benefit-title{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;color:var(--white);margin-bottom:3px;}
+    .recon-box{background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--accent2);padding:20px 24px;margin-bottom:16px;}
+    .recon-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);margin-bottom:12px;}
+    .recon-math{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--white);margin-bottom:8px;}
+    .dose-table{width:100%;border-collapse:collapse;}
+    .dose-table th{background:rgba(0,212,255,0.08);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);}
+    .dose-table td{padding:12px 14px;border-bottom:1px solid rgba(26,45,58,0.5);vertical-align:top;font-size:13px;}
+    .dose-level{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);font-weight:700;}
+    .dose-amount{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--white);}
+    .dose-units{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent);display:block;margin-top:2px;}
+    .bio-table{width:100%;border-collapse:collapse;}
+    .bio-table th{background:rgba(0,212,255,0.06);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--muted);text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);}
+    .bio-table td{padding:10px 12px;border-bottom:1px solid rgba(26,45,58,0.4);vertical-align:top;font-size:12px;}
+    .bio-name{color:var(--white);font-weight:500;display:block;}
+    .bio-test{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);}
+    .range-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 6px;margin-right:4px;}
+    .range-clinical{background:rgba(74,98,114,0.3);color:var(--muted);}
+    .range-optimal{background:rgba(0,255,157,0.1);color:var(--accent2);}
+    .bio-category{margin-bottom:24px;}
+    .bio-category-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);margin-bottom:10px;}
+    .note-box{background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.15);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .highlight-box{background:rgba(0,255,157,0.04);border:1px solid rgba(0,255,157,0.2);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .warning-box{background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.25);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .disclaimer-box{background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.2);padding:14px 18px;margin-top:20px;font-size:12px;color:var(--text);line-height:1.5;}
+    .escalation-table{width:100%;border-collapse:collapse;}
+    .escalation-table th{background:rgba(0,255,157,0.06);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent2);text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);}
+    .escalation-table td{padding:11px 14px;border-bottom:1px solid rgba(26,45,58,0.5);font-size:13px;}
+    .week-badge{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);font-weight:700;}
+  </style>
+</head>
+<body>
+<div class="container">
+<a href="index.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--muted);text-decoration:none;text-transform:uppercase;margin-bottom:28px;padding:8px 14px;border:1px solid var(--border);transition:all .2s;" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">← Back to Encyclopedia</a>
+
+  <div class="header">
+    <div class="peptide-label">Apex Research Reference</div>
+    <div class="peptide-name">SEMAGLUTIDE</div>
+    <div class="peptide-fullname">GLP-1 Receptor Agonist — Ozempic / Wegovy Active Compound</div>
+    <div class="tag-row">
+      <span class="tag">GLP-1 AGONIST</span>
+      <span class="tag">WEIGHT LOSS</span>
+      <span class="tag">METABOLIC</span>
+      <span class="tag">APPETITE CONTROL</span>
+      <span class="tag">CARDIOVASCULAR</span>
+      <span class="tag">DIABETES / T2DM</span>
+    </div>
+  </div>
+
+  <!-- 01 IDENTITY -->
+  <div class="section" style="animation-delay:0.1s;border-top-color:var(--accent);">
+    <div class="section-num">01 / IDENTITY</div>
+    <h2>Compound Profile</h2>
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-value">31</div>
+        <div class="stat-label">AMINO ACIDS</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">~4.1</div>
+        <div class="stat-label">kDa MW</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">SC</div>
+        <div class="stat-label">ROUTE</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">~7 days</div>
+        <div class="stat-label">HALF-LIFE</div>
+      </div>
+    </div>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">ORIGIN</div>
+          <div class="info-value">Synthetic analogue of human GLP-1 (glucagon-like peptide-1), modified with a C18 fatty diacid chain via a linker to human albumin. Developed by Novo Nordisk. Approved as Ozempic (diabetes, 2017) and Wegovy (obesity, 2021).</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">MECHANISM</div>
+          <div class="info-value">Binds and activates GLP-1R (glucagon-like peptide-1 receptor) — expressed in pancreas, brain, GI tract, heart, and kidneys. Mimics the natural incretin hormone GLP-1 with 94% structural homology but ~168× longer half-life due to albumin binding.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">PRIMARY ACTIONS</div>
+          <div class="info-value">① Glucose-dependent insulin secretion (lowers blood sugar only when elevated — no hypoglycemia risk at therapeutic doses) ② Suppresses glucagon ③ Slows gastric emptying ④ Central appetite suppression via hypothalamic GLP-1R</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">WHY WEEKLY DOSING</div>
+          <div class="info-value">The fatty acid chain binds to albumin in the bloodstream, dramatically extending half-life from 2 min (native GLP-1) to ~7 days. This makes once-weekly subcutaneous injection sufficient for stable plasma levels.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">CARDIOVASCULAR PROTECTION</div>
+          <div class="info-value">SUSTAIN-6 and SELECT trials: semaglutide reduces major adverse cardiovascular events (MACE) by 20–26% in high-risk populations. Mechanism: direct cardiac GLP-1R signaling + indirect effects of weight loss and glucose normalization.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">COMPOUNDING NOTE</div>
+          <div class="info-value">Compounded semaglutide (base form, not salt) from 503A/503B pharmacies is identical in mechanism to branded products. Dose-equivalent to Ozempic/Wegovy when reconstituted correctly.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 RESEARCH HISTORY -->
+  <div class="section" style="animation-delay:0.15s;border-top-color:var(--accent2);">
+    <div class="section-num">02 / RESEARCH HISTORY</div>
+    <h2>Development Timeline</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-year">1987</div>
+        <div>GLP-1 identified as a natural incretin hormone by Mojsov et al. at Rockefeller University. The core biology of the GLP-1 receptor axis is established.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2000s</div>
+        <div>Novo Nordisk develops semaglutide as an improved GLP-1 analogue — targeting the albumin binding approach to achieve weekly dosing and superior receptor affinity vs. earlier GLP-1 agents (exenatide, liraglutide).</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2017</div>
+        <div>FDA approval of Ozempic (0.5mg/1mg/2mg) for Type 2 Diabetes. SUSTAIN trial series: superior HbA1c reduction versus comparators, unexpected significant weight loss observed.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2021</div>
+        <div>FDA approval of Wegovy (2.4mg) for chronic weight management — first drug approved for obesity in a decade. STEP 1 trial: 14.9% mean body weight reduction vs. 2.4% placebo at 68 weeks.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2023</div>
+        <div>SELECT trial published in NEJM: semaglutide 2.4mg reduces major cardiovascular events by 20% in non-diabetic obese adults. FDA approves cardiovascular risk reduction indication. Global shortage of branded product drives compounding pharmacy demand.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2024–Present</div>
+        <div>Oral semaglutide (Rybelsus) gains traction. Tirzepatide and Retatrutide emerge as dual/triple agonists outperforming semaglutide on weight loss. Semaglutide remains the most studied GLP-1 agent with the longest safety record.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 BENEFITS -->
+  <div class="section" style="animation-delay:0.2s;border-top-color:var(--accent3);">
+    <div class="section-num">03 / BENEFITS & MECHANISMS</div>
+    <h2>Research-Supported Effects</h2>
+    <div class="benefit-item">
+      <div class="benefit-num">01</div>
+      <div>
+        <div class="benefit-title">Weight Loss — 15–16% at Full Dose</div>
+        <div>STEP 1 trial (2021): 14.9% mean weight loss at 2.4mg/week × 68 weeks vs. 2.4% placebo. Mechanism: central appetite suppression via hypothalamic GLP-1R reduces caloric intake 30–40%. Gastric emptying slowed — prolonged satiety after meals. Patients report dramatically reduced food noise and cravings.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">02</div>
+      <div>
+        <div class="benefit-title">Blood Sugar Control — HbA1c Reduction 1.5–2.2%</div>
+        <div>Glucose-dependent insulin secretion: only releases insulin when blood sugar is elevated — mechanistically prevents hypoglycemia at therapeutic doses. Suppresses postprandial glucagon spike. SUSTAIN trials: 1.5–2.2% HbA1c reduction, superior to DPP-4 inhibitors, SGLT2 inhibitors, and basal insulin comparators.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">03</div>
+      <div>
+        <div class="benefit-title">Cardiovascular Protection — 20% MACE Reduction</div>
+        <div>SELECT trial (2023): 20% reduction in MACE (myocardial infarction, stroke, CV death) in 17,600 non-diabetic obese adults. Direct cardiac GLP-1R signaling provides cardioprotection independent of weight loss. FDA approved cardiovascular indication — a landmark for any weight loss medication.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">04</div>
+      <div>
+        <div class="benefit-title">Liver Protection — NASH/NAFLD Improvement</div>
+        <div>ESSENCE trial (2024): semaglutide achieves NASH resolution in 62.9% of patients at 72 weeks. Reduces liver fat (MRI-PDFF), inflammation, and fibrosis. First drug to show significant anti-fibrotic effects in non-alcoholic steatohepatitis — FDA approval pending for this indication.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">05</div>
+      <div>
+        <div class="benefit-title">Kidney Protection — CKD Progression Slowed</div>
+        <div>FLOW trial (2024): 24% reduction in kidney disease progression and 20% reduction in CV death in CKD patients. GLP-1R expressed in kidney — direct renoprotective signaling plus indirect effects of glucose and blood pressure normalization.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 RECONSTITUTION -->
+  <div class="section" style="animation-delay:0.25s;border-top-color:var(--accent2);">
+    <div class="section-num">04 / RECONSTITUTION</div>
+    <h2>Vial Preparation</h2>
+    <div class="recon-box">
+      <div class="recon-title">COMPOUNDED SEMAGLUTIDE — TYPICAL VIAL SIZES: 2mg, 4mg, 5mg, 10mg</div>
+      <div class="recon-math">Standard: Add 2.0 mL (200 units) bacteriostatic water to a 2mg vial</div>
+      <div class="recon-math" style="color:var(--accent2);">Concentration: 0.01 mg per unit (10 mcg per unit)</div>
+      <div style="margin-top:14px;">
+        <table class="dose-table">
+          <thead>
+            <tr><th>DOSE</th><th>mg</th><th>UNITS ON SYRINGE</th><th>VOLUME</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="dose-level">STARTING</span></td>
+              <td><span class="dose-amount">0.25</span><span class="dose-units">mg</span></td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:16px;color:var(--white);">25 units</td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:14px;">0.25 mL</td>
+            </tr>
+            <tr>
+              <td><span class="dose-level">STEP 2</span></td>
+              <td><span class="dose-amount">0.5</span><span class="dose-units">mg</span></td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:16px;color:var(--white);">50 units</td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:14px;">0.50 mL</td>
+            </tr>
+            <tr>
+              <td><span class="dose-level">STEP 3</span></td>
+              <td><span class="dose-amount">1.0</span><span class="dose-units">mg</span></td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:16px;color:var(--white);">100 units</td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:14px;">1.0 mL</td>
+            </tr>
+            <tr>
+              <td><span class="dose-level">TARGET</span></td>
+              <td><span class="dose-amount">2.4</span><span class="dose-units">mg (Wegovy dose)</span></td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:16px;color:var(--white);">Requires 4–5mg vial reconstituted at appropriate concentration</td>
+              <td style="font-family:'Share Tech Mono',monospace;font-size:14px;">Per provider prescription</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="warning-box">
+      <strong style="color:var(--accent3);">⚠ Concentration Varies by Pharmacy:</strong> Compounding pharmacies vary in vial concentration. ALWAYS confirm the exact mg/mL concentration on your pharmacy label before drawing dose. Recalculate units every time you open a new vial. Do not assume concentrations are consistent across suppliers.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent);">Storage:</strong> Reconstituted semaglutide: refrigerate (2–8°C), use within 28 days. Protect from light. Once-weekly injection — each vial should last several weeks at standard escalation doses.
+    </div>
+  </div>
+
+  <!-- 05 DOSING ESCALATION -->
+  <div class="section" style="animation-delay:0.3s;border-top-color:var(--accent);">
+    <div class="section-num">05 / DOSE ESCALATION PROTOCOL</div>
+    <h2>Standard Escalation Schedule</h2>
+    <div class="highlight-box" style="margin-bottom:16px;">
+      <strong style="color:var(--accent2);">Why Escalation Matters:</strong> Semaglutide must be titrated slowly to minimize GI side effects (nausea, vomiting). Starting too high causes intolerable nausea and high discontinuation rates. The escalation schedule allows GI receptors to adapt. Most patients reach their maintenance dose at weeks 16–20.
+    </div>
+    <table class="escalation-table">
+      <thead>
+        <tr><th>WEEKS</th><th>DOSE</th><th>FREQUENCY</th><th>EXPECTED RESPONSE</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="week-badge">1–4</span></td>
+          <td><strong style="color:var(--white);">0.25 mg</strong></td>
+          <td>Once weekly SC</td>
+          <td>Mild appetite reduction, minimal GI effects. Body adapting.</td>
+        </tr>
+        <tr>
+          <td><span class="week-badge">5–8</span></td>
+          <td><strong style="color:var(--white);">0.5 mg</strong></td>
+          <td>Once weekly SC</td>
+          <td>Noticeable appetite reduction, some nausea possible. 2–4% weight loss.</td>
+        </tr>
+        <tr>
+          <td><span class="week-badge">9–12</span></td>
+          <td><strong style="color:var(--white);">1.0 mg</strong></td>
+          <td>Once weekly SC</td>
+          <td>Significant appetite suppression. 5–8% weight loss typical by week 12.</td>
+        </tr>
+        <tr>
+          <td><span class="week-badge">13–16</span></td>
+          <td><strong style="color:var(--white);">1.7 mg</strong></td>
+          <td>Once weekly SC</td>
+          <td>Strong food noise suppression. Weight loss accelerates. Diabetes patients may reach HbA1c target.</td>
+        </tr>
+        <tr>
+          <td><span class="week-badge">17+</span></td>
+          <td><strong style="color:var(--white);">2.4 mg</strong></td>
+          <td>Once weekly SC (maintenance)</td>
+          <td>Maximum approved dose for obesity. 15%+ weight loss at 68 weeks in STEP trials.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note-box" style="margin-top:14px;">
+      <strong style="color:var(--accent);">Stall Management:</strong> Weight loss often plateaus at weeks 8–12 as body adapts. This is a hormonal adjustment phase — do not stop. Dose escalation typically breaks the plateau. Adding AOD-9604 500mcg/day or MOTS-c 5mg/day to the protocol can augment fat mobilization during plateau phases.
+    </div>
+  </div>
+
+  <!-- 06 TIMING -->
+  <div class="section" style="animation-delay:0.35s;border-top-color:var(--accent3);">
+    <div class="section-num">06 / TIMING & ADMINISTRATION</div>
+    <h2>Injection Protocol</h2>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">FREQUENCY</div>
+          <div class="info-value" style="color:var(--accent2);font-size:15px;font-weight:600;">Once Weekly — Same Day Each Week</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">TIMING RELATIVE TO FOOD</div>
+          <div class="info-value">No fasting required. Can inject any time of day. Most patients prefer a consistent weekly day (e.g., every Sunday AM). Injecting the night before social eating events can time peak appetite suppression effect.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">INJECTION SITES</div>
+          <div class="info-value">Subcutaneous — abdomen (preferred), outer thigh, or upper arm. Rotate sites weekly. Abdomen provides most consistent absorption. Avoid injecting within 2 inches of navel.</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">GI SIDE EFFECT MANAGEMENT</div>
+          <div class="info-value">Nausea peaks 8–12 hours post-injection, resolves within 24–48 hours. Strategies: ① Inject before bed — sleep through peak nausea window ② Eat small, low-fat meals on injection day ③ Avoid alcohol for 24h post-injection ④ Ginger tea, ondansetron (Zofran) PRN for acute nausea</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">MISSED DOSE</div>
+          <div class="info-value">If &lt;5 days since missed dose — inject as soon as possible. If ≥5 days — skip and resume on next scheduled day. Do NOT double-dose. Maintain regular weekly schedule.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 07 BIOMARKERS -->
+  <div class="section" style="animation-delay:0.4s;border-top-color:var(--accent);">
+    <div class="section-num">07 / BIOMARKER MONITORING</div>
+    <h2>Recommended Lab Panel</h2>
+    <div class="bio-category">
+      <div class="bio-category-title">METABOLIC — PRIMARY RESPONSE</div>
+      <table class="bio-table">
+        <thead><tr><th>MARKER</th><th>CLINICAL RANGE</th><th>OPTIMAL TARGET</th><th>NOTES</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">HbA1c</span><span class="bio-test">hemoglobin A1c</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>&lt;5.7%</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>&lt;5.3%</td>
+            <td>Primary T2DM response marker. Recheck at 12 weeks. Expect 1.5–2.2% reduction from baseline in diabetic patients.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Fasting Glucose</span><span class="bio-test">blood glucose</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>70–99 mg/dL</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>72–90 mg/dL</td>
+            <td>Should improve progressively. Glucose-dependent mechanism = minimal hypoglycemia risk as monotherapy.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Fasting Insulin + HOMA-IR</span><span class="bio-test">insulin resistance index</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>HOMA-IR &lt;2.5</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>HOMA-IR &lt;1.5</td>
+            <td>Insulin sensitivity improves with weight loss. Track trajectory every 12 weeks.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Lipid Panel</span><span class="bio-test">total cholesterol, LDL, HDL, TG</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>Standard</td>
+            <td><span class="range-label range-optimal">OPTIMAL</span>TG &lt;80 / LDL &lt;70 mg/dL</td>
+            <td>TG and LDL improve significantly with weight loss. HDL rises. Recheck at 12–16 weeks.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="bio-category">
+      <div class="bio-category-title">SAFETY MONITORING</div>
+      <table class="bio-table">
+        <thead><tr><th>MARKER</th><th>CLINICAL RANGE</th><th>NOTES</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">Amylase / Lipase</span><span class="bio-test">pancreatic enzymes</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>Standard</td>
+            <td>Baseline + annually. Rare pancreatitis risk — if severe abdominal pain develops, hold semaglutide and check immediately.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Thyroid (TSH)</span><span class="bio-test">thyroid-stimulating hormone</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>0.5–4.5 mIU/L</td>
+            <td>Semaglutide carries MTC (medullary thyroid carcinoma) warning in rodents — not confirmed in humans but contraindicated with personal/family history of MTC or MEN2.</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">eGFR / Creatinine</span><span class="bio-test">kidney function</span></td>
+            <td><span class="range-label range-clinical">CLINICAL</span>eGFR &gt;60</td>
+            <td>FLOW trial confirms renal protection — but monitor in CKD patients. Dehydration from GI side effects can transiently affect kidney function.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 08 CYCLE PROTOCOL -->
+  <div class="section" style="animation-delay:0.45s;border-top-color:var(--accent2);">
+    <div class="section-num">08 / CYCLE PROTOCOL</div>
+    <h2>Administration Schedule</h2>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">DURATION</div>
+          <div class="info-value" style="color:var(--white);font-size:18px;font-weight:600;">Ongoing — Maintenance Drug</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">LONG-TERM USE</div>
+          <div class="info-value">Semaglutide is a maintenance medication — weight regain occurs if discontinued (average 2/3 of lost weight returns within 1 year). Current medical guidance treats it as chronic therapy, similar to blood pressure or cholesterol medications.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">CYCLING APPROACH</div>
+          <div class="info-value">Some compounding protocols cycle: 24 weeks on at full dose → 8 weeks at reduced maintenance (0.5–1mg) → reassess. Not standard of care but used in cost-management protocols.</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">LEAN MASS PROTECTION</div>
+          <div class="info-value">Up to 40% of weight loss on GLP-1s alone may be lean mass (muscle). Mitigate with: ① Protein target ≥1.6g/kg/day ② Resistance training 3×/week ③ Consider adding BPC-157 for tissue integrity or a GH secretagogue to preserve muscle.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">OPTIMAL STACK</div>
+          <div class="info-value">Semaglutide + AOD-9604 500mcg AM (direct lipolysis) + MOTS-c 5mg AM (mitochondrial efficiency). Triple metabolic mechanism: appetite suppression + lipolysis + cellular energy optimization.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">REQUIRES</div>
+          <div class="info-value">Reconstitution with BAC water · Precise dosing with Apex V3 Pen · Refrigeration post-reconstitution · Weekly injection schedule</div>
+        </div>
+      </div>
+    </div>
+    <div class="disclaimer-box">
+      ⚠ Research reference only. Compounded semaglutide is not equivalent to FDA-approved branded formulations in terms of regulatory status. Consult a licensed prescriber. Information sourced from published clinical trial data including STEP, SUSTAIN, SELECT, FLOW, and ESSENCE trial series.
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

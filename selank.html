@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Selank — Apex Research Reference</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap');
+    :root{--bg:#080c10;--panel:#0d1318;--border:#1a2d3a;--accent:#00d4ff;--accent2:#00ff9d;--accent3:#ff6b35;--text:#c8dde8;--muted:#4a6272;--white:#eaf4f8;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;line-height:1.6;padding:40px 20px;}
+    body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 70% 10%,rgba(0,212,255,0.06) 0%,transparent 60%),radial-gradient(ellipse at 20% 90%,rgba(255,107,53,0.04) 0%,transparent 50%);pointer-events:none;z-index:0;}
+    .container{max-width:900px;margin:0 auto;position:relative;z-index:1;}
+    .header{margin-bottom:40px;border-bottom:1px solid var(--border);padding-bottom:24px;}
+    .peptide-label{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;}
+    .peptide-name{font-family:'Rajdhani',sans-serif;font-size:52px;font-weight:700;color:var(--white);line-height:1;margin-bottom:8px;}
+    .peptide-fullname{font-size:16px;color:var(--muted);margin-bottom:16px;}
+    .tag-row{display:flex;gap:8px;flex-wrap:wrap;}
+    .tag{background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.25);color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;padding:3px 10px;}
+    .section{background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--muted);padding:28px 32px;margin-bottom:16px;animation:fadeUp 0.4s ease both;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+    .section-num{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:8px;}
+    h2{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px;}
+    .stat-box{background:var(--bg);border:1px solid var(--border);padding:16px;text-align:center;}
+    .stat-value{font-family:'Rajdhani',sans-serif;font-size:32px;font-weight:700;color:var(--white);line-height:1;}
+    .stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-top:4px;}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+    .info-item{margin-bottom:14px;}
+    .info-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:4px;}
+    .info-value{color:var(--white);font-size:13px;line-height:1.5;}
+    .timeline{position:relative;padding-left:20px;}
+    .timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:var(--border);}
+    .timeline-item{position:relative;margin-bottom:20px;}
+    .timeline-item::before{content:'';position:absolute;left:-24px;top:5px;width:8px;height:8px;background:var(--accent);border-radius:50%;}
+    .timeline-year{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:4px;}
+    .benefit-item{display:flex;gap:14px;margin-bottom:16px;align-items:flex-start;}
+    .benefit-num{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent3);min-width:28px;padding-top:2px;}
+    .benefit-title{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;color:var(--white);margin-bottom:3px;}
+    .recon-box{background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--accent2);padding:20px 24px;margin-bottom:16px;}
+    .recon-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);margin-bottom:12px;}
+    .recon-math{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--white);margin-bottom:8px;}
+    .dose-table{width:100%;border-collapse:collapse;}
+    .dose-table th{background:rgba(0,212,255,0.08);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);}
+    .dose-table td{padding:12px 14px;border-bottom:1px solid rgba(26,45,58,0.5);vertical-align:top;font-size:13px;}
+    .dose-level{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);font-weight:700;}
+    .dose-amount{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--white);}
+    .dose-units{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent);display:block;margin-top:2px;}
+    .bio-table{width:100%;border-collapse:collapse;}
+    .bio-table th{background:rgba(0,212,255,0.06);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--muted);text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);}
+    .bio-table td{padding:10px 12px;border-bottom:1px solid rgba(26,45,58,0.4);vertical-align:top;font-size:12px;}
+    .bio-name{color:var(--white);font-weight:500;display:block;}
+    .bio-test{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);}
+    .range-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 6px;margin-right:4px;}
+    .range-clinical{background:rgba(74,98,114,0.3);color:var(--muted);}
+    .range-optimal{background:rgba(0,255,157,0.1);color:var(--accent2);}
+    .bio-category{margin-bottom:24px;}
+    .bio-category-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);margin-bottom:10px;}
+    .note-box{background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.15);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .disclaimer-box{background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.2);padding:14px 18px;margin-top:20px;font-size:12px;color:var(--text);line-height:1.5;}
+  </style>
+</head>
+<body>
+<div class="container">
+<a href="index.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--muted);text-decoration:none;text-transform:uppercase;margin-bottom:28px;padding:8px 14px;border:1px solid var(--border);transition:all .2s;" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">← Back to Encyclopedia</a>
+
+  <div class="header">
+    <div class="peptide-label">Apex Research Reference</div>
+    <div class="peptide-name">SELANK</div>
+    <div class="peptide-fullname">Tuftsin Analog (TKPRPGP) — Anxiolytic Nootropic Neuropeptide</div>
+    <div class="tag-row">
+      <span class="tag">ANXIOLYTIC</span>
+      <span class="tag">NOOTROPIC</span>
+      <span class="tag">COGNITIVE</span>
+      <span class="tag">MOOD</span>
+      <span class="tag">BDNF</span>
+      <span class="tag">APPROVED (RUSSIA)</span>
+    </div>
+  </div>
+
+  <!-- 01 -->
+  <div class="section" style="animation-delay:0.1s;border-top-color:var(--accent);">
+    <div class="section-num">01 / IDENTITY</div>
+    <h2>Compound Profile</h2>
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-value">7</div>
+        <div class="stat-label">AMINO ACIDS</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">~0.86</div>
+        <div class="stat-label">kDa MW</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">SC/IN</div>
+        <div class="stat-label">ROUTE</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">~1–2h</div>
+        <div class="stat-label">HALF-LIFE</div>
+      </div>
+    </div>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">SEQUENCE</div>
+          <div class="info-value" style="font-family:'Share Tech Mono',monospace;">Thr-Lys-Pro-Arg-Pro-Gly-Pro (TKPRPGP)</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">CLASSIFICATION</div>
+          <div class="info-value">Synthetic heptapeptide analog of tuftsin (naturally occurring immunomodulatory tetrapeptide Thr-Lys-Pro-Arg). The Pro-Gly-Pro extension dramatically stabilizes the molecule and adds CNS-active anxiolytic properties not present in native tuftsin.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">MECHANISM</div>
+          <div class="info-value">Modulates serotonin, dopamine, and GABA neurotransmitter systems. Increases BDNF (brain-derived neurotrophic factor). Stabilizes and upregulates mRNA for GABA-A receptors. Enkephalinase inhibition → increases endorphin availability. Reduces IL-6 neuroinflammation. Crosses blood-brain barrier effectively.</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">DEVELOPER</div>
+          <div class="info-value">Institute of Molecular Genetics (IMGR) and Institute of Pharmacology, Russian Academy of Sciences. V.V. Semenova and T.A. Gudasheva led development in 1980s–1990s.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">REGULATORY STATUS</div>
+          <div class="info-value">Approved anxiolytic medication in Russia (since 2002). Prescription drug in Russia for generalized anxiety disorder. Not FDA-approved; research compound in Western markets.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">VIAL SIZE</div>
+          <div class="info-value">10mg lyophilized powder</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 -->
+  <div class="section" style="animation-delay:0.15s;border-top-color:var(--accent2);">
+    <div class="section-num">02 / RESEARCH HISTORY</div>
+    <h2>Development Timeline</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-year">1980s</div>
+        <div>Russian neuroscientists at IMGR seek a non-benzodiazepine anxiolytic without sedation, addiction, or cognitive impairment — the main failures of the benzo drug class. Tuftsin (Thr-Lys-Pro-Arg) — a natural immunomodulatory peptide from the spleen — is identified as having mild CNS activity. Work begins to extend and stabilize tuftsin for anxiolytic application.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">1992</div>
+        <div>Selank (TKPRPGP) synthesized — tuftsin with a C-terminal Pro-Gly-Pro extension. The extension prevents rapid enzymatic degradation, extends CNS activity, and critically adds anxiolytic properties not present in the parent tuftsin molecule. Animal studies confirm dose-dependent anxiolytic effects comparable to diazepam without sedation.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">1994–2002</div>
+        <div>Phase I, II, and III clinical trials in Russia. Primary indication: generalized anxiety disorder (GAD). Trials demonstrate efficacy equal to traditional anxiolytics (phenazepam class) with superior safety profile — no sedation, no addiction, no cognitive impairment. Cognitive enhancement as secondary finding surprises researchers. Approved as prescription medication in Russia 2002.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2008–2014</div>
+        <div>Selank's mechanism of action studied in detail. BDNF upregulation discovered — unique among anxiolytics. Serotonin transporter mRNA modulation (similar to SSRIs but without the 4–6 week onset delay). Enkephalinase inhibitor effect. Nootropic properties documented in clinical studies — improved memory, attention, and cognitive performance in anxious patients.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2015–present</div>
+        <div>Selank adopted by international biohacking and performance community for anxiety management without pharmaceutical side effects, cognitive enhancement, and nootropic stacking. Intranasal formulation developed — bypasses peptide degradation in GI tract, allows convenient dosing. Widely available as research compound internationally.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 -->
+  <div class="section" style="animation-delay:0.2s;border-top-color:var(--accent3);">
+    <div class="section-num">03 / BENEFITS</div>
+    <h2>Primary Effects</h2>
+    <div class="benefit-item">
+      <div class="benefit-num">01</div>
+      <div>
+        <div class="benefit-title">Anxiolytic — Anxiety Reduction Without Sedation</div>
+        <div>Selank reduces anxiety with clinical efficacy comparable to benzodiazepines but with zero sedation, zero cognitive impairment, and zero addiction potential. Mechanism: GABA-A receptor stabilization + serotonin modulation + enkephalin system activation. Users describe a calm, clear-headed state — "relaxed focus" — as opposed to the foggy sedation of benzodiazepines.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">02</div>
+      <div>
+        <div class="benefit-title">Cognitive Enhancement — Memory &amp; Learning</div>
+        <div>Selank's nootropic effects are documented: improved short-term memory consolidation, faster information processing, enhanced focus and attention. Mechanism: BDNF upregulation (neuroplasticity) + catecholamine optimization + reduced neuroinflammation. Paradoxically, reducing anxiety alone improves cognitive performance significantly — the anxiolysis and nootropic effects are synergistic.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">03</div>
+      <div>
+        <div class="benefit-title">BDNF Upregulation (Neuroplasticity)</div>
+        <div>Brain-Derived Neurotrophic Factor is the primary neuroplasticity signal — it drives synaptic formation, learning, memory, and neuronal survival. Selank increases BDNF expression, making it one of the few compounds with a clear neuroplasticity mechanism. Relevant for cognitive aging, learning optimization, and depression (low BDNF is a key feature of depression).</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">04</div>
+      <div>
+        <div class="benefit-title">Anti-Depressant Activity</div>
+        <div>Selank demonstrates antidepressant effects in clinical studies — comparable to standard antidepressants but with rapid onset (days vs. 4–6 weeks for SSRIs). Mechanism: serotonin transporter modulation + BDNF upregulation + enkephalin system activation. No sexual side effects, no weight gain, no emotional blunting — key advantages over pharmaceutical antidepressants.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">05</div>
+      <div>
+        <div class="benefit-title">Immune Modulation (Tuftsin Base)</div>
+        <div>The tuftsin core of Selank retains immunomodulatory activity. Modulates IL-6 and IL-2 production, activates phagocytosis, and has antiviral properties. Russian clinical data suggests benefits for recurrent viral infections in immune-compromised individuals. Relevant context: Selank was also studied for HIV patients in Russia.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 -->
+  <div class="section" style="animation-delay:0.25s;border-top-color:var(--accent2);">
+    <div class="section-num">04 / RECONSTITUTION</div>
+    <h2>Preparation Protocol</h2>
+    <div class="recon-box">
+      <div class="recon-title">// 10MG VIAL — STANDARD RECONSTITUTION</div>
+      <div class="recon-math">10,000 mcg ÷ 300 units BAC water = <span style="color:var(--accent2)">33.3 mcg per unit</span></div>
+      <div style="font-size:13px;margin-top:8px;color:var(--muted);">Add 3.0 mL (300 units) bacteriostatic water to 10mg lyophilized vial.</div>
+    </div>
+    <table class="dose-table">
+      <thead>
+        <tr>
+          <th>TARGET DOSE</th>
+          <th>UNITS TO DRAW</th>
+          <th>VOLUME</th>
+          <th>NOTE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="dose-level">LOW</span><span class="dose-amount">250 mcg</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--white);">7.5 units</td>
+          <td style="font-family:'Share Tech Mono',monospace;">0.075 mL</td>
+          <td>Sensitive users; mild anxiolytic</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">STANDARD</span><span class="dose-amount">500 mcg</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--white);">15 units</td>
+          <td style="font-family:'Share Tech Mono',monospace;">0.15 mL</td>
+          <td>Standard anxiolytic + nootropic dose</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">HIGH</span><span class="dose-amount">1,000 mcg</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--white);">30 units</td>
+          <td style="font-family:'Share Tech Mono',monospace;">0.30 mL</td>
+          <td>GAD clinical trial dose; upper range</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note-box" style="margin-top:16px;">
+      <strong style="color:var(--accent2);">Storage:</strong> Lyophilized — refrigerate (2–8°C), protect from light. Reconstituted: refrigerate, use within 30 days.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent);">Intranasal Alternative:</strong> Many users prefer intranasal administration (nasal spray formulation). 100–300mcg per nostril, 1–2× daily. Bypasses first-pass metabolism, rapidly crosses BBB via olfactory route. If using reconstituted solution intranasally — ensure it's sterile and use appropriate nasal spray bottle.
+    </div>
+  </div>
+
+  <!-- 05 -->
+  <div class="section" style="animation-delay:0.3s;border-top-color:var(--accent);">
+    <div class="section-num">05 / DOSING PROTOCOL</div>
+    <h2>Administration Guide</h2>
+    <table class="dose-table">
+      <thead>
+        <tr>
+          <th>PROTOCOL</th>
+          <th>DOSE</th>
+          <th>FREQUENCY</th>
+          <th>DURATION</th>
+          <th>CONTEXT</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="dose-level">COGNITIVE</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;">250–500 mcg SC</td>
+          <td>1–2×/day (AM + midday)</td>
+          <td>5 days on / 2 off</td>
+          <td>Focus, learning, nootropic effects</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">ANXIOLYTIC</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;">500–1000 mcg SC</td>
+          <td>1–2×/day</td>
+          <td>4–8 weeks</td>
+          <td>GAD, social anxiety, performance anxiety</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">ACUTE STRESS</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;">500 mcg SC/IN</td>
+          <td>Single dose PRN</td>
+          <td>As needed</td>
+          <td>Pre-presentation, high-stress events</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">STACK</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;">250 mcg SC</td>
+          <td>With Semax AM</td>
+          <td>Ongoing</td>
+          <td>Selank (anxiolytic) + Semax (stimulating) balance</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note-box">
+      <strong style="color:var(--accent);">Classic Stack — Selank + Semax:</strong> Selank in the evening (anxiolytic, promotes calm) + Semax in the morning (stimulating, focus-enhancing) = comprehensive cognitive/mood optimization across the day. Widely used in Russian medicine and the international nootropic community.
+    </div>
+  </div>
+
+  <!-- 06 -->
+  <div class="section" style="animation-delay:0.35s;border-top-color:var(--accent3);">
+    <div class="section-num">06 / TIMING</div>
+    <h2>Administration Timing</h2>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">PREFERRED WINDOW</div>
+          <div class="info-value">Morning or early afternoon for cognitive/focus effects. Evening for anxiety management and sleep preparation. Acute dosing: 30–60 min before stressful event.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">ONSET</div>
+          <div class="info-value">SC: 15–30 minutes. Intranasal: 5–15 minutes (faster BBB penetration via olfactory pathway). Effects last 4–6 hours from a single dose.</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">FOOD STATE</div>
+          <div class="info-value">No significant food interaction. Can be taken fed or fasted. Some users prefer fasted for faster onset.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">CYCLING</div>
+          <div class="info-value">5 days on / 2 days off prevents tolerance accumulation. Some users run 4 weeks on / 1 week off. No withdrawal syndrome documented even with extended continuous use.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 07 -->
+  <div class="section" style="animation-delay:0.4s;border-top-color:var(--accent);">
+    <div class="section-num">07 / BIOMARKERS</div>
+    <h2>Monitoring Panel</h2>
+
+    <div class="bio-category">
+      <div class="bio-category-title">// COGNITIVE &amp; NEUROLOGICAL FUNCTION</div>
+      <table class="bio-table">
+        <thead>
+          <tr><th>MARKER</th><th>TEST</th><th>CLINICAL RANGE</th><th>OPTIMAL ON SELANK</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">BDNF (Serum)</span><span class="bio-test">Brain-Derived Neurotrophic Factor</span></td>
+            <td>Specialty lab</td>
+            <td><span class="range-label range-clinical">CLIN</span>8–32 ng/mL (serum)</td>
+            <td><span class="range-label range-optimal">OPT</span>Upper-normal or above; increasing trend on Selank</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Cognitive Assessment</span><span class="bio-test">Subjective + Objective</span></td>
+            <td>CNS Vital Signs, ImPACT, or Cambridge Cognition</td>
+            <td><span class="range-label range-clinical">CLIN</span>Age-normalized baseline</td>
+            <td><span class="range-label range-optimal">OPT</span>Improved processing speed, memory, and attention vs. baseline</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">// MOOD &amp; STRESS AXIS</div>
+      <table class="bio-table">
+        <thead>
+          <tr><th>MARKER</th><th>TEST</th><th>CLINICAL RANGE</th><th>OPTIMAL</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">AM Cortisol</span><span class="bio-test">Stress Axis Function</span></td>
+            <td>AM serum (8 AM)</td>
+            <td><span class="range-label range-clinical">CLIN</span>6–23 mcg/dL</td>
+            <td><span class="range-label range-optimal">OPT</span>10–18 mcg/dL (robust AM peak; not suppressed)</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">GAD-7 Anxiety Score</span><span class="bio-test">Validated Anxiety Scale</span></td>
+            <td>Self-reported questionnaire</td>
+            <td><span class="range-label range-clinical">CLIN</span>0–4 = minimal; 5–9 = mild; 10+ = moderate-severe</td>
+            <td><span class="range-label range-optimal">OPT</span>0–4 (minimal) — expected response to Selank in GAD</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Serotonin (whole blood)</span><span class="bio-test">Serotonin Activity Proxy</span></td>
+            <td>Specialty lab</td>
+            <td><span class="range-label range-clinical">CLIN</span>50–220 ng/mL</td>
+            <td><span class="range-label range-optimal">OPT</span>Upper-normal range (Selank modulates serotonin transporter)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 08 -->
+  <div class="section" style="animation-delay:0.45s;border-top-color:var(--accent2);">
+    <div class="section-num">08 / CYCLE PROTOCOL</div>
+    <h2>Recommended Cycle</h2>
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-value">4–8</div>
+        <div class="stat-label">WEEKS ACTIVE</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">5 on/2 off</div>
+        <div class="stat-label">SCHEDULE</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">1–2</div>
+        <div class="stat-label">WEEKS OFF</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">500 mcg</div>
+        <div class="stat-label">STANDARD DOSE</div>
+      </div>
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent2);">Standard Protocol:</strong> 500mcg SC or intranasal, 1–2× daily, 5 days on / 2 days off. Run for 4–8 weeks then 1–2 weeks off. BDNF upregulation builds cumulatively over weeks — benefits compound with consistent use.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent2);">Cognitive Enhancement Protocol:</strong> 250mcg SC AM + 250mcg SC or intranasal midday. Pair with learning-intensive work (language study, skill acquisition, exam preparation). The BDNF upregulation makes this period of accelerated neuroplasticity particularly valuable for embedding new skills.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent);">Semax + Selank Combination:</strong> Semax 300mcg (AM, stimulating, ACTH-derived, focus-first) + Selank 500mcg (PM, anxiolytic, calming, GABA/serotonin). These two peptides are the "yin and yang" of Russian nootropic medicine — used together they provide full-spectrum cognitive and mood optimization without stimulant crash or sedative grogginess.
+    </div>
+    <div class="disclaimer-box">
+      <strong style="color:var(--accent3);">Research Compound Notice:</strong> Selank is an approved prescription drug in Russia (since 2002) with over 25 years of clinical use data. It has not been approved by the FDA. The Russian clinical data demonstrates excellent safety and efficacy for anxiety disorders. No serious adverse effects documented in clinical literature. Not for use during pregnancy. Consult a healthcare provider before use for any psychiatric condition.
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

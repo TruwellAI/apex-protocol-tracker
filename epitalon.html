@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Epitalon — Apex Research Reference</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap');
+    :root{--bg:#080c10;--panel:#0d1318;--border:#1a2d3a;--accent:#00d4ff;--accent2:#00ff9d;--accent3:#ff6b35;--text:#c8dde8;--muted:#4a6272;--white:#eaf4f8;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;line-height:1.6;padding:40px 20px;}
+    body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 70% 10%,rgba(0,212,255,0.06) 0%,transparent 60%),radial-gradient(ellipse at 20% 90%,rgba(255,107,53,0.04) 0%,transparent 50%);pointer-events:none;z-index:0;}
+    .container{max-width:900px;margin:0 auto;position:relative;z-index:1;}
+    .header{margin-bottom:40px;border-bottom:1px solid var(--border);padding-bottom:24px;}
+    .peptide-label{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;}
+    .peptide-name{font-family:'Rajdhani',sans-serif;font-size:52px;font-weight:700;color:var(--white);line-height:1;margin-bottom:8px;}
+    .peptide-fullname{font-size:16px;color:var(--muted);margin-bottom:16px;}
+    .tag-row{display:flex;gap:8px;flex-wrap:wrap;}
+    .tag{background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.25);color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;padding:3px 10px;}
+    .section{background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--muted);padding:28px 32px;margin-bottom:16px;animation:fadeUp 0.4s ease both;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+    .section-num{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:8px;}
+    h2{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px;}
+    .stat-box{background:var(--bg);border:1px solid var(--border);padding:16px;text-align:center;}
+    .stat-value{font-family:'Rajdhani',sans-serif;font-size:32px;font-weight:700;color:var(--white);line-height:1;}
+    .stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-top:4px;}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+    .info-item{margin-bottom:14px;}
+    .info-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:4px;}
+    .info-value{color:var(--white);font-size:13px;line-height:1.5;}
+    .timeline{position:relative;padding-left:20px;}
+    .timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:var(--border);}
+    .timeline-item{position:relative;margin-bottom:20px;}
+    .timeline-item::before{content:'';position:absolute;left:-24px;top:5px;width:8px;height:8px;background:var(--accent);border-radius:50%;}
+    .timeline-year{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:4px;}
+    .benefit-item{display:flex;gap:14px;margin-bottom:16px;align-items:flex-start;}
+    .benefit-num{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent3);min-width:28px;padding-top:2px;}
+    .benefit-title{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;color:var(--white);margin-bottom:3px;}
+    .recon-box{background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--accent2);padding:20px 24px;margin-bottom:16px;}
+    .recon-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);margin-bottom:12px;}
+    .recon-math{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--white);margin-bottom:8px;}
+    .dose-table{width:100%;border-collapse:collapse;}
+    .dose-table th{background:rgba(0,212,255,0.08);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);}
+    .dose-table td{padding:12px 14px;border-bottom:1px solid rgba(26,45,58,0.5);vertical-align:top;font-size:13px;}
+    .dose-level{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);font-weight:700;}
+    .dose-amount{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--white);}
+    .dose-units{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent);display:block;margin-top:2px;}
+    .bio-table{width:100%;border-collapse:collapse;}
+    .bio-table th{background:rgba(0,212,255,0.06);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--muted);text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);}
+    .bio-table td{padding:10px 12px;border-bottom:1px solid rgba(26,45,58,0.4);vertical-align:top;font-size:12px;}
+    .bio-name{color:var(--white);font-weight:500;display:block;}
+    .bio-test{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);}
+    .range-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 6px;margin-right:4px;}
+    .range-clinical{background:rgba(74,98,114,0.3);color:var(--muted);}
+    .range-optimal{background:rgba(0,255,157,0.1);color:var(--accent2);}
+    .bio-category{margin-bottom:24px;}
+    .bio-category-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);margin-bottom:10px;}
+    .note-box{background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.15);padding:14px 18px;margin:14px 0;font-size:13px;line-height:1.6;}
+    .highlight-box{background:rgba(0,255,157,0.04);border:1px solid rgba(0,255,157,0.2);padding:16px 20px;margin:16px 0;}
+    .disclaimer-box{background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.2);padding:14px 18px;margin-top:20px;font-size:12px;color:var(--text);line-height:1.5;}
+  </style>
+</head>
+<body>
+<div class="container">
+<a href="index.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--muted);text-decoration:none;text-transform:uppercase;margin-bottom:28px;padding:8px 14px;border:1px solid var(--border);transition:all .2s;" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">← Back to Encyclopedia</a>
+
+  <div class="header">
+    <div class="peptide-label">Apex Research Reference</div>
+    <div class="peptide-name">EPITALON</div>
+    <div class="peptide-fullname">Epithalon / Epithalamin Synthetic Analog — Pineal Gland Tetrapeptide &amp; Telomerase Activator</div>
+    <div class="tag-row">
+      <span class="tag">ANTI-AGING</span>
+      <span class="tag">TELOMERE</span>
+      <span class="tag">LONGEVITY</span>
+      <span class="tag">PINEAL</span>
+      <span class="tag">CIRCADIAN</span>
+      <span class="tag">DNA REPAIR</span>
+    </div>
+  </div>
+
+  <!-- 01 -->
+  <div class="section" style="animation-delay:0.1s;border-top-color:var(--accent);">
+    <div class="section-num">01 / IDENTITY</div>
+    <h2>Compound Profile</h2>
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-value">4</div>
+        <div class="stat-label">AMINO ACIDS</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">~0.39</div>
+        <div class="stat-label">kDa MW</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">SC/IV</div>
+        <div class="stat-label">ROUTE</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">50mg</div>
+        <div class="stat-label">VIAL SIZE</div>
+      </div>
+    </div>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">SEQUENCE</div>
+          <div class="info-value" style="font-family:'Share Tech Mono',monospace;">Ala-Glu-Asp-Gly (AEDG)</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">CLASSIFICATION</div>
+          <div class="info-value">Synthetic tetrapeptide analog of epithalamin — the bioregulator peptide naturally secreted by the pineal gland. Epitalon is the synthetic, more stable version of the natural pineal extract.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">PRIMARY MECHANISM</div>
+          <div class="info-value">Activates telomerase (hTERT) → elongates/maintains telomeres. Regulates pineal melatonin production → circadian rhythm normalization. Activates PCNA (proliferating cell nuclear antigen) → DNA repair. Antioxidant upregulation via Nrf2 pathway.</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">DEVELOPER</div>
+          <div class="info-value">Prof. Vladimir Khavinson, St. Petersburg Institute of Bioregulation and Gerontology, Russia. Developed 1980s–1990s from research on hypothalamic/pineal bioregulators and aging.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">WHY UNIQUE</div>
+          <div class="info-value">Epitalon is one of the very few compounds with published human data showing actual telomere lengthening. Most "telomere" supplements have no such evidence. Khavinson's group published longitudinal data from elderly patients over 12+ years.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">ORAL BIOAVAILABILITY</div>
+          <div class="info-value">Surprisingly good for a peptide — some studies suggest sublingual/oral absorption. However, SC injection provides the most reliable bioavailability for clinical endpoints.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 -->
+  <div class="section" style="animation-delay:0.15s;border-top-color:var(--accent2);">
+    <div class="section-num">02 / RESEARCH HISTORY</div>
+    <h2>Development Timeline</h2>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-year">1970s–1980s</div>
+        <div>Vladimir Khavinson at the St. Petersburg Institute begins research on pineal gland extracts and their relationship to aging. Epithalalin — the crude pineal extract — shows anti-aging effects in animal models: extended lifespan, reduced cancer incidence, normalized hormone rhythms.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">1989</div>
+        <div>Khavinson synthesizes Epitalon (AEDG tetrapeptide) — the active component of epithalamin. Simpler to manufacture, more stable, fully synthetic. Animal studies confirm longevity-extending effects: mice treated with Epitalon show 25–30% lifespan extension vs. controls in some studies.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2003</div>
+        <div>Landmark publication: Khavinson et al. demonstrate Epitalon activates telomerase in human fetal fibroblasts and somatic cells — the first peptide shown to directly elongate telomeres in human cells. Published in <em>Bulletin of Experimental Biology and Medicine</em> and later confirmed in multiple follow-up studies.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2006–2012</div>
+        <div>Long-term human cohort data published: elderly patients (65–80 years) treated with Epitalon over 12 years show reduced mortality rates, improved sleep and circadian rhythms, better melatonin regulation, reduced cancer incidence, and measurable telomere preservation vs. untreated age-matched controls.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2014–2024</div>
+        <div>Mechanism elucidated in detail — Epitalon activates hTERT gene expression, upregulates Nrf2 antioxidant response, normalizes cortisol/melatonin rhythms, and reduces DNA damage markers. Western research community adopts Epitalon as longevity protocol component. Widely available as research compound.</div>
+      </div>
+    </div>
+    <div class="highlight-box">
+      <strong style="color:var(--accent2);">Key Data Point:</strong> In a 12-year follow-up study of elderly patients, Epitalon treatment was associated with 28% lower mortality vs. control group. Mean telomere length was preserved in the treatment group while controls showed progressive shortening. This remains some of the strongest long-term human data for any longevity peptide.
+    </div>
+  </div>
+
+  <!-- 03 -->
+  <div class="section" style="animation-delay:0.2s;border-top-color:var(--accent3);">
+    <div class="section-num">03 / BENEFITS</div>
+    <h2>Primary Effects</h2>
+    <div class="benefit-item">
+      <div class="benefit-num">01</div>
+      <div>
+        <div class="benefit-title">Telomere Lengthening &amp; Telomerase Activation</div>
+        <div>The defining mechanism: Epitalon activates hTERT (human telomerase reverse transcriptase) gene expression. Telomeres are the protective caps on chromosomes — they shorten with each cell division (the "biological clock"). Telomerase rebuilds them. Epitalon is one of the few compounds with published evidence of actual telomere lengthening in human cells.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">02</div>
+      <div>
+        <div class="benefit-title">Circadian Rhythm &amp; Melatonin Regulation</div>
+        <div>As a pineal peptide, Epitalon normalizes melatonin secretion — particularly the age-related decline in nocturnal melatonin production. Restores more youthful cortisol/melatonin patterns. Clinically: improved sleep quality, faster sleep onset, reduced waking, normalized circadian gene expression (BMAL1, PER2, CLOCK).</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">03</div>
+      <div>
+        <div class="benefit-title">Cancer Prevention &amp; DNA Integrity</div>
+        <div>Multiple mechanisms converge on cancer prevention: telomere maintenance prevents chromosomal instability, DNA repair upregulation reduces mutation accumulation, antioxidant activation reduces oxidative DNA damage. Long-term cohort studies show reduced cancer incidence in Epitalon-treated elderly patients.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">04</div>
+      <div>
+        <div class="benefit-title">Antioxidant Upregulation (Nrf2)</div>
+        <div>Epitalon activates the Nrf2/ARE pathway — the master antioxidant transcription factor that upregulates SOD, catalase, glutathione peroxidase, and other endogenous antioxidant enzymes. Reduces oxidative stress markers (8-OH-dG, MDA) and protects mitochondria from ROS damage.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">05</div>
+      <div>
+        <div class="benefit-title">Retinal &amp; Visual Function Preservation</div>
+        <div>Unique among longevity peptides: Epitalon has documented benefit for age-related retinal degeneration. Russian trials showed improved retinal sensitivity and visual acuity in elderly patients with degenerative eye disease. Mechanism: cytoprotection of photoreceptors and RPE cells via antioxidant and anti-inflammatory pathways.</div>
+      </div>
+    </div>
+    <div class="benefit-item">
+      <div class="benefit-num">06</div>
+      <div>
+        <div class="benefit-title">Neurological &amp; Cognitive Support</div>
+        <div>Pineal-hypothalamic axis regulation affects the entire neuroendocrine system. Epitalon treatment normalizes GH/IGF-1 axis, cortisol rhythms, and neurotransmitter balance. Reported effects: improved memory, reduced age-associated cognitive decline, better stress resilience. Neuroprotective against oxidative stress in CNS.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 -->
+  <div class="section" style="animation-delay:0.25s;border-top-color:var(--accent2);">
+    <div class="section-num">04 / RECONSTITUTION</div>
+    <h2>Preparation Protocol</h2>
+    <div class="recon-box">
+      <div class="recon-title">// 50MG VIAL — STANDARD RECONSTITUTION</div>
+      <div class="recon-math">50,000 mcg ÷ 300 units BAC water = <span style="color:var(--accent2)">166.6 mcg per unit</span></div>
+      <div style="font-size:13px;margin-top:8px;color:var(--muted);">Add 3.0 mL (300 units) bacteriostatic water to 50mg lyophilized vial.</div>
+    </div>
+    <table class="dose-table">
+      <thead>
+        <tr>
+          <th>TARGET DOSE</th>
+          <th>UNITS TO DRAW</th>
+          <th>VOLUME</th>
+          <th>NOTE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="dose-level">LOW</span><span class="dose-amount">300 mcg</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--white);">~2 units</td>
+          <td style="font-family:'Share Tech Mono',monospace;">0.018 mL</td>
+          <td>Conservative start — sensitive individuals</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">STANDARD</span><span class="dose-amount">500 mcg</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--white);">3 units</td>
+          <td style="font-family:'Share Tech Mono',monospace;">0.030 mL</td>
+          <td>Most common research dose</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">HIGH</span><span class="dose-amount">750 mcg</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--white);">4.5 units</td>
+          <td style="font-family:'Share Tech Mono',monospace;">0.045 mL</td>
+          <td>Aggressive pulsed protocol</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note-box" style="margin-top:16px;">
+      <strong style="color:var(--accent2);">Vial yield:</strong> 50mg vial at 500mcg/day = 100 doses. One vial covers multiple full pulsed cycles. Reconstitution: 50mg + 3.0mL BAC = 166.6 mcg/unit.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent2);">Storage:</strong> Lyophilized — refrigerate (2–8°C), protect from light. Reconstituted: refrigerate, stable for 30 days. Epitalon is a small, stable tetrapeptide — one of the more stable peptides once reconstituted.
+    </div>
+  </div>
+
+  <!-- 05 -->
+  <div class="section" style="animation-delay:0.3s;border-top-color:var(--accent);">
+    <div class="section-num">05 / DOSING PROTOCOL</div>
+    <h2>Administration Guide</h2>
+    <table class="dose-table">
+      <thead>
+        <tr>
+          <th>PROTOCOL</th>
+          <th>DOSE</th>
+          <th>SCHEDULE</th>
+          <th>DURATION</th>
+          <th>CONTEXT</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="dose-level">SHORT PULSE</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;">5–10 mg SC</td>
+          <td>Daily × 10 days</td>
+          <td>10 days on / 3–6 months off</td>
+          <td>Classic Khavinson protocol — most studied</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">EXTENDED</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;">5 mg SC</td>
+          <td>Daily × 20 days</td>
+          <td>20 days on / 4–6 months off</td>
+          <td>More sustained telomere effect</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">QUARTERLY</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;">10 mg SC</td>
+          <td>Daily × 10 days</td>
+          <td>Every 3–4 months</td>
+          <td>Ongoing longevity maintenance protocol</td>
+        </tr>
+        <tr>
+          <td><span class="dose-level">ANNUAL</span></td>
+          <td style="font-family:'Share Tech Mono',monospace;">10–20 mg SC</td>
+          <td>Daily × 10 days</td>
+          <td>Once annually</td>
+          <td>Minimum longevity protocol; budget-conscious</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note-box">
+      <strong style="color:var(--accent);">Pulsed Protocol Rationale:</strong> Epitalon works through gene expression changes (hTERT upregulation, Nrf2 activation) that persist well beyond the dosing period. Unlike daily-maintenance peptides, Epitalon produces lasting epigenetic changes — pulsed protocols are both more practical and clinically consistent with Khavinson's original research design.
+    </div>
+  </div>
+
+  <!-- 06 -->
+  <div class="section" style="animation-delay:0.35s;border-top-color:var(--accent3);">
+    <div class="section-num">06 / TIMING</div>
+    <h2>Administration Timing</h2>
+    <div class="info-grid">
+      <div>
+        <div class="info-item">
+          <div class="info-label">PREFERRED WINDOW</div>
+          <div class="info-value">Evening, 30–60 minutes before sleep. Rationale: aligns with pineal gland activity (melatonin synthesis occurs nocturnally), supports circadian normalization effects, and may enhance sleep quality as a direct benefit.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">FOOD STATE</div>
+          <div class="info-value">Fasted preferred — some data suggests Epitalon absorption is better without food competing in the GI system. SC injection bypasses this concern; timing relative to food is less critical than for oral compounds.</div>
+        </div>
+      </div>
+      <div>
+        <div class="info-item">
+          <div class="info-label">STACKING</div>
+          <div class="info-value">Epitalon + NAD+ = comprehensive anti-aging stack (telomere + sirtuin + DNA repair). Add GHK-Cu for tissue remodeling layer. FOX04-DRI (senolytic) timed separately — clear senolytics first, then Epitalon for telomere maintenance.</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">CYCLE FREQUENCY</div>
+          <div class="info-value">Most evidence supports quarterly pulsing (4 courses/year). Some longevity practitioners use 2 courses/year. Annual is the minimum to maintain biological age benefits based on cohort data.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 07 -->
+  <div class="section" style="animation-delay:0.4s;border-top-color:var(--accent);">
+    <div class="section-num">07 / BIOMARKERS</div>
+    <h2>Monitoring Panel</h2>
+
+    <div class="bio-category">
+      <div class="bio-category-title">// TELOMERE &amp; BIOLOGICAL AGE</div>
+      <table class="bio-table">
+        <thead>
+          <tr><th>MARKER</th><th>TEST</th><th>CLINICAL RANGE</th><th>OPTIMAL / TARGET</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">Telomere Length (LTL)</span><span class="bio-test">Leukocyte Telomere Length</span></td>
+            <td>Life Length, Repeat Diagnostics, or SpectraCell</td>
+            <td><span class="range-label range-clinical">CLIN</span>Age-normalized (decreases ~50 bp/year)</td>
+            <td><span class="range-label range-optimal">OPT</span>75th+ percentile for age; stable or increasing on treatment</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">Epigenetic Age</span><span class="bio-test">DNA Methylation Clock</span></td>
+            <td>TruAge, myDNAge, Horvath Clock</td>
+            <td><span class="range-label range-clinical">CLIN</span>≈ Chronological age ± 5 years</td>
+            <td><span class="range-label range-optimal">OPT</span>&gt;5 years younger than chronological; improving over cycles</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">GrimAge Score</span><span class="bio-test">Mortality Predictor Clock</span></td>
+            <td>TruAge or Elysium Index</td>
+            <td><span class="range-label range-clinical">CLIN</span>≈ Chronological age</td>
+            <td><span class="range-label range-optimal">OPT</span>Significantly younger; improving annually</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">// HORMONAL &amp; CIRCADIAN MARKERS</div>
+      <table class="bio-table">
+        <thead>
+          <tr><th>MARKER</th><th>TEST</th><th>CLINICAL RANGE</th><th>OPTIMAL</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">Melatonin (nocturnal)</span><span class="bio-test">Urinary 6-sulfatoxymelatonin or AM serum</span></td>
+            <td>24h urine or LabCorp serum</td>
+            <td><span class="range-label range-clinical">CLIN</span>Highly variable; peaks 2–4 AM</td>
+            <td><span class="range-label range-optimal">OPT</span>Normal nocturnal peak restored; improved sleep architecture</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">AM Cortisol</span><span class="bio-test">Diurnal Cortisol Rhythm</span></td>
+            <td>8 AM serum draw</td>
+            <td><span class="range-label range-clinical">CLIN</span>6–23 mcg/dL (AM peak)</td>
+            <td><span class="range-label range-optimal">OPT</span>Normal AM peak (10–20 mcg/dL) with evening trough &lt;3 mcg/dL</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">IGF-1</span><span class="bio-test">Growth Hormone Axis</span></td>
+            <td>AM fasting serum</td>
+            <td><span class="range-label range-clinical">CLIN</span>Age-dependent normal range</td>
+            <td><span class="range-label range-optimal">OPT</span>Upper-normal for age (Epitalon normalizes pineal-GH axis)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-category-title">// OXIDATIVE STRESS &amp; DNA DAMAGE</div>
+      <table class="bio-table">
+        <thead>
+          <tr><th>MARKER</th><th>TEST</th><th>CLINICAL RANGE</th><th>OPTIMAL</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="bio-name">8-OHdG (Oxidative DNA Damage)</span><span class="bio-test">Urinary 8-hydroxy-2'-deoxyguanosine</span></td>
+            <td>Urine collection (lab specialty)</td>
+            <td><span class="range-label range-clinical">CLIN</span>&lt;15 ng/mg creatinine</td>
+            <td><span class="range-label range-optimal">OPT</span>&lt;5 ng/mg creatinine (low DNA oxidation)</td>
+          </tr>
+          <tr>
+            <td><span class="bio-name">hs-CRP</span><span class="bio-test">Inflammatory Aging</span></td>
+            <td>Standard lab</td>
+            <td><span class="range-label range-clinical">CLIN</span>&lt;3.0 mg/L</td>
+            <td><span class="range-label range-optimal">OPT</span>&lt;0.5 mg/L</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 08 -->
+  <div class="section" style="animation-delay:0.45s;border-top-color:var(--accent2);">
+    <div class="section-num">08 / CYCLE PROTOCOL</div>
+    <h2>Recommended Protocol</h2>
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-value">10–20</div>
+        <div class="stat-label">DAYS ACTIVE</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">Evening</div>
+        <div class="stat-label">INJECTION TIME</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">3–4×</div>
+        <div class="stat-label">PER YEAR</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">500 mcg</div>
+        <div class="stat-label">STANDARD DOSE</div>
+      </div>
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent2);">Standard Protocol:</strong> 500mcg SC nightly for 10 consecutive days. Repeat every 3–4 months. This 4× annual pulsed protocol aligns with the original Khavinson telomere research framework. One 50mg vial covers 100 doses — multiple full cycles.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent2);">Aggressive Protocol:</strong> 750mcg SC nightly for 10–20 days, twice yearly (spring + fall). Upper research dose range. Particularly recommended for users 50+ or with elevated biological age markers.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent);">Longevity Stack (Annual Protocol):</strong><br>
+      Q1 (January): FOX04-DRI senolytic (clear aged cells) → Epitalon 10-day course<br>
+      Q2 (April): NAD+ loading week + Epitalon 10-day course<br>
+      Q3 (July): GHK-Cu 8-week cycle<br>
+      Q4 (October): Epitalon 10-day course + NAD+ boost<br>
+      This quarterly rotation addresses multiple aging hallmarks: senescence, telomere length, NAD+ depletion, and tissue remodeling.
+    </div>
+    <div class="note-box">
+      <strong style="color:var(--accent);">Sleep Protocol Addition:</strong> During Epitalon courses, avoid blue light after 9 PM, maintain consistent sleep/wake times, and consider blackout curtains. Epitalon normalizes melatonin secretion — supporting these circadian hygiene practices amplifies the compound's sleep architecture benefits.
+    </div>
+    <div class="disclaimer-box">
+      <strong style="color:var(--accent3);">Research Compound Notice:</strong> Epitalon has been studied in human subjects primarily through Russian research institutions since the 1980s. The published longevity data is compelling but comes primarily from one research group (Khavinson et al.) and has not been fully replicated in large Western RCTs. No FDA approval. No known serious adverse effects reported across decades of use. Telomerase activation carries a theoretical cancer-promotion concern in individuals with pre-existing malignancies — contraindicated in active cancer. For educational and research purposes.
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
