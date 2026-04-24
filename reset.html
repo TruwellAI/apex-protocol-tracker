@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reset — Apex Protocol</title>
+<style>
+  :root{--bg:#080c10;--text:#c8cdd5;--accent:#14b8a6;--muted:#64748b;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{background:var(--bg);color:var(--text);font-family:-apple-system,system-ui,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+  .wrap{max-width:420px;text-align:center;}
+  .icon{font-size:56px;margin-bottom:14px;line-height:1;}
+  h1{font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:800;color:#fff;letter-spacing:-.01em;margin-bottom:10px;line-height:1.15;}
+  p{font-size:14px;line-height:1.6;margin-bottom:20px;color:#94a3b8;}
+  .btn{display:block;padding:14px 20px;background:var(--accent);color:#fff;text-decoration:none;border:none;border-radius:6px;font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;width:100%;margin-bottom:10px;box-shadow:0 4px 16px rgba(20,184,166,.35);}
+  .btn-outline{background:transparent;border:1px solid rgba(148,163,184,.3);color:#94a3b8;font-weight:700;}
+  .status{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);margin-top:16px;min-height:16px;letter-spacing:.1em;}
+  .tagline{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.2em;color:var(--muted);margin-bottom:8px;text-transform:uppercase;}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="icon">🔄</div>
+    <div class="tagline">APEX PROTOCOL</div>
+    <h1>Start Fresh</h1>
+    <p>This will clear all your local data — protocols, settings, test state. Everything goes back to a clean slate so you can test the app from zero.</p>
+    <button class="btn" onclick="doReset()">🗑 NUKE EVERYTHING</button>
+    <a class="btn btn-outline" href="protocol-tracker.html">← Back to Tracker (keep data)</a>
+    <div id="status" class="status"></div>
+  </div>
+<script>
+function doReset() {
+  const status = document.getElementById('status');
+  try {
+    const localKeys = Object.keys(localStorage).length;
+    const sessionKeys = Object.keys(sessionStorage).length;
+    localStorage.clear();
+    sessionStorage.clear();
+    // Clear cookies for this origin (best effort)
+    document.cookie.split(';').forEach(c => {
+      const eq = c.indexOf('=');
+      const name = (eq > -1 ? c.substr(0, eq) : c).trim();
+      if (name) document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
+    });
+    status.innerHTML = '✓ CLEARED ' + (localKeys + sessionKeys) + ' KEYS — REDIRECTING…';
+    setTimeout(() => { window.location.href = 'protocol-tracker.html?fresh=1'; }, 800);
+  } catch(e) {
+    status.textContent = '✗ ERROR: ' + e.message;
+  }
+}
+</script>
+</body>
+</html>

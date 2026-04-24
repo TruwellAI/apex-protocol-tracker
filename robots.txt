@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /reset.html
+Disallow: /assets/
+
+Sitemap: https://apexdosing.com/sitemap.xml

@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compare Peptides — Apex</title>
+<!-- apex-seo-injected -->
+<meta name="description" content="Compare peptides side by side — mechanisms, dosing, cycle length, overlap detection. Free research tool. Not medical advice.">
+<link rel="canonical" href="https://apexdosing.com/compare.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Compare Peptides — Apex">
+<meta property="og:description" content="Compare peptides side by side — mechanisms, dosing, cycle length, overlap detection. Free research tool. Not medical advice.">
+<meta property="og:url" content="https://apexdosing.com/compare.html">
+<meta property="og:site_name" content="Apex Protocol">
+<meta property="og:image" content="https://apexdosing.com/assets/icon-1024.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Compare Peptides — Apex">
+<meta name="twitter:description" content="Compare peptides side by side — mechanisms, dosing, cycle length, overlap detection. Free research tool. Not medical advice.">
+<meta name="twitter:image" content="https://apexdosing.com/assets/icon-1024.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "MedicalWebPage",
+  "name": "Compare Peptides — Apex",
+  "description": "Compare peptides side by side — mechanisms, dosing, cycle length, overlap detection. Free research tool. Not medical advice.",
+  "url": "https://apexdosing.com/compare.html",
+  "audience": {
+    "@type": "MedicalAudience",
+    "audienceType": "researcher"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Apex Protocol",
+    "url": "https://apexdosing.com"
+  },
+  "inLanguage": "en-US",
+  "isFamilyFriendly": false
+}
+</script>
+<!-- /apex-seo-injected -->
+
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#080c10;--panel:#0d1318;--border:#1a2d3a;--accent:#00d4ff;--accent2:#00ff9d;--accent3:#ff6b35;--text:#c8dde8;--muted:#4a6272;--white:#eaf4f8;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-weight:300;min-height:100vh;padding:32px 20px;}
+  body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse 60% 40% at 80% 10%,rgba(0,212,255,0.06) 0%,transparent 60%),radial-gradient(ellipse 40% 50% at 10% 80%,rgba(255,107,53,0.03) 0%,transparent 60%);pointer-events:none;z-index:0;}
+  .container{max-width:1100px;margin:0 auto;position:relative;z-index:1;}
+  .back-link{display:inline-flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--muted);text-decoration:none;text-transform:uppercase;margin-bottom:28px;padding:8px 14px;border:1px solid var(--border);transition:all .2s;}
+  .back-link:hover{color:var(--accent);border-color:var(--accent);}
+  .header{border-left:3px solid var(--accent);padding-left:20px;margin-bottom:30px;}
+  .header .label{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:4px;color:var(--accent);text-transform:uppercase;margin-bottom:6px;}
+  .header h1{font-family:'Rajdhani',sans-serif;font-size:clamp(36px,8vw,54px);font-weight:700;color:var(--white);line-height:1;letter-spacing:1px;}
+  .header .subtitle{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted);margin-top:10px;letter-spacing:2px;}
+  .filters{margin-bottom:24px;padding:20px;background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--accent);border-radius:4px;}
+  .filters-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);margin-bottom:10px;text-transform:uppercase;}
+  .goal-pills{display:flex;flex-wrap:wrap;gap:6px;}
+  .goal-pill{padding:7px 14px;background:#0f1820;border:1px solid var(--border);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border-radius:16px;transition:all .15s;user-select:none;}
+  .goal-pill:hover{border-color:rgba(0,212,255,.4);}
+  .goal-pill.active{background:rgba(0,212,255,.15);border-color:var(--accent);color:var(--accent);}
+  .selectors{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px;}
+  .selector-col{background:var(--panel);border:1px solid var(--border);padding:18px;border-radius:4px;}
+  .selector-col.col-a{border-top:3px solid var(--accent);}
+  .selector-col.col-b{border-top:3px solid var(--accent2);}
+  .selector-col.col-c{border-top:3px solid var(--accent3);}
+  .selector-col label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);display:block;margin-bottom:8px;text-transform:uppercase;}
+  .selector-col select{width:100%;background:#0f1820;border:1px solid var(--border);color:var(--white);padding:10px 12px;font-family:'Barlow',sans-serif;font-size:14px;border-radius:3px;outline:none;}
+  .selector-col select:focus{border-color:var(--accent);}
+  .compare-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .compare-table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--border);min-width:640px;}
+  .compare-table th, .compare-table td{padding:14px 16px;border-bottom:1px solid rgba(26,45,58,0.6);vertical-align:top;}
+  .compare-table th{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);text-align:left;text-transform:uppercase;background:rgba(0,212,255,0.02);white-space:nowrap;}
+  .compare-table td{font-size:13px;color:var(--text);line-height:1.55;}
+  .compare-table tr:hover td{background:rgba(0,212,255,0.03);}
+  .compare-table tr.row-title td{background:#0a0f15;border-top:2px solid var(--border);}
+  .col-a-head, .col-b-head, .col-c-head{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:800;line-height:1.1;margin-bottom:4px;}
+  .col-a-head{color:var(--accent);}
+  .col-b-head{color:var(--accent2);}
+  .col-c-head{color:var(--accent3);}
+  .col-sub{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;}
+  .star{color:#fbbf24;font-size:14px;letter-spacing:1px;}
+  .star-empty{color:rgba(251,191,36,.25);}
+  .verdict-panel{margin-top:24px;padding:20px 24px;background:linear-gradient(135deg,rgba(0,255,157,.08),rgba(0,255,157,.02));border:1px solid rgba(0,255,157,.3);border-radius:6px;}
+  .verdict-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);margin-bottom:8px;text-transform:uppercase;}
+  .verdict-title{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:800;color:var(--white);margin-bottom:10px;line-height:1.25;}
+  .verdict-body{font-size:14px;color:var(--text);line-height:1.65;}
+  .empty-state{text-align:center;padding:40px 20px;color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.12em;}
+  .cta-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px;}
+  .cta-btn{display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 18px;text-decoration:none;font-family:'Rajdhani',sans-serif;font-weight:800;font-size:14px;letter-spacing:.06em;text-transform:uppercase;border-radius:6px;transition:all .2s;-webkit-tap-highlight-color:transparent;}
+  .cta-btn.primary{background:linear-gradient(135deg,var(--accent2),#0d9488);color:#060a0d;}
+  .cta-btn.primary:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,255,157,.25);}
+  .cta-btn.secondary{background:transparent;color:var(--text);border:1px solid var(--border);}
+  .cta-btn.secondary:hover{background:rgba(0,212,255,0.06);border-color:var(--accent);color:var(--accent);}
+  @media(max-width:700px){
+    .selectors{grid-template-columns:1fr;gap:10px;}
+    .cta-row{grid-template-columns:1fr;}
+    .compare-table th{font-size:9px;padding:10px 8px;}
+    .compare-table td{padding:10px 8px;font-size:12px;}
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="index.html" class="back-link">← Back to Encyclopedia</a>
+
+  <div class="header">
+    <div class="label">⚖️ Side-by-Side</div>
+    <h1>Compare Peptides</h1>
+    <div class="subtitle">PICK 2 OR 3 · SEE THEM HEAD-TO-HEAD · MAKE THE RIGHT CALL</div>
+  </div>
+
+  <!-- GOAL FILTER -->
+  <div class="filters">
+    <div class="filters-label">🎯 FILTER BY GOAL</div>
+    <div class="goal-pills" id="goal-pills">
+      <div class="goal-pill active" data-goal="all">All Peptides</div>
+      <div class="goal-pill" data-goal="gh-axis">GH Axis (Sleep + Recovery)</div>
+      <div class="goal-pill" data-goal="weight-loss">Weight Loss / GLP-1s</div>
+      <div class="goal-pill" data-goal="healing">Healing & Recovery</div>
+      <div class="goal-pill" data-goal="longevity">Longevity / Anti-Aging</div>
+      <div class="goal-pill" data-goal="libido">Libido</div>
+      <div class="goal-pill" data-goal="cognition">Cognition / Nootropic</div>
+      <div class="goal-pill" data-goal="hormonal">Testosterone / TRT</div>
+    </div>
+  </div>
+
+  <!-- PEPTIDE SELECTORS (3 columns) -->
+  <div class="selectors">
+    <div class="selector-col col-a">
+      <label>Column A</label>
+      <select id="sel-a" onchange="renderCompare()">
+        <option value="">— Pick a peptide —</option>
+      </select>
+    </div>
+    <div class="selector-col col-b">
+      <label>Column B</label>
+      <select id="sel-b" onchange="renderCompare()">
+        <option value="">— Pick a peptide —</option>
+      </select>
+    </div>
+    <div class="selector-col col-c">
+      <label>Column C (optional)</label>
+      <select id="sel-c" onchange="renderCompare()">
+        <option value="">— Pick a peptide —</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- COMPARISON TABLE -->
+  <div id="compare-output">
+    <div class="empty-state">Pick at least 2 peptides above to see them compared.</div>
+  </div>
+
+  <div class="cta-row">
+    <a href="index.html" class="cta-btn secondary">📖 Browse Encyclopedia</a>
+    <a href="protocol-tracker.html" class="cta-btn primary">🎯 Go to Tracker</a>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════════════
+// 📚 PEPTIDE COMPARISON DATA
+// Every field here drives the side-by-side rows. Add new peptides by
+// extending this object. "goals" array controls which goal-filter pills
+// the peptide shows up under.
+// ══════════════════════════════════════════════════════════════════════
+const PEPTIDES = {
+  // ─── GH AXIS ────────────────────────────────────────────
+  'Ipamorelin': {
+    goals: ['gh-axis','longevity','healing'],
+    fullName: 'Ipamorelin',
+    class: 'GHRP (Ghrelin mimetic)',
+    fda: 'Research-only',
+    bestFor: 'Clean GH pulse — no cortisol / prolactin spike',
+    dose: '200-300 mcg',
+    freq: 'Daily at bedtime, fasted',
+    mechanism: 'Mimics ghrelin → stimulates pituitary to release GH',
+    sideEffects: 'Very clean — rare mild headache',
+    stacksWith: 'CJC-1295 (synergy)',
+    notWith: 'Tesamorelin (GHRH redundancy)',
+    shelfLife: '21 days',
+    xlr8Cost: '$7',
+    ratings: { sleep:5, recovery:4, fatLoss:3, muscle:4, libido:1, cognition:2 },
+    notes: 'The cleanest GHRP. Ideal pairing partner for CJC-1295 No DAC.',
+    link: 'ipamorelin.html',
+  },
+  'CJC-1295 No DAC': {
+    goals: ['gh-axis','longevity'],
+    fullName: 'CJC-1295 No DAC',
+    class: 'GHRH analog',
+    fda: 'Research-only',
+    bestFor: 'Extending + amplifying natural GH pulses',
+    dose: '100-300 mcg',
+    freq: 'Daily at bedtime, fasted',
+    mechanism: 'Stimulates pituitary GHRH receptor → more/longer GH pulses',
+    sideEffects: 'Mild tingling / injection-site redness',
+    stacksWith: 'Ipamorelin (gold standard GH stack)',
+    notWith: 'Tesamorelin, Sermorelin (redundant GHRH)',
+    shelfLife: '21 days',
+    xlr8Cost: '$7',
+    ratings: { sleep:4, recovery:4, fatLoss:3, muscle:4, libido:1, cognition:2 },
+    notes: 'Works BEST stacked with Ipamorelin. Alone it\'s decent, stacked it\'s elite.',
+    link: 'cjc-no-dac.html',
+  },
+  'CJC + Ipa Blend': {
+    goals: ['gh-axis','longevity','healing'],
+    fullName: 'CJC-1295 + Ipamorelin Blend',
+    class: 'GHRH + GHRP combo',
+    fda: 'Research-only',
+    bestFor: 'Full GH axis optimization — the community gold standard',
+    dose: '200-300 mcg combined',
+    freq: 'Daily at bedtime, fasted',
+    mechanism: 'CJC extends GH pulse window; Ipa amplifies via ghrelin — 2-3x stronger than either alone',
+    sideEffects: 'Mild (clean Ipa profile dominates)',
+    stacksWith: 'TRT, BPC-157, NAD+',
+    notWith: 'Tesamorelin, Sermorelin',
+    shelfLife: '21 days',
+    xlr8Cost: '~$14',
+    ratings: { sleep:5, recovery:5, fatLoss:4, muscle:5, libido:2, cognition:3 },
+    notes: 'The default recommendation for most users wanting GH benefits. Pre-blended = single injection.',
+    link: 'cjc-ipa-blend.html',
+  },
+  'CJC-1295 DAC': {
+    goals: ['gh-axis','longevity'],
+    fullName: 'CJC-1295 DAC',
+    class: 'Long-acting GHRH (DAC-extended)',
+    fda: 'Research-only',
+    bestFor: 'Sustained GHRH action — 2x/week dosing',
+    dose: '2mg',
+    freq: '2x per week',
+    mechanism: 'DAC attachment extends half-life to ~8 days — creates "GH bleed" rather than pulses',
+    sideEffects: 'Can blunt natural pulsatility — tingling, water retention',
+    stacksWith: 'Usually runs solo',
+    notWith: 'CJC No DAC, Ipamorelin (disrupts pulse pattern)',
+    shelfLife: '28 days',
+    xlr8Cost: '$14',
+    ratings: { sleep:3, recovery:4, fatLoss:3, muscle:4, libido:1, cognition:2 },
+    notes: 'Convenient but produces less "natural" GH pattern. Most practitioners prefer No DAC now.',
+    link: 'cjc1295-dac.html',
+  },
+  'Sermorelin': {
+    goals: ['gh-axis','longevity'],
+    fullName: 'Sermorelin',
+    class: 'GHRH analog (first-gen)',
+    fda: '❌ No (previously approved, discontinued)',
+    bestFor: 'Gentle GH axis stimulation, older protocol',
+    dose: '200-500 mcg',
+    freq: 'Daily at bedtime, fasted',
+    mechanism: 'First synthetic GHRH — shorter half-life than CJC No DAC',
+    sideEffects: 'Mild — injection site, occasional flushing',
+    stacksWith: 'Ipamorelin (traditional pairing)',
+    notWith: 'CJC-1295 (redundant)',
+    shelfLife: '21 days',
+    xlr8Cost: '$12',
+    ratings: { sleep:3, recovery:3, fatLoss:2, muscle:3, libido:1, cognition:2 },
+    notes: 'Largely superseded by CJC No DAC. Still used in some anti-aging clinics.',
+    link: 'sermorelin.html',
+  },
+  'Tesamorelin': {
+    goals: ['gh-axis','weight-loss','longevity'],
+    fullName: 'Tesamorelin (Egrifta)',
+    class: 'GHRH analog (stabilized)',
+    fda: '✅ YES (HIV lipodystrophy)',
+    bestFor: 'Visceral (belly/organ) fat reduction',
+    dose: '1-2 mg',
+    freq: 'Daily at bedtime, fasted',
+    mechanism: 'Stabilized GHRH — potent IGF-1 elevator, targets visceral fat specifically',
+    sideEffects: 'Water retention, joint aches, elevated fasting glucose',
+    stacksWith: 'Runs solo typically; pairs OK with MOTS-c',
+    notWith: 'CJC, Sermorelin, Ipamorelin (redundant or over-stimulating)',
+    shelfLife: '21 days',
+    xlr8Cost: '$15',
+    ratings: { sleep:3, recovery:3, fatLoss:5, muscle:3, libido:1, cognition:2 },
+    notes: 'The visceral fat specialist. FDA-approved for HIV lipodystrophy, used off-label for general anti-aging.',
+    link: 'tesamorelin.html',
+  },
+  'Hexarelin': {
+    goals: ['gh-axis'],
+    fullName: 'Hexarelin',
+    class: 'GHRP (potent, older-gen)',
+    fda: 'Research-only',
+    bestFor: 'Strongest GH release of the GHRP family',
+    dose: '100-200 mcg',
+    freq: 'Daily, short cycles',
+    mechanism: 'Potent ghrelin receptor agonist — strongest GH release, but raises cortisol + prolactin',
+    sideEffects: 'Cortisol spike, prolactin rise, appetite, can desensitize quickly',
+    stacksWith: 'CJC-1295 (short cycles)',
+    notWith: 'Ipamorelin (redundant, cleaner)',
+    shelfLife: '21 days',
+    xlr8Cost: '$10',
+    ratings: { sleep:4, recovery:4, fatLoss:3, muscle:4, libido:2, cognition:2 },
+    notes: 'Powerful but dirty. Most users prefer Ipa for cleanliness. Max 4-week cycles to avoid desensitization.',
+    link: null,
+  },
+
+  // ─── GLP-1 / WEIGHT LOSS ───────────────────────────────
+  'Semaglutide': {
+    goals: ['weight-loss'],
+    fullName: 'Semaglutide (Ozempic / Wegovy)',
+    class: 'GLP-1 agonist',
+    fda: '✅ YES (T2D, obesity)',
+    bestFor: 'Foundational weight loss, appetite suppression',
+    dose: '0.25 → 2.4 mg (titration)',
+    freq: 'Once weekly',
+    mechanism: 'Mimics GLP-1 → delays gastric emptying, suppresses appetite, improves insulin sensitivity',
+    sideEffects: 'Nausea, constipation, possible muscle loss if protein low',
+    stacksWith: 'Metformin, MOTS-c, TRT (but check e2)',
+    notWith: 'Tirzepatide / Retatrutide (same class)',
+    shelfLife: '30 days',
+    xlr8Cost: 'Not stocked — use UP',
+    ratings: { sleep:2, recovery:2, fatLoss:4, muscle:2, libido:2, cognition:2 },
+    notes: 'The original GLP-1. Most data, widest clinical use. ~15% avg weight loss.',
+    link: 'semaglutide.html',
+  },
+  'Tirzepatide': {
+    goals: ['weight-loss'],
+    fullName: 'Tirzepatide (Mounjaro / Zepbound)',
+    class: 'Dual GLP-1 + GIP agonist',
+    fda: '✅ YES (T2D, obesity)',
+    bestFor: 'More aggressive weight loss, better muscle preservation than Sema',
+    dose: '2.5 → 15 mg (titration)',
+    freq: 'Once weekly',
+    mechanism: 'Dual-receptor agonism — stronger appetite suppression + better lean mass retention vs Sema',
+    sideEffects: 'Same as Sema but often milder nausea',
+    stacksWith: 'TRT, BPC-157',
+    notWith: 'Semaglutide / Retatrutide (same class)',
+    shelfLife: '30 days',
+    xlr8Cost: 'Not stocked — use UP',
+    ratings: { sleep:2, recovery:2, fatLoss:5, muscle:3, libido:2, cognition:2 },
+    notes: 'The middle-ground choice — more effective than Sema, less intense than Reta. ~20% avg weight loss.',
+    link: 'tirzepatide.html',
+  },
+  'Retatrutide': {
+    goals: ['weight-loss'],
+    fullName: 'Retatrutide (LY3437943)',
+    class: 'Triple agonist — GLP-1 + GIP + Glucagon',
+    fda: '❌ Phase 3',
+    bestFor: 'Most aggressive fat loss available, emerging cancer research',
+    dose: '1 → 12 mg (slow titration)',
+    freq: 'Once weekly',
+    mechanism: 'Three receptors — fat loss via multiple pathways including metabolic rate increase',
+    sideEffects: 'Stronger GI effects, some elevated heart rate, dehydration',
+    stacksWith: 'TRT, BPC-157, NAD+',
+    notWith: 'Other GLP-1s',
+    shelfLife: '30 days',
+    xlr8Cost: '$14.50',
+    ratings: { sleep:2, recovery:2, fatLoss:5, muscle:4, libido:2, cognition:2 },
+    notes: 'Most powerful fat loss compound in development. ~24% avg weight loss in Phase 2. Strong preclinical anti-tumor data (Nature 2025).',
+    link: 'retatrutide.html',
+  },
+  'AOD-9604': {
+    goals: ['weight-loss','healing'],
+    fullName: 'AOD-9604',
+    class: 'Lipolytic HGH fragment (176-191)',
+    fda: '❌ Research-only',
+    bestFor: 'Targeted fat loss WITHOUT affecting blood sugar',
+    dose: '250-500 mcg',
+    freq: 'Daily (AM fasted)',
+    mechanism: 'Mimics lipolytic region of GH — burns fat, doesn\'t elevate IGF-1',
+    sideEffects: 'Very clean — rare mild nausea',
+    stacksWith: 'CJC+Ipa, TRT, GLP-1s',
+    notWith: 'No contraindications noted',
+    shelfLife: '21 days (⚠️ use acetic acid to reconstitute)',
+    xlr8Cost: '$16',
+    ratings: { sleep:2, recovery:3, fatLoss:3, muscle:2, libido:1, cognition:2 },
+    notes: 'The only peptide that burns fat via GH pathway without the metabolic baggage. Requires acetic acid reconstitution.',
+    link: 'aod9604.html',
+  },
+  '5-Amino-1MQ': {
+    goals: ['weight-loss'],
+    fullName: '5-Amino-1MQ',
+    class: 'NNMT inhibitor (oral)',
+    fda: 'Research-only',
+    bestFor: 'Metabolic reset, NAD+ preservation in fat cells',
+    dose: '50-150 mg',
+    freq: 'Daily (oral)',
+    mechanism: 'Blocks NNMT enzyme → preserves NAD+ → metabolic rate increase + fat loss',
+    sideEffects: 'Generally clean',
+    stacksWith: 'NAD+, MOTS-c, CJC+Ipa',
+    notWith: 'No known conflicts',
+    shelfLife: '30 days (capsule)',
+    xlr8Cost: '$9.50 (50mg caps)',
+    ratings: { sleep:2, recovery:3, fatLoss:3, muscle:3, libido:1, cognition:3 },
+    notes: 'Oral capsule — no injection needed. Quietly effective metabolic support.',
+    link: '5amino1mq.html',
+  },
+  'MOTS-c': {
+    goals: ['weight-loss','longevity'],
+    fullName: 'MOTS-c',
+    class: 'Mitochondrial peptide',
+    fda: 'Research-only',
+    bestFor: 'Mitochondrial function, exercise-mimetic fat loss',
+    dose: '5-10 mg (weekly total)',
+    freq: '1-2x per week',
+    mechanism: 'Encoded in mitochondrial DNA — improves insulin sensitivity + endurance capacity',
+    sideEffects: 'Very clean',
+    stacksWith: 'NAD+, SS-31, CJC+Ipa, GLP-1s',
+    notWith: 'No known conflicts',
+    shelfLife: '21 days (hydrophobic)',
+    xlr8Cost: '$5',
+    ratings: { sleep:2, recovery:4, fatLoss:3, muscle:3, libido:1, cognition:3 },
+    notes: 'The "exercise mimetic" peptide. Pairs beautifully with GLP-1s for fat loss.',
+    link: 'motsc.html',
+  },
+
+  // ─── HEALING ────────────────────────────────────────────
+  'BPC-157': {
+    goals: ['healing','longevity'],
+    fullName: 'BPC-157',
+    class: 'Body Protection Compound',
+    fda: 'Research-only',
+    bestFor: 'Injury healing, gut repair, anti-inflammatory',
+    dose: '250-500 mcg',
+    freq: 'Daily (SQ or oral)',
+    mechanism: 'Upregulates growth factors (VEGF, FGF, nitric oxide) → accelerates tissue repair',
+    sideEffects: 'Extremely clean — no established tolerance',
+    stacksWith: 'TB-500 (the "Wolverine" stack), GLP-1s',
+    notWith: 'No known conflicts',
+    shelfLife: '30 days',
+    xlr8Cost: '$5.80',
+    ratings: { sleep:3, recovery:5, fatLoss:1, muscle:3, libido:2, cognition:3 },
+    notes: 'The gold standard healing peptide. Works for almost everyone.',
+    link: 'bpc157.html',
+  },
+  'TB-500': {
+    goals: ['healing'],
+    fullName: 'TB-500 (Thymosin Beta-4)',
+    class: 'Regenerative peptide',
+    fda: 'Research-only',
+    bestFor: 'Systemic healing, tendon/ligament repair, hair growth',
+    dose: '2-5 mg',
+    freq: '1-2x per week',
+    mechanism: 'Regulates actin → promotes cell migration, angiogenesis, tissue repair',
+    sideEffects: 'Clean, occasional mild fatigue first few doses',
+    stacksWith: 'BPC-157 (Wolverine), GHK-Cu',
+    notWith: 'No known conflicts',
+    shelfLife: '30 days',
+    xlr8Cost: '$11',
+    ratings: { sleep:3, recovery:5, fatLoss:1, muscle:3, libido:2, cognition:2 },
+    notes: 'Systemic healing — reaches where BPC can\'t. Often paired with BPC for injury work.',
+    link: 'tb500.html',
+  },
+  'GHK-Cu': {
+    goals: ['healing','longevity'],
+    fullName: 'GHK-Cu (Copper Peptide)',
+    class: 'Copper tripeptide',
+    fda: 'Research-only (topical skincare approved)',
+    bestFor: 'Skin, hair, collagen, wound healing',
+    dose: '1-2 mg',
+    freq: 'Daily',
+    mechanism: 'Copper binding → collagen synthesis, antioxidant, gene expression modulation',
+    sideEffects: 'Mild — can darken injection sites temporarily',
+    stacksWith: 'BPC-157, TB-500 (GLOW stack)',
+    notWith: 'No known conflicts',
+    shelfLife: '30 days',
+    xlr8Cost: '$4.20',
+    ratings: { sleep:2, recovery:4, fatLoss:1, muscle:2, libido:1, cognition:2 },
+    notes: 'The beauty + repair peptide. Huge margin for the value.',
+    link: 'ghkcu.html',
+  },
+  'KPV': {
+    goals: ['healing','longevity'],
+    fullName: 'KPV',
+    class: 'α-MSH fragment (anti-inflammatory)',
+    fda: 'Research-only',
+    bestFor: 'Gut inflammation, autoimmune support',
+    dose: '250-500 mcg',
+    freq: 'Daily',
+    mechanism: 'α-MSH anti-inflammatory action — blocks NF-κB',
+    sideEffects: 'Very clean',
+    stacksWith: 'BPC-157, GHK-Cu (KLOW stack)',
+    notWith: 'No known conflicts',
+    shelfLife: '30 days',
+    xlr8Cost: '$5',
+    ratings: { sleep:2, recovery:4, fatLoss:1, muscle:1, libido:1, cognition:2 },
+    notes: 'The gut healer. Non-negotiable if you have IBD/IBS/autoimmune issues.',
+    link: 'kpv.html',
+  },
+
+  // ─── LONGEVITY ─────────────────────────────────────────
+  'NAD+': {
+    goals: ['longevity','weight-loss'],
+    fullName: 'NAD+ (Nicotinamide Adenine Dinucleotide)',
+    class: 'Coenzyme (mitochondrial)',
+    fda: 'Research-only',
+    bestFor: 'Energy, cognition, mitochondrial function, longevity',
+    dose: '50-250 mg',
+    freq: 'Every other day (EOD)',
+    mechanism: 'Master regulator of cellular energy + sirtuin activation',
+    sideEffects: 'Flushing, chest tightness (slow injection = less)',
+    stacksWith: 'MOTS-c, SS-31, everything',
+    notWith: 'No known conflicts',
+    shelfLife: '30 days',
+    xlr8Cost: '$11.50 (1000mg)',
+    ratings: { sleep:2, recovery:4, fatLoss:2, muscle:2, libido:1, cognition:5 },
+    notes: 'The longevity peptide. Pair with MOTS-c for the mitochondrial stack.',
+    link: 'nad-plus.html',
+  },
+  'Epitalon': {
+    goals: ['longevity'],
+    fullName: 'Epitalon (Epithalon)',
+    class: 'Khavinson bioregulator',
+    fda: 'Research-only',
+    bestFor: 'Telomere protection, pineal function, sleep quality',
+    dose: '5-10 mg (per cycle)',
+    freq: '1x/day for 10 days, 2x/year',
+    mechanism: 'Activates telomerase → lengthens telomeres → cellular anti-aging',
+    sideEffects: 'Very clean — no established tolerance',
+    stacksWith: 'Cartalax, MOTS-c, NAD+',
+    notWith: 'No known conflicts',
+    shelfLife: '28 days',
+    xlr8Cost: '$4',
+    ratings: { sleep:5, recovery:3, fatLoss:1, muscle:2, libido:2, cognition:3 },
+    notes: 'Short-cycle peptide. 10 days twice a year is the classic Khavinson protocol.',
+    link: 'epitalon.html',
+  },
+  'SS-31': {
+    goals: ['longevity'],
+    fullName: 'SS-31 (Elamipretide)',
+    class: 'Mitochondrial-targeted peptide',
+    fda: '❌ Phase 3 (various conditions)',
+    bestFor: 'Mitochondrial dysfunction, cardiac support, energy',
+    dose: '3-5 mg',
+    freq: 'Daily',
+    mechanism: 'Binds cardiolipin in inner mitochondrial membrane → restores function',
+    sideEffects: 'Clean',
+    stacksWith: 'MOTS-c, NAD+',
+    notWith: 'No known conflicts',
+    shelfLife: '21 days (hydrophobic)',
+    xlr8Cost: '$7.50',
+    ratings: { sleep:2, recovery:4, fatLoss:2, muscle:3, libido:1, cognition:4 },
+    notes: 'The mitochondrial specialist. Best paired with MOTS-c for full mito reset.',
+    link: 'ss31.html',
+  },
+  'Thymosin Alpha-1': {
+    goals: ['longevity','healing'],
+    fullName: 'Thymosin Alpha-1',
+    class: 'Immune-modulating peptide',
+    fda: '✅ YES (various countries for hepatitis)',
+    bestFor: 'Immune function, post-illness recovery, chronic infection',
+    dose: '1.5-3 mg',
+    freq: '2x per week',
+    mechanism: 'Stimulates T-cell maturation, improves immune surveillance',
+    sideEffects: 'Clean',
+    stacksWith: 'BPC-157, GHK-Cu',
+    notWith: 'Immunosuppressants (obviously)',
+    shelfLife: '28 days',
+    xlr8Cost: '$5',
+    ratings: { sleep:3, recovery:4, fatLoss:1, muscle:2, libido:2, cognition:3 },
+    notes: 'The immune system peptide. Non-negotiable if you get sick often or have chronic low-grade issues.',
+    link: 'thymosin-alpha1.html',
+  },
+
+  // ─── LIBIDO ────────────────────────────────────────────
+  'PT-141': {
+    goals: ['libido'],
+    fullName: 'PT-141 (Bremelanotide)',
+    class: 'Melanocortin receptor agonist',
+    fda: '✅ YES (Vyleesi — HSDD in women)',
+    bestFor: 'Pure libido — both sexes',
+    dose: '1-2 mg',
+    freq: 'On demand (45-90 min before activity)',
+    mechanism: 'MC-3/4 receptor agonism — central nervous system arousal pathway',
+    sideEffects: 'Flushing, nausea, transient BP increase',
+    stacksWith: 'TRT (synergy)',
+    notWith: 'Melanotan II (same receptors — redundant)',
+    shelfLife: '28 days',
+    xlr8Cost: '$5',
+    ratings: { sleep:1, recovery:1, fatLoss:1, muscle:1, libido:5, cognition:2 },
+    notes: 'The cleanest libido peptide — no tanning side effects like Melanotan. On-demand only, NOT daily.',
+    link: 'pt141.html',
+  },
+  'Melanotan I': {
+    goals: ['libido'],
+    fullName: 'Melanotan I (Afamelanotide)',
+    class: 'α-MSH analog (MC1R selective)',
+    fda: '✅ YES (Scenesse — photoprotection)',
+    bestFor: 'Tanning only — no libido effect',
+    dose: '250-500 mcg',
+    freq: 'Daily during loading',
+    mechanism: 'Selective MC1R agonism → melanin production without MC-3/4 effects',
+    sideEffects: 'Very clean — no libido/nausea like MT-II',
+    stacksWith: 'Runs solo; PT-141 if libido needed',
+    notWith: 'Melanotan II (redundant tanning)',
+    shelfLife: '28 days',
+    xlr8Cost: '$4',
+    ratings: { sleep:1, recovery:1, fatLoss:1, muscle:1, libido:1, cognition:1 },
+    notes: 'Pure tanning. MT-I does NOT affect libido. Pair with PT-141 if you want both.',
+    link: 'melanotan1.html',
+  },
+  'Melanotan II': {
+    goals: ['libido'],
+    fullName: 'Melanotan II',
+    class: 'α-MSH analog (non-selective)',
+    fda: 'Research-only',
+    bestFor: 'Tanning + libido — on demand',
+    dose: '250-500 mcg',
+    freq: 'Daily (tanning) + on-demand (libido)',
+    mechanism: 'MC1R (tan) + MC-3/4 (libido) — dual receptor hit',
+    sideEffects: 'Nausea, flushing, mole darkening, appetite suppression',
+    stacksWith: 'TRT',
+    notWith: 'PT-141, Melanotan I (redundant)',
+    shelfLife: '28 days',
+    xlr8Cost: '$4',
+    ratings: { sleep:1, recovery:1, fatLoss:1, muscle:1, libido:4, cognition:1 },
+    notes: 'Tan + libido in one. Side effects are real though — most people prefer MT-I + PT-141 stack to split the functions.',
+    link: 'melanotan2.html',
+  },
+
+  // ─── COGNITION ─────────────────────────────────────────
+  'Semax': {
+    goals: ['cognition'],
+    fullName: 'Semax',
+    class: 'ACTH-derived nootropic',
+    fda: '✅ YES (Russia — neurological conditions)',
+    bestFor: 'Focus, memory, BDNF elevation, stress resilience',
+    dose: '600-1200 mcg (intranasal)',
+    freq: 'Daily',
+    mechanism: 'ACTH(4-10) fragment — elevates BDNF + NGF',
+    sideEffects: 'Very clean',
+    stacksWith: 'Selank, NAD+',
+    notWith: 'No known conflicts',
+    shelfLife: '21 days',
+    xlr8Cost: '$9.50',
+    ratings: { sleep:2, recovery:3, fatLoss:1, muscle:1, libido:2, cognition:5 },
+    notes: 'Intranasal → bypasses blood-brain barrier. Fast-acting focus enhancement.',
+    link: 'semax.html',
+  },
+  'Selank': {
+    goals: ['cognition'],
+    fullName: 'Selank',
+    class: 'Tuftsin-derived anxiolytic',
+    fda: '✅ YES (Russia — generalized anxiety)',
+    bestFor: 'Anti-anxiety without sedation, mental clarity under stress',
+    dose: '600-1200 mcg (intranasal)',
+    freq: 'Daily as needed',
+    mechanism: 'Modulates GABA + serotonin — calming without sedation',
+    sideEffects: 'Very clean',
+    stacksWith: 'Semax, Ipa+CJC',
+    notWith: 'No known conflicts',
+    shelfLife: '21 days',
+    xlr8Cost: '$5',
+    ratings: { sleep:3, recovery:3, fatLoss:1, muscle:1, libido:1, cognition:4 },
+    notes: 'Selank is the anti-anxiety sibling to Semax. Pair them for full CNS coverage.',
+    link: 'selank.html',
+  },
+  'Dihexa': {
+    goals: ['cognition'],
+    fullName: 'Dihexa',
+    class: 'Angiotensin-derived nootropic',
+    fda: 'Research-only',
+    bestFor: 'Memory, synaptic plasticity, cognitive decline',
+    dose: '8-45 mg (oral or topical)',
+    freq: 'Daily',
+    mechanism: 'Most potent known BDNF-upregulator — synaptogenesis',
+    sideEffects: 'Largely clean, some report headaches',
+    stacksWith: 'Semax, NAD+',
+    notWith: 'No known conflicts',
+    shelfLife: '21 days',
+    xlr8Cost: '$18',
+    ratings: { sleep:1, recovery:2, fatLoss:1, muscle:1, libido:1, cognition:5 },
+    notes: '7-8 orders of magnitude more potent than BDNF itself. Emerging research on Alzheimer\'s applications.',
+    link: 'dihexa.html',
+  },
+  'DSIP': {
+    goals: ['cognition','gh-axis'],
+    fullName: 'DSIP (Delta Sleep-Inducing Peptide)',
+    class: 'Sleep-modulating peptide',
+    fda: 'Research-only',
+    bestFor: 'Deep sleep enhancement, cortisol reduction',
+    dose: '100-300 mcg',
+    freq: 'Daily at bedtime',
+    mechanism: 'Modulates delta brainwave activity, reduces cortisol',
+    sideEffects: 'Very clean',
+    stacksWith: 'CJC+Ipa, Ipamorelin',
+    notWith: 'No known conflicts',
+    shelfLife: '21 days',
+    xlr8Cost: '$7.50',
+    ratings: { sleep:5, recovery:3, fatLoss:1, muscle:1, libido:1, cognition:3 },
+    notes: 'The sleep specialist. Pair with CJC+Ipa for ultimate recovery-optimized nights.',
+    link: 'dsip.html',
+  },
+
+  // ─── STACKS ────────────────────────────────────────────
+  'KLOW Stack': {
+    goals: ['healing','longevity'],
+    fullName: 'KLOW Stack',
+    class: 'Multi-peptide blend (KPV + LL-37 + BPC-157 + Wolverine)',
+    fda: 'Research-only',
+    bestFor: 'Full-body gut + anti-inflammatory + healing',
+    dose: '400-800 mcg combined',
+    freq: 'Daily',
+    mechanism: 'Four synergistic peptides covering gut repair + immune modulation + tissue healing',
+    sideEffects: 'Clean (each component is clean alone)',
+    stacksWith: 'TRT, NAD+',
+    notWith: 'Redundant with individual components',
+    shelfLife: '21 days (shortest member wins)',
+    xlr8Cost: '$18',
+    ratings: { sleep:3, recovery:5, fatLoss:1, muscle:2, libido:1, cognition:2 },
+    notes: 'Maximum healing bundle. 1 injection replaces 4 separate compounds.',
+    link: 'klow.html',
+  },
+  'GLOW Stack': {
+    goals: ['healing','longevity'],
+    fullName: 'GLOW Stack',
+    class: 'Multi-peptide blend (GHK-Cu + TB-500 + BPC-157)',
+    fda: 'Research-only',
+    bestFor: 'Skin + collagen + systemic healing',
+    dose: '500-1000 mcg combined',
+    freq: 'Daily',
+    mechanism: 'Three peptides for beauty + recovery synergy',
+    sideEffects: 'Clean',
+    stacksWith: 'TRT',
+    notWith: 'Redundant with individual components',
+    shelfLife: '30 days',
+    xlr8Cost: '$14.50',
+    ratings: { sleep:2, recovery:5, fatLoss:1, muscle:2, libido:1, cognition:2 },
+    notes: 'The beauty/anti-aging stack. Great for post-injury or skin focus.',
+    link: 'glow.html',
+  },
+  'Wolverine Stack': {
+    goals: ['healing'],
+    fullName: 'Wolverine Stack',
+    class: 'BPC-157 + TB-500 blend',
+    fda: 'Research-only',
+    bestFor: 'Injury recovery, systemic tissue repair',
+    dose: '500-750 mcg combined',
+    freq: 'Daily',
+    mechanism: 'Structural healer (BPC) + systemic mobilizer (TB-500)',
+    sideEffects: 'Very clean',
+    stacksWith: 'GHK-Cu, TRT',
+    notWith: 'Individual BPC / TB-500',
+    shelfLife: '30 days',
+    xlr8Cost: '$10',
+    ratings: { sleep:3, recovery:5, fatLoss:1, muscle:3, libido:2, cognition:2 },
+    notes: 'Named for Marvel\'s healing hero. The classic recovery stack.',
+    link: 'wolverine.html',
+  },
+};
+
+// ═══════════════════════════════════════════════════════════
+// UI LOGIC
+// ═══════════════════════════════════════════════════════════
+
+let currentGoal = 'all';
+
+function getFilteredPeptides(goal) {
+  if (goal === 'all') return Object.keys(PEPTIDES);
+  return Object.keys(PEPTIDES).filter(k => PEPTIDES[k].goals && PEPTIDES[k].goals.includes(goal));
+}
+
+function populateSelectors() {
+  const filtered = getFilteredPeptides(currentGoal);
+  ['sel-a','sel-b','sel-c'].forEach(id => {
+    const el = document.getElementById(id);
+    const current = el.value;
+    el.innerHTML = '<option value="">— Pick a peptide —</option>' +
+      filtered.map(k => `<option value="${k}" ${k === current ? 'selected' : ''}>${k}</option>`).join('');
+  });
+}
+
+function setGoal(goal) {
+  currentGoal = goal;
+  document.querySelectorAll('.goal-pill').forEach(p => {
+    p.classList.toggle('active', p.getAttribute('data-goal') === goal);
+  });
+  populateSelectors();
+  renderCompare();
+}
+
+// Wire up goal pill clicks
+document.querySelectorAll('.goal-pill').forEach(p => {
+  p.addEventListener('click', () => setGoal(p.getAttribute('data-goal')));
+});
+
+function stars(n) {
+  const filled = Math.max(0, Math.min(5, n));
+  return `<span class="star">${'★'.repeat(filled)}<span class="star-empty">${'★'.repeat(5-filled)}</span></span>`;
+}
+
+function val(peptide, field) {
+  if (!peptide) return '<span style="color:var(--muted);">—</span>';
+  const v = peptide[field];
+  return v == null || v === '' ? '<span style="color:var(--muted);">—</span>' : v;
+}
+
+function generateVerdict(peps) {
+  const active = peps.filter(Boolean);
+  if (active.length < 2) return null;
+  // Very simple logic — find the one with highest "stacked" rating for the current filter
+  const goalKey = currentGoal === 'all' ? 'fatLoss' : (currentGoal === 'gh-axis' ? 'sleep' : currentGoal === 'weight-loss' ? 'fatLoss' : currentGoal === 'healing' ? 'recovery' : currentGoal === 'libido' ? 'libido' : currentGoal === 'cognition' ? 'cognition' : currentGoal === 'longevity' ? 'recovery' : 'recovery');
+  const scored = active.map(p => {
+    const r = p.ratings || {};
+    const total = Object.values(r).reduce((a,b)=>a+b,0);
+    return { name: p.fullName, goalScore: r[goalKey] || 0, total, notes: p.notes };
+  });
+  scored.sort((a,b) => {
+    if (b.goalScore !== a.goalScore) return b.goalScore - a.goalScore;
+    return b.total - a.total;
+  });
+  const winner = scored[0];
+  return {
+    title: `For this comparison, <strong style="color:var(--accent2);">${winner.name}</strong> stands out.`,
+    body: winner.notes,
+  };
+}
+
+// ═══════════════════════════════════════════════════════════
+// CONFLICT DETECTOR — fires when any pair of selected peptides
+// overlaps on mechanism (e.g., Tesamorelin + CJC = both GHRH).
+// Checks "notWith" field, class overlap, and known redundant pairings.
+// ═══════════════════════════════════════════════════════════
+function detectConflicts(peps) {
+  const active = peps.filter(Boolean);
+  if (active.length < 2) return [];
+  const conflicts = [];
+
+  // Explicit "notWith" references — case-insensitive substring match
+  for (let i = 0; i < active.length; i++) {
+    for (let j = i + 1; j < active.length; j++) {
+      const A = active[i], B = active[j];
+      const notA = (A.notWith || '').toLowerCase();
+      const notB = (B.notWith || '').toLowerCase();
+      const nameA = A.fullName.toLowerCase();
+      const nameB = B.fullName.toLowerCase();
+      const shortA = nameA.split(' ')[0];
+      const shortB = nameB.split(' ')[0];
+      if (notA.includes(shortB) || notA.includes(nameB) || notB.includes(shortA) || notB.includes(nameA)) {
+        conflicts.push({ a: A, b: B, reason: A.notWith.includes(shortB) || A.notWith.includes(nameB) ? A.notWith : B.notWith });
+        continue;
+      }
+      // Class-based redundancy check (two GHRH analogs, two GLP-1s, etc.)
+      const classA = (A.class || '').toLowerCase();
+      const classB = (B.class || '').toLowerCase();
+      const REDUNDANT_CLASSES = [
+        { test: (x) => x.includes('ghrh'), label: 'Both are GHRH analogs — they hit the same pituitary receptor. Running both is redundant and may blunt natural pulsatility.' },
+        { test: (x) => x.includes('glp-1'), label: 'Both are GLP-1 receptor agonists — running two simultaneously doubles side effects without extra benefit. Pick one.' },
+        { test: (x) => x.includes('ghrp') || x.includes('ghrelin'), label: 'Both are GHRPs (ghrelin-receptor agonists) — they compete for the same receptor. One clean GHRP (Ipamorelin) usually beats stacking two.' },
+        { test: (x) => x.includes('melanocortin') || x.includes('α-msh'), label: 'Both activate melanocortin receptors — stacking amplifies side effects (nausea, flushing) without extra benefit.' },
+      ];
+      for (const rc of REDUNDANT_CLASSES) {
+        if (rc.test(classA) && rc.test(classB)) {
+          conflicts.push({ a: A, b: B, reason: rc.label });
+          break;
+        }
+      }
+    }
+  }
+  return conflicts;
+}
+
+function renderCompare() {
+  const a = PEPTIDES[document.getElementById('sel-a').value] || null;
+  const b = PEPTIDES[document.getElementById('sel-b').value] || null;
+  const c = PEPTIDES[document.getElementById('sel-c').value] || null;
+  const out = document.getElementById('compare-output');
+
+  if (!a && !b && !c) {
+    out.innerHTML = '<div class="empty-state">Pick at least 2 peptides above to see them compared.</div>';
+    return;
+  }
+  if ([a,b,c].filter(Boolean).length < 2) {
+    out.innerHTML = '<div class="empty-state">Pick one more peptide to compare.</div>';
+    return;
+  }
+
+  // Check for mechanism overlap / redundancy and surface a warning at top
+  const conflicts = detectConflicts([a,b,c]);
+  let conflictBanner = '';
+  if (conflicts.length > 0) {
+    conflictBanner = conflicts.map(c => `
+      <div style="margin-bottom:14px;padding:16px 20px;background:linear-gradient(135deg,rgba(239,68,68,.12),rgba(239,68,68,.03));border:2px solid rgba(239,68,68,.55);border-radius:6px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.2em;color:#f87171;margin-bottom:8px;">⚠️ MECHANISM CONFLICT DETECTED</div>
+        <div style="font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:800;color:#fff;line-height:1.3;margin-bottom:6px;">${c.a.fullName} + ${c.b.fullName} — <span style="color:#f87171;">redundant pairing</span></div>
+        <div style="font-family:'Barlow',sans-serif;font-size:14px;color:#cbd5e1;line-height:1.6;">${c.reason}</div>
+      </div>
+    `).join('');
+  }
+
+  const showC = !!c;
+  const header = `<tr>
+    <th style="width:140px;">Attribute</th>
+    <th class="col-a-head-cell">${a ? `<div class="col-a-head">${a.fullName}</div><div class="col-sub">${a.class}</div>` : '—'}</th>
+    <th class="col-b-head-cell">${b ? `<div class="col-b-head">${b.fullName}</div><div class="col-sub">${b.class}</div>` : '—'}</th>
+    ${showC ? `<th class="col-c-head-cell">${c ? `<div class="col-c-head">${c.fullName}</div><div class="col-sub">${c.class}</div>` : '—'}</th>` : ''}
+  </tr>`;
+
+  const row = (label, field, opts={}) => {
+    const getVal = opts.getter || ((p) => val(p, field));
+    return `<tr>
+      <th>${label}</th>
+      <td>${a ? getVal(a) : '—'}</td>
+      <td>${b ? getVal(b) : '—'}</td>
+      ${showC ? `<td>${c ? getVal(c) : '—'}</td>` : ''}
+    </tr>`;
+  };
+
+  const ratingRow = (label, key) => row(label, null, { getter: (p) => stars((p.ratings||{})[key]||0) });
+
+  let html = conflictBanner;
+  html += `<div class="compare-table-wrap"><table class="compare-table"><thead>${header}</thead><tbody>`;
+  html += row('FDA Status', 'fda');
+  html += row('Best For', 'bestFor');
+  html += row('Typical Dose', 'dose');
+  html += row('Frequency', 'freq');
+  html += row('Mechanism', 'mechanism');
+  html += row('Side Effects', 'sideEffects');
+  html += `<tr class="row-title"><td colspan="${showC?4:3}" style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;padding:14px 16px;">⭐ Rated head-to-head</td></tr>`;
+  html += ratingRow('Sleep', 'sleep');
+  html += ratingRow('Recovery', 'recovery');
+  html += ratingRow('Fat Loss', 'fatLoss');
+  html += ratingRow('Muscle Protection', 'muscle');
+  html += ratingRow('Libido', 'libido');
+  html += ratingRow('Cognition', 'cognition');
+  html += `<tr class="row-title"><td colspan="${showC?4:3}" style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;padding:14px 16px;">🧬 Stacking + Cost</td></tr>`;
+  html += row('Stacks well with', 'stacksWith');
+  html += row('Do NOT combine with', 'notWith');
+  html += row('Shelf life (reconstituted)', 'shelfLife');
+  html += row('XLR8 cost (partner rate)', 'xlr8Cost');
+  html += row('Notes', 'notes');
+  html += row('Link', null, {
+    getter: (p) => p.link ? `<a href="${p.link}" style="color:var(--accent);text-decoration:none;font-family:'Share Tech Mono',monospace;font-size:11px;">📖 Full Reference →</a>` : '<span style="color:var(--muted);">—</span>',
+  });
+  html += '</tbody></table></div>';
+
+  // Verdict panel
+  const v = generateVerdict([a,b,c]);
+  if (v) {
+    html += `<div class="verdict-panel">
+      <div class="verdict-label">⚖️ The call</div>
+      <div class="verdict-title">${v.title}</div>
+      <div class="verdict-body">${v.body}</div>
+    </div>`;
+  }
+
+  out.innerHTML = html;
+}
+
+// Initial population
+populateSelectors();
+</script>
+
+<!-- PERSISTENT WIZARD TRIGGER -->
+<a href="wizard.html" id="apex-fab" style="position:fixed;bottom:20px;right:20px;background:#00ff9d;color:#080c10;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;padding:12px 18px;text-decoration:none;z-index:9999;box-shadow:0 6px 24px rgba(0,255,157,.35);display:flex;align-items:center;gap:8px;border-radius:2px;">🧪 Walk me through</a>
+<style>@media(max-width:640px){#apex-fab{bottom:20px!important;right:16px!important;font-size:11px!important;padding:10px 14px!important;}}</style>
+
+<!-- ═══ GLOBAL COMPLIANCE FOOTER ═══ -->
+<div style="max-width:1100px;margin:32px auto 0;padding:20px 24px;border-top:1px solid #1a2d3a;text-align:center;font-size:11px;color:#4a6272;font-family:'Share Tech Mono',monospace;letter-spacing:.08em;line-height:1.7;">
+  ⚠ RESEARCH USE ONLY · NOT MEDICAL ADVICE · NOT FDA-APPROVED FOR MOST COMPOUNDS DISCUSSED · 17+<br>
+  Apex does not prescribe, sell, or facilitate the purchase of peptides. Consult a licensed healthcare provider before any protocol.<br>
+  <a href="privacy.html" style="color:#4a6272;margin:0 8px;">Privacy Policy</a> ·
+  <a href="terms.html" style="color:#4a6272;margin:0 8px;">Terms of Service</a> ·
+  <a href="mailto:support@apexdosing.com" style="color:#4a6272;margin:0 8px;">Support</a>
+</div>
+
+<script src="assets/apex-nav-pill.js"></script>
+<script src="assets/apex-editorial.js"></script>
+<script src="assets/apex-social-proof.js"></script>
+</body>
+</html>

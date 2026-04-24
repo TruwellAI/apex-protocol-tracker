@@ -1,0 +1,1848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apex — Walk Me Through It</title>
+<meta name="description" content="Never used peptides? Apex walks you through it. Pick a goal, get a research-backed starter stack, set reminders.">
+<link rel="icon" href="assets/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script>
+  localStorage.setItem('apex_email', 'open@apexprotocol');
+  localStorage.setItem('apex_lane', 'guided');
+</script>
+<style>
+:root{
+  --bg:#080c10;--panel:#0d1318;--panel2:#121a22;--border:#1a2d3a;
+  --accent:#00d4ff;--accent2:#00ff9d;--accent3:#ff6b35;
+  --text:#c8dde8;--muted:#4a6272;--white:#eaf4f8;
+  --green:#10b981;--yellow:#fbbf24;--red:#ef4444;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{min-height:100%;}
+body{
+  background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;
+  font-size:14px;line-height:1.6;min-height:100vh;
+}
+body::before{
+  content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse at 80% 0%,rgba(0,212,255,.07) 0%,transparent 55%),
+             radial-gradient(ellipse at 10% 90%,rgba(0,255,157,.05) 0%,transparent 50%);
+  pointer-events:none;z-index:0;
+}
+.wrap{max-width:840px;margin:0 auto;padding:0 24px;position:relative;z-index:1;}
+
+/* TOP BAR */
+.top{display:flex;align-items:center;justify-content:space-between;padding:20px 0 12px;}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;}
+.brand-mark{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--accent);letter-spacing:.16em;}
+.brand-tag{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.25em;color:var(--muted);text-transform:uppercase;border-left:1px solid var(--border);padding-left:12px;}
+.exit{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.2em;color:var(--muted);text-decoration:none;text-transform:uppercase;}
+.exit:hover{color:var(--accent);}
+.top-nav{display:flex;align-items:center;gap:16px;}
+.top-nav .jump{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.18em;color:var(--muted);text-decoration:none;text-transform:uppercase;transition:color .15s;}
+.top-nav .jump:hover{color:var(--accent);}
+@media(max-width:720px){.top-nav .jump{display:none;}}
+
+/* PROGRESS */
+.progress-wrap{padding:8px 0 24px;}
+.progress-meta{display:flex;justify-content:space-between;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:10px;}
+.progress-track{height:3px;background:var(--border);overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .4s ease;width:16.67%;}
+.progress-dots{display:flex;justify-content:space-between;margin-top:12px;gap:6px;}
+.pdot{background:var(--panel);border:1px solid var(--border);color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.1em;width:28px;height:28px;cursor:pointer;transition:all .15s;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.pdot:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.pdot.current{background:var(--accent2);color:#080c10;border-color:var(--accent2);font-weight:700;}
+.pdot.done{border-color:var(--accent2);color:var(--accent2);}
+.pdot:disabled{cursor:not-allowed;opacity:.35;}
+
+/* STEP BLOCK */
+.step{display:none;padding:12px 0 80px;animation:fadeIn .25s ease;}
+.step.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.eyebrow{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.3em;color:var(--accent);text-transform:uppercase;margin-bottom:14px;}
+h2.step-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:clamp(32px,5vw,46px);line-height:1.05;letter-spacing:-1px;color:var(--white);margin-bottom:12px;}
+.step-sub{font-size:16px;color:var(--text);margin-bottom:32px;line-height:1.55;max-width:640px;}
+
+/* GOAL GRID */
+.goals{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+@media (max-width:560px){.goals{grid-template-columns:1fr;}}
+.goal{background:var(--panel);border:1px solid var(--border);padding:22px 22px;cursor:pointer;text-align:left;transition:all .2s;font-family:inherit;color:inherit;font-size:inherit;border-left:3px solid transparent;}
+.goal:hover{border-color:var(--accent);border-left-color:var(--accent2);transform:translateY(-2px);}
+.goal.selected{border-color:var(--accent2);border-left-color:var(--accent2);background:rgba(0,255,157,.04);}
+.goal-top{display:flex;align-items:center;gap:14px;margin-bottom:8px;}
+.goal-icon{font-size:32px;line-height:1;}
+.goal-name{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--white);line-height:1.1;}
+.goal-desc{font-size:12px;color:var(--muted);line-height:1.5;}
+
+/* PRIMER CARDS */
+.primer-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+@media (max-width:700px){.primer-grid{grid-template-columns:1fr;}}
+.primer-card{background:var(--panel);border:1px solid var(--border);padding:24px 24px;border-top:3px solid var(--accent);}
+.primer-card.c2{border-top-color:var(--accent2);}
+.primer-card.c3{border-top-color:var(--accent3);}
+.primer-card.c4{border-top-color:var(--yellow);}
+.primer-card h3{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--white);margin-bottom:10px;}
+.primer-card p{font-size:13px;color:var(--text);line-height:1.65;}
+.primer-card .emoji{font-size:24px;margin-bottom:8px;line-height:1;}
+
+/* PEPTIDE CARDS */
+.peptides{display:flex;flex-direction:column;gap:14px;}
+.pep{background:var(--panel);border:1px solid var(--border);padding:22px 22px;border-left:3px solid var(--accent2);}
+.pep-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:8px;flex-wrap:wrap;}
+.pep-name{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);}
+.pep-badges{display:flex;gap:8px;flex-wrap:wrap;}
+.badge{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.15em;padding:4px 8px;border:1px solid var(--border);text-transform:uppercase;color:var(--muted);}
+.badge.easy{border-color:var(--green);color:var(--green);}
+.badge.med{border-color:var(--yellow);color:var(--yellow);}
+.badge.adv{border-color:var(--accent3);color:var(--accent3);}
+.pep-why{font-size:13px;color:var(--text);line-height:1.55;margin-bottom:12px;}
+.pep-meta{display:flex;gap:18px;flex-wrap:wrap;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;}
+.pep-meta strong{color:var(--white);font-weight:600;}
+.read-research-btn{display:block;background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.35);color:var(--accent);font-family:'Rajdhani',sans-serif;font-weight:600;font-size:13px;letter-spacing:.06em;text-transform:uppercase;padding:12px 16px;text-decoration:none;text-align:center;transition:all .15s;}
+.read-research-btn:hover{background:var(--accent);color:#080c10;border-color:var(--accent);}
+
+/* GOAL INTRO — "how this category is typically run" panel */
+.goal-intro{background:linear-gradient(135deg,rgba(0,255,157,.04) 0%,rgba(0,212,255,.03) 100%);border:1px solid rgba(0,255,157,.18);border-left:3px solid var(--accent2);padding:20px 22px;margin-bottom:22px;}
+.gi-headline{font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:600;color:var(--white);line-height:1.4;margin-bottom:12px;display:flex;align-items:flex-start;gap:10px;}
+.gi-icon{font-size:22px;line-height:1;flex-shrink:0;}
+.gi-points{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;}
+.gi-points li{font-size:13px;color:var(--text);line-height:1.55;padding-left:18px;position:relative;}
+.gi-points li::before{content:'→';position:absolute;left:0;top:0;color:var(--accent2);font-weight:700;}
+
+/* ═══════════ PHASE 2 STYLES ═══════════ */
+
+/* Peptide toggle state */
+.pep.selected{border-left-color:var(--accent2);background:rgba(0,255,157,.04);}
+.pep.recommended:not(.selected){border-left-color:var(--yellow);}
+.badge.added{border-color:var(--accent2);color:var(--accent2);background:rgba(0,255,157,.08);}
+.badge.recommended-badge{border-color:var(--yellow);color:var(--yellow);background:rgba(251,191,36,.08);}
+.pep-actions{display:flex;gap:8px;}
+@media(max-width:560px){.pep-actions{flex-direction:column;}}
+.pep-toggle{flex:1;background:var(--accent2);color:#080c10;border:none;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;padding:12px 16px;cursor:pointer;transition:all .15s;}
+.pep-toggle:hover{background:var(--accent);}
+.pep-toggle.added{background:rgba(0,255,157,.12);color:var(--accent2);border:1px solid var(--accent2);}
+.pep-toggle.added:hover{background:rgba(255,107,53,.12);color:var(--accent3);border-color:var(--accent3);}
+.read-research-btn.compact{flex:1;padding:12px 14px;font-size:12px;}
+
+/* Running stack preview (Step 3) */
+.running-stack{background:var(--panel);border:1px solid var(--border);border-top:3px solid var(--accent2);padding:20px 22px;}
+.running-stack.empty{border-top-color:var(--border);}
+.rs-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:14px;}
+.rs-empty{font-size:13px;color:var(--muted);font-style:italic;}
+.rs-group{margin-bottom:12px;}
+.rs-group-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--accent);margin-bottom:6px;text-transform:uppercase;}
+.rs-chips{display:flex;flex-wrap:wrap;gap:6px;}
+.rs-chip{background:var(--panel2);border:1px solid var(--border);padding:6px 8px 6px 12px;font-family:'Rajdhani',sans-serif;font-size:13px;color:var(--white);display:inline-flex;align-items:center;gap:6px;}
+.rs-x{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:0 4px;line-height:1;transition:color .15s;}
+.rs-x:hover{color:var(--accent3);}
+.rs-warn{margin-top:14px;background:rgba(255,107,53,.08);border:1px solid rgba(255,107,53,.3);border-left:3px solid var(--accent3);padding:12px 14px;}
+.rs-warn-head{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:var(--accent3);margin-bottom:6px;}
+.rs-warn-item{font-size:12px;color:var(--text);line-height:1.5;padding:4px 0;}
+
+/* Add another goal panel (Step 3) */
+.add-goal-panel{background:var(--panel);border:1px solid var(--border);padding:20px 22px;margin-top:20px;}
+.agp-label{font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;color:var(--white);margin-bottom:4px;}
+.agp-sub{font-size:12px;color:var(--muted);margin-bottom:14px;}
+.agp-chips{display:flex;flex-wrap:wrap;gap:8px;}
+.agp-chip{background:var(--panel2);border:1px solid var(--border);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;padding:10px 14px;cursor:pointer;transition:all .15s;}
+.agp-chip:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px);}
+
+/* Review (Step 4) */
+.review-empty{text-align:center;padding:30px 20px;background:var(--panel);border:1px dashed var(--border);}
+.review-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:22px;}
+.rv-stat{background:var(--panel);border:1px solid var(--border);padding:16px;text-align:center;}
+.rv-val{font-family:'Rajdhani',sans-serif;font-size:30px;font-weight:700;color:var(--white);line-height:1;}
+.rv-lab{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-top:4px;}
+.conflicts-panel{background:rgba(255,107,53,.08);border:1px solid rgba(255,107,53,.35);border-left:3px solid var(--accent3);padding:16px 18px;margin-bottom:20px;}
+.cp-head{font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;color:var(--accent3);margin-bottom:10px;}
+.cp-item{padding:10px 0;border-bottom:1px solid rgba(255,107,53,.15);}
+.cp-item:last-child{border-bottom:none;}
+.cp-group{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--accent3);text-transform:uppercase;margin-bottom:4px;}
+.cp-msg{font-size:13px;color:var(--text);line-height:1.55;margin-bottom:8px;}
+.cp-actions{display:flex;flex-wrap:wrap;gap:6px;}
+.cp-remove{background:rgba(255,107,53,.12);border:1px solid var(--accent3);color:var(--accent3);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.1em;padding:6px 10px;cursor:pointer;text-transform:uppercase;}
+.cp-remove:hover{background:var(--accent3);color:#080c10;}
+.ok-panel{background:linear-gradient(135deg,rgba(0,255,157,.12),rgba(0,255,157,.04));border:1px solid rgba(0,255,157,.5);border-left:4px solid var(--accent2);padding:20px 24px;font-size:17px;font-weight:600;color:var(--white);margin-bottom:22px;line-height:1.5;box-shadow:0 4px 20px rgba(0,255,157,.1);}
+
+/* Benefits panel (Step 4) — prominent hero treatment */
+.benefits-panel{background:linear-gradient(135deg,rgba(0,212,255,.08),rgba(0,255,157,.04));border:1px solid rgba(0,212,255,.4);border-left:4px solid var(--accent);padding:24px 26px;margin-bottom:22px;box-shadow:0 4px 24px rgba(0,212,255,.08);}
+.bp-head{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);margin-bottom:18px;letter-spacing:.01em;display:flex;align-items:center;gap:10px;}
+.bp-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;}
+.bp-list li{display:flex;align-items:flex-start;gap:12px;font-size:14px;color:var(--text);line-height:1.55;padding:8px 0;border-bottom:1px solid rgba(0,212,255,.1);}
+.bp-list li:last-child{border-bottom:none;}
+.bp-icon{font-size:22px;line-height:1.2;flex-shrink:0;}
+.bp-text{flex:1;}
+.review-groups{display:flex;flex-direction:column;gap:16px;}
+.rg-block{background:var(--panel);border:1px solid var(--border);padding:18px 20px;}
+.rg-head{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--accent);margin-bottom:12px;letter-spacing:.02em;}
+.rg-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);gap:12px;}
+.rg-item:last-child{border-bottom:none;}
+.rg-name{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--white);}
+.rg-meta{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-top:2px;}
+.rg-remove{background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.15em;padding:6px 10px;cursor:pointer;text-transform:uppercase;transition:all .15s;}
+.rg-remove:hover{border-color:var(--accent3);color:var(--accent3);}
+
+/* Ready buttons (Step 5) */
+.ready-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+@media(max-width:700px){.ready-row{grid-template-columns:1fr;}}
+.ready-btn{background:var(--panel);border:1px solid var(--border);padding:28px 24px;cursor:pointer;text-align:left;font-family:inherit;color:inherit;transition:all .2s;border-top:3px solid transparent;}
+.ready-btn.yes{border-top-color:var(--accent2);}
+.ready-btn.no{border-top-color:var(--accent);}
+.ready-btn:hover{transform:translateY(-3px);border-color:var(--accent);}
+.ready-icon{font-size:36px;margin-bottom:12px;line-height:1;}
+.ready-title{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);line-height:1.1;margin-bottom:8px;}
+.ready-desc{font-size:13px;color:var(--text);line-height:1.55;}
+.ready-sub-cta{margin-top:14px;padding:10px 12px;background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.3);border-radius:3px;font-size:12px;color:var(--text);line-height:1.5;}
+.ready-sub-cta a{color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;}
+
+/* General protocol block (Step 6 top) */
+.general-protocol{background:linear-gradient(135deg,rgba(0,212,255,.04),rgba(0,255,157,.02));border:1px solid rgba(0,212,255,.25);border-left:3px solid var(--accent);padding:18px 22px;margin-bottom:20px;}
+.gp-head{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--white);margin-bottom:12px;letter-spacing:.02em;}
+.gp-steps{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:7px;}
+.gp-steps li{font-size:13px;color:var(--text);line-height:1.55;}
+.gp-steps li strong{color:var(--accent2);}
+
+/* Compact per-peptide row (Step 6 — standards) */
+.standards-section{display:flex;flex-direction:column;gap:8px;margin-bottom:22px;}
+.compact-recon{background:var(--panel);border:1px solid var(--border);border-left:3px solid var(--muted);padding:14px 18px;}
+.cr-head{display:flex;align-items:baseline;gap:10px;margin-bottom:10px;}
+.cr-idx{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.1em;}
+.cr-name{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--white);}
+.cr-config{display:grid;grid-template-columns:auto auto 1fr;gap:14px;align-items:end;}
+@media(max-width:560px){.cr-config{grid-template-columns:1fr 1fr;}.cr-conc{grid-column:1/-1;}}
+.cr-field label{display:block;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;}
+.cr-conc{background:rgba(0,255,157,.06);border:1px solid rgba(0,255,157,.22);border-left:3px solid var(--accent2);padding:8px 12px;text-align:right;}
+@media(max-width:560px){.cr-conc{text-align:left;}}
+.cr-conc-val{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:var(--white);}
+.cr-conc-unit{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent2);letter-spacing:.05em;margin-top:2px;}
+
+/* Specials section header */
+.specials-section{margin-top:8px;margin-bottom:14px;}
+.specials-head{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--accent3);text-transform:uppercase;padding:10px 14px;background:rgba(255,107,53,.06);border-left:3px solid var(--accent3);margin-bottom:12px;}
+
+/* Reconstitution cards (Step 6) */
+.recon-card{background:var(--panel);border:1px solid var(--border);border-left:3px solid var(--accent);padding:20px 22px;margin-bottom:14px;}
+.rc-head{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--white);margin-bottom:16px;}
+.rc-oral{font-size:15px;color:var(--accent2);font-weight:500;}
+.rc-step-grid{display:flex;flex-direction:column;gap:12px;}
+.rc-step{display:flex;gap:14px;align-items:flex-start;}
+.rc-step-num{background:var(--accent);color:#080c10;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;flex-shrink:0;}
+.rc-step-body{flex:1;}
+.rc-step-head{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:var(--white);margin-bottom:2px;}
+.rc-step-text{font-size:13px;color:var(--text);line-height:1.55;}
+.rc-note{margin-top:14px;background:rgba(251,191,36,.06);border-left:2px solid var(--yellow);padding:10px 12px;font-size:12px;color:var(--text);line-height:1.55;}
+
+/* Schedule section (Step 7) */
+.sched-section{margin-bottom:22px;}
+.sched-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:10px;}
+
+/* Scrollable date picker (Step 7) */
+.date-scroller-wrap{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;margin-bottom:16px;padding-bottom:6px;}
+.date-scroller{display:flex;gap:8px;padding:2px;}
+.ds-tile{flex:0 0 auto;background:var(--panel2);border:1px solid var(--border);padding:10px 14px;cursor:pointer;text-align:center;color:inherit;font-family:inherit;transition:all .15s;min-width:76px;border-radius:3px;border-top:3px solid transparent;}
+.ds-tile:hover{border-color:var(--accent);}
+.ds-tile.selected{border-color:var(--accent2);border-top-color:var(--accent2);background:rgba(0,255,157,.06);}
+.ds-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;}
+.ds-tile.selected .ds-label{color:var(--accent2);}
+.ds-num{font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;color:var(--white);line-height:1;}
+.ds-month{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-top:3px;}
+.date-custom-row{background:var(--panel2);border:1px solid var(--border);padding:12px 14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
+.dc-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;}
+.dc-input{flex:1;background:var(--bg);color:var(--white);border:1px solid var(--border);padding:8px 10px;font-family:'Rajdhani',sans-serif;font-size:14px;min-width:140px;}
+
+/* Inline vial/BAC editor (Step 6) */
+.vial-config-row{display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:end;background:var(--panel2);border:1px solid var(--border);padding:12px 14px;margin-bottom:14px;border-radius:3px;}
+@media(max-width:600px){.vial-config-row{grid-template-columns:1fr 1fr;gap:10px;}.vc-hint{grid-column:1/-1;}}
+.vc-input label{display:block;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;}
+.vc-field{display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--border);padding:6px 10px;transition:border-color .15s;}
+.vc-field:focus-within{border-color:var(--accent2);}
+.vc-field input{background:transparent;border:none;outline:none;color:var(--white);font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;width:100%;min-width:0;padding:0;}
+.vc-field input::-webkit-outer-spin-button,.vc-field input::-webkit-inner-spin-button{opacity:.5;}
+.vc-unit{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;flex-shrink:0;}
+.vc-hint{font-size:11px;color:var(--muted);font-style:italic;line-height:1.3;}
+.rc-concentration-banner{background:rgba(0,255,157,.06);border:1px solid rgba(0,255,157,.25);border-left:3px solid var(--accent2);padding:10px 14px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.05em;color:var(--text);margin-bottom:16px;}
+.rc-concentration-banner strong{color:var(--white);font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:0;}
+
+/* Buy Apex pen CTA (Step 6) */
+.pen-cta{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:14px;padding:14px 18px;background:linear-gradient(135deg,rgba(0,212,255,.1),rgba(0,255,157,.04));border:1px solid rgba(0,212,255,.4);border-left:3px solid var(--accent);text-decoration:none;transition:all .2s;border-radius:3px;}
+.pen-cta:hover{background:linear-gradient(135deg,rgba(0,212,255,.18),rgba(0,255,157,.08));border-color:var(--accent);transform:translateY(-1px);}
+.pen-cta-left{color:var(--text);font-size:13px;line-height:1.5;}
+.pen-cta-left strong{color:var(--white);font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;}
+.pen-cta-arrow{color:var(--accent);font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;flex-shrink:0;}
+
+/* Injection setup toggle (Step 6) */
+.setup-toggle{background:var(--panel);border:1px solid var(--border);padding:20px 22px;margin-bottom:22px;}
+.st-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:12px;}
+.st-buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media(max-width:560px){.st-buttons{grid-template-columns:1fr;}}
+.st-btn{background:var(--panel2);border:1px solid var(--border);padding:16px 18px;cursor:pointer;text-align:left;color:inherit;font-family:inherit;transition:all .2s;border-top:3px solid transparent;}
+.st-btn:hover{border-color:var(--accent);}
+.st-btn.selected{border-color:var(--accent2);border-top-color:var(--accent2);background:rgba(0,255,157,.04);}
+.st-icon{font-size:28px;line-height:1;margin-bottom:10px;}
+.st-title{font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;color:var(--white);margin-bottom:4px;}
+.st-desc{font-size:12px;color:var(--muted);line-height:1.5;}
+
+/* STARTER STACK REVIEW */
+.stack-review{background:var(--panel);border:1px solid var(--border);padding:28px;margin-bottom:20px;border-top:3px solid var(--accent2);}
+.stack-header{display:flex;align-items:center;gap:14px;margin-bottom:8px;}
+.stack-emoji{font-size:36px;line-height:1;}
+.stack-name{font-family:'Rajdhani',sans-serif;font-size:26px;font-weight:700;color:var(--white);line-height:1.1;}
+.stack-tag{font-size:13px;color:var(--accent2);margin-bottom:18px;font-style:italic;}
+.stack-why{background:rgba(0,212,255,.05);border-left:2px solid var(--accent);padding:14px 16px;margin-bottom:22px;font-size:13px;line-height:1.6;}
+.stack-why strong{color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;display:block;margin-bottom:4px;}
+.stack-items{display:flex;flex-direction:column;gap:10px;}
+.stack-item{display:grid;grid-template-columns:1fr auto;gap:12px;padding:14px;background:var(--panel2);border:1px solid var(--border);align-items:center;}
+.si-left{display:flex;flex-direction:column;gap:4px;}
+.si-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:17px;color:var(--white);}
+.si-reason{font-size:12px;color:var(--muted);line-height:1.5;}
+.si-right{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent2);letter-spacing:.15em;text-align:right;}
+
+/* REMINDER SETUP */
+.reminder-panel{background:var(--panel);border:1px solid var(--border);padding:26px;margin-bottom:18px;}
+.rp-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:12px;}
+.rp-times{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+@media (max-width:560px){.rp-times{grid-template-columns:1fr;}}
+.rp-time{background:var(--panel2);border:1px solid var(--border);padding:12px 14px;display:flex;justify-content:space-between;align-items:center;}
+.rp-time label{font-size:12px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:.15em;text-transform:uppercase;}
+.rp-time input[type=time]{background:var(--bg);color:var(--white);border:1px solid var(--border);padding:6px 8px;font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;}
+.rp-notice{background:rgba(251,191,36,.06);border-left:2px solid var(--yellow);padding:12px 14px;font-size:12px;color:var(--text);line-height:1.55;margin-top:14px;}
+
+/* START DATE */
+.date-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+@media (max-width:560px){.date-row{grid-template-columns:1fr;}}
+.date-btn{background:var(--panel);border:1px solid var(--border);padding:16px;cursor:pointer;text-align:left;color:var(--text);font-family:inherit;transition:all .15s;}
+.date-btn:hover{border-color:var(--accent);}
+.date-btn.selected{border-color:var(--accent2);background:rgba(0,255,157,.04);}
+.date-btn .db-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;}
+.date-btn .db-date{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--white);}
+
+/* NAV BUTTONS */
+.nav-row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:32px;padding-top:24px;border-top:1px solid var(--border);}
+.btn{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:14px 28px;border:none;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all .15s;}
+.btn-primary{background:var(--accent2);color:#080c10;}
+.btn-primary:hover{background:var(--accent);}
+.btn-primary:disabled{background:var(--muted);cursor:not-allowed;opacity:.5;}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;padding:12px 20px;}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent);}
+.btn-link{background:none;border:none;color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;text-decoration:underline;padding:8px;}
+.btn-link:hover{color:var(--accent);}
+
+/* UTILITY */
+.center{text-align:center;}
+.mb-8{margin-bottom:8px;}
+.mb-16{margin-bottom:16px;}
+.mb-24{margin-bottom:24px;}
+.custom-opt{text-align:center;margin-top:22px;}
+
+/* FINAL STEP */
+.final-hero{text-align:center;padding:40px 0;}
+.final-hero .fh-icon{font-size:64px;margin-bottom:20px;line-height:1;}
+.final-hero h2{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:clamp(32px,5vw,48px);color:var(--white);line-height:1.05;margin-bottom:16px;}
+.final-hero p{font-size:16px;color:var(--text);max-width:560px;margin:0 auto 28px;line-height:1.6;}
+.final-cta{display:inline-flex;align-items:center;gap:10px;background:var(--accent2);color:#080c10;font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;letter-spacing:.08em;padding:18px 36px;text-decoration:none;text-transform:uppercase;}
+.final-cta:hover{background:var(--accent);}
+.final-pen-cta{margin-top:40px;max-width:500px;margin-left:auto;margin-right:auto;background:linear-gradient(135deg,rgba(0,212,255,.08),rgba(0,255,157,.04));border:1px solid rgba(0,212,255,.35);border-left:3px solid var(--accent);padding:24px;text-align:left;display:flex;gap:16px;align-items:flex-start;}
+.fpc-icon{font-size:40px;line-height:1;flex-shrink:0;}
+.fpc-body{flex:1;}
+.fpc-title{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--white);margin-bottom:6px;}
+.fpc-desc{font-size:13px;color:var(--text);line-height:1.55;margin-bottom:12px;}
+.fpc-btn{display:inline-block;background:var(--accent);color:#080c10;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:10px 18px;text-decoration:none;}
+.fpc-btn:hover{background:var(--white);}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- TOP -->
+  <div class="top">
+    <a href="./" class="brand">
+      <span class="brand-mark">APEX</span>
+      <span class="brand-tag">Walk-Through</span>
+    </a>
+    <div class="top-nav">
+      <a href="browse.html" class="jump">📚 Encyclopedia</a>
+      <a href="compare.html" class="jump">⚖ Compare</a>
+      <a href="protocol-tracker.html" class="jump">⚗ Tracker</a>
+      <a href="?pick=1" class="exit">← Exit</a>
+    </div>
+  </div>
+
+  <!-- PROGRESS (clickable — jump to any prior step) -->
+  <div class="progress-wrap">
+    <div class="progress-meta">
+      <span id="p-step">Step 1 of 7</span>
+      <span id="p-label">Pick a goal</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="p-fill"></div></div>
+    <div class="progress-dots" id="progress-dots">
+      <button class="pdot" data-step="1" title="Pick a goal">1</button>
+      <button class="pdot" data-step="2" title="Basics">2</button>
+      <button class="pdot" data-step="3" title="Build stack">3</button>
+      <button class="pdot" data-step="4" title="Review">4</button>
+      <button class="pdot" data-step="5" title="Ready to start?">5</button>
+      <button class="pdot" data-step="6" title="Reconstitute">6</button>
+      <button class="pdot" data-step="7" title="Schedule">7</button>
+    </div>
+  </div>
+
+  <!-- ───── STEP 1: GOAL ───── -->
+  <div class="step active" data-step="1">
+    <div class="eyebrow">Step 1 · Pick your starting goal</div>
+    <h2 class="step-title">What are you trying to <span style="color:var(--accent2);">accomplish first?</span></h2>
+    <p class="step-sub">Pick your <strong style="color:var(--white);">top priority</strong> — we'll start there. <strong style="color:var(--accent2);">You can layer in more goals</strong> (fat loss + muscle + sleep, etc.) on the next screens. Most people stack 2–3 goals together.</p>
+
+    <div class="goals" id="goal-grid">
+      <button class="goal" data-goal="fat-loss">
+        <div class="goal-top"><span class="goal-icon">🔥</span><span class="goal-name">Lose fat</span></div>
+        <div class="goal-desc">Drop body fat. Control appetite. Protect muscle.</div>
+      </button>
+      <button class="goal" data-goal="muscle">
+        <div class="goal-top"><span class="goal-icon">💪</span><span class="goal-name">Build muscle</span></div>
+        <div class="goal-desc">Grow muscle mass. Boost recovery. Support GH.</div>
+      </button>
+      <button class="goal" data-goal="recovery">
+        <div class="goal-top"><span class="goal-icon">🩹</span><span class="goal-name">Recover from an injury</span></div>
+        <div class="goal-desc">Heal tissue faster. Fix nagging injuries.</div>
+      </button>
+      <button class="goal" data-goal="longevity">
+        <div class="goal-top"><span class="goal-icon">⏳</span><span class="goal-name">Anti-aging / longevity</span></div>
+        <div class="goal-desc">Protect telomeres. Slow tissue aging.</div>
+      </button>
+      <button class="goal" data-goal="sleep">
+        <div class="goal-top"><span class="goal-icon">😴</span><span class="goal-name">Sleep better</span></div>
+        <div class="goal-desc">Deeper sleep. Better recovery. No hangover.</div>
+      </button>
+      <button class="goal" data-goal="focus">
+        <div class="goal-top"><span class="goal-icon">🧠</span><span class="goal-name">Sharper focus / mood</span></div>
+        <div class="goal-desc">Cognition, energy, and calm balance.</div>
+      </button>
+      <button class="goal" data-goal="libido">
+        <div class="goal-top"><span class="goal-icon">❤️‍🔥</span><span class="goal-name">Sex / libido</span></div>
+        <div class="goal-desc">Works on your brain's desire centers — not your blood flow.</div>
+      </button>
+      <button class="goal" data-goal="explore">
+        <div class="goal-top"><span class="goal-icon">🔬</span><span class="goal-name">Just curious</span></div>
+        <div class="goal-desc">Show me everything. I'll decide later.</div>
+      </button>
+    </div>
+
+    <div class="nav-row">
+      <a href="./" class="btn-ghost">← Back to start</a>
+      <button class="btn btn-primary" id="btn-step1-next" disabled>Next →</button>
+    </div>
+  </div>
+
+  <!-- ───── STEP 2: PRIMER ───── -->
+  <div class="step" data-step="2">
+    <div class="eyebrow">Step 2 · 60-second primer</div>
+    <h2 class="step-title">The basics, without the <span style="color:var(--accent2);">textbook.</span></h2>
+    <p class="step-sub">Four things every peptide user needs to know. Takes a minute. Then we'll show you the actual peptides.</p>
+
+    <div class="primer-grid">
+      <div class="primer-card">
+        <div class="emoji">🧬</div>
+        <h3>What peptides are (&amp; how they arrive)</h3>
+        <p>Peptides are short signaling proteins your body already makes — natural messengers that tell tissues what to do. Research peptides arrive as a <strong style="color:var(--white);">freeze-dried powder</strong> in a small glass vial. Before you inject, you reconstitute it with sterile liquid: <strong style="color:var(--accent2);">bacteriostatic water</strong> for most peptides, or <strong style="color:var(--accent3);">acetic acid</strong> for a few (AOD-9604, Melanotan). The app tells you which one and exactly how much to add.</p>
+      </div>
+      <div class="primer-card c2">
+        <div class="emoji">💉</div>
+        <h3>How you take them</h3>
+        <p>Most peptides go under the skin (subcutaneous, "subq") — belly fat, an inch or two from the navel. Tiny insulin-grade needle, takes two seconds, barely feels like anything. A handful are nasal sprays. Apex's injection pen does the math automatically — dial the dose, click, done.</p>
+      </div>
+      <div class="primer-card c3">
+        <div class="emoji">⏰</div>
+        <h3>Shelf life matters</h3>
+        <p>Once you mix the powder with BAC water, your peptide has a clock on it — typically 14 to 30 days, stored in the fridge. Past that window it starts breaking down. The app tracks expiry per peptide so you never inject a dead batch. Unmixed vials last years at room temp.</p>
+      </div>
+      <div class="primer-card c4">
+        <div class="emoji">⚠️</div>
+        <h3>Three things to never do</h3>
+        <p>1) Don't freeze reconstituted peptides — ice crystals destroy them.<br>2) Don't shake the vial hard — swirl gently.<br>3) Don't stack peptides that do the same thing (we'll warn you if you try).</p>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-ghost" onclick="goStep(1)">← Back</button>
+      <button class="btn btn-primary" id="step2-next" onclick="step2Next()">Show me the peptides →</button>
+    </div>
+  </div>
+
+  <!-- ───── STEP 3: BUILD YOUR STACK ───── -->
+  <div class="step" data-step="3">
+    <div class="eyebrow" id="s3-eyebrow">Step 3 · Build your stack</div>
+    <h2 class="step-title" id="s3-title">The peptides that match your goal.</h2>
+    <p class="step-sub" id="s3-sub">Tap any peptide to add it to your stack. Tap again to remove. You can also pick peptides from a different goal — your running stack at the bottom stays with you.</p>
+
+    <div id="goal-intro-slot"></div>
+    <div class="peptides" id="peptide-list"></div>
+
+    <!-- Running stack preview -->
+    <div id="running-stack-slot" style="margin-top:24px;"></div>
+
+    <!-- Add another goal control -->
+    <div class="add-goal-panel">
+      <div class="agp-label">Want to address another goal too?</div>
+      <div class="agp-sub">Your current peptides stay. Pick a new category and add more.</div>
+      <div class="agp-chips" id="add-goal-chips"></div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-ghost" onclick="goStep(2)">← Back to basics</button>
+      <button class="btn btn-primary" id="s3-review-btn" onclick="goStep(4)">Review my stack →</button>
+    </div>
+  </div>
+
+  <!-- ───── STEP 4: REVIEW YOUR STACK ───── -->
+  <div class="step" data-step="4">
+    <div class="eyebrow">Step 4 · Review your stack</div>
+    <h2 class="step-title">Here's <span style="color:var(--accent2);">everything you've picked.</span></h2>
+    <p class="step-sub">Double-check the combo. If anything conflicts, I'll flag it below. You can go back and add / remove anytime.</p>
+
+    <div id="review-slot"></div>
+
+    <div class="nav-row">
+      <button class="btn-ghost" onclick="goStep(3)">← Back to builder</button>
+      <button class="btn btn-primary" id="s4-next-btn" onclick="goStep(5)">Looks good →</button>
+    </div>
+  </div>
+
+  <!-- ───── STEP 5: READY TO START? ───── -->
+  <div class="step" data-step="5">
+    <div class="eyebrow">Step 5 · Ready to start, or just researching?</div>
+    <h2 class="step-title">Do you have these peptides <span style="color:var(--accent2);">in hand?</span></h2>
+    <p class="step-sub">If you already have everything ordered and ready to reconstitute, we'll walk through mixing each vial next. If not, no pressure — save your stack for later and come back when you're ready.</p>
+
+    <div class="ready-row">
+      <button class="ready-btn yes" onclick="pickReady('yes')">
+        <div class="ready-icon">✅</div>
+        <div class="ready-title">Yes — I have them all</div>
+        <div class="ready-desc">Walk me through mixing each vial, then schedule the first dose.</div>
+      </button>
+      <button class="ready-btn no" onclick="pickReady('no')">
+        <div class="ready-icon">📋</div>
+        <div class="ready-title">Not yet — save for later</div>
+        <div class="ready-desc">I'm still researching or ordering. Keep my stack saved — no start date yet.</div>
+        <div class="ready-sub-cta">️ <strong>Tip:</strong> while you're ordering peptides, add an Apex pen ($39) — makes dosing painless. <a href="https://apexdosing.com/buy-pen" target="_blank" rel="noopener" onclick="event.stopPropagation();">See the pen →</a></div>
+      </button>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-ghost" onclick="goStep(4)">← Back</button>
+    </div>
+  </div>
+
+  <!-- ───── STEP 6: RECONSTITUTION WALKTHROUGH ───── -->
+  <div class="step" data-step="6">
+    <div class="eyebrow">Step 6 · Reconstitution walkthrough</div>
+    <h2 class="step-title">Let's <span style="color:var(--accent2);">mix your vials.</span></h2>
+    <p class="step-sub">Pick your setup below — we'll show exact volumes, concentrations, and (for pen users) the dial number per dose.</p>
+
+    <!-- Injection setup selector -->
+    <div class="setup-toggle">
+      <div class="st-label">What are you injecting with?</div>
+      <div class="st-buttons">
+        <button class="st-btn selected" data-setup="syringe" onclick="pickSetup('syringe')">
+          <div class="st-icon">💉</div>
+          <div class="st-title">Insulin syringes</div>
+          <div class="st-desc">Standard U-100 syringes · draw from the vial · manual unit counting</div>
+        </button>
+        <button class="st-btn" data-setup="pen" onclick="pickSetup('pen')">
+          <div class="st-icon">️</div>
+          <div class="st-title">Apex pen</div>
+          <div class="st-desc">3mL cartridge · screw into pen · dial dose · click · done. No math at dose time.</div>
+        </button>
+      </div>
+      <a href="https://apexdosing.com/buy-pen" target="_blank" rel="noopener" class="pen-cta">
+        <span class="pen-cta-left">️ <strong>Don't have an Apex pen yet?</strong> Get one — $39 · ships with cartridges, needles, BAC water</span>
+        <span class="pen-cta-arrow">→</span>
+      </a>
+    </div>
+
+    <div id="recon-slot"></div>
+
+    <div class="nav-row">
+      <button class="btn-ghost" onclick="goStep(5)">← Back</button>
+      <button class="btn btn-primary" onclick="goStep(7)">Mixed them all →</button>
+    </div>
+  </div>
+
+  <!-- ───── STEP 7: SCHEDULE (date + reminders) ───── -->
+  <div class="step" data-step="7">
+    <div class="eyebrow">Step 7 · Schedule</div>
+    <h2 class="step-title">When do you <span style="color:var(--accent2);">start</span>, and when do we <span style="color:var(--accent2);">buzz you?</span></h2>
+    <p class="step-sub">Pick your start date and the three daily dose times. The app sends a discreet notification with "Took it" / "Skip" right on your lock screen.</p>
+
+    <div class="sched-section">
+      <div class="sched-label">Start date — pick any day</div>
+      <div class="date-scroller-wrap">
+        <div class="date-scroller" id="date-scroller"></div>
+      </div>
+      <div class="date-custom-row">
+        <label class="dc-label">Or pick a specific date:</label>
+        <input type="date" id="custom-date" class="dc-input" />
+      </div>
+    </div>
+
+    <div class="reminder-panel">
+      <div class="rp-label">Dose reminder times (you can change these later)</div>
+      <div class="rp-times">
+        <div class="rp-time"><label>🌅 AM</label><input type="time" id="time-am" value="07:00"></div>
+        <div class="rp-time"><label>💪 Pre-Workout</label><input type="time" id="time-pw" value="11:45"></div>
+        <div class="rp-time"><label>🌙 Bedtime</label><input type="time" id="time-pm" value="21:30"></div>
+      </div>
+      <div class="rp-notice">📱 On mobile, reminders become native lock-screen notifications with one-tap "Took it" / "Skip" buttons. On desktop, check the app once a day.</div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-ghost" onclick="goStep(6)">← Back</button>
+      <button class="btn btn-primary" onclick="finishWizard()">Start my cycle →</button>
+    </div>
+  </div>
+
+  <!-- ───── FINAL CELEBRATION ───── -->
+  <div class="step" data-step="8">
+    <div class="final-hero">
+      <div class="fh-icon">🚀</div>
+      <h2>You're set.</h2>
+      <p id="final-msg">Stack built. Reminders scheduled. You can always switch peptides, adjust doses, or pause a cycle from the tracker.</p>
+      <a href="#" class="final-cta" id="final-cta">Open my tracker →</a>
+
+      <div class="final-pen-cta">
+        <div class="fpc-icon">️</div>
+        <div class="fpc-body">
+          <div class="fpc-title">Still injecting with insulin syringes?</div>
+          <div class="fpc-desc">The Apex V3 pen turns every dose into a click. Dial the units, inject, done — no math at dose time. $39 one-time, ships with cartridges, needles, and BAC water.</div>
+          <a href="https://apexdosing.com/buy-pen" target="_blank" rel="noopener" class="fpc-btn">Get the pen — $39 →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     STARTER STACK DEFINITIONS
+     Non-overlapping mechanisms. Research-backed. Beginner-safe.
+═══════════════════════════════════════════════════════════════════════ -->
+<script>
+const GOAL_META = {
+  'fat-loss':  { label:'Lose fat',             emoji:'🔥',  color:'#ff6b35' },
+  'muscle':    { label:'Build muscle',          emoji:'💪',  color:'#00ff9d' },
+  'recovery':  { label:'Recover from injury',   emoji:'🩹',  color:'#00d4ff' },
+  'longevity': { label:'Anti-aging',            emoji:'⏳',  color:'#a78bfa' },
+  'sleep':     { label:'Sleep better',          emoji:'😴',  color:'#60a5fa' },
+  'focus':     { label:'Focus & mood',          emoji:'🧠',  color:'#fbbf24' },
+  'libido':    { label:'Sex / libido',          emoji:'❤️‍🔥',color:'#f472b6' },
+  'explore':   { label:'Explore everything',    emoji:'🔬',  color:'#4a6272' }
+};
+
+// GOAL INTRO — the cadence / timeline expectation for each category
+// Shown as a "how this category is typically run" panel at the top of Step 3
+const GOAL_INTRO = {
+  'fat-loss': {
+    headline: 'Expect a 12–48 week protocol. GLP-class drugs are a marathon, not a sprint.',
+    points: [
+      'GLP-class peptides (Reta, Sema, Tirz) titrate UP gradually over 16–20 weeks, then hold',
+      'AOD-9604 and MOTS-c run concurrently daily — different pathways, no overlap',
+      'NEVER stop GLP-class peptides cold turkey. Always taper DOWN over 8–10 weeks to avoid rebound hunger'
+    ]
+  },
+  'muscle': {
+    headline: 'Cycle in 8–12 week blocks with 4-week breaks so your body stays responsive.',
+    points: [
+      'These peptides work by pushing your body\'s natural growth hormone system. If you run them forever, your body stops responding — same as caffeine tolerance',
+      'IGF-1 LR3 is especially cycle-sensitive: 4 weeks on, 8 weeks off (always)',
+      'Train hard during the on-cycle, eat + rest during the off-cycle. The peptide is a multiplier, not a magic bullet'
+    ]
+  },
+  'recovery': {
+    headline: 'Short, intense courses. Use them to fix something, then stop.',
+    points: [
+      'Typical injury-specific run: 6–8 weeks, then step off',
+      'BPC-157 can be bumped to 2x daily for active injuries, 1x daily for maintenance',
+      'Not a lifestyle peptide — it\'s a healing tool. Treat it like a prescription antibiotic, not a multivitamin'
+    ]
+  },
+  'longevity': {
+    headline: 'This is a multi-year, multi-decade play. Pulsed cycles — not daily forever.',
+    points: [
+      'Epithalon: 10-day courses, 2 times per year (every ~6 months)',
+      'GHK-Cu: 12 weeks on, 4 weeks off — then repeat',
+      'SS-31 + MOTS-c: mitochondrial support, cycled 4–8 weeks at a time',
+      'Expect results measured in years, not weeks. The goal is aging slowly, not looking different in 30 days'
+    ]
+  },
+  'sleep': {
+    headline: 'Daily evening dosing. Gentle, no dependence risk.',
+    points: [
+      'DSIP can run continuously or in 4-week cycles — personal preference',
+      'Dose 30–60 min before bed',
+      'Effects are subtle — deeper sleep quality, not knock-out sedation'
+    ]
+  },
+  'focus': {
+    headline: 'Daily nasal sprays. AM for stimulating, PM for calming. 4-week cycles.',
+    points: [
+      'Semax in the morning (boosts focus + drive) · Selank in the afternoon or as-needed (calms anxiety)',
+      '4 weeks on, 4 weeks off to prevent tolerance',
+      'Effects noticeable within hours of first dose — not weeks'
+    ]
+  },
+  'libido': {
+    headline: 'On-demand, not cyclical. Keep a dose in the fridge for when you need it.',
+    points: [
+      'PT-141: inject 30–60 min before intimacy',
+      'Not a daily peptide — situational use only',
+      'Some users report transient nausea or flushing with first few doses'
+    ]
+  },
+  'explore': {
+    headline: 'Start simple. Learn your response to one category before adding more.',
+    points: [
+      'Your first peptide should be a gentle one — BPC-157 or Ipamorelin are good intros',
+      'Run it for a full cycle (6–10 weeks) before adding a second peptide',
+      'Track how you feel. Some people respond strongly to growth hormone peptides, others to tissue repair, others to cognitive peptides'
+    ]
+  }
+};
+
+// PEPTIDE SHORTLISTS per goal (shown in Step 3)
+// Each peptide: name must match CATALOG in protocol-tracker.html exactly
+const PEPTIDE_SHORTLISTS = {
+  'fat-loss': [
+    { name:'Retatrutide', diff:'med',  why:'Hits THREE appetite-and-metabolism receptors at once (Semaglutide only hits one). The most aggressive fat-loss compound in clinical trials — up to 24% body weight loss at 48 weeks. Slow titration required. The power tool of this whole category.', howOften:'1 injection/week', timing:'Any time with food' },
+    { name:'Semaglutide', diff:'easy', why:'FDA-approved (Ozempic / Wegovy). Works by slowing your gut and making you feel full sooner — the appetite workhorse. 10–17% body weight drop in clinical trials. Gentler on your stomach than Reta or Tirz. Beginner-friendly.', howOften:'1 injection/week', timing:'Any time with food' },
+    { name:'Tirzepatide', diff:'med',  why:'FDA-approved (Mounjaro / Zepbound). Hits two receptors instead of Semaglutide\'s one. More potent — averages 20%+ body weight loss. Mid-point between Sema and Reta.', howOften:'1 injection/week', timing:'Any time with food' },
+    { name:'AOD-9604',    diff:'easy', why:'A fragment of growth hormone that keeps ONLY the fat-burning action. Breaks down fat directly at the cell level without touching blood sugar or causing GI issues. Zero overlap with the GLP drugs above — stacks clean with anything.', howOften:'Daily', timing:'AM fasted' },
+    { name:'MOTS-c',      diff:'med',  why:'Works INSIDE your cells rather than on your hormones. Improves how efficiently your mitochondria (the tiny energy factories in every cell) burn fuel. Fully complementary with GLP drugs and AOD — no overlap.', howOften:'Daily × 4 weeks', timing:'AM fasted' },
+    { name:'5-Amino-1MQ',  diff:'med', why:'Removes a "brake" that normally slows your cells\' ability to burn fuel. Supports fat burning and muscle preservation at the same time. Oral capsule — no injection needed.', howOften:'Daily', timing:'AM' },
+    { name:'L-Carnitine',  diff:'easy', why:'The conveyor belt for fat. GLP drugs and AOD release fat from cells — L-Carnitine carries it INSIDE the mitochondria where it gets burned. Different step, zero overlap, stacks clean with anything. Pre-workout timing.', howOften:'Daily (pre-workout)', timing:'Pre-workout or AM' }
+  ],
+  'muscle': [
+    { name:'CJC + Ipa Blend',  diff:'easy', why:'Two peptides pre-mixed in one vial. CJC-1295 (No DAC) tells your body to release its natural nightly growth hormone. Ipamorelin makes that release bigger. Together, one bedtime injection replaces two. The beginner-friendly growth hormone stack.', howOften:'Daily', timing:'Bedtime fasted' },
+    { name:'CJC-1295 No DAC',  diff:'med',  why:'Standalone version (no Ipamorelin). A growth hormone releaser — triggers a clean, natural-shape nightly GH spike. Pair it with an amplifier like Ipamorelin for full effect.', howOften:'Daily', timing:'Bedtime fasted' },
+    { name:'CJC-1295 DAC',     diff:'med',  why:'Long-acting version (~6–8 day half-life). Instead of creating a sharp spike, it keeps growth hormone levels elevated steadily — a sustained baseline. Once-weekly injection. Often stacked with the Blend for 24/7 coverage.', howOften:'1x/week', timing:'AM' },
+    { name:'Tesamorelin',      diff:'adv',  why:'FDA-approved growth hormone releaser (originally for HIV-related fat changes). More potent and cleaner than CJC — used for body recomposition, especially losing stubborn belly fat while keeping muscle. Titrate up to 2mg.', howOften:'Daily', timing:'Bedtime fasted' },
+    { name:'Ipamorelin',       diff:'easy', why:'Solo option if you want just the "amplifier" side of the growth hormone equation. Pure GH release without the cortisol spike older peptides caused. Pair with any releaser (CJC No DAC, Tesamorelin, Sermorelin).', howOften:'Daily', timing:'Bedtime fasted' },
+    { name:'IGF-1 LR3',        diff:'med',  why:'The downstream muscle-building signal your body normally makes AFTER growth hormone — delivered directly. Skips the whole growth hormone system and hits muscle tissue. Long half-life (~24 hr). Post-workout timing for max uptake. Short 4-week cycles.', howOften:'Daily × 4 weeks, 8 weeks off', timing:'Post-workout' }
+  ],
+  'recovery': [
+    { name:'BPC-157', diff:'easy', why:'Heals tissue right where it\'s injured — by growing new blood vessels to the site and improving local blood flow. The gold standard for tendon, ligament, and gut repair. Bump to 2x daily for active injuries.', howOften:'1–2x daily', timing:'AM ± PM' },
+    { name:'TB-500',  diff:'easy', why:'Works body-wide instead of just at one spot — tells cells to migrate into damaged areas and rebuild. Deeper and longer-lasting than BPC-157. The two are complementary, not redundant.', howOften:'2x/week', timing:'AM' },
+    { name:'GHK-Cu',  diff:'med',  why:'Copper-peptide. Accelerates wound healing, collagen synthesis, skin remodeling. Pairs well when skin / connective tissue is involved.', howOften:'Daily', timing:'AM' }
+  ],
+  'longevity': [
+    { name:'Epithalon',       diff:'med',  why:'Protects your telomeres — the tips of your DNA that shorten every time a cell divides. Short telomeres = cell aging. Epithalon activates the enzyme that maintains telomere length. Short pulsed cycles (10 days, twice a year). Cheap, clean, almost mythic in the longevity community.', howOften:'Daily × 10 days, 2x/year', timing:'Bedtime' },
+    { name:'SS-31',           diff:'adv',  why:'Rebuilds your mitochondria — the tiny energy factories inside every cell. As you age, those factories get leaky and inefficient. SS-31 stabilizes their internal structure. Clinical data in heart failure and mitochondrial disease. This is the "fix the engine" peptide.', howOften:'Daily', timing:'AM' },
+    { name:'GHK-Cu',          diff:'easy', why:'Copper tripeptide — resets aging-related gene expression toward a younger pattern. Strongest evidence for skin, hair, collagen, wound healing. The "rebuild the outside" peptide.', howOften:'Daily', timing:'AM' },
+    { name:'CJC + Ipa Blend', diff:'easy', why:'Growth hormone support for midlife. A mild nightly release keeps your body producing IGF-1 — the signal that drives tissue regeneration, bone density, and muscle maintenance as you age.', howOften:'Daily', timing:'Bedtime fasted' },
+    { name:'MOTS-c',          diff:'med',  why:'Tunes up how well your mitochondria burn fuel. Makes your body more flexible about switching between sugar and fat for energy, and more sensitive to insulin. Different mechanism than SS-31 — they work together, not against each other. Short pulsed cycles.', howOften:'Daily × 4 weeks', timing:'AM fasted' }
+  ],
+  'sleep': [
+    { name:'DSIP', diff:'easy', why:'Delta Sleep-Inducing Peptide. Improves sleep architecture without morning grogginess. Short cycle, gentle, no dependence risk.', howOften:'Daily', timing:'Bedtime' }
+  ],
+  'focus': [
+    { name:'Semax',  diff:'easy', why:'Nasal spray. Raises dopamine (the focus and drive neurotransmitter) and BDNF (a growth factor for your brain cells). Morning dose for focus, motivation, and recall. No tolerance build-up at normal doses.', howOften:'Daily', timing:'AM nasal' },
+    { name:'Selank', diff:'easy', why:'Nasal spray. Calming without sedation — works on the same chill-out brain system that anti-anxiety meds target, but without grogginess or dependence. Evening dose takes the edge off without making you sleepy.', howOften:'Daily or as needed', timing:'PM nasal' }
+  ],
+  'libido': [
+    { name:'PT-141', diff:'med', why:'The only peptide that actually works on libido by acting on your BRAIN\'s desire centers — not your blood flow (like Viagra). Hits a receptor called melanocortin-4 that turns on desire. Situational use — inject when you need it, not daily.', howOften:'As needed', timing:'30–60 min before' }
+  ],
+  'explore': [
+    { name:'BPC-157',     diff:'easy', why:'The most-stacked peptide in the space. Start here to understand why.', howOften:'Daily', timing:'AM' },
+    { name:'Ipamorelin',  diff:'easy', why:'The gentlest growth hormone peptide. Perfect as your first peptide from the growth hormone category.', howOften:'Daily', timing:'Bedtime fasted' },
+    { name:'AOD-9604',    diff:'easy', why:'Low-side-effect fat burner. Easy to stack with almost anything else.', howOften:'Daily', timing:'AM fasted' }
+  ]
+};
+
+// STARTER STACK — the final recommendation (Step 4)
+const STARTER_STACKS = {
+  'fat-loss': {
+    name:'Fat Loss Stack',
+    emoji:'🔥',
+    tagline:'Four layers. Complete fat-loss chain, no overlap.',
+    peptides:[
+      { name:'Retatrutide', dose:'low', timing:'am',          cycleWk:48,   reason:'Brain-level — appetite control by hitting three receptors at once (weekly injection)' },
+      { name:'MOTS-c',      dose:'mid', timing:'am',          cycleWk:4,    reason:'Cell-level — improves how your mitochondria burn fuel (daily AM fasted)' },
+      { name:'AOD-9604',    dose:'mid', timing:'am',          cycleWk:12,   reason:'Tissue-level — direct fat cell breakdown, no blood sugar impact (daily AM fasted)' },
+      { name:'L-Carnitine', dose:'mid', timing:'postworkout', cycleWk:null, reason:'Transport-level — the conveyor belt that carries released fat INTO mitochondria to be burned (200mg pre-workout)' }
+    ],
+    why:'Four layers, four completely different mechanisms, zero overlap. <strong>Retatrutide</strong> works on your BRAIN — controls appetite and metabolism by hitting three receptors at once. <strong>MOTS-c</strong> works INSIDE your CELLS — improves how efficiently your mitochondria burn fuel. <strong>AOD-9604</strong> works directly on your FAT CELLS — releases stored fat. <strong>L-Carnitine</strong> is the CONVEYOR BELT — transports that released fat INTO the mitochondria where it actually gets burned. Without L-Carnitine, fat released by AOD just floats in the bloodstream and can eventually re-store. Full chain: Brain → Cell → Tissue → Transport. Every link covered.'
+  },
+  'muscle': {
+    name:'Muscle Building Stack',
+    emoji:'💪',
+    tagline:'Growth hormone coverage from top to bottom.',
+    peptides:[
+      { name:'CJC + Ipa Blend', dose:'mid', timing:'bedtime',     cycleWk:10, reason:'Nightly growth hormone release — pre-blended CJC-1295 No DAC + Ipamorelin, one injection' },
+      { name:'CJC-1295 DAC',    dose:'mid', timing:'am',          cycleWk:12, reason:'Keeps growth hormone elevated between nightly spikes — long-acting, 1x/week' },
+      { name:'IGF-1 LR3',       dose:'low', timing:'postworkout', cycleWk:4,  reason:'The muscle-building signal delivered directly — post-workout window, 4 weeks on / 8 weeks off' }
+    ],
+    why:'Full growth hormone coverage, top to bottom. The Blend triggers your natural nightly GH release. CJC DAC keeps growth hormone levels elevated steadily between those nightly spikes. IGF-1 LR3 skips the whole system and delivers the muscle-building signal directly to tissue. Three peptides, three distinct roles — no redundancy, no ringing the same doorbell twice. (Heads up: adding Tesamorelin on top of this stack would conflict with CJC DAC — same job, different brand. Pick one or the other, not both.)'
+  },
+  'recovery': {
+    name:'Recovery / Healing Starter',
+    emoji:'🩹',
+    tagline:'Local repair + systemic repair. Different tools, same goal.',
+    peptides:[
+      { name:'BPC-157', dose:'mid', timing:'am', cycleWk:6, reason:'Local tissue repair — grows new blood vessels at the injury site (daily AM, 2x for active injuries)' },
+      { name:'TB-500',  dose:'mid', timing:'am', cycleWk:8, reason:'Whole-body tissue repair — works system-wide (2x per week)' }
+    ],
+    why:'BPC-157 works locally at the injury site. TB-500 works systemically everywhere. They use separate biological machinery — stacking them attacks the injury from both angles without overlap.'
+  },
+  'longevity': {
+    name:'Anti-Aging / Longevity Stack',
+    emoji:'⏳',
+    tagline:'Four different aging mechanisms. Zero overlap.',
+    peptides:[
+      { name:'Epithalon',       dose:'mid', timing:'bedtime', cycleWk:2,  reason:'Telomere length — 10-day courses, 2x per year' },
+      { name:'SS-31',           dose:'mid', timing:'am',      cycleWk:8,  reason:'Mitochondrial membrane rebuilder — stabilizes the cristae (daily AM)' },
+      { name:'CJC + Ipa Blend', dose:'mid', timing:'bedtime', cycleWk:10, reason:'Growth hormone maintenance — nightly release keeps you producing IGF-1 at midlife levels' },
+      { name:'GHK-Cu',          dose:'mid', timing:'am',      cycleWk:12, reason:'Skin/collagen/gene expression — copper peptide for the outside (daily AM)' }
+    ],
+    why:'Four peptides, four different aging mechanisms. Epithalon targets your telomeres — the tips of your DNA that shorten as you age. SS-31 rebuilds your mitochondrial power plants — the tiny energy factories inside every cell. CJC + Ipa Blend keeps your growth hormone firing at midlife levels, which supports tissue regeneration, bone density, and muscle retention. GHK-Cu resets aging-related gene expression toward younger patterns, especially for skin, collagen, and wound healing. Attacking aging from the DNA level, the cellular energy level, the hormonal level, and the tissue level — all at once, no ringing the same doorbell twice.'
+  },
+  'sleep': {
+    name:'Sleep Starter',
+    emoji:'😴',
+    tagline:'One peptide. One target. Clean.',
+    peptides:[
+      { name:'DSIP', dose:'mid', timing:'bedtime', cycleWk:4, reason:'Delta-wave sleep inducer — no morning hangover (daily bedtime)' }
+    ],
+    why:'DSIP shifts sleep architecture toward deeper delta-wave sleep. No grogginess. No dependence. Start with the single peptide, add others only if sleep issues persist past 4 weeks.'
+  },
+  'focus': {
+    name:'Focus & Mood Starter',
+    emoji:'🧠',
+    tagline:'Stimulating AM + calming PM. Yin and yang.',
+    peptides:[
+      { name:'Semax',  dose:'mid', timing:'am', cycleWk:4, reason:'Morning focus + drive — nasal spray, boosts dopamine and brain growth factor' },
+      { name:'Selank', dose:'mid', timing:'pm', cycleWk:4, reason:'Calming without sedation — evening nasal spray, takes the edge off' }
+    ],
+    why:'Semax activates. Selank calms. They work on different neurotransmitter systems — stacking them balances your day instead of overstimulating one side.'
+  },
+  'libido': {
+    name:'Libido Starter',
+    emoji:'❤️‍🔥',
+    tagline:'Works on desire in the brain. Use when you need it.',
+    peptides:[
+      { name:'PT-141', dose:'mid', timing:'pm', cycleWk:8, reason:'Turns on the desire centers in your brain (inject 30–60 min before — as needed)' }
+    ],
+    why:'PT-141 works on your BRAIN, not your blood flow. That means it addresses desire rather than mechanics — the opposite end of the problem Viagra solves. Use it situationally. One peptide is enough here — stacking libido peptides rarely adds benefit.'
+  },
+  'explore': {
+    name:'Explorer Stack',
+    emoji:'🔬',
+    tagline:'The gentlest intro to three major peptide categories.',
+    peptides:[
+      { name:'BPC-157',    dose:'mid', timing:'am',      cycleWk:6,  reason:'Tissue repair category — the most-used peptide' },
+      { name:'Ipamorelin', dose:'mid', timing:'bedtime', cycleWk:10, reason:'Growth hormone category — gentlest option' }
+    ],
+    why:'Not sure where to focus? Start with the two safest peptides that teach you the basics of injection + recovery + growth hormone peptides without commitment. You can layer in more once you know what you feel.'
+  }
+};
+
+// ═══════════════════════════════════════════════════════════════════════
+// MECHANISM TAGS — used for conflict detection ("ringing the doorbell twice")
+// Each peptide has one or more mechanism tags. Tags in the same CONFLICT_GROUP
+// mean "only pick one from this group — stacking two is redundant."
+// ═══════════════════════════════════════════════════════════════════════
+const MECH_TAGS = {
+  'CJC + Ipa Blend':      ['ghrh-short', 'ghrp'],
+  'CJC-1295 No DAC':      ['ghrh-short'],
+  'CJC-1295 DAC':         ['ghrh-long'],
+  'Tesamorelin':          ['ghrh-long'],
+  'Sermorelin':           ['ghrh-short'],
+  'Ipamorelin':           ['ghrp'],
+  'IGF-1 LR3':            ['igf1-direct'],
+  'Semaglutide':          ['glp1'],
+  'Tirzepatide':          ['glp1'],
+  'Retatrutide':          ['glp1'],
+  'AOD-9604':             ['fat-burner'],
+  'MOTS-c':               ['mito-tune'],
+  'SS-31':                ['mito-stab'],
+  'Epithalon':            ['telomere'],
+  'GHK-Cu':               ['copper-repair'],
+  'BPC-157':              ['repair-local'],
+  'TB-500':               ['repair-systemic'],
+  'DSIP':                 ['sleep'],
+  'Semax':                ['cog-stim'],
+  'Selank':               ['cog-calm'],
+  'PT-141':               ['libido'],
+  '5-Amino-1MQ':          ['metabolic-oral'],
+  'KPV':                  ['anti-inflam'],
+  'L-Carnitine':          ['fat-transport']
+};
+
+// Groups where stacking two = redundancy warning
+const CONFLICT_GROUPS = {
+  'ghrh-short':   'Short-acting growth hormone releasers',
+  'ghrh-long':    'Long-acting growth hormone releasers',
+  'ghrp':         'Growth hormone amplifiers',
+  'glp1':         'GLP-class appetite peptides',
+  'mito-stab':    'Mitochondrial stabilizers'
+};
+
+// Reconstitution recommendations — maps to CATALOG in protocol-tracker.html
+// { vialMg, bacMl, diluent: 'bac' | 'acetic' }
+const RECON_DATA = {
+  'CJC + Ipa Blend':    { vialMg:10, bacMl:3.0, diluent:'bac' },
+  'CJC-1295 No DAC':    { vialMg:10, bacMl:3.0, diluent:'bac' },
+  'CJC-1295 DAC':       { vialMg:10, bacMl:3.0, diluent:'bac' },
+  'Tesamorelin':        { vialMg:10, bacMl:3.0, diluent:'bac' },
+  'Sermorelin':         { vialMg:10, bacMl:3.0, diluent:'bac' },
+  'Ipamorelin':         { vialMg:10, bacMl:3.0, diluent:'bac' },
+  'IGF-1 LR3':          { vialMg:10, bacMl:3.0, diluent:'bac' },
+  'Semaglutide':        { vialMg:10, bacMl:3.0, diluent:'bac' },
+  'Tirzepatide':        { vialMg:10, bacMl:3.0, diluent:'bac' },
+  'Retatrutide':        { vialMg:10, bacMl:3.0, diluent:'bac' },
+  'AOD-9604':           { vialMg:10, aceticMl:1.0, bacMl:2.0, diluent:'acetic', note:'Apex recommendation: 1 mL of 0.6% acetic acid + 2 mL BAC water = 3 mL total. Acetic acid dissolves AOD cleanly; BAC water dilutes to reduce injection-site sting. Plain BAC water alone will leave clumps.' },
+  'MOTS-c':             { vialMg:10, bacMl:3.0, diluent:'bac' },
+  'SS-31':              { vialMg:10, bacMl:3.0, diluent:'bac' },
+  'Epithalon':          { vialMg:10, bacMl:3.0, diluent:'bac' },
+  'GHK-Cu':             { vialMg:10, bacMl:3.0, diluent:'bac' },
+  'BPC-157':            { vialMg:10, bacMl:3.0, diluent:'bac' },
+  'TB-500':             { vialMg:10, bacMl:3.0, diluent:'bac' },
+  'DSIP':               { vialMg:10, bacMl:3.0, diluent:'bac' },
+  'Semax':              { vialMg:10, bacMl:6.0, diluent:'bac', nasal:true, sprayMcg:167, note:'Nasal spray is the CORRECT route for Semax — not a workaround. These peptides cross directly into the brain via the olfactory nerve, which is why all the Russian clinical data uses nasal administration.' },
+  'Selank':             { vialMg:10, bacMl:6.0, diluent:'bac', nasal:true, sprayMcg:167, note:'Nasal spray is the CORRECT route for Selank — same reason as Semax. Bypasses the blood-brain barrier via olfactory pathway.' },
+  'PT-141':             { vialMg:10, bacMl:3.0, diluent:'bac' },
+  'KPV':                { vialMg:10, bacMl:3.0, diluent:'bac' },
+  '5-Amino-1MQ':        { oral:true, note:'Oral capsule — no reconstitution needed. Swallow with water.' },
+  'L-Carnitine':        { vialMg:5000, bacMl:10.0, diluent:'bac', premixed:true, note:'Apex default: 500 mg/mL × 10 mL = 5,000 mg per bottle (pre-mixed solution). NO reconstitution needed — L-Carnitine ships as a sterile ready-to-use solution, not a lyophilized powder. Skip the mixing steps entirely. Just draw your dose and inject.' }
+};
+
+// ═══════════════════════════════════════════════════════════════════════
+// WIZARD STATE + NAVIGATION
+// ═══════════════════════════════════════════════════════════════════════
+const STEP_LABELS = { 1:'Pick a goal', 2:'Basics', 3:'Build stack', 4:'Review', 5:'Ready to start?', 6:'Reconstitute', 7:'Schedule' };
+let state = {
+  goal: null,                      // current goal being explored
+  goalsAddedFrom: [],              // goals user has picked peptides from
+  selectedPeptides: [],            // [{ name, dose, timing, cycleWk, reason, fromGoal }]
+  primerSeen: false,               // skip primer on goal-switch loop-back
+  hasInHand: null,                 // 'yes' | 'no' | null
+  setup: 'syringe',                // 'syringe' | 'pen' — how they'll inject
+  reconOverrides: {},              // { 'Retatrutide': { vialMg:20, bacMl:2 } } — user-customized vial size + BAC volume
+  startDate: null,
+  times: { am:'07:00', pw:'11:45', pm:'21:30' }
+};
+
+function updateRecon(peptideName, field, value) {
+  const num = parseFloat(value);
+  if (isNaN(num) || num <= 0) return;
+  state.reconOverrides[peptideName] = state.reconOverrides[peptideName] || {};
+  state.reconOverrides[peptideName][field] = num;
+  renderRecon();
+}
+
+function pickSetup(setup) {
+  state.setup = setup;
+  document.querySelectorAll('.st-btn').forEach(b => b.classList.toggle('selected', b.dataset.setup === setup));
+  renderRecon();
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// STACK BUILDING HELPERS
+// ═══════════════════════════════════════════════════════════════════════
+function isPeptideSelected(name) {
+  return state.selectedPeptides.some(p => p.name === name);
+}
+
+// Peptide-specific safety disclosures shown BEFORE the peptide is added to the stack.
+// Covers two types: (1) aggressive titration classes, (2) non-standard reconstitution requirements.
+const PEPTIDE_WARNINGS = {
+  'Retatrutide': {
+    risk: 'Retatrutide is a TRIPLE-receptor agonist — the most aggressive GLP-class compound. Starting too high = severe nausea, vomiting, GI shutdown.',
+    rules: [
+      'START LOW — begin at the lowest titration step',
+      'RAMP UP SLOWLY — increase every 4 weeks only if tolerated',
+      'NEVER STOP COLD TURKEY — taper DOWN over 8–10 weeks'
+    ],
+    consequence: 'Ignoring this = you get really sick.'
+  },
+  'Semaglutide': {
+    risk: 'Semaglutide is a GLP-1 agonist. Starting too high or stopping cold turkey causes severe nausea, vomiting, and rebound hunger.',
+    rules: [
+      'START LOW — begin at 0.25mg weekly',
+      'RAMP UP SLOWLY — increase every 4 weeks only if tolerated',
+      'NEVER STOP COLD TURKEY — taper DOWN over 8 weeks'
+    ],
+    consequence: 'Ignoring this = severe GI side effects and rebound weight gain.'
+  },
+  'Tirzepatide': {
+    risk: 'Tirzepatide is a dual GLP-1/GIP agonist. Aggressive titration schedule required to avoid serious GI side effects.',
+    rules: [
+      'START LOW — begin at 2.5mg weekly',
+      'RAMP UP SLOWLY — increase every 4 weeks only if tolerated',
+      'NEVER STOP COLD TURKEY — taper DOWN over 10 weeks'
+    ],
+    consequence: 'Ignoring this = severe nausea, vomiting, dehydration.'
+  },
+  'Tesamorelin': {
+    risk: 'Tesamorelin requires a gradual titration up to 2mg. Full-dose starts cause injection-site reactions and fluid retention.',
+    rules: [
+      'START at 1mg daily',
+      'RAMP UP to 2mg after week 1',
+      'Check IGF-1, fasting glucose, liver enzymes at 8 weeks'
+    ],
+    consequence: 'Ignoring this = water retention, puffy face, injection site reactions.'
+  },
+  'AOD-9604': {
+    risk: 'AOD-9604 will NOT dissolve in plain bacteriostatic water. It REQUIRES acetic acid for reconstitution.',
+    rules: [
+      'Use 0.6% ACETIC ACID to reconstitute (supplier-matched diluent is best)',
+      'Some protocols use acetic acid FIRST, then BAC water as secondary dilution',
+      'Never attempt to reconstitute AOD with plain BAC water alone',
+      'If your vial shipped with a matched diluent — USE IT'
+    ],
+    consequence: 'Ignoring this = clumpy vial, peptide never fully dissolves, wasted money, no therapeutic effect.'
+  }
+};
+
+function confirmTitrationWarning(name) {
+  const warn = PEPTIDE_WARNINGS[name];
+  if (!warn) return true;   // no warning needed
+  const rulesStr = warn.rules.map(r => '• ' + r).join('\n');
+  const msg = `⚠️ Before you add ${name} to your stack\n\n${warn.risk}\n\nThe rules:\n${rulesStr}\n\n${warn.consequence}\n\nDo you understand and want to continue?`;
+  return confirm(msg);
+}
+
+function togglePeptide(name, fromGoal) {
+  const idx = state.selectedPeptides.findIndex(p => p.name === name);
+  if (idx >= 0) {
+    state.selectedPeptides.splice(idx, 1);
+  } else {
+    // Safety check before adding high-titration peptides
+    if (!confirmTitrationWarning(name)) return;
+    // Pull metadata from the shortlist so we have timing/howOften/reason
+    const shortlist = PEPTIDE_SHORTLISTS[fromGoal] || [];
+    const meta = shortlist.find(p => p.name === name) || {};
+    state.selectedPeptides.push({
+      name: name,
+      fromGoal: fromGoal,
+      howOften: meta.howOften || 'Daily',
+      timing: meta.timing || '',
+      why: meta.why || '',
+      dose: 'mid',
+      cycleWk: null
+    });
+  }
+  renderRunningStack();
+  renderAddGoalChips();   // show/hide "add another goal" based on whether user has selected a peptide
+  // Re-render peptide cards to reflect checked state
+  renderPeptideList();
+}
+
+function removePeptide(name) {
+  state.selectedPeptides = state.selectedPeptides.filter(p => p.name !== name);
+  renderRunningStack();
+  if (document.querySelector('.step[data-step="4"].active')) renderReview();
+  if (document.querySelector('.step[data-step="3"].active')) renderPeptideList();
+}
+
+function detectConflicts() {
+  const tagCounts = {};
+  const tagPeptides = {};
+  for (const p of state.selectedPeptides) {
+    const tags = MECH_TAGS[p.name] || [];
+    for (const t of tags) {
+      tagCounts[t] = (tagCounts[t] || 0) + 1;
+      tagPeptides[t] = tagPeptides[t] || [];
+      tagPeptides[t].push(p.name);
+    }
+  }
+  const warnings = [];
+  for (const [tag, label] of Object.entries(CONFLICT_GROUPS)) {
+    if ((tagCounts[tag] || 0) > 1) {
+      warnings.push({
+        group: label,
+        peptides: tagPeptides[tag],
+        message: `You picked ${tagPeptides[tag].join(' + ')} — both are ${label.toLowerCase()}. That's ringing the same doorbell twice. Pick one.`
+      });
+    }
+  }
+  return warnings;
+}
+
+function renderRunningStack() {
+  const slot = document.getElementById('running-stack-slot');
+  if (!slot) return;
+  if (state.selectedPeptides.length === 0) {
+    slot.innerHTML = `
+      <div class="running-stack empty">
+        <div class="rs-label">Your stack so far</div>
+        <div class="rs-empty">No peptides added yet. Tap any peptide above to add it.</div>
+      </div>`;
+    return;
+  }
+  const byGoal = {};
+  for (const p of state.selectedPeptides) {
+    byGoal[p.fromGoal] = byGoal[p.fromGoal] || [];
+    byGoal[p.fromGoal].push(p);
+  }
+  const warnings = detectConflicts();
+  slot.innerHTML = `
+    <div class="running-stack">
+      <div class="rs-label">Your stack so far · ${state.selectedPeptides.length} peptide${state.selectedPeptides.length>1?'s':''}</div>
+      ${Object.entries(byGoal).map(([g, peps]) => {
+        const meta = GOAL_META[g] || { emoji:'•', label:g };
+        return `
+          <div class="rs-group">
+            <div class="rs-group-label">${meta.emoji} ${meta.label}</div>
+            <div class="rs-chips">
+              ${peps.map(p => `<span class="rs-chip">${p.name} <button class="rs-x" onclick="removePeptide('${p.name.replace(/'/g,"\\'")}')">×</button></span>`).join('')}
+            </div>
+          </div>`;
+      }).join('')}
+      ${warnings.length > 0 ? `
+        <div class="rs-warn">
+          <div class="rs-warn-head">⚠ Heads up — doorbell ringing twice</div>
+          ${warnings.map(w => `<div class="rs-warn-item">${w.message}</div>`).join('')}
+        </div>` : ''}
+    </div>
+  `;
+}
+
+let maxStepReached = 1;
+
+function goStep(n) {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  const target = document.querySelector('.step[data-step="' + n + '"]');
+  if (!target) return;
+  target.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  maxStepReached = Math.max(maxStepReached, n);
+
+  // progress bar + dots (7 visible steps)
+  if (n <= 7) {
+    document.getElementById('p-step').textContent = 'Step ' + n + ' of 7';
+    document.getElementById('p-label').textContent = STEP_LABELS[n];
+    document.getElementById('p-fill').style.width = ((n/7)*100) + '%';
+    updateDots(n);
+  }
+
+  // render step-specific content
+  if (n === 3) {
+    // No auto-preload. Users actively choose every peptide to add to their stack.
+    // The "recommended starter" is shown as a badge on the matching peptide cards,
+    // so users see WHICH peptides we recommend — but they still have to tap Add.
+    renderPeptideList();
+    renderRunningStack();
+    renderAddGoalChips();
+  }
+  if (n === 4) renderReview();
+  if (n === 6) renderRecon();
+  if (n === 7) renderDateOptions();
+}
+
+function updateDots(current) {
+  document.querySelectorAll('.pdot').forEach(btn => {
+    const step = parseInt(btn.dataset.step, 10);
+    btn.classList.remove('current','done');
+    if (step === current) btn.classList.add('current');
+    else if (step < current || step <= maxStepReached) btn.classList.add('done');
+    // Disable future steps user hasn't reached yet (except step 1 requires a goal)
+    btn.disabled = (step > maxStepReached) || (step > 1 && !state.goal);
+  });
+}
+
+// Wire clickable progress dots
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.pdot').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (btn.disabled) return;
+      const step = parseInt(btn.dataset.step, 10);
+      if (step === 1 || state.goal) goStep(step);
+    });
+  });
+  updateDots(1);
+});
+
+// STEP 1: GOAL PICKER
+document.getElementById('goal-grid').addEventListener('click', (e) => {
+  const btn = e.target.closest('.goal');
+  if (!btn) return;
+  document.querySelectorAll('.goal').forEach(g => g.classList.remove('selected'));
+  btn.classList.add('selected');
+  state.goal = btn.dataset.goal;
+  state.stack = JSON.parse(JSON.stringify(STARTER_STACKS[state.goal] || STARTER_STACKS['explore']));
+  document.getElementById('btn-step1-next').disabled = false;
+
+  // If user picked "Just curious," change Step 2's next button to go to encyclopedia
+  const step2Btn = document.getElementById('step2-next');
+  if (step2Btn) {
+    if (state.goal === 'explore') {
+      step2Btn.textContent = 'Open the encyclopedia →';
+    } else {
+      step2Btn.textContent = 'Show me the peptides →';
+    }
+  }
+});
+document.getElementById('btn-step1-next').addEventListener('click', () => {
+  if (!state.goal) return;
+  goStep(2);
+});
+
+// STEP 2: primer → next (explore goes to browse, others continue wizard)
+function step2Next() {
+  if (state.goal === 'explore') {
+    // Save lane + route to encyclopedia
+    try { localStorage.setItem('apex_lane','browsing'); } catch(e){}
+    location.href = 'browse.html';
+    return;
+  }
+  goStep(3);
+}
+
+// STEP 3: RENDER PEPTIDE LIST
+function renderPeptideList() {
+  const list = PEPTIDE_SHORTLISTS[state.goal] || PEPTIDE_SHORTLISTS['explore'];
+  const meta = GOAL_META[state.goal];
+  const intro = GOAL_INTRO[state.goal] || GOAL_INTRO['explore'];
+  document.getElementById('s3-title').innerHTML = `<span>${meta.emoji}</span> The peptides that fit <span style="color:var(--accent2);">${meta.label.toLowerCase()}.</span>`;
+
+  // Render the "how this category is typically run" intro panel above the peptide list
+  const introSlot = document.getElementById('goal-intro-slot');
+  if (introSlot && intro) {
+    introSlot.innerHTML = `
+      <div class="goal-intro">
+        <div class="gi-headline"><span class="gi-icon">${meta.emoji}</span>${intro.headline}</div>
+        <ul class="gi-points">
+          ${intro.points.map(pt => `<li>${pt}</li>`).join('')}
+        </ul>
+      </div>
+    `;
+  }
+  const slugMap = { 'Semaglutide':'semaglutide','Tirzepatide':'tirzepatide','Retatrutide':'retatrutide','AOD-9604':'aod9604',
+                    'BPC-157':'bpc157','TB-500':'tb500','GHK-Cu':'ghkcu','KPV':'kpv','LL-37':'ll37','ARA-290':'ara290',
+                    'Ipamorelin':'ipamorelin','CJC-1295 No DAC':'cjc-no-dac','CJC-1295 DAC':'cjc1295-dac','CJC + Ipa Blend':'cjc-ipa-blend',
+                    'Sermorelin':'sermorelin','Tesamorelin':'tesamorelin','IGF-1 LR3':'igf1-lr3',
+                    'Epithalon':'epitalon','MOTS-c':'motsc','SS-31':'ss31','Semax':'semax','Selank':'selank',
+                    'DSIP':'dsip','PT-141':'pt141','L-Carnitine':'l-carnitine'};
+  // Which peptides are in the starter stack for this goal? (used to show a "Recommended" badge)
+  const starter = STARTER_STACKS[state.goal];
+  const starterNames = starter && Array.isArray(starter.peptides) ? starter.peptides.map(sp => sp.name) : [];
+  document.getElementById('peptide-list').innerHTML = list.map(p => {
+    const diffLabel = p.diff === 'easy' ? 'Beginner' : p.diff === 'med' ? 'Intermediate' : 'Advanced';
+    const slug = slugMap[p.name] || p.name.toLowerCase().replace(/[^a-z0-9]/g,'');
+    const isSelected = isPeptideSelected(p.name);
+    const isRecommended = starterNames.includes(p.name);
+    const escapedName = p.name.replace(/'/g,"\\'");
+    return `
+    <div class="pep ${isSelected ? 'selected' : ''} ${isRecommended && !isSelected ? 'recommended' : ''}">
+      <div class="pep-top">
+        <div class="pep-name">${p.name}</div>
+        <div class="pep-badges">
+          <span class="badge ${p.diff}">${diffLabel}</span>
+          ${isRecommended ? '<span class="badge recommended-badge">⭐ Recommended starter</span>' : ''}
+          ${isSelected ? '<span class="badge added">✓ In your stack</span>' : ''}
+        </div>
+      </div>
+      <div class="pep-why">${p.why}</div>
+      <div class="pep-meta" style="margin-bottom:14px;">
+        <span><strong>Frequency:</strong> ${p.howOften}</span>
+        <span><strong>When:</strong> ${p.timing}</span>
+      </div>
+      <div class="pep-actions">
+        <button class="pep-toggle ${isSelected ? 'added' : ''}" onclick="togglePeptide('${escapedName}','${state.goal}')">
+          ${isSelected ? '✓ Added — tap to remove' : '+ Add to my stack'}
+        </button>
+        <a href="${slug}.html" target="_blank" rel="noopener" class="read-research-btn compact">📖 Read research →</a>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderAddGoalChips() {
+  const panel = document.querySelector('.add-goal-panel');
+  const slot = document.getElementById('add-goal-chips');
+  if (!panel || !slot) return;
+
+  // Only show the "Add another goal" panel AFTER the user has added at least one peptide
+  // from the current goal — avoids premature branching when they're still building the first stack.
+  const hasPeptideFromCurrentGoal = state.selectedPeptides.some(p => p.fromGoal === state.goal);
+  if (!hasPeptideFromCurrentGoal) {
+    panel.style.display = 'none';
+    return;
+  }
+  panel.style.display = '';
+
+  const allGoals = ['fat-loss','muscle','recovery','longevity','sleep','focus','libido'];
+  slot.innerHTML = allGoals.filter(g => g !== state.goal).map(g => {
+    const m = GOAL_META[g];
+    return `<button class="agp-chip" onclick="switchGoal('${g}')">${m.emoji} ${m.label}</button>`;
+  }).join('');
+}
+
+function switchGoal(newGoal) {
+  if (!state.goalsAddedFrom.includes(state.goal)) state.goalsAddedFrom.push(state.goal);
+  state.goal = newGoal;
+  renderPeptideList();
+  renderAddGoalChips();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// STEP 4 helpers: Benefits summary — "Your stack is currently hitting:"
+// Maps the selected peptides to plain-English benefit bullets.
+// ═══════════════════════════════════════════════════════════════════════
+const PEPTIDE_BENEFITS = {
+  'Retatrutide':      { label:'Appetite control via triple receptor agonism (brain-level fat loss)', icon:'🧠' },
+  'Semaglutide':      { label:'Appetite control via GLP-1 (brain-level fat loss)', icon:'🧠' },
+  'Tirzepatide':      { label:'Appetite control via dual GLP-1/GIP (brain-level fat loss)', icon:'🧠' },
+  'AOD-9604':         { label:'Direct fat cell breakdown (tissue-level fat loss)', icon:'🔥' },
+  'MOTS-c':           { label:'Mitochondrial efficiency + insulin sensitivity (cellular fat burning)', icon:'⚡' },
+  'SS-31':            { label:'Mitochondrial membrane repair (cellular anti-aging)', icon:'🔧' },
+  'L-Carnitine':      { label:'Fatty acid transport into mitochondria (fuel delivery for fat burn)', icon:'🚚' },
+  '5-Amino-1MQ':      { label:'Removes metabolic brake on cellular energy burn', icon:'⚙️' },
+  'Epithalon':        { label:'Telomere maintenance (DNA-level aging)', icon:'🧬' },
+  'GHK-Cu':           { label:'Collagen + gene expression reset (skin, connective tissue)', icon:'✨' },
+  'CJC + Ipa Blend':  { label:'Nightly growth hormone release (muscle, recovery, body comp)', icon:'💤' },
+  'CJC-1295 No DAC':  { label:'Nightly growth hormone release (short-acting GHRH)', icon:'💤' },
+  'CJC-1295 DAC':     { label:'Sustained growth hormone baseline (long-acting)', icon:'📈' },
+  'Tesamorelin':      { label:'Potent GHRH analog (visceral fat + muscle retention)', icon:'💉' },
+  'Sermorelin':       { label:'Mild GHRH pulse (gentle GH support)', icon:'🌙' },
+  'Ipamorelin':       { label:'Clean GHRP pulse (GH release, no cortisol spike)', icon:'💪' },
+  'IGF-1 LR3':        { label:'Direct muscle-building signal (post-workout)', icon:'🏋️' },
+  'BPC-157':          { label:'Local tissue repair (tendons, gut, soft tissue)', icon:'🩹' },
+  'TB-500':           { label:'Systemic tissue repair (whole-body healing)', icon:'🔄' },
+  'KPV':              { label:'Anti-inflammatory (gut + skin)', icon:'🛡️' },
+  'DSIP':             { label:'Deep sleep architecture (non-sedative)', icon:'😴' },
+  'Semax':            { label:'Morning focus + motivation (dopamine, BDNF)', icon:'🧠' },
+  'Selank':           { label:'Calming without sedation (evening anxiety relief)', icon:'🧘' },
+  'PT-141':           { label:'Central desire activator (libido via brain, not blood)', icon:'❤️‍🔥' }
+};
+
+function renderBenefitsPanel() {
+  if (state.selectedPeptides.length === 0) return '';
+  const bullets = state.selectedPeptides.map(p => {
+    const b = PEPTIDE_BENEFITS[p.name];
+    if (!b) return null;
+    return `<li><span class="bp-icon">${b.icon}</span><span class="bp-text">${b.label}</span></li>`;
+  }).filter(Boolean).join('');
+  if (!bullets) return '';
+  return `
+    <div class="benefits-panel">
+      <div class="bp-head">✨ Your stack is currently hitting:</div>
+      <ul class="bp-list">${bullets}</ul>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// STEP 4: REVIEW — full stack with conflict detection
+// ═══════════════════════════════════════════════════════════════════════
+function renderReview() {
+  const slot = document.getElementById('review-slot');
+  if (!slot) return;
+  const warnings = detectConflicts();
+  const peptides = state.selectedPeptides;
+
+  if (peptides.length === 0) {
+    slot.innerHTML = `
+      <div class="review-empty">
+        <p style="font-size:15px;color:var(--text);margin-bottom:20px;">You haven't added any peptides yet.</p>
+        <button class="btn btn-primary" onclick="goStep(3)">← Back to the builder</button>
+      </div>`;
+    document.getElementById('s4-next-btn').disabled = true;
+    return;
+  }
+  document.getElementById('s4-next-btn').disabled = false;
+
+  const byGoal = {};
+  for (const p of peptides) {
+    byGoal[p.fromGoal] = byGoal[p.fromGoal] || [];
+    byGoal[p.fromGoal].push(p);
+  }
+  const goalCount = Object.keys(byGoal).length;
+  const escName = n => n.replace(/'/g,"\\'");
+
+  slot.innerHTML = `
+    <div class="review-stats">
+      <div class="rv-stat"><div class="rv-val">${peptides.length}</div><div class="rv-lab">Peptide${peptides.length>1?'s':''}</div></div>
+      <div class="rv-stat"><div class="rv-val">${goalCount}</div><div class="rv-lab">Goal${goalCount>1?'s':''}</div></div>
+      <div class="rv-stat"><div class="rv-val" style="color:${warnings.length?'#ff6b35':'#00ff9d'}">${warnings.length}</div><div class="rv-lab">Conflict${warnings.length!==1?'s':''}</div></div>
+    </div>
+
+    ${warnings.length > 0 ? `
+      <div class="conflicts-panel">
+        <div class="cp-head">⚠ Heads up — ringing the doorbell twice</div>
+        ${warnings.map(w => `
+          <div class="cp-item">
+            <div class="cp-group">${w.group}</div>
+            <div class="cp-msg">${w.message}</div>
+            <div class="cp-actions">
+              ${w.peptides.map(pn => `<button class="cp-remove" onclick="removePeptide('${escName(pn)}')">Remove ${pn}</button>`).join('')}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    ` : `
+      <div class="ok-panel">✅ No mechanism conflicts. This stack hits each target through a different pathway.</div>
+    `}
+
+    ${renderBenefitsPanel()}
+
+    <div class="review-groups">
+      ${Object.entries(byGoal).map(([g, peps]) => {
+        const meta = GOAL_META[g] || { emoji:'•', label:g };
+        return `
+          <div class="rg-block">
+            <div class="rg-head">${meta.emoji} ${meta.label}</div>
+            ${peps.map(p => `
+              <div class="rg-item">
+                <div class="rg-left">
+                  <div class="rg-name">${p.name}</div>
+                  <div class="rg-meta">${p.howOften} · ${p.timing}</div>
+                </div>
+                <button class="rg-remove" onclick="removePeptide('${escName(p.name)}')">× remove</button>
+              </div>
+            `).join('')}
+          </div>`;
+      }).join('')}
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// STEP 5: READY-TO-START GATE
+// ═══════════════════════════════════════════════════════════════════════
+function pickReady(answer) {
+  state.hasInHand = answer;
+  if (answer === 'yes') {
+    goStep(6);
+  } else {
+    // Save stack as "planned" (no start date)
+    saveAsPlanned();
+  }
+}
+
+function saveAsPlanned() {
+  const payload = {
+    version: 2,
+    createdAt: new Date().toISOString(),
+    planned: true,
+    startDate: null,
+    selectedPeptides: state.selectedPeptides,
+    times: null
+  };
+  try { localStorage.setItem('apex_wizard_payload', JSON.stringify(payload)); } catch(e){}
+  try { localStorage.setItem('apex_lane','guided'); } catch(e){}
+
+  // Jump to final with "planned" messaging
+  goStep(8);
+  const n = state.selectedPeptides.length;
+  document.getElementById('final-msg').innerHTML = `
+    <strong style="color:var(--white);">${n} peptide${n>1?'s':''} saved as your plan.</strong><br>
+    No start date — cycle won't begin until you come back and say you're ready.<br><br>
+    <span style="font-size:13px;color:var(--muted);">Need peptides? Apex ships vials with reconstitution kits, needles, and BAC water.</span>
+  `;
+  document.getElementById('final-cta').textContent = 'See my saved stack →';
+  document.getElementById('final-cta').href = 'protocol-tracker.html?fromWizard=1&planned=1';
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// STEP 6: RECONSTITUTION WALKTHROUGH
+// Shows ONE general reconstitution protocol at the top, then a compact
+// per-peptide row (just name + vial + BAC + concentration). Special peptides
+// (AOD = acetic acid, Semax/Selank = nasal spray) get their own expanded cards.
+// ═══════════════════════════════════════════════════════════════════════
+function renderGeneralReconProtocol() {
+  if (state.setup === 'pen') {
+    return `
+      <div class="general-protocol">
+        <div class="gp-head">💉 General protocol — Apex pen setup (applies to every standard peptide below)</div>
+        <ol class="gp-steps">
+          <li><strong>Grab supplies</strong> — your peptide vial, bacteriostatic water, one empty 3mL Apex cartridge, your pen, one pen needle (31g).</li>
+          <li><strong>Fill cartridge with 3mL BAC water</strong> (use a transfer needle) — or whatever volume each peptide specifies.</li>
+          <li><strong>Inject into the peptide vial</strong> down the side of the glass. Swirl — never shake.</li>
+          <li><strong>Transfer back into the cartridge</strong>, screw the cap on, load into the pen, prime 1 unit, dial your dose.</li>
+        </ol>
+      </div>`;
+  }
+  return `
+    <div class="general-protocol">
+      <div class="gp-head">💉 General protocol — insulin syringe setup (applies to every standard peptide below)</div>
+      <ol class="gp-steps">
+        <li><strong>Grab supplies</strong> — your peptide vial, bacteriostatic water, one 3cc syringe for mixing, and U-100 insulin syringes for dosing.</li>
+        <li><strong>Draw 3mL BAC water</strong> (or whatever the peptide below specifies) — 300 units on an insulin syringe.</li>
+        <li><strong>Inject it into the peptide vial</strong> at an angle, down the glass. Swirl gently — never shake.</li>
+        <li><strong>Read your concentration</strong> (shown per-peptide below) and draw your dose in units.</li>
+      </ol>
+      <div style="margin-top:14px;padding:10px 14px;background:rgba(0,255,157,.05);border-left:2px solid var(--accent2);font-size:12px;color:var(--text);line-height:1.55;">
+        <strong style="color:var(--accent2);">SubQ or IM?</strong> For peptides, there's essentially no difference — both deliver the same mg into your bloodstream with nearly identical absorption curves. Default to <strong style="color:var(--white);">SubQ</strong> (into belly fat / love handle / thigh with a 30g × ½" insulin needle). Less pain, thinner needles, same result.
+      </div>
+    </div>`;
+}
+
+function renderCompactPeptideRow(p, idx, r) {
+  const mcgPerMl = (r.vialMg * 1000) / r.bacMl;
+  const mcgPerUnit = mcgPerMl / 100;
+  const escName = p.name.replace(/'/g,"\\'");
+  return `
+    <div class="compact-recon">
+      <div class="cr-head">
+        <span class="cr-idx">${idx+1}.</span>
+        <span class="cr-name">${p.name}</span>
+      </div>
+      <div class="cr-config">
+        <div class="cr-field">
+          <label>VIAL</label>
+          <div class="vc-field">
+            <input type="number" min="0.5" max="200" step="0.5" value="${r.vialMg}" onchange="updateRecon('${escName}','vialMg',this.value)">
+            <span class="vc-unit">mg</span>
+          </div>
+        </div>
+        <div class="cr-field">
+          <label>BAC</label>
+          <div class="vc-field">
+            <input type="number" min="0.3" max="10" step="0.1" value="${r.bacMl}" onchange="updateRecon('${escName}','bacMl',this.value)">
+            <span class="vc-unit">mL</span>
+          </div>
+        </div>
+        <div class="cr-conc">
+          <div class="cr-conc-val">${mcgPerMl.toLocaleString()} mcg/mL</div>
+          <div class="cr-conc-unit">${mcgPerUnit.toFixed(1)} mcg/unit</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderRecon() {
+  const slot = document.getElementById('recon-slot');
+  if (!slot) return;
+  if (state.selectedPeptides.length === 0) {
+    slot.innerHTML = `<p>No peptides selected. Go back and add some.</p>`;
+    return;
+  }
+
+  // Segment peptides into special-case (acetic acid / nasal) vs standard
+  const specials = [];
+  const standards = [];
+  state.selectedPeptides.forEach(p => {
+    const rBase = RECON_DATA[p.name];
+    if (!rBase) { standards.push(p); return; }
+    const override = state.reconOverrides[p.name] || {};
+    const r = Object.assign({}, rBase, override);
+    if (r.oral || r.nasal || r.diluent === 'acetic') specials.push({ p, r });
+    else standards.push({ p, r });
+  });
+
+  let html = '';
+
+  // Block 1: general protocol reference (only if there are any standard peptides)
+  if (standards.length > 0) {
+    html += renderGeneralReconProtocol();
+    html += `<div class="standards-section">`;
+    standards.forEach((entry, idx) => {
+      html += renderCompactPeptideRow(entry.p, idx, entry.r);
+    });
+    html += `</div>`;
+  }
+
+  // Block 2: special cases (acetic acid + nasal spray peptides)
+  if (specials.length > 0) {
+    html += `<div class="specials-section"><div class="specials-head">⚠ These need a different setup — follow each card:</div></div>`;
+    specials.forEach((entry, idx) => {
+      const globalIdx = standards.length + idx;
+      html += renderSpecialPeptide(entry.p, globalIdx, entry.r);
+    });
+  }
+
+  slot.innerHTML = html;
+}
+
+// Render individual special-case cards (oral / nasal / acetic-acid peptides)
+function renderSpecialPeptide(p, idx, r) {
+  const escName = p.name.replace(/'/g,"\\'");
+
+  // Dummy variables that the legacy block uses — kept for compatibility
+  const diluentLabel = r.diluent === 'acetic' ? 'Acetic acid (0.6%)' : 'Bacteriostatic water';
+  const diluentColor = r.diluent === 'acetic' ? '#ff6b35' : '#00ff9d';
+  const mgPerMl = r.vialMg / r.bacMl;
+  const mcgPerMl = mgPerMl * 1000;
+  const mcgPerUnit = mcgPerMl / 100;
+
+  // Run the legacy logic to produce the rich per-peptide cards for special peptides
+  return renderSpecialLegacy(p, idx, r, escName, diluentLabel, diluentColor, mcgPerMl, mcgPerUnit);
+}
+
+function renderSpecialLegacy(p, idx, r, escName, diluentLabel, diluentColor, mcgPerMl, mcgPerUnit) {
+    // Oral peptides = one-line card
+    if (r.oral) {
+      return `
+        <div class="recon-card">
+          <div class="rc-head">${idx+1}. ${p.name}</div>
+          <div class="rc-oral">💊 Oral capsule — no mixing needed.</div>
+          ${r.note ? `<div class="rc-note">${r.note}</div>` : ''}
+        </div>`;
+    }
+
+    // Vial-size + BAC-volume editor block (shown on nasal + acetic special cards)
+    const editorBlock = `
+      <div class="vial-config-row">
+        <div class="vc-input">
+          <label>VIAL SIZE</label>
+          <div class="vc-field">
+            <input type="number" min="0.5" max="200" step="0.5" value="${r.vialMg}" onchange="updateRecon('${escName}','vialMg',this.value)">
+            <span class="vc-unit">mg</span>
+          </div>
+        </div>
+        <div class="vc-input">
+          <label>${r.diluent === 'acetic' ? 'ACETIC ACID' : 'BAC WATER'}</label>
+          <div class="vc-field">
+            <input type="number" min="0.3" max="10" step="0.1" value="${r.bacMl}" onchange="updateRecon('${escName}','bacMl',this.value)">
+            <span class="vc-unit">mL</span>
+          </div>
+        </div>
+        <div class="vc-hint">Edit these to match what you bought.</div>
+      </div>`;
+
+    // Nasal spray peptides (Semax, Selank)
+    if (r.nasal) {
+      const mcgPerMl = (r.vialMg * 1000) / r.bacMl;
+      const sprayMcg = Math.round(mcgPerMl * 0.1);
+      return `
+        <div class="recon-card" style="border-left-color:#a78bfa;">
+          <div class="rc-head">${idx+1}. ${p.name} <span style="font-size:12px;font-family:'Share Tech Mono',monospace;color:#a78bfa;letter-spacing:.15em;">NASAL SPRAY</span></div>
+          ${editorBlock}
+          <div class="rc-concentration-banner" style="border-left-color:#a78bfa;">Concentration: <strong>${mcgPerMl.toLocaleString()} mcg/mL</strong> · <strong>${sprayMcg} mcg per spray</strong></div>
+          <div class="rc-step-grid">
+            <div class="rc-step">
+              <div class="rc-step-num" style="background:#a78bfa;">1</div>
+              <div class="rc-step-body">
+                <div class="rc-step-head">Grab your supplies</div>
+                <div class="rc-step-text">One <strong>${r.vialMg}mg vial</strong> of ${p.name}, a vial of <strong style="color:#00ff9d;">bacteriostatic water</strong>, a 5–10cc syringe for mixing, and an <strong>empty sterile nasal spray pump (~10mL size, 0.1mL/spray)</strong>. Never reuse a pump that held another liquid.</div>
+              </div>
+            </div>
+            <div class="rc-step">
+              <div class="rc-step-num" style="background:#a78bfa;">2</div>
+              <div class="rc-step-body">
+                <div class="rc-step-head">Draw the BAC water</div>
+                <div class="rc-step-text">Draw <strong style="color:#00ff9d;">${r.bacMl}mL</strong> of bacteriostatic water with the mixing syringe.</div>
+              </div>
+            </div>
+            <div class="rc-step">
+              <div class="rc-step-num" style="background:#a78bfa;">3</div>
+              <div class="rc-step-body">
+                <div class="rc-step-head">Add it slowly to the peptide vial</div>
+                <div class="rc-step-text">Tilt the vial, let the water run down the side onto the powder. Gently swirl until fully dissolved — <strong>never shake.</strong></div>
+              </div>
+            </div>
+            <div class="rc-step">
+              <div class="rc-step-num" style="background:#a78bfa;">4</div>
+              <div class="rc-step-body">
+                <div class="rc-step-head">Transfer to the nasal spray bottle</div>
+                <div class="rc-step-text">Draw the full reconstituted solution into a clean syringe, then pour or inject it into the nasal spray bottle. Screw the pump cap on firmly.</div>
+              </div>
+            </div>
+            <div class="rc-step">
+              <div class="rc-step-num" style="background:#a78bfa;">5</div>
+              <div class="rc-step-body">
+                <div class="rc-step-head">Prime the pump</div>
+                <div class="rc-step-text">Pump <strong>3–4 sprays into a tissue</strong> (not your nose) to clear air out of the dip tube. Normal is: nothing → nothing → fine mist.</div>
+              </div>
+            </div>
+            <div class="rc-step">
+              <div class="rc-step-num" style="background:#a78bfa;">6</div>
+              <div class="rc-step-body">
+                <div class="rc-step-head">Your dose per spray</div>
+                <div class="rc-step-text"><strong style="color:var(--white);">${sprayMcg} mcg per spray</strong> (one full pump). Typical use: 1 spray per nostril = <strong style="color:var(--white);">${sprayMcg * 2} mcg total dose</strong>. Alternate nostrils day-to-day to reduce irritation.</div>
+              </div>
+            </div>
+          </div>
+          ${r.note ? `<div class="rc-note" style="background:rgba(167,139,250,.06);border-left-color:#a78bfa;color:#d8c9ff;">ℹ ${r.note}</div>` : ''}
+        </div>`;
+    }
+
+    // Acetic-acid peptides (AOD-9604, Melanotan variants)
+    // Three-input editor: vial size + acetic acid volume + BAC water volume
+    if (r.diluent === 'acetic') {
+      const aceticMl = r.aceticMl ?? 1.0;
+      const bacMl = r.bacMl ?? 2.0;
+      const totalMl = aceticMl + bacMl;
+      const acMcgPerMl = (r.vialMg * 1000) / totalMl;
+      const acMcgPerUnit = acMcgPerMl / 100;
+
+      const aoEditorBlock = `
+        <div class="vial-config-row" style="grid-template-columns:1fr 1fr 1fr;">
+          <div class="vc-input">
+            <label>VIAL SIZE</label>
+            <div class="vc-field">
+              <input type="number" min="0.5" max="200" step="0.5" value="${r.vialMg}" onchange="updateRecon('${escName}','vialMg',this.value)">
+              <span class="vc-unit">mg</span>
+            </div>
+          </div>
+          <div class="vc-input">
+            <label style="color:#ff6b35;">ACETIC ACID</label>
+            <div class="vc-field">
+              <input type="number" min="0.3" max="10" step="0.1" value="${aceticMl}" onchange="updateRecon('${escName}','aceticMl',this.value)">
+              <span class="vc-unit">mL</span>
+            </div>
+          </div>
+          <div class="vc-input">
+            <label style="color:#00ff9d;">BAC WATER</label>
+            <div class="vc-field">
+              <input type="number" min="0.3" max="10" step="0.1" value="${bacMl}" onchange="updateRecon('${escName}','bacMl',this.value)">
+              <span class="vc-unit">mL</span>
+            </div>
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-top:6px;font-style:italic;">Total volume: ${totalMl.toFixed(1)} mL · edit to match what you bought</div>`;
+
+      return `
+        <div class="recon-card" style="border-left-color:#ff6b35;">
+          <div class="rc-head">${idx+1}. ${p.name} <span style="font-size:12px;font-family:'Share Tech Mono',monospace;color:#ff6b35;letter-spacing:.15em;">REQUIRES ACETIC ACID + BAC</span></div>
+          <div class="rc-note" style="background:rgba(255,107,53,.1);border-left-color:#ff6b35;color:#ffc8a8;margin-bottom:14px;">
+            <strong>⚠ Do NOT use plain BAC water alone.</strong> ${p.name} only dissolves cleanly with acetic acid. Plain BAC water alone will leave clumps. Apex recommendation: <strong style="color:#ff6b35;">1 mL of 0.6% acetic acid</strong> + <strong style="color:#00ff9d;">2 mL bacteriostatic water</strong> = 3 mL total. Acetic acid dissolves AOD cleanly · BAC water dilutes to reduce injection-site sting.
+          </div>
+          ${aoEditorBlock}
+          <div class="rc-concentration-banner" style="border-left-color:#ff6b35;margin-top:14px;">Concentration: <strong>${acMcgPerMl.toLocaleString()} mcg/mL</strong> · <strong>${acMcgPerUnit.toFixed(1)} mcg per unit</strong></div>
+          ${r.note ? `<div class="rc-note">ℹ ${r.note}</div>` : ''}
+          <div style="margin-top:12px;font-size:12px;color:var(--muted);line-height:1.5;">Otherwise follow the general reconstitution protocol at the top of this page — everything else (injection technique, swirl-don't-shake, storage) is the same.</div>
+        </div>`;
+    }
+
+    // Fallback (shouldn't be hit — standards go through compact view)
+    return `<div class="recon-card"><div class="rc-head">${idx+1}. ${p.name}</div><div class="rc-body">Use the standard protocol at the top of the page.</div></div>`;
+}
+
+// STEP 4: STACK REVIEW
+function renderStackReview() {
+  const s = state.stack || STARTER_STACKS['explore'];
+  document.getElementById('s4-title').textContent = "Here's what we'd start with: " + s.name;
+  document.getElementById('stack-review-slot').innerHTML = `
+    <div class="stack-review">
+      <div class="stack-header">
+        <div class="stack-emoji">${s.emoji}</div>
+        <div class="stack-name">${s.name}</div>
+      </div>
+      <div class="stack-tag">${s.tagline}</div>
+      <div class="stack-why"><strong>Why these two</strong>${s.why}</div>
+      <div class="stack-items">
+        ${s.peptides.map(p => `
+          <div class="stack-item">
+            <div class="si-left">
+              <div class="si-name">${p.name}</div>
+              <div class="si-reason">${p.reason}</div>
+            </div>
+            <div class="si-right">${p.dose.toUpperCase()} DOSE<br>${p.timing.toUpperCase()}<br>${p.cycleWk}wk cycle</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function customBuild() {
+  // Expert wants to build from scratch — skip the rest of the wizard.
+  // Save their goal + reminder-time preferences, route straight to the builder.
+  try {
+    localStorage.setItem('apex_lane','builder');
+    if (state.goal) localStorage.setItem('apex_last_goal', state.goal);
+  } catch(e){}
+  location.href = 'protocol-tracker.html';
+}
+
+// STEP 7: DATE — scrollable day picker (14 days) + any-date input
+function renderDateOptions() {
+  const iso = n => n.toISOString().slice(0,10);
+  const now = new Date();
+  const todayISO = iso(now);
+  if (!state.startDate) state.startDate = todayISO;
+
+  // Render 14 upcoming days as horizontal scroll tiles
+  const scroller = document.getElementById('date-scroller');
+  if (scroller) {
+    const days = [];
+    for (let i = 0; i < 14; i++) {
+      const d = new Date(now);
+      d.setDate(d.getDate() + i);
+      days.push(d);
+    }
+    scroller.innerHTML = days.map(d => {
+      const dayISO = iso(d);
+      const dayName = d.toLocaleDateString('en-US',{weekday:'short'});
+      const dayNum = d.getDate();
+      const monthName = d.toLocaleDateString('en-US',{month:'short'});
+      const label = dayISO === todayISO
+        ? 'Today'
+        : (dayISO === iso(new Date(now.getTime() + 86400000)) ? 'Tomorrow' : dayName);
+      const isSelected = dayISO === state.startDate;
+      return `
+        <button class="ds-tile ${isSelected?'selected':''}" data-iso="${dayISO}" onclick="pickStartDate('${dayISO}')">
+          <div class="ds-label">${label}</div>
+          <div class="ds-num">${dayNum}</div>
+          <div class="ds-month">${monthName}</div>
+        </button>`;
+    }).join('');
+  }
+
+  const customInput = document.getElementById('custom-date');
+  if (customInput) {
+    customInput.value = state.startDate;
+    customInput.min = todayISO;
+    customInput.onchange = (e) => {
+      if (e.target.value) pickStartDate(e.target.value);
+    };
+  }
+}
+
+function pickStartDate(isoStr) {
+  state.startDate = isoStr;
+  document.querySelectorAll('.ds-tile').forEach(t => t.classList.toggle('selected', t.dataset.iso === isoStr));
+  const customInput = document.getElementById('custom-date');
+  if (customInput) customInput.value = isoStr;
+}
+
+// STEP 7 → FINISH (only reached if user said YES to "have peptides in hand")
+function finishWizard() {
+  // capture times
+  state.times = {
+    am: document.getElementById('time-am').value || '07:00',
+    pw: document.getElementById('time-pw').value || '11:45',
+    pm: document.getElementById('time-pm').value || '21:30'
+  };
+
+  // write wizard payload — new v2 format uses selectedPeptides array
+  const payload = {
+    version: 2,
+    createdAt: new Date().toISOString(),
+    planned: false,
+    primaryGoal: state.selectedPeptides[0]?.fromGoal || state.goal,
+    startDate: state.startDate,
+    times: state.times,
+    selectedPeptides: state.selectedPeptides
+  };
+  try { localStorage.setItem('apex_wizard_payload', JSON.stringify(payload)); } catch(e){}
+  try { localStorage.setItem('apex_lane', 'guided'); } catch(e){}
+  try { localStorage.setItem('apex_reminder_times', JSON.stringify(state.times)); } catch(e){}
+
+  // show final
+  goStep(8);
+  const n = state.selectedPeptides.length;
+  const goalsSet = new Set(state.selectedPeptides.map(p => p.fromGoal));
+  const goalSummary = Array.from(goalsSet).map(g => (GOAL_META[g]?.label || g)).join(' · ');
+  document.getElementById('final-msg').innerHTML = `
+    <strong style="color:var(--white);font-size:20px;">${n} peptide${n>1?'s':''} in your stack</strong><br>
+    <span style="color:var(--muted);">${goalSummary}</span><br><br>
+    Start date: <strong style="color:var(--white);">${state.startDate}</strong><br>
+    Reminders: <strong style="color:var(--white);">${state.times.am} AM · ${state.times.pw} Pre-WO · ${state.times.pm} PM</strong>
+  `;
+  document.getElementById('final-cta').textContent = 'Open my tracker →';
+  document.getElementById('final-cta').href = 'protocol-tracker.html?fromWizard=1';
+}
+</script>
+
+<!-- ═══ GLOBAL COMPLIANCE FOOTER (every page) ═══ -->
+<div style="max-width:840px;margin:32px auto 0;padding:20px 24px;border-top:1px solid #1a2d3a;text-align:center;font-size:11px;color:#4a6272;font-family:'Share Tech Mono',monospace;letter-spacing:.08em;line-height:1.7;">
+  ⚠ RESEARCH USE ONLY · NOT MEDICAL ADVICE · NOT FDA-APPROVED FOR MOST COMPOUNDS DISCUSSED · 17+<br>
+  Apex does not prescribe, sell, or facilitate the purchase of peptides. Consult a licensed healthcare provider before any protocol.<br>
+  <a href="privacy.html" style="color:#4a6272;margin:0 8px;">Privacy Policy</a> ·
+  <a href="terms.html" style="color:#4a6272;margin:0 8px;">Terms of Service</a> ·
+  <a href="mailto:support@apexdosing.com" style="color:#4a6272;margin:0 8px;">Support</a>
+</div>
+</body>
+</html>

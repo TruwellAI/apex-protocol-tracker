@@ -1,26 +1,28 @@
 {
-  "name": "Apex Protocol Tracker",
-  "short_name": "Apex Tracker",
-  "description": "Build your peptide stack, track your cycle, and monitor your labs.",
-  "start_url": "/protocol-tracker.html",
+  "name": "Apex Protocol",
+  "short_name": "Apex",
+  "description": "Peptide research, stack builder, and cycle tracker — research-backed dosing, live countdowns, and a daily injection card.",
+  "start_url": "protocol-tracker.html",
+  "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#080c10",
-  "theme_color": "#00d4ff",
+  "theme_color": "#080c10",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "assets/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "icon-512.png",
+      "src": "assets/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     }
   ],
-  "categories": ["health", "fitness", "medical"],
-  "screenshots": []
+  "categories": ["health", "medical", "fitness"],
+  "lang": "en-US",
+  "dir": "ltr"
 }

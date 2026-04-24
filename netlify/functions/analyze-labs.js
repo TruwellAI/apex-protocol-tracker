@@ -28,8 +28,8 @@ exports.handler = async (event) => {
     return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid JSON body' }) };
   }
 
-  const { pdfBase64, mediaType = 'application/pdf' } = body;
-  if (!pdfBase64) {
+  const { pdfBase64, mediaType = 'application/pdf', pdfText } = body;
+  if (!pdfBase64 && !pdfText) {
     return { statusCode: 400, headers, body: JSON.stringify({ error: 'No PDF data provided' }) };
   }
 
@@ -71,29 +71,21 @@ Return ONLY the JSON. Example: {"total-t":542,"estradiol":28.4,"hscrp":0.8}`;
       headers: {
         'x-api-key': apiKey,
         'anthropic-version': '2023-06-01',
-        'anthropic-beta': 'pdfs-2024-09-25',
         'content-type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'claude-opus-4-5',
-        max_tokens: 1024,
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 4096,
+        system: 'You are a medical lab results parser. You extract numeric lab values from lab reports and return ONLY a valid JSON object. No markdown, no explanation, no code fences. Raw JSON only.',
         messages: [
           {
             role: 'user',
-            content: [
-              {
-                type: 'document',
-                source: {
-                  type: 'base64',
-                  media_type: mediaType,
-                  data: pdfBase64
-                }
-              },
-              {
-                type: 'text',
-                text: prompt
-              }
-            ]
+            content: pdfText
+              ? `Here is the extracted text from a lab report PDF:\n\n${pdfText}\n\n${prompt}`
+              : [
+                  { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: pdfBase64 } },
+                  { type: 'text', text: prompt }
+                ]
           }
         ]
       })
@@ -101,12 +93,13 @@ Return ONLY the JSON. Example: {"total-t":542,"estradiol":28.4,"hscrp":0.8}`;
 
     if (!response.ok) {
       const errText = await response.text();
-      console.error('Anthropic API error:', errText);
-      return { statusCode: 502, headers, body: JSON.stringify({ error: 'AI extraction failed', detail: errText }) };
+      console.error('Anthropic API error:', response.status, errText);
+      return { statusCode: 502, headers, body: JSON.stringify({ error: `Anthropic ${response.status}: ${errText.slice(0,200)}` }) };
     }
 
     const data = await response.json();
     const rawText = data?.content?.[0]?.text?.trim() || '{}';
+    console.log('AI raw response:', rawText.slice(0, 500));
 
     // Parse and validate — only return numeric values
     let parsed;
@@ -115,7 +108,7 @@ Return ONLY the JSON. Example: {"total-t":542,"estradiol":28.4,"hscrp":0.8}`;
     } catch {
       // Try to extract JSON from response if it has surrounding text
       const match = rawText.match(/\{[\s\S]*\}/);
-      parsed = match ? JSON.parse(match[0]) : {};
+      try { parsed = match ? JSON.parse(match[0]) : {}; } catch { parsed = {}; }
     }
 
     // Sanitize — only keep known keys with numeric values
@@ -132,7 +125,7 @@ Return ONLY the JSON. Example: {"total-t":542,"estradiol":28.4,"hscrp":0.8}`;
     return {
       statusCode: 200,
       headers,
-      body: JSON.stringify({ values: clean, count: Object.keys(clean).length })
+      body: JSON.stringify({ values: clean, count: Object.keys(clean).length, debug: rawText.slice(0, 300) })
     };
 
   } catch (err) {

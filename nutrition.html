@@ -1,0 +1,2986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Apex Nutrition — Macro Planner & Food Tracker</title>
+<!-- apex-seo-injected -->
+<meta name="description" content="Apex nutrition toolkit — macros calculator, meal timing for GLP-1 cycles, protein targets on a cut. Research-educational tool.">
+<link rel="canonical" href="https://apexdosing.com/nutrition.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Apex Nutrition — Macro Planner & Food Tracker">
+<meta property="og:description" content="Apex nutrition toolkit — macros calculator, meal timing for GLP-1 cycles, protein targets on a cut. Research-educational tool.">
+<meta property="og:url" content="https://apexdosing.com/nutrition.html">
+<meta property="og:site_name" content="Apex Protocol">
+<meta property="og:image" content="https://apexdosing.com/assets/icon-1024.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Apex Nutrition — Macro Planner & Food Tracker">
+<meta name="twitter:description" content="Apex nutrition toolkit — macros calculator, meal timing for GLP-1 cycles, protein targets on a cut. Research-educational tool.">
+<meta name="twitter:image" content="https://apexdosing.com/assets/icon-1024.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "MedicalWebPage",
+  "name": "Apex Nutrition — Macro Planner & Food Tracker",
+  "description": "Apex nutrition toolkit — macros calculator, meal timing for GLP-1 cycles, protein targets on a cut. Research-educational tool.",
+  "url": "https://apexdosing.com/nutrition.html",
+  "audience": {
+    "@type": "MedicalAudience",
+    "audienceType": "researcher"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Apex Protocol",
+    "url": "https://apexdosing.com"
+  },
+  "inLanguage": "en-US",
+  "isFamilyFriendly": false
+}
+</script>
+<!-- /apex-seo-injected -->
+
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080c10;--panel:#0d1318;--border:#1a2332;--white:#f0f2f5;--text:#c8cdd5;--muted:#6b7a8d;--accent:#00d4ff;--accent2:#00c48c;--accent3:#a78bfa;--purple:#a78bfa;--warn:#facc15;--danger:#ef4444;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;padding-bottom:80px;}
+.topbar{background:#0a0e14;border-bottom:1px solid var(--border);padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:52px;position:sticky;top:0;z-index:100;}
+.topbar-logo{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--accent2);letter-spacing:.15em;text-transform:uppercase;}
+.topbar-logo span{display:block;font-size:8px;font-weight:400;color:var(--muted);letter-spacing:.25em;}
+.main{max-width:600px;margin:0 auto;padding:20px 16px 100px;}
+.card{background:var(--panel);border:1px solid var(--border);padding:20px;margin-bottom:14px;border-radius:4px;}
+.form-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--muted);margin-bottom:6px;text-transform:uppercase;}
+.form-input,.form-select{width:100%;background:#060a0d;border:1px solid var(--border);color:var(--white);font-family:'Barlow',sans-serif;font-size:16px;padding:12px 14px;outline:none;transition:border .2s;border-radius:2px;}
+.form-input:focus,.form-select:focus{border-color:var(--accent);}
+.form-group{margin-bottom:16px;}
+.form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-hint{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);margin-top:4px;}
+.btn-primary{display:block;width:100%;padding:14px;background:var(--accent2);color:#080c10;font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;text-align:center;border:none;border-radius:3px;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;text-decoration:none;}
+.btn-back{display:inline-block;padding:8px 16px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;border-radius:3px;-webkit-tap-highlight-color:transparent;touch-action:manipulation;text-decoration:none;margin-bottom:16px;}
+
+/* STEP INDICATOR */
+.steps{display:flex;justify-content:center;gap:8px;margin-bottom:20px;}
+.step-dot{width:14px;height:14px;border-radius:50%;background:var(--border);transition:all .3s;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;text-decoration:none;display:block;}
+.step-dot.active{background:var(--accent2);width:32px;border-radius:7px;}
+.step-dot.done{background:rgba(0,196,140,.5);}
+.step-dot:hover{opacity:.8;}
+
+/* BODY FAT SELECTOR */
+.bf-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:12px;}
+.bf-option{padding:12px 4px;border:2px solid var(--border);border-radius:8px;text-align:center;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:all .15s;}
+.bf-option.active{border-color:var(--accent2);background:rgba(0,196,140,.1);}
+.bf-pct{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--white);}
+.bf-label{font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--muted);margin-top:2px;text-transform:uppercase;}
+
+/* FOOD PICKS */
+.food-pick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
+.food-pick{padding:10px 6px;border:2px solid var(--border);border-radius:8px;text-align:center;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:all .15s;min-height:44px;}
+.food-pick.selected{border-color:var(--accent2);background:rgba(0,196,140,.1);}
+.food-pick-name{font-family:'Barlow',sans-serif;font-size:12px;font-weight:600;color:var(--white);}
+.food-pick-macro{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--muted);margin-top:2px;}
+
+/* GOAL BUTTONS */
+.goal-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.goal-btn{display:block;padding:14px;background:#0a1520;border:2px solid var(--border);border-radius:6px;text-align:center;text-decoration:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:all .15s;}
+.goal-btn.active{border-color:var(--accent2);background:rgba(0,196,140,.1);}
+
+/* MEAL PLAN */
+.meal-card{background:var(--panel);border:1px solid var(--border);margin-bottom:12px;border-radius:4px;overflow:hidden;transition:background .15s,border-color .15s;}
+.meal-card.drop-target-hover{border-color:var(--accent2);background:rgba(20,184,166,.08);box-shadow:0 0 0 2px rgba(20,184,166,.3);}
+.meal-card.drop-zone-ready{border-color:rgba(20,184,166,.35);border-style:dashed;}
+.meal-card-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.meal-card-title{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:var(--white);}
+.meal-card-cals{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);}
+.meal-card-body{padding:12px 16px;min-height:40px;}
+.meal-food-row{display:flex;justify-content:space-between;align-items:center;padding:8px 6px;border-bottom:1px solid rgba(255,255,255,.04);border-radius:4px;cursor:grab;transition:background .15s,opacity .15s,transform .15s;-webkit-user-select:none;user-select:none;touch-action:none;}
+.meal-food-row:hover{background:rgba(20,184,166,.04);}
+.meal-food-row:active{cursor:grabbing;}
+.meal-food-row.dragging{opacity:.35;background:rgba(20,184,166,.12);border:1px dashed var(--accent2);}
+.meal-food-row.picked-up{background:rgba(20,184,166,.18);border:1px solid var(--accent2);box-shadow:0 0 0 2px rgba(20,184,166,.35);transform:scale(1.01);}
+.meal-food-name{font-size:13px;color:var(--white);display:flex;align-items:center;gap:6px;}
+.meal-food-handle{font-size:14px;color:var(--muted);line-height:1;flex-shrink:0;}
+.meal-food-portion{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent2);}
+.meal-food-macros{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);}
+.drag-hint-banner{position:sticky;top:12px;z-index:100;background:linear-gradient(90deg,#14b8a6,#0d9488);color:#fff;padding:10px 14px;border-radius:6px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.1em;text-align:center;box-shadow:0 4px 14px rgba(20,184,166,.4);margin-bottom:12px;animation:slideDown .2s ease-out;}
+@keyframes slideDown{from{transform:translateY(-10px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+
+/* MACRO BARS */
+.macro-bar-wrap{margin-bottom:14px;}
+.macro-bar-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;}
+.macro-bar-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;}
+.macro-bar-value{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;}
+.macro-bar-track{height:10px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;}
+.macro-bar-fill{height:100%;border-radius:2px;transition:width .3s ease;}
+
+/* FOOD LOG */
+.food-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);}
+.food-name{font-family:'Barlow',sans-serif;font-size:14px;color:var(--white);font-weight:500;}
+.food-macros{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);}
+.food-cals{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--accent2);}
+
+/* MEAL SECTIONS */
+.meal-section{background:var(--panel);border:1px solid var(--border);margin-bottom:12px;border-radius:4px;overflow:hidden;}
+.meal-header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;-webkit-tap-highlight-color:transparent;}
+
+/* CHECK-IN */
+.checkin-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.checkin-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--muted);width:70px;text-transform:uppercase;flex-shrink:0;}
+.checkin-dots{display:flex;gap:6px;}
+.checkin-dot{width:36px;height:36px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:var(--muted);cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:all .15s;text-decoration:none;}
+.checkin-dot.active{border-color:var(--accent2);color:var(--accent2);background:rgba(0,196,140,.1);}
+
+/* SUMMARY */
+.summary-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:14px;}
+.summary-item{text-align:center;padding:10px 4px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:4px;}
+.summary-value{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;line-height:1;}
+.summary-label{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:.1em;color:var(--muted);margin-top:2px;text-transform:uppercase;}
+
+/* FOOD SEARCH */
+.food-search-wrap{position:relative;margin-bottom:12px;}
+.food-search-results{position:absolute;top:100%;left:0;right:0;background:#0d1318;border:1px solid var(--border);border-top:none;max-height:250px;overflow-y:auto;z-index:50;display:none;}
+.food-search-results.open{display:block;}
+.food-search-item{padding:10px 14px;cursor:pointer;font-size:14px;color:var(--text);border-bottom:1px solid var(--border);-webkit-tap-highlight-color:transparent;text-decoration:none;display:block;}
+.food-search-item:active{background:rgba(0,196,140,.1);}
+
+/* AI CHAT BUTTON */
+.ai-chat-btn{position:fixed;bottom:80px;right:16px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#080c10;border:none;font-size:24px;cursor:pointer;box-shadow:0 4px 20px rgba(0,196,140,.4);z-index:1000;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+.ai-chat-modal{display:none;position:fixed;bottom:140px;right:16px;width:340px;max-width:90vw;background:var(--panel);border:1px solid var(--border);border-radius:12px;z-index:1001;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.5);}
+.ai-chat-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.ai-chat-body{padding:12px 16px;max-height:300px;overflow-y:auto;}
+.ai-chat-input-wrap{padding:8px 12px;border-top:1px solid var(--border);display:flex;gap:8px;}
+.ai-chat-input{flex:1;background:#060a0d;border:1px solid var(--border);color:var(--white);font-size:14px;padding:10px;border-radius:4px;outline:none;}
+.ai-chat-send{background:var(--accent2);color:#080c10;border:none;padding:10px 14px;font-family:'Rajdhani',sans-serif;font-weight:700;border-radius:4px;cursor:pointer;}
+.ai-msg{margin-bottom:10px;padding:8px 12px;border-radius:8px;font-size:13px;line-height:1.5;}
+.ai-msg.bot{background:rgba(0,196,140,.08);border:1px solid rgba(0,196,140,.15);color:var(--text);}
+.ai-msg.user{background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.15);color:var(--text);text-align:right;}
+
+/* BOTTOM NAV */
+#nutrition-bottom-nav{display:none;}
+@media(max-width:768px){
+  #nutrition-bottom-nav{display:grid!important;}
+  .ai-chat-modal{right:8px;left:8px;width:auto;bottom:80px;}
+  .ai-chat-btn{bottom:72px;right:12px;width:50px;height:50px;font-size:20px;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-logo">
+    APEX NUTRITION
+    <span>MACRO PLANNER & MEAL BUILDER</span>
+  </div>
+  <div style="display:flex;gap:6px;align-items:center;">
+    <a href="protocol-tracker.html" style="display:inline-flex;align-items:center;gap:6px;background:rgba(20,184,166,.1);border:1px solid rgba(20,184,166,.4);color:#14b8a6;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.12em;padding:8px 14px;text-decoration:none;text-transform:uppercase;border-radius:3px;-webkit-tap-highlight-color:transparent;touch-action:manipulation;">📋 <span class="nb-label">Tracker</span></a>
+    <a href="index.html" style="display:inline-flex;align-items:center;gap:6px;background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.35);color:#00d4ff;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.12em;padding:8px 14px;text-decoration:none;text-transform:uppercase;border-radius:3px;-webkit-tap-highlight-color:transparent;touch-action:manipulation;">📖 <span class="nb-label">Wiki</span></a>
+  </div>
+</div>
+<style>
+  @media(max-width:600px){.nb-label{display:none;}}
+</style>
+
+<!-- RETURN-TO-SETUP BANNER — injected via JS if ?return= query param is present -->
+<div id="return-banner" style="display:none;position:sticky;top:52px;z-index:99;background:linear-gradient(90deg,#14b8a6,#0d9488);padding:10px 16px;box-shadow:0 2px 12px rgba(20,184,166,.3);">
+  <a id="return-banner-link" href="#" style="display:flex;align-items:center;justify-content:space-between;gap:12px;color:#fff;text-decoration:none;font-family:'Rajdhani',sans-serif;-webkit-tap-highlight-color:transparent;touch-action:manipulation;">
+    <div style="flex:1;min-width:0;">
+      <div style="font-size:10px;letter-spacing:.12em;opacity:.9;text-transform:uppercase;">Finish when you're ready →</div>
+      <div id="return-banner-label" style="font-size:14px;font-weight:700;line-height:1.2;margin-top:2px;">Back to your protocol setup</div>
+    </div>
+    <div style="font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:8px 14px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.4);border-radius:3px;white-space:nowrap;">← Return</div>
+  </a>
+</div>
+
+<div class="main">
+
+<!-- STEP INDICATOR — tappable navigation -->
+<div class="steps" id="step-dots">
+  <a href="#" class="step-dot active" data-step="1" onclick="navToStep(1);return false;" title="Your Body"></a>
+  <a href="#" class="step-dot" data-step="2" onclick="navToStep(2);return false;" title="Your Targets"></a>
+  <a href="#" class="step-dot" data-step="3" onclick="navToStep(3);return false;" title="Your Foods"></a>
+  <a href="#" class="step-dot" data-step="4" onclick="navToStep(4);return false;" title="Meal Plan"></a>
+  <a href="#" class="step-dot" data-step="5" onclick="navToStep(5);return false;" title="Daily Tracker"></a>
+</div>
+
+<!-- ═══════════════════ STEP 1: YOUR BODY ═══════════════════ -->
+<div id="step-1" class="step-page">
+  <div style="text-align:center;margin-bottom:20px;">
+    <div style="font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;color:var(--white);">Let's Get You Set Up</div>
+    <div style="font-family:'Barlow',sans-serif;font-size:13px;color:var(--muted);margin-top:4px;line-height:1.5;">We'll walk you through your measurements, set your macros,<br>pick your foods, build your meal plan, and create your shopping list.<br>Takes about 2 minutes. Let's go.</div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent2);letter-spacing:.15em;margin-top:8px;">STEP 1 OF 5 — YOUR BODY</div>
+  </div>
+  <div class="card">
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Weight (lbs)</label>
+        <input type="number" class="form-input" id="n-weight" placeholder="185" min="80" max="500">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Age</label>
+        <input type="number" class="form-input" id="n-age" placeholder="38" min="16" max="99">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Height</label>
+      <div class="form-grid-2" style="gap:8px;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <input type="number" class="form-input" id="n-height-ft" placeholder="5" min="4" max="7">
+          <span style="color:var(--muted);font-size:12px;">ft</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <input type="number" class="form-input" id="n-height-in" placeholder="10" min="0" max="11">
+          <span style="color:var(--muted);font-size:12px;">in</span>
+        </div>
+      </div>
+    </div>
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Gender</label>
+        <select class="form-select" id="n-gender">
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Activity Level</label>
+        <select class="form-select" id="n-activity">
+          <option value="1.2">Desk job, no workouts (1.20)</option>
+          <option value="1.35" selected>Desk job + lift 3–5x/wk (1.35)</option>
+          <option value="1.45">Active job OR lift 5–6x/wk + steps (1.45)</option>
+          <option value="1.55">Physical job + heavy training (1.55)</option>
+          <option value="1.65">Athlete training 2x/day (1.65)</option>
+        </select>
+        <div class="form-hint">Honest defaults — most people overestimate this. If you're not sure, pick the lower option.</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Daily Workout Calorie Burn (optional)</label>
+      <input type="number" class="form-input" id="n-workout-burn" placeholder="e.g. 400 — leave blank to use activity level above" min="0" max="2000" onchange="S.workoutBurn=parseFloat(this.value)||0;save();">
+      <div class="form-hint">From your watch, Apple Health, or an estimate. If you know this, we'll use it directly instead of the activity multiplier — more accurate.</div>
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Current Body Fat %</label>
+        <input type="number" class="form-input" id="n-bf-current" placeholder="20" min="3" max="50" step="0.5" oninput="S.bfCurrent=parseFloat(this.value)||0;save();" onchange="S.bfCurrent=parseFloat(this.value)||0;save();">
+        <div class="form-hint">Don't know? Most men: 18-25%. Most women: 25-35%. <strong style="color:#14b8a6;">Entering this switches us to Katch-McArdle — way more accurate.</strong></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Goal Body Fat %</label>
+        <input type="number" class="form-input" id="n-bf-goal" placeholder="15" min="3" max="40" step="0.5" onchange="S.bfGoal=parseFloat(this.value)||15;save();">
+        <div class="form-hint">Men: 10-15% lean. Women: 18-22% lean.</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Goal</label>
+      <div class="goal-grid">
+        <a href="#" class="goal-btn" ontouchstart="event.preventDefault();selectGoal('cut')" onclick="selectGoal('cut');return false;" data-goal="cut">
+          <div style="font-size:20px;">🔥</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:var(--white);">CUT</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--muted);">-500 cal deficit</div>
+        </a>
+        <a href="#" class="goal-btn" ontouchstart="event.preventDefault();selectGoal('recomp')" onclick="selectGoal('recomp');return false;" data-goal="recomp">
+          <div style="font-size:20px;">💪</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:var(--white);">RECOMP</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--muted);">maintenance</div>
+        </a>
+        <a href="#" class="goal-btn" ontouchstart="event.preventDefault();selectGoal('bulk')" onclick="selectGoal('bulk');return false;" data-goal="bulk">
+          <div style="font-size:20px;">📈</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:var(--white);">LEAN BULK</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--muted);">+300 surplus</div>
+        </a>
+        <a href="#" class="goal-btn" ontouchstart="event.preventDefault();selectGoal('maintain')" onclick="selectGoal('maintain');return false;" data-goal="maintain">
+          <div style="font-size:20px;">⚖️</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:var(--white);">MAINTAIN</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--muted);">hold steady</div>
+        </a>
+      </div>
+    </div>
+
+    <a href="#" ontouchstart="event.preventDefault();goToStep(2)" onclick="goToStep(2);return false;" class="btn-primary">NEXT — SEE MY TARGETS →</a>
+  </div>
+</div>
+
+<!-- ═══════════════════ STEP 2: YOUR TARGETS ═══════════════════ -->
+<div id="step-2" class="step-page" style="display:none;">
+  <div style="text-align:center;margin-bottom:20px;">
+    <div style="font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;color:var(--white);">Your Targets</div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.15em;">STEP 2 OF 5</div>
+  </div>
+  <a href="#" class="btn-back" onclick="goToStep(1);return false;">← BACK</a>
+
+  <div class="summary-grid">
+    <div class="summary-item"><div class="summary-value" id="t-cals" style="color:var(--accent2);">—</div><div class="summary-label">CALORIES</div></div>
+    <div class="summary-item"><div class="summary-value" id="t-protein" style="color:#ef4444;">—</div><div class="summary-label">PROTEIN</div></div>
+    <div class="summary-item"><div class="summary-value" id="t-carbs" style="color:#facc15;">—</div><div class="summary-label">CARBS</div></div>
+    <div class="summary-item"><div class="summary-value" id="t-fat" style="color:#a78bfa;">—</div><div class="summary-label">FAT</div></div>
+  </div>
+
+  <div class="card" id="targets-explanation">
+    <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.12em;color:var(--accent);margin-bottom:10px;">HOW WE CALCULATED THIS</div>
+    <div id="explain-text" style="font-size:13px;line-height:1.7;color:var(--text);"></div>
+  </div>
+
+  <div class="card">
+    <div class="form-group">
+      <label class="form-label">Protein per lb of bodyweight</label>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <input type="range" id="protein-slider" min="0.7" max="1.5" step="0.1" value="1.0" style="flex:1;accent-color:var(--accent2);" oninput="updateProteinSlider()">
+        <span id="protein-slider-val" style="font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--accent2);min-width:50px;text-align:right;">1.0g</span>
+      </div>
+      <div class="form-hint">Research recommends 0.8-1.2g/lb for active individuals on peptide protocols. Higher protein preserves muscle during a cut.</div>
+    </div>
+  </div>
+
+  <div class="card" id="timeline-card" style="display:none;">
+    <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.12em;color:var(--warn);margin-bottom:8px;">📅 GOAL TIMELINE</div>
+    <div id="timeline-text" style="font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--white);"></div>
+    <div id="timeline-detail" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:4px;"></div>
+    <!-- PROGRESS BAR -->
+    <div id="timeline-progress" style="margin-top:12px;display:none;">
+      <div style="height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;">
+        <div id="timeline-bar" style="height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));border-radius:4px;transition:width .5s;width:0%;"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:4px;">
+        <span style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--muted);" id="timeline-start-bf"></span>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--accent2);" id="timeline-pct"></span>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--muted);" id="timeline-goal-bf"></span>
+      </div>
+    </div>
+    <!-- INTELLIGENCE CARD -->
+    <div id="timeline-intel" style="margin-top:14px;padding:12px;background:rgba(0,196,140,.05);border:1px solid rgba(0,196,140,.15);border-radius:6px;display:none;">
+      <div id="timeline-intel-text" style="font-family:'Barlow',sans-serif;font-size:13px;color:var(--text);line-height:1.6;"></div>
+    </div>
+    <!-- PEPTIDE CONNECTION -->
+    <div id="timeline-peptide" style="margin-top:10px;padding:10px 12px;background:rgba(0,212,255,.05);border:1px solid rgba(0,212,255,.15);border-radius:6px;display:none;">
+      <div id="timeline-peptide-text" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent);line-height:1.6;"></div>
+    </div>
+  </div>
+
+  <a href="#" onclick="goToStep(3);return false;" class="btn-primary">NEXT — PICK YOUR FOODS →</a>
+</div>
+
+<!-- ═══════════════════ STEP 3: ROCKY ASKS (food intake) ═══════════════════ -->
+<div id="step-3" class="step-page" style="display:none;">
+  <div style="text-align:center;margin-bottom:20px;">
+    <div style="font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;color:var(--white);">👽 Rocky's Turn</div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.15em;margin-top:4px;">STEP 3 OF 5 — TELL ROCKY WHAT YOU EAT</div>
+  </div>
+  <a href="#" class="btn-back" onclick="goToStep(2);return false;">← BACK</a>
+
+  <div class="card" style="padding:18px 20px;">
+    <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border);">
+      <div style="font-size:32px;line-height:1;flex-shrink:0;">👽</div>
+      <div style="flex:1;">
+        <div style="font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:#14b8a6;">Rocky here.</div>
+        <div style="font-family:'Barlow',sans-serif;font-size:13px;color:var(--text);line-height:1.55;margin-top:4px;">I'll build your meal plan from what you actually eat. Type your answers below — separate foods with commas. Don't worry about matching a database. Just list what you like.</div>
+      </div>
+    </div>
+
+    <!-- Q1: Proteins -->
+    <div class="form-group">
+      <label class="form-label" style="color:#ef4444;">🥩 Favorite Proteins</label>
+      <textarea id="rocky-proteins" class="form-input" rows="2" placeholder="e.g. chicken breast, ground beef, eggs, greek yogurt, whey, salmon" style="font-family:'Barlow',sans-serif;font-size:15px;resize:vertical;"></textarea>
+      <div class="form-hint">Whatever you actually eat. If you never touch tilapia, don't list it.</div>
+    </div>
+
+    <!-- Q2: Carbs -->
+    <div class="form-group">
+      <label class="form-label" style="color:#facc15;">🍚 Favorite Carbs</label>
+      <textarea id="rocky-carbs" class="form-input" rows="2" placeholder="e.g. white rice, oats, sourdough, potato, berries" style="font-family:'Barlow',sans-serif;font-size:15px;resize:vertical;"></textarea>
+    </div>
+
+    <!-- Q3: Fats -->
+    <div class="form-group">
+      <label class="form-label" style="color:#a78bfa;">🥑 Favorite Fats</label>
+      <textarea id="rocky-fats" class="form-input" rows="2" placeholder="e.g. avocado, olive oil, almonds, peanut butter" style="font-family:'Barlow',sans-serif;font-size:15px;resize:vertical;"></textarea>
+    </div>
+
+    <!-- Q4: Restrictions -->
+    <div class="form-group">
+      <label class="form-label">⚠️ Any Dietary Restrictions?</label>
+      <textarea id="rocky-restrictions" class="form-input" rows="2" placeholder="e.g. no dairy, vegetarian, gluten-free, shellfish allergy, or 'none'" style="font-family:'Barlow',sans-serif;font-size:15px;resize:vertical;"></textarea>
+    </div>
+  </div>
+
+  <div class="card" style="padding:18px 20px;margin-top:14px;">
+    <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.15em;color:#14b8a6;margin-bottom:12px;">WHAT DO YOU ACTUALLY EAT?</div>
+
+    <!-- Q5: Typical breakfast -->
+    <div class="form-group">
+      <label class="form-label">🌅 Typical Breakfast</label>
+      <textarea id="rocky-breakfast" class="form-input" rows="2" placeholder="e.g. eggs + oats with berries, or protein shake + banana" style="font-family:'Barlow',sans-serif;font-size:15px;resize:vertical;"></textarea>
+    </div>
+
+    <!-- Q6: Typical lunch -->
+    <div class="form-group">
+      <label class="form-label">☀️ Typical Lunch</label>
+      <textarea id="rocky-lunch" class="form-input" rows="2" placeholder="e.g. chicken + rice + veggies, or ground turkey bowl" style="font-family:'Barlow',sans-serif;font-size:15px;resize:vertical;"></textarea>
+    </div>
+
+    <!-- Q7: Typical dinner -->
+    <div class="form-group">
+      <label class="form-label">🌙 Typical Dinner</label>
+      <textarea id="rocky-dinner" class="form-input" rows="2" placeholder="e.g. steak + potato + avocado, or salmon + sweet potato" style="font-family:'Barlow',sans-serif;font-size:15px;resize:vertical;"></textarea>
+    </div>
+
+    <!-- Q8: Typical snacks -->
+    <div class="form-group">
+      <label class="form-label">🥜 Typical Snacks</label>
+      <textarea id="rocky-snacks" class="form-input" rows="2" placeholder="e.g. greek yogurt, protein bar, apple, almonds" style="font-family:'Barlow',sans-serif;font-size:15px;resize:vertical;"></textarea>
+    </div>
+
+    <!-- Q9: Protein drinks -->
+    <div class="form-group">
+      <label class="form-label">🥤 Protein Drinks / Shakes</label>
+      <textarea id="rocky-shakes" class="form-input" rows="2" placeholder="e.g. whey isolate, Premier Protein, homemade shake with banana" style="font-family:'Barlow',sans-serif;font-size:15px;resize:vertical;"></textarea>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin:14px 0;padding:10px 14px;background:rgba(20,184,166,.05);border:1px solid rgba(20,184,166,.2);border-radius:4px;">
+    <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:#14b8a6;letter-spacing:.1em;line-height:1.7;">
+      👽 Rocky will match your answers to the macro database, respect your restrictions, and put breakfast foods in the breakfast slot — lunch foods in lunch, dinner in dinner.
+    </div>
+  </div>
+
+  <a href="#" onclick="saveRockyAnswers();goToStep(4);return false;" class="btn-primary">👽 ROCKY, BUILD MY MEAL PLAN →</a>
+</div>
+
+<!-- ═══════════════════ STEP 4: MEAL PLAN ═══════════════════ -->
+<div id="step-4" class="step-page" style="display:none;">
+  <div style="text-align:center;margin-bottom:20px;">
+    <div style="font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;color:var(--white);">Your Meal Plan</div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.15em;">STEP 4 OF 5 — BUILT FROM YOUR PICKS</div>
+  </div>
+  <a href="#" class="btn-back" onclick="goToStep(3);return false;">← CHANGE FOODS</a>
+
+  <div class="summary-grid" style="margin-bottom:16px;">
+    <div class="summary-item"><div class="summary-value" id="mp-cals" style="color:var(--accent2);">—</div><div class="summary-label">CALORIES</div></div>
+    <div class="summary-item"><div class="summary-value" id="mp-protein" style="color:#ef4444;">—</div><div class="summary-label">PROTEIN</div></div>
+    <div class="summary-item"><div class="summary-value" id="mp-carbs" style="color:#facc15;">—</div><div class="summary-label">CARBS</div></div>
+    <div class="summary-item"><div class="summary-value" id="mp-fat" style="color:#a78bfa;">—</div><div class="summary-label">FAT</div></div>
+  </div>
+
+  <div id="meal-plan-output"></div>
+
+  <div style="display:flex;gap:10px;margin-top:14px;">
+    <a href="#" onclick="generateMealPlan();return false;" style="flex:1;" class="btn-primary">🔄 REGENERATE</a>
+    <a href="#" onclick="buildShoppingList();document.getElementById('ai-modal').style.display='block';return false;" style="flex:1;" class="btn-primary" style="background:var(--accent);">🛒 SHOPPING LIST</a>
+  </div>
+  <!-- MEAL PREP DAY -->
+  <div class="card" style="margin-top:14px;">
+    <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.12em;color:var(--accent);margin-bottom:10px;">📅 MEAL PREP DAY</div>
+    <div style="font-family:'Barlow',sans-serif;font-size:13px;color:var(--text);margin-bottom:12px;">What day do you meal prep? Rocky will check in with you and ask if you want any changes before you cook.</div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;" id="prep-day-grid">
+      <a href="#" onclick="selectPrepDay('Sun');return false;" class="bf-option" data-prep="Sun" style="padding:10px 4px;"><div class="bf-pct" style="font-size:14px;">S</div><div class="bf-label">SUN</div></a>
+      <a href="#" onclick="selectPrepDay('Mon');return false;" class="bf-option" data-prep="Mon" style="padding:10px 4px;"><div class="bf-pct" style="font-size:14px;">M</div><div class="bf-label">MON</div></a>
+      <a href="#" onclick="selectPrepDay('Tue');return false;" class="bf-option" data-prep="Tue" style="padding:10px 4px;"><div class="bf-pct" style="font-size:14px;">T</div><div class="bf-label">TUE</div></a>
+      <a href="#" onclick="selectPrepDay('Wed');return false;" class="bf-option" data-prep="Wed" style="padding:10px 4px;"><div class="bf-pct" style="font-size:14px;">W</div><div class="bf-label">WED</div></a>
+      <a href="#" onclick="selectPrepDay('Thu');return false;" class="bf-option" data-prep="Thu" style="padding:10px 4px;"><div class="bf-pct" style="font-size:14px;">T</div><div class="bf-label">THU</div></a>
+      <a href="#" onclick="selectPrepDay('Fri');return false;" class="bf-option" data-prep="Fri" style="padding:10px 4px;"><div class="bf-pct" style="font-size:14px;">F</div><div class="bf-label">FRI</div></a>
+      <a href="#" onclick="selectPrepDay('Sat');return false;" class="bf-option" data-prep="Sat" style="padding:10px 4px;"><div class="bf-pct" style="font-size:14px;">S</div><div class="bf-label">SAT</div></a>
+    </div>
+    <div id="prep-day-msg" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent2);text-align:center;margin-top:8px;"></div>
+  </div>
+
+  <!-- ROCKY TIP -->
+  <div style="background:rgba(0,196,140,.05);border:1px solid rgba(0,196,140,.15);border-left:3px solid var(--accent2);padding:12px 14px;margin-top:14px;border-radius:0 6px 6px 0;">
+    <div style="font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:var(--accent2);margin-bottom:4px;">🥊 ROCKY'S TIP</div>
+    <div style="font-family:'Barlow',sans-serif;font-size:12px;color:var(--text);line-height:1.6;" id="rocky-tip"></div>
+  </div>
+
+  <div style="height:14px;"></div>
+  <a href="#" onclick="goToStep(5);return false;" class="btn-primary" style="background:var(--accent);">START TRACKING →</a>
+</div>
+
+<!-- ═══════════════════ STEP 5: DAILY TRACKER ═══════════════════ -->
+<div id="step-5" class="step-page" style="display:none;">
+  <div style="text-align:center;margin-bottom:20px;">
+    <div style="font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;color:var(--white);">Today's Log</div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.15em;" id="tracker-date">STEP 5 OF 5</div>
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:16px;">
+    <a href="#" class="btn-back" onclick="goToStep(4);return false;" style="margin-bottom:0;">← MEAL PLAN</a>
+    <a href="#" class="btn-back" onclick="goToStep(1);return false;" style="margin-bottom:0;">🏠 HOME</a>
+  </div>
+
+  <!-- Macro Progress -->
+  <div class="card" id="macro-progress">
+    <div class="macro-bar-wrap">
+      <div class="macro-bar-header"><span class="macro-bar-label">CALORIES</span><span class="macro-bar-value" style="color:var(--accent2);"><span id="e-cals">0</span> / <span id="g-cals">—</span></span></div>
+      <div class="macro-bar-track"><div class="macro-bar-fill" id="bar-cals" style="width:0%;background:var(--accent2);"></div></div>
+    </div>
+    <div class="macro-bar-wrap">
+      <div class="macro-bar-header"><span class="macro-bar-label">PROTEIN</span><span class="macro-bar-value" style="color:#ef4444;"><span id="e-protein">0</span>g / <span id="g-protein">—</span>g</span></div>
+      <div class="macro-bar-track"><div class="macro-bar-fill" id="bar-protein" style="width:0%;background:#ef4444;"></div></div>
+    </div>
+    <div class="macro-bar-wrap">
+      <div class="macro-bar-header"><span class="macro-bar-label">CARBS</span><span class="macro-bar-value" style="color:#facc15;"><span id="e-carbs">0</span>g / <span id="g-carbs">—</span>g</span></div>
+      <div class="macro-bar-track"><div class="macro-bar-fill" id="bar-carbs" style="width:0%;background:#facc15;"></div></div>
+    </div>
+    <div class="macro-bar-wrap">
+      <div class="macro-bar-header"><span class="macro-bar-label">FAT</span><span class="macro-bar-value" style="color:#a78bfa;"><span id="e-fat">0</span>g / <span id="g-fat">—</span>g</span></div>
+      <div class="macro-bar-track"><div class="macro-bar-fill" id="bar-fat" style="width:0%;background:#a78bfa;"></div></div>
+    </div>
+  </div>
+
+  <!-- Food Search -->
+  <div class="food-search-wrap">
+    <input type="text" class="form-input" id="food-search" placeholder="🔍 Search food... (chicken, rice, eggs)" oninput="searchFood(this.value)">
+    <div class="food-search-results" id="food-results"></div>
+  </div>
+
+  <!-- ACTION: Dump today's meal plan + reset button -->
+  <div style="display:flex;gap:8px;margin-bottom:12px;">
+    <a href="#" onclick="dumpMealPlanIntoLog();return false;" style="flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:12px;background:rgba(20,184,166,.12);border:1px solid rgba(20,184,166,.4);color:#14b8a6;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;border-radius:4px;-webkit-tap-highlight-color:transparent;touch-action:manipulation;">📋 Load Today's Plan</a>
+    <a href="#" onclick="if(confirm('Clear all logged food for today?')){S.foodLog[todayKey()]={};save();renderLog();}return false;" style="flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;padding:12px 16px;background:rgba(148,163,184,.08);border:1px solid rgba(148,163,184,.25);color:#94a3b8;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;border-radius:4px;-webkit-tap-highlight-color:transparent;touch-action:manipulation;">Reset</a>
+  </div>
+
+  <!-- Meal Logs -->
+  <div class="meal-section" id="log-breakfast">
+    <div class="meal-header" onclick="toggleLog('breakfast')"><span style="font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:var(--white);">🌅 Breakfast</span><span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);" id="log-breakfast-cals">0 cal</span></div>
+    <div id="log-breakfast-body"></div>
+    <a href="#" onclick="openAddUnplanned('breakfast');return false;" style="display:block;padding:10px;text-align:center;text-decoration:none;font-family:'Share Tech Mono',monospace;font-size:10px;color:#14b8a6;letter-spacing:.1em;border-top:1px solid rgba(20,184,166,.15);-webkit-tap-highlight-color:transparent;touch-action:manipulation;">+ ADD UNPLANNED FOOD</a>
+  </div>
+  <div class="meal-section" id="log-lunch">
+    <div class="meal-header" onclick="toggleLog('lunch')"><span style="font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:var(--white);">☀️ Lunch</span><span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);" id="log-lunch-cals">0 cal</span></div>
+    <div id="log-lunch-body"></div>
+    <a href="#" onclick="openAddUnplanned('lunch');return false;" style="display:block;padding:10px;text-align:center;text-decoration:none;font-family:'Share Tech Mono',monospace;font-size:10px;color:#14b8a6;letter-spacing:.1em;border-top:1px solid rgba(20,184,166,.15);-webkit-tap-highlight-color:transparent;touch-action:manipulation;">+ ADD UNPLANNED FOOD</a>
+  </div>
+  <div class="meal-section" id="log-dinner">
+    <div class="meal-header" onclick="toggleLog('dinner')"><span style="font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:var(--white);">🌙 Dinner</span><span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);" id="log-dinner-cals">0 cal</span></div>
+    <div id="log-dinner-body"></div>
+    <a href="#" onclick="openAddUnplanned('dinner');return false;" style="display:block;padding:10px;text-align:center;text-decoration:none;font-family:'Share Tech Mono',monospace;font-size:10px;color:#14b8a6;letter-spacing:.1em;border-top:1px solid rgba(20,184,166,.15);-webkit-tap-highlight-color:transparent;touch-action:manipulation;">+ ADD UNPLANNED FOOD</a>
+  </div>
+  <div class="meal-section" id="log-snacks">
+    <div class="meal-header" onclick="toggleLog('snacks')"><span style="font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:var(--white);">🥜 Snacks / Between Meals</span><span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);" id="log-snacks-cals">0 cal</span></div>
+    <div id="log-snacks-body"></div>
+    <a href="#" onclick="openAddUnplanned('snacks');return false;" style="display:block;padding:10px;text-align:center;text-decoration:none;font-family:'Share Tech Mono',monospace;font-size:10px;color:#14b8a6;letter-spacing:.1em;border-top:1px solid rgba(20,184,166,.15);-webkit-tap-highlight-color:transparent;touch-action:manipulation;">+ ADD UNPLANNED FOOD</a>
+  </div>
+
+  <!-- 7-Day Trend (kept — daily check-in removed) -->
+  <div style="font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.2em;color:var(--accent);margin:24px 0 14px;">📈 7-DAY TREND</div>
+  <div class="card" id="trend-card"></div>
+</div>
+
+<!-- UNPLANNED FOOD MODAL -->
+<div id="unplanned-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:10000;align-items:center;justify-content:center;padding:16px;">
+  <div style="background:var(--panel);border:1px solid rgba(20,184,166,.4);border-radius:6px;width:100%;max-width:440px;padding:22px;">
+    <div style="font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:800;color:#fff;margin-bottom:4px;">Add Unplanned Food</div>
+    <div id="unplanned-meal-label" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:#14b8a6;letter-spacing:.12em;text-transform:uppercase;margin-bottom:14px;">to your meal</div>
+
+    <div class="form-group">
+      <label class="form-label">Search the database</label>
+      <input type="text" id="unplanned-search" class="form-input" placeholder="e.g. Dave's Killer Bread, chicken, oats" oninput="searchUnplanned(this.value)" autocomplete="off" style="font-size:16px;">
+      <div id="unplanned-results" style="max-height:180px;overflow-y:auto;margin-top:6px;"></div>
+    </div>
+
+    <div style="text-align:center;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;margin:10px 0;">— OR TYPE YOUR OWN —</div>
+
+    <div class="form-group">
+      <label class="form-label">Custom Food</label>
+      <input type="text" id="unplanned-custom-name" class="form-input" placeholder="Name (e.g. Mom's meatloaf)" style="font-size:16px;margin-bottom:6px;">
+      <div class="form-grid-2" style="gap:6px;">
+        <input type="number" id="unplanned-custom-cal" class="form-input" placeholder="Calories" style="font-size:16px;">
+        <input type="number" id="unplanned-custom-p" class="form-input" placeholder="Protein g" style="font-size:16px;">
+      </div>
+      <div class="form-grid-2" style="gap:6px;margin-top:6px;">
+        <input type="number" id="unplanned-custom-c" class="form-input" placeholder="Carbs g" style="font-size:16px;">
+        <input type="number" id="unplanned-custom-f" class="form-input" placeholder="Fat g" style="font-size:16px;">
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:14px;">
+      <a href="#" onclick="document.getElementById('unplanned-modal').style.display='none';return false;" style="flex:0 0 auto;padding:12px 18px;background:rgba(148,163,184,.08);border:1px solid rgba(148,163,184,.25);color:#94a3b8;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;border-radius:4px;-webkit-tap-highlight-color:transparent;">Cancel</a>
+      <a href="#" onclick="saveUnplannedCustom();return false;" style="flex:1;padding:12px;background:#14b8a6;color:#fff;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;text-align:center;border-radius:4px;box-shadow:0 2px 10px rgba(20,184,166,.35);-webkit-tap-highlight-color:transparent;">Save Custom</a>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<!-- AI NUTRITION ASSISTANT BUTTON -->
+<a href="#" class="ai-chat-btn" id="ai-btn" onclick="toggleAiChat();return false;" title="AI Rocky">👽</a>
+
+<!-- AI CHAT MODAL -->
+<div class="ai-chat-modal" id="ai-modal">
+  <div class="ai-chat-header">
+    <span style="font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:var(--accent2);">👽 Rocky</span>
+    <a href="#" onclick="toggleAiChat();return false;" style="color:var(--muted);text-decoration:none;font-size:18px;">×</a>
+  </div>
+  <div class="ai-chat-body" id="ai-chat-body">
+    <div class="ai-msg bot">👽 I'm <strong>Rocky</strong> — your nutrition co-pilot.<br><br>I can:<br>• Swap foods in your meal plan<br>• Build your weekly shopping list<br>• Answer nutrition questions<br>• Help you hit your macros<br><br>Try: "I'm tired of chicken" or "build my shopping list"</div>
+  </div>
+  <div class="ai-chat-input-wrap">
+    <input type="text" class="ai-chat-input" id="ai-input" placeholder="Ask me anything..." onkeydown="if(event.key==='Enter')sendAiMsg()">
+    <a href="#" class="ai-chat-send" onclick="sendAiMsg();return false;">→</a>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div id="nutrition-bottom-nav" style="position:fixed;bottom:0;left:0;right:0;z-index:10000;background:#0a0e14;border-top:1px solid rgba(0,196,140,.3);padding:6px 0 env(safe-area-inset-bottom);grid-template-columns:repeat(3,1fr);">
+  <a href="protocol-tracker.html" style="background:none;border:none;color:#8899aa;font-family:'Rajdhani',sans-serif;font-size:9px;font-weight:700;letter-spacing:.06em;cursor:pointer;padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:3px;text-transform:uppercase;text-decoration:none;min-height:44px;"><span style="font-size:22px;">⚗️</span>TRACKER</a>
+  <a href="nutrition.html" style="background:none;border:none;color:#00c48c;font-family:'Rajdhani',sans-serif;font-size:9px;font-weight:700;letter-spacing:.06em;cursor:pointer;padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:3px;text-transform:uppercase;text-decoration:none;min-height:44px;"><span style="font-size:22px;">🥗</span>NUTRITION</a>
+  <a href="index.html" style="background:none;border:none;color:#8899aa;font-family:'Rajdhani',sans-serif;font-size:9px;font-weight:700;letter-spacing:.06em;cursor:pointer;padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:3px;text-transform:uppercase;text-decoration:none;min-height:44px;"><span style="font-size:22px;">📖</span>WIKI</a>
+</div>
+
+<!-- ADD FOOD MODAL -->
+<div id="add-food-modal" style="display:none;position:fixed;inset:0;background:rgba(4,6,8,.88);z-index:10002;align-items:center;justify-content:center;padding:16px;" onclick="if(event.target===this)closeAddFood()">
+  <div style="background:#0d1318;border:1px solid var(--border);width:400px;max-width:95vw;padding:24px;border-radius:4px;">
+    <div style="font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--white);margin-bottom:4px;" id="add-food-title">Add Food</div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:16px;" id="add-food-info"></div>
+    <div class="form-group">
+      <label class="form-label">Amount (grams)</label>
+      <input type="number" class="form-input" id="add-food-grams" placeholder="100" value="100" min="1" oninput="updateAddPreview()">
+    </div>
+    <div id="add-food-preview" style="background:#060a0d;padding:12px;margin-bottom:14px;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);text-align:center;"></div>
+    <div class="form-group">
+      <label class="form-label">Add to meal</label>
+      <select class="form-select" id="add-food-meal"><option value="breakfast">Breakfast</option><option value="lunch">Lunch</option><option value="dinner">Dinner</option><option value="snacks">Snacks</option></select>
+    </div>
+    <a href="#" onclick="confirmAddFood();return false;" class="btn-primary">ADD TO LOG</a>
+  </div>
+</div>
+
+<script src="assets/apex-macro-calc.js"></script>
+<script>
+// ══════════════════════════════════════════════════════════
+// FOOD DATABASE (per 100g)
+// ══════════════════════════════════════════════════════════
+const FOODS = {
+  'Chicken Breast':{p:31,c:0,f:3.6,cal:165,cat:'protein'},
+  'Ground Turkey':{p:19,c:0,f:7,cal:148,cat:'protein'},
+  'Ground Beef':{p:24,c:0,f:4.5,cal:137,cat:'protein'},
+  'Salmon':{p:25,c:0,f:13,cal:208,cat:'protein'},
+  'Steak':{p:27,c:0,f:17,cal:264,cat:'protein'},
+  'Tuna':{p:29,c:0,f:1,cal:130,cat:'protein'},
+  'Tilapia':{p:26,c:0,f:2.7,cal:128,cat:'protein'},
+  'Turkey Breast':{p:29,c:0,f:1,cal:135,cat:'protein'},
+  'Shrimp':{p:24,c:0.2,f:0.3,cal:99,cat:'protein'},
+  'Eggs':{p:13,c:1.1,f:11,cal:155,cat:'protein'},
+  'Egg Whites':{p:11,c:0.7,f:0.2,cal:52,cat:'protein'},
+  'Greek Yogurt':{p:10,c:3.6,f:0.4,cal:59,cat:'protein'},
+  'Cottage Cheese':{p:11,c:3.4,f:4.3,cal:98,cat:'protein'},
+  'Whey Protein':{p:80,c:7,f:3,cal:375,cat:'protein'},
+  'White Rice':{p:2.7,c:28,f:0.3,cal:130,cat:'carbs'},
+  'Brown Rice':{p:2.6,c:23,f:0.9,cal:112,cat:'carbs'},
+  'Sweet Potato':{p:1.6,c:20,f:0.1,cal:86,cat:'carbs'},
+  'Oatmeal':{p:2.5,c:12,f:1.4,cal:71,cat:'carbs'},
+  'Sourdough':{p:8.8,c:50,f:1.8,cal:253,cat:'carbs'},
+  'Banana':{p:1.1,c:23,f:0.3,cal:89,cat:'carbs'},
+  'Quinoa':{p:4.4,c:21,f:1.9,cal:120,cat:'carbs'},
+  'Pasta':{p:5,c:31,f:1.1,cal:158,cat:'carbs'},
+  'Potato':{p:2,c:17,f:0.1,cal:77,cat:'carbs'},
+  'Apple':{p:0.3,c:14,f:0.2,cal:52,cat:'carbs'},
+  'Blueberries':{p:0.7,c:14,f:0.3,cal:57,cat:'carbs'},
+  'Carrots':{p:0.9,c:10,f:0.2,cal:41,cat:'carbs'},
+  'Broccoli':{p:2.8,c:7,f:0.4,cal:34,cat:'carbs'},
+  'Asparagus':{p:2.2,c:3.9,f:0.2,cal:20,cat:'carbs'},
+  'Green Beans':{p:1.8,c:7,f:0.2,cal:31,cat:'carbs'},
+  'Spinach':{p:2.9,c:3.6,f:0.4,cal:23,cat:'carbs'},
+  'Mixed Vegetables':{p:2,c:8,f:0.2,cal:40,cat:'carbs'},
+  'Avocado':{p:2,c:9,f:15,cal:160,cat:'fats'},
+  'Olive Oil':{p:0,c:0,f:100,cal:884,cat:'fats'},
+  'Almonds':{p:21,c:22,f:50,cal:579,cat:'fats'},
+  'Peanut Butter':{p:25,c:20,f:50,cal:588,cat:'fats'},
+  'Almond Butter':{p:21,c:19,f:50,cal:598,cat:'fats'},
+  'Walnuts':{p:15,c:14,f:65,cal:654,cat:'fats'},
+  'Cheese':{p:25,c:1.3,f:33,cal:403,cat:'fats'},
+  'Whole Milk':{p:3.4,c:4.8,f:3.7,cal:65,cat:'fats'},
+  'Coconut Oil':{p:0,c:0,f:100,cal:862,cat:'fats'},
+  'Butter':{p:0.9,c:0.1,f:81,cal:717,cat:'fats'},
+};
+
+// ══════════════════════════════════════════════════════════
+// CUSTOM FOODS — branded and compound items Rocky knows about
+// Macros per 100g. `gPerUnit` = realistic single serving in grams.
+// ══════════════════════════════════════════════════════════
+const CUSTOM_FOODS = {
+  // ── Branded breads (per slice) ──
+  "daves killer bread":{p:5,c:22,f:1.5,cal:110,cat:'carbs',unit:'slice',gPerUnit:49,alias:['daves bread','dave killer bread','dave bread','dkb','killer bread']},
+  "daves killer bread 21 whole grains":{p:5,c:22,f:1.5,cal:110,cat:'carbs',unit:'slice',gPerUnit:49,alias:['21 whole grains','21 grains','daves 21 grains']},
+  "ezekiel bread":{p:4,c:15,f:0.5,cal:80,cat:'carbs',unit:'slice',gPerUnit:34,alias:['ezekiel','sprouted bread','ezekiel 4 9']},
+  "sourdough bread":{p:4,c:18,f:0.5,cal:93,cat:'carbs',unit:'slice',gPerUnit:36,alias:['sourdough slice']},
+  "whole wheat bread":{p:4,c:12,f:1,cal:69,cat:'carbs',unit:'slice',gPerUnit:28,alias:['wheat bread','wheat toast']},
+  "bagel":{p:4,c:19,f:0.7,cal:95,cat:'carbs',unit:'bagel',gPerUnit:105,alias:['plain bagel','everything bagel']},
+  "english muffin":{p:4,c:13,f:0.5,cal:74,cat:'carbs',unit:'muffin',gPerUnit:57},
+  "tortilla":{p:3,c:16,f:1,cal:87,cat:'carbs',unit:'tortilla',gPerUnit:50,alias:['flour tortilla','wrap']},
+  // ── Branded oatmeal ──
+  "quaker instant oatmeal":{p:5,c:33,f:2.5,cal:175,cat:'carbs',unit:'packet',gPerUnit:43,alias:['quaker oats','quaker packet','quaker instant','instant oatmeal','quaker high fiber','quaker fiber']},
+  "quaker oats original":{p:5,c:27,f:3,cal:150,cat:'carbs',unit:'packet',gPerUnit:43,alias:['quaker original']},
+  "rolled oats":{p:13,c:67,f:7,cal:389,cat:'carbs',unit:'cup',gPerUnit:80,alias:['oats','raw oats','dry oats']},
+  "kodiak cakes pancakes":{p:14,c:22,f:3,cal:180,cat:'carbs',unit:'serving',gPerUnit:43,alias:['kodiak','kodiak pancakes','protein pancakes']},
+  "overnight oats":{p:12,c:45,f:8,cal:300,cat:'carbs',unit:'bowl',gPerUnit:250},
+  "protein oatmeal":{p:25,c:40,f:6,cal:300,cat:'carbs',unit:'bowl',gPerUnit:250,alias:['oats and protein','protein oats','protein oats bowl']},
+  // ── Compound breakfast items ──
+  "avocado toast":{p:6,c:20,f:15,cal:220,cat:'carbs',unit:'serving',gPerUnit:150,alias:['avo toast','avocado on toast']},
+  "egg sandwich":{p:18,c:25,f:14,cal:300,cat:'protein',unit:'sandwich',gPerUnit:180},
+  "breakfast burrito":{p:22,c:30,f:18,cal:360,cat:'protein',unit:'burrito',gPerUnit:230},
+  "egg white omelet":{p:24,c:2,f:0.5,cal:110,cat:'protein',unit:'serving',gPerUnit:180,alias:['egg white omelette']},
+  "scrambled eggs":{p:13,c:1,f:11,cal:155,cat:'protein',unit:'serving',gPerUnit:100},
+  // ── Branded yogurt ──
+  "chobani greek yogurt":{p:12,c:6,f:0,cal:80,cat:'protein',unit:'cup',gPerUnit:170,alias:['chobani','chobani nonfat']},
+  "oikos triple zero":{p:15,c:6,f:0,cal:100,cat:'protein',unit:'cup',gPerUnit:150,alias:['oikos','triple zero','two good']},
+  "two good yogurt":{p:12,c:3,f:2,cal:80,cat:'protein',unit:'cup',gPerUnit:150,alias:['two good']},
+  "greek yogurt with berries":{p:12,c:15,f:1,cal:120,cat:'protein',unit:'cup',gPerUnit:200,alias:['greek yogurt berries','yogurt with berries','yogurt and berries']},
+  "cottage cheese with fruit":{p:13,c:10,f:4,cal:130,cat:'protein',unit:'cup',gPerUnit:200},
+  // ── Branded protein ──
+  "premier protein":{p:30,c:4,f:3,cal:160,cat:'protein',unit:'shake',gPerUnit:325,alias:['premier shake','premier protein shake']},
+  "fairlife protein":{p:30,c:6,f:2.5,cal:150,cat:'protein',unit:'shake',gPerUnit:340,alias:['core power','fairlife','fairlife shake']},
+  "protein shake":{p:30,c:10,f:3,cal:180,cat:'protein',unit:'shake',gPerUnit:300,alias:['whey shake','protein drink','whey isolate']},
+  "quest bar":{p:21,c:22,f:8,cal:190,cat:'protein',unit:'bar',gPerUnit:60,alias:['quest protein bar']},
+  "rxbar":{p:12,c:23,f:9,cal:210,cat:'protein',unit:'bar',gPerUnit:52,alias:['rx bar','rx protein bar']},
+  "barebell":{p:20,c:20,f:6,cal:210,cat:'protein',unit:'bar',gPerUnit:55,alias:['bare bell','bare bells']},
+  "built bar":{p:17,c:23,f:4,cal:170,cat:'protein',unit:'bar',gPerUnit:50,alias:['built']},
+  // ── Compound lunch/dinner ──
+  "chicken bowl":{p:40,c:50,f:12,cal:450,cat:'protein',unit:'bowl',gPerUnit:400,alias:['chipotle bowl','chicken burrito bowl']},
+  "steak salad":{p:35,c:15,f:20,cal:360,cat:'protein',unit:'salad',gPerUnit:350},
+  "chicken stir fry":{p:35,c:40,f:12,cal:380,cat:'protein',unit:'plate',gPerUnit:400,alias:['stir fry']},
+  "salmon bowl":{p:35,c:35,f:15,cal:410,cat:'protein',unit:'bowl',gPerUnit:380,alias:['salmon poke']},
+  "chicken and rice":{p:35,c:50,f:6,cal:400,cat:'protein',unit:'plate',gPerUnit:400,alias:['chicken rice','chicken with rice']},
+  "pasta with meat sauce":{p:25,c:60,f:15,cal:470,cat:'carbs',unit:'plate',gPerUnit:400,alias:['spaghetti','meat sauce pasta','bolognese']},
+  "burger":{p:25,c:30,f:22,cal:430,cat:'protein',unit:'burger',gPerUnit:250,alias:['hamburger','cheeseburger']},
+  "taco":{p:15,c:20,f:10,cal:225,cat:'protein',unit:'taco',gPerUnit:100,alias:['tacos','street taco']},
+  // ── Snacks ──
+  "rice cake with pb":{p:4,c:15,f:6,cal:130,cat:'carbs',unit:'cake',gPerUnit:35,alias:['rice cake pb','rice cake peanut butter']},
+  "trail mix":{p:14,c:45,f:29,cal:462,cat:'fats',unit:'cup',gPerUnit:80,alias:['mixed nuts']},
+  "jerky":{p:33,c:11,f:7,cal:240,cat:'protein',unit:'oz',gPerUnit:28,alias:['beef jerky','turkey jerky']},
+  "string cheese":{p:7,c:1,f:6,cal:80,cat:'fats',unit:'stick',gPerUnit:28,alias:['cheese stick','mozzarella stick']},
+};
+
+// ══════════════════════════════════════════════════════════
+// SERVING-SIZE CAPS (grams) — prevents insane portions
+// ══════════════════════════════════════════════════════════
+const SERVING_CAPS = {
+  protein: {
+    'Chicken Breast': 250, 'Ground Turkey': 220, 'Ground Beef': 220, 'Salmon': 200,
+    'Steak': 220, 'Tuna': 200, 'Tilapia': 200, 'Turkey Breast': 200, 'Shrimp': 200,
+    'Eggs': 200, 'Egg Whites': 200, 'Greek Yogurt': 250, 'Cottage Cheese': 200,
+    'Whey Protein': 40,
+  },
+  carbs: {
+    'White Rice': 250, 'Brown Rice': 250, 'Sweet Potato': 300, 'Oatmeal': 80,
+    'Sourdough': 100, 'Banana': 150, 'Quinoa': 220, 'Pasta': 150, 'Potato': 350,
+    'Apple': 200, 'Blueberries': 150,
+  },
+  fats: {
+    'Avocado': 150, 'Olive Oil': 14, 'Almonds': 40, 'Peanut Butter': 32,
+    'Almond Butter': 32, 'Walnuts': 30, 'Cheese': 60, 'Whole Milk': 250,
+    'Coconut Oil': 14, 'Butter': 14,
+  },
+};
+const DEFAULT_CAPS = { protein: 220, carbs: 200, fats: 30 };
+
+function getServingCap(foodName, category) {
+  if (SERVING_CAPS[category] && SERVING_CAPS[category][foodName]) {
+    return SERVING_CAPS[category][foodName];
+  }
+  return DEFAULT_CAPS[category] || 200;
+}
+
+// ══════════════════════════════════════════════════════════
+// HUMAN UNITS — convert grams to realistic servings
+// ══════════════════════════════════════════════════════════
+const HUMAN_UNITS = {
+  // Proteins
+  'Chicken Breast':  { gPer:28, unit:'oz', plural:'oz' },
+  'Ground Turkey':   { gPer:28, unit:'oz', plural:'oz' },
+  'Ground Beef':     { gPer:28, unit:'oz', plural:'oz' },
+  'Salmon':          { gPer:28, unit:'oz', plural:'oz' },
+  'Steak':           { gPer:28, unit:'oz', plural:'oz' },
+  'Tuna':            { gPer:28, unit:'oz', plural:'oz' },
+  'Tilapia':         { gPer:28, unit:'oz', plural:'oz' },
+  'Turkey Breast':   { gPer:28, unit:'oz', plural:'oz' },
+  'Shrimp':          { gPer:28, unit:'oz', plural:'oz' },
+  'Eggs':            { gPer:50, unit:'large egg', plural:'large eggs' },
+  'Egg Whites':      { gPer:33, unit:'egg white', plural:'egg whites' },
+  'Greek Yogurt':    { gPer:245, unit:'cup', plural:'cups' },
+  'Cottage Cheese':  { gPer:225, unit:'cup', plural:'cups' },
+  'Whey Protein':    { gPer:30, unit:'scoop', plural:'scoops' },
+  // Carbs (cooked weights where relevant)
+  'White Rice':      { gPer:158, unit:'cup cooked', plural:'cups cooked' },
+  'Brown Rice':      { gPer:195, unit:'cup cooked', plural:'cups cooked' },
+  'Sweet Potato':    { gPer:130, unit:'medium', plural:'medium' },
+  'Oatmeal':         { gPer:80,  unit:'cup dry', plural:'cups dry' },
+  'Sourdough':       { gPer:50,  unit:'slice', plural:'slices' },
+  'Banana':          { gPer:118, unit:'medium', plural:'medium' },
+  'Quinoa':          { gPer:185, unit:'cup cooked', plural:'cups cooked' },
+  'Pasta':           { gPer:140, unit:'cup cooked', plural:'cups cooked' },
+  'Potato':          { gPer:150, unit:'medium', plural:'medium' },
+  'Apple':           { gPer:182, unit:'medium', plural:'medium' },
+  'Blueberries':     { gPer:148, unit:'cup', plural:'cups' },
+  // Fats
+  'Avocado':         { gPer:150, unit:'whole', plural:'whole' },
+  'Olive Oil':       { gPer:14,  unit:'tbsp', plural:'tbsp' },
+  'Almonds':         { gPer:28,  unit:'oz', plural:'oz' },
+  'Peanut Butter':   { gPer:32,  unit:'tbsp', plural:'tbsp' },
+  'Almond Butter':   { gPer:32,  unit:'tbsp', plural:'tbsp' },
+  'Walnuts':         { gPer:28,  unit:'oz', plural:'oz' },
+  'Cheese':          { gPer:28,  unit:'oz', plural:'oz' },
+  'Whole Milk':      { gPer:244, unit:'cup', plural:'cups' },
+  'Coconut Oil':     { gPer:14,  unit:'tbsp', plural:'tbsp' },
+  'Butter':          { gPer:14,  unit:'tbsp', plural:'tbsp' },
+};
+
+function formatServing(foodName, grams) {
+  const spec = HUMAN_UNITS[foodName];
+  if (!spec) {
+    // Fallback: just show grams
+    return grams + 'g';
+  }
+  const units = grams / spec.gPer;
+  const rounded = units < 1.25 ? units.toFixed(1) : Math.round(units * 2) / 2; // nearest 0.5
+  const unitLabel = rounded === 1 ? spec.unit : spec.plural;
+  return `${rounded} ${unitLabel}  (${grams}g)`;
+}
+
+// ══════════════════════════════════════════════════════════
+// FOOD FAMILIES — dedupes similar foods within a meal
+// Example: Oatmeal + Quaker Instant + Rolled Oats = all "oats" family
+// Pick ONE per family per meal.
+// ══════════════════════════════════════════════════════════
+const FOOD_FAMILIES = {
+  // Oat family — all interchangeable
+  'Oatmeal':                      'oats',
+  'Rolled Oats':                  'oats',
+  'Quaker Instant Oatmeal':       'oats',
+  'Quaker Oats Original':         'oats',
+  'Protein Oatmeal':              'oats',
+  'Overnight Oats':               'oats',
+  'Kodiak Cakes Pancakes':        'oats',
+  // Egg family
+  'Eggs':                         'eggs',
+  'Egg Whites':                   'eggs',
+  'Scrambled Eggs':               'eggs',
+  'Egg White Omelet':             'eggs',
+  'Egg Sandwich':                 'eggs',
+  // Yogurt family
+  'Greek Yogurt':                 'yogurt',
+  'Chobani Greek Yogurt':         'yogurt',
+  'Oikos Triple Zero':            'yogurt',
+  'Two Good Yogurt':              'yogurt',
+  'Greek Yogurt With Berries':    'yogurt',
+  'Cottage Cheese':               'cottage-cheese',
+  'Cottage Cheese With Fruit':    'cottage-cheese',
+  // Protein shake family
+  'Whey Protein':                 'shake',
+  'Premier Protein':              'shake',
+  'Fairlife Protein':             'shake',
+  'Protein Shake':                'shake',
+  // Bar family
+  'Quest Bar':                    'bar',
+  'Rxbar':                        'bar',
+  'Barebell':                     'bar',
+  'Built Bar':                    'bar',
+  // Bread family
+  'Sourdough':                    'bread',
+  'Sourdough Bread':              'bread',
+  'Whole Wheat Bread':            'bread',
+  'Daves Killer Bread':           'bread',
+  'Daves Killer Bread 21 Whole Grains':'bread',
+  'Ezekiel Bread':                'bread',
+  'Bagel':                        'bread',
+  'English Muffin':               'bread',
+  'Tortilla':                     'bread',
+  // Rice family
+  'White Rice':                   'rice',
+  'Brown Rice':                   'rice',
+  // Potato family (per meal)
+  'Potato':                       'potato',
+  'Sweet Potato':                 'potato',
+  // Chicken family (per meal) — prevents chicken + chicken bowl
+  'Chicken Breast':               'chicken',
+  'Chicken Bowl':                 'chicken',
+  'Chicken And Rice':             'chicken',
+  'Chicken Stir Fry':             'chicken',
+  // Beef family
+  'Ground Beef':                  'beef',
+  'Steak':                        'beef',
+  'Burger':                       'beef',
+  // Berry family
+  'Blueberries':                  'berries',
+};
+
+function getFoodFamily(foodName) {
+  return FOOD_FAMILIES[foodName] || foodName.toLowerCase();
+}
+
+// De-duplicate a food list by family, keeping the FIRST occurrence
+function dedupeByFamily(foodList) {
+  const seen = new Set();
+  const out = [];
+  foodList.forEach(f => {
+    const name = typeof f === 'string' ? f : f.name;
+    const fam = getFoodFamily(name);
+    if (!seen.has(fam)) {
+      seen.add(fam);
+      out.push(f);
+    }
+  });
+  return out;
+}
+
+// Cap foods per meal: max 1 protein, 2 carbs, 1 fat = 4 items total
+function capMealItems(foodList, maxP = 1, maxC = 2, maxF = 1) {
+  const proteins = foodList.filter(f => getFoodCategory(f) === 'protein').slice(0, maxP);
+  const carbs = foodList.filter(f => getFoodCategory(f) === 'carbs').slice(0, maxC);
+  const fats = foodList.filter(f => getFoodCategory(f) === 'fats').slice(0, maxF);
+  return [...proteins, ...carbs, ...fats];
+}
+
+const RESTRICTIONS = ['Dairy Free','Gluten Free','No Pork','No Shellfish','No Nuts','Vegetarian','Keto','Low Carb'];
+
+// ══════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════
+const todayKey = () => new Date().toISOString().split('T')[0];
+
+let S = {
+  profile: null,
+  bfCurrent: 20,
+  bfGoal: 15,
+  goal: 'cut',
+  proteinPerLb: 1.0,
+  prepDay: null,
+  foodPicks: [],       // legacy — still used as fallback
+  restrictions: [],
+  mealPlan: null,
+  foodLog: {},
+  checkins: {},
+  workoutBurn: 0,
+  // Rocky's answers (new)
+  rockyAnswers: null,  // {proteins:[], carbs:[], fats:[], restrictions:[], breakfast:[], lunch:[], dinner:[], snacks:[], shakes:[]}
+};
+
+function load() { try { const s = localStorage.getItem('apex_nutrition_v2'); if(s) S = JSON.parse(s); } catch(e){} }
+function save() { localStorage.setItem('apex_nutrition_v2', JSON.stringify(S)); }
+
+// ══════════════════════════════════════════════════════════
+// STEP NAVIGATION
+// ══════════════════════════════════════════════════════════
+let currentStep = 1;
+let highestStep = 1; // tracks furthest step reached
+
+function navToStep(n) {
+  // Can go back to any completed step, or forward only to next step
+  if (n <= highestStep || n === highestStep + 1) {
+    goToStep(n);
+  }
+}
+
+function goToStep(n) {
+  if (n > highestStep) highestStep = n;
+  // Validate before advancing
+  if (n === 2 && currentStep === 1) {
+    if (!calculateTargets()) return;
+  }
+  // Re-render targets whenever visiting step 2 (fixes back-navigation data loss)
+  if (n === 2 && S.profile) {
+    calculateTargets();
+    renderIntelligence();
+  }
+  if (n === 4 && currentStep === 3) {
+    // Rocky handles food intake now — no minimum pick count.
+    // If Rocky answers are empty, saveRockyAnswers() falls back to the
+    // default food set so generateMealPlan() always has something to work with.
+    generateMealPlan();
+  }
+  if (n === 5) {
+    initTracker();
+  }
+
+  document.querySelectorAll('.step-page').forEach(p => p.style.display = 'none');
+  document.getElementById('step-' + n).style.display = 'block';
+  currentStep = n;
+
+  // Update dots
+  document.querySelectorAll('.step-dot').forEach(d => {
+    const s = parseInt(d.getAttribute('data-step'));
+    d.className = 'step-dot' + (s === n ? ' active' : s < n ? ' done' : '');
+  });
+
+  window.scrollTo(0, 0);
+}
+
+// ══════════════════════════════════════════════════════════
+// STEP 1 — BODY FAT + GOAL
+// ══════════════════════════════════════════════════════════
+function selectBF(type, pct) {
+  if (type === 'current') S.bfCurrent = pct;
+  else S.bfGoal = pct;
+  const container = document.getElementById('bf-' + type);
+  container.querySelectorAll('.bf-option').forEach(o => {
+    o.className = 'bf-option' + (parseInt(o.getAttribute('data-bf')) === pct ? ' active' : '');
+  });
+  save();
+}
+
+function selectGoal(goal) {
+  S.goal = goal;
+  document.querySelectorAll('.goal-btn').forEach(b => {
+    b.className = 'goal-btn' + (b.getAttribute('data-goal') === goal ? ' active' : '');
+  });
+  save();
+}
+
+// ══════════════════════════════════════════════════════════
+// STEP 2 — CALCULATE TARGETS
+// ══════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
+// GLP-1 MUSCLE-SPARING ADJUSTMENTS
+// Reta, Sem, Tirz preserve lean mass in a deficit. Reta is strongest
+// (glucagon co-agonism). We unlock more aggressive deficits + higher
+// protein on GLP-1s because the drug is protecting muscle.
+// ══════════════════════════════════════════════════════════
+function detectGlp1Adjustments() {
+  // Standard (no GLP-1)
+  const standard = {
+    glp1: null,
+    deficit: 500,
+    proteinPerLb: 1.0,
+    deficitLabel: '500 cal deficit',
+    explanation: null,
+    weeklyLossRate: 1.0, // lbs/week
+  };
+  try {
+    const raw = localStorage.getItem('apex_tracker');
+    if (!raw) return standard;
+    const st = JSON.parse(raw);
+    const active = (st.protocols || []).filter(p => p.status === 'active');
+    const reta = active.find(p => p.name === 'Retatrutide');
+    const tirz = active.find(p => p.name === 'Tirzepatide');
+    const sem  = active.find(p => p.name === 'Semaglutide');
+
+    if (reta) {
+      return {
+        glp1: 'Retatrutide',
+        deficit: 1000,
+        proteinPerLb: 1.2,
+        deficitLabel: '1000 cal deficit — aggressive muscle-sparing',
+        weeklyLossRate: 2.0,
+        explanation: {
+          title: '🔥 Retatrutide Muscle-Sparing Mode',
+          body:
+            "Reta is a GLP-1 + GIP + glucagon triple agonist. The glucagon co-agonism is the key difference — " +
+            "it preserves lean mass even in aggressive deficits. Phase 2 trials showed ~85% of weight lost was fat " +
+            "(vs. ~75% on standard cuts). That lets us safely run a bigger deficit than you could without the drug.",
+          adjustments: [
+            '<strong>Deficit → 1000 cal/day</strong> (normally capped at 500 for muscle preservation)',
+            '<strong>Protein → 1.2g/lb</strong> (was 1.0g/lb — max MPS to synergize with Reta)',
+            '<strong>Weekly loss → ~2 lbs/week</strong> (safely, because Reta protects lean mass)',
+          ],
+          source: 'Jastreboff et al. Retatrutide Phase 2, NEJM 2023',
+        },
+      };
+    }
+    if (tirz) {
+      return {
+        glp1: 'Tirzepatide',
+        deficit: 750,
+        proteinPerLb: 1.1,
+        deficitLabel: '750 cal deficit — Tirzepatide mode',
+        weeklyLossRate: 1.5,
+        explanation: {
+          title: '💉 Tirzepatide Muscle-Aware Mode',
+          body:
+            "Tirzepatide is a GLP-1 + GIP dual agonist. SURMOUNT trials showed strong fat-loss bias with " +
+            "appetite suppression that makes a 750 cal deficit sustainable. Protein bumped to 1.1g/lb to " +
+            "offset the reduced overall intake.",
+          adjustments: [
+            '<strong>Deficit → 750 cal/day</strong> (up from 500 standard)',
+            '<strong>Protein → 1.1g/lb</strong> (was 1.0g/lb — preserves muscle at higher deficit)',
+            '<strong>Weekly loss → ~1.5 lbs/week</strong>',
+          ],
+          source: 'Jastreboff et al. SURMOUNT-1, NEJM 2022',
+        },
+      };
+    }
+    if (sem) {
+      return {
+        glp1: 'Semaglutide',
+        deficit: 600,
+        proteinPerLb: 1.1,
+        deficitLabel: '600 cal deficit — Semaglutide mode',
+        weeklyLossRate: 1.2,
+        explanation: {
+          title: '💉 Semaglutide Muscle-Aware Mode',
+          body:
+            "Semaglutide suppresses appetite, making a moderate deficit easier to sustain. STEP-1 trials " +
+            "showed consistent fat loss, but higher lean-mass loss risk than Tirz/Reta — so we only bump " +
+            "the deficit slightly and push protein higher to protect muscle.",
+          adjustments: [
+            '<strong>Deficit → 600 cal/day</strong> (up from 500 standard)',
+            '<strong>Protein → 1.1g/lb</strong> (protect lean mass)',
+            '<strong>Weekly loss → ~1.2 lbs/week</strong>',
+          ],
+          source: 'Wilding et al. STEP-1, NEJM 2021',
+        },
+      };
+    }
+  } catch(e) { console.warn('GLP-1 detection failed:', e); }
+  return standard;
+}
+
+function calculateTargets() {
+  const w = parseFloat(document.getElementById('n-weight').value);
+  const ft = parseFloat(document.getElementById('n-height-ft').value);
+  const inch = parseFloat(document.getElementById('n-height-in').value) || 0;
+  const age = parseFloat(document.getElementById('n-age').value);
+  const gender = document.getElementById('n-gender').value;
+  const activity = parseFloat(document.getElementById('n-activity').value);
+  const workoutBurn = parseFloat(document.getElementById('n-workout-burn')?.value) || 0;
+  // BF% — prefer the live DOM value, fall back to saved state (covers
+  // typed-but-not-blurred + reload cases).
+  const bfFromDom = parseFloat(document.getElementById('n-bf-current')?.value);
+  const bfFromState = parseFloat(S.bfCurrent);
+  const bfCurrent = (!isNaN(bfFromDom) && bfFromDom > 0)
+    ? bfFromDom
+    : (!isNaN(bfFromState) && bfFromState > 0 ? bfFromState : 0);
+
+  // ONLY weight is required. Everything else gets a sensible default so the
+  // NEXT button never silently fails. The user can refine later.
+  if (!w) {
+    // Visual inline feedback instead of a blocking alert
+    const wEl = document.getElementById('n-weight');
+    if (wEl) {
+      wEl.style.borderColor = '#ef4444';
+      wEl.style.boxShadow = '0 0 0 3px rgba(239,68,68,.2)';
+      wEl.focus();
+      setTimeout(() => { wEl.style.borderColor = ''; wEl.style.boxShadow = ''; }, 3000);
+    }
+    return false;
+  }
+  const heightIn = (ft || 5) * 12 + (inch || 10); // default 5'10"
+  const effectiveAge = age || 35; // default 35yo
+
+  // Detect which GLP-1 (if any) is active — read from apex_tracker localStorage
+  let activeCompound = null;
+  try {
+    const raw = localStorage.getItem('apex_tracker');
+    if (raw) {
+      const st = JSON.parse(raw);
+      const active = (st.protocols || []).filter(p => p.status === 'active');
+      ['Retatrutide','Tirzepatide','Semaglutide'].forEach(name => {
+        if (!activeCompound && active.find(p => p.name === name)) activeCompound = name;
+      });
+    }
+  } catch(e) {}
+
+  // ── Call the shared macro calculator ──
+  const r = ApexMacroCalc.calculate({
+    weight: w,
+    heightIn,
+    age: effectiveAge,
+    gender,
+    bfCurrent,
+    activity,
+    workoutBurn,
+    goal: S.goal,
+    compound: activeCompound,
+    userProteinPerLb: S.proteinPerLb,
+  });
+
+  const targetCals = r.targetCal;
+  const proteinG = r.proteinG;
+  const carbG = r.carbG;
+  const fatG = r.fatG;
+  const bmr = r.bmr;
+  const mifflinBmr = r.mifflinBmr;
+  const katchBmr = r.katchBmr;
+  const lbmLb = r.lbmLb;
+  const useKatch = r.useKatch;
+  const formulaName = r.formulaName;
+  const formulaNote = r.formulaNote;
+  const tdee = r.tdee;
+  const activityNote = r.activityNote;
+  const deficitLabel = r.deficitLabel;
+  const proteinNote = r.proteinNote;
+  const fatNote = r.fatNote;
+  const glp1Adj = detectGlp1Adjustments(); // kept for explanation card below
+
+  // Sync the protein slider to whatever the engine picked
+  if (useKatch) {
+    S.proteinPerLb = r.proteinPerLb;
+    const pSlider = document.getElementById('protein-slider');
+    const pVal = document.getElementById('protein-slider-val');
+    if (pSlider) pSlider.value = r.proteinPerLb;
+    if (pVal) pVal.textContent = r.proteinPerLb.toFixed(2) + 'g/lb LBM';
+  } else if (glp1Adj.glp1 && S.proteinPerLb < glp1Adj.proteinPerLb) {
+    S.proteinPerLb = glp1Adj.proteinPerLb;
+    const pSlider = document.getElementById('protein-slider');
+    const pVal = document.getElementById('protein-slider-val');
+    if (pSlider) pSlider.value = glp1Adj.proteinPerLb;
+    if (pVal) pVal.textContent = glp1Adj.proteinPerLb.toFixed(1) + 'g/lb BW';
+  }
+
+  S.profile = {
+    weight: w, heightIn, age: effectiveAge, gender, activity, workoutBurn,
+    bfCurrent, lbmLb, bmr, mifflinBmr, katchBmr, formulaName, tdee,
+    targets: { cals: targetCals, protein: proteinG, carbs: carbG, fat: fatG },
+    glp1Mode: activeCompound,
+  };
+  save();
+
+  // Update UI macros
+  document.getElementById('t-cals').textContent = targetCals;
+  document.getElementById('t-protein').textContent = proteinG + 'g';
+  document.getElementById('t-carbs').textContent = carbG + 'g';
+  document.getElementById('t-fat').textContent = fatG + 'g';
+
+  // ── EXPLANATION CARD ───────────────────────────────
+  let explanation = '';
+
+  // Formula picker card — shows both + which we picked + why
+  if (useKatch) {
+    explanation += `
+      <div style="margin-bottom:14px;padding:14px 16px;background:linear-gradient(135deg,rgba(20,184,166,.1),rgba(20,184,166,.02));border:1px solid rgba(20,184,166,.4);border-radius:6px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.15em;color:#14b8a6;margin-bottom:6px;">🧮 HOW WE CALCULATED YOUR BMR</div>
+        <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:800;color:#fff;margin-bottom:4px;line-height:1;">${bmr} kcal/day</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:#14b8a6;margin-bottom:10px;">✓ Calculated with Katch-McArdle</div>
+        <div style="font-family:'Barlow',sans-serif;font-size:12px;color:#94a3b8;line-height:1.55;margin-bottom:10px;">${formulaNote}</div>
+        <div style="padding:8px 10px;background:rgba(0,0,0,.25);border-radius:3px;font-family:'Share Tech Mono',monospace;font-size:10px;color:#94a3b8;line-height:1.8;">
+          • <strong style="color:#14b8a6;">Katch-McArdle: ${katchBmr} kcal</strong> ← picked<br>
+          • Mifflin-St Jeor: ${mifflinBmr} kcal (${mifflinBmr < katchBmr ? 'undercounts your muscle' : 'overcounts your fat'})
+        </div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:#64748b;margin-top:8px;">📚 Katch & McArdle 1975 · Most accurate when LBM is known</div>
+      </div>`;
+  } else {
+    explanation += `
+      <div style="margin-bottom:14px;padding:14px 16px;background:linear-gradient(135deg,rgba(44,123,229,.08),rgba(44,123,229,.02));border:1px solid rgba(44,123,229,.35);border-radius:6px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.15em;color:#2c7be5;margin-bottom:6px;">🧮 HOW WE CALCULATED YOUR BMR</div>
+        <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:800;color:#fff;margin-bottom:4px;line-height:1;">${bmr} kcal/day</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:#2c7be5;margin-bottom:10px;">✓ Calculated with Mifflin-St Jeor</div>
+        <div style="font-family:'Barlow',sans-serif;font-size:12px;color:#94a3b8;line-height:1.55;margin-bottom:10px;">${formulaNote}</div>
+        <div style="padding:8px 10px;background:rgba(250,204,21,.06);border:1px solid rgba(250,204,21,.25);border-radius:3px;font-family:'Share Tech Mono',monospace;font-size:9px;color:#facc15;line-height:1.6;">
+          💡 <strong>Want a more accurate number?</strong> <a href="#" onclick="goToStep(1);setTimeout(()=>{const el=document.getElementById('n-bf-current');if(el){el.focus();el.scrollIntoView({behavior:'smooth',block:'center'});}},100);return false;" style="color:#facc15;text-decoration:underline;">Tap here to go back to Step 1</a> and enter your body fat %. We'll switch to Katch-McArdle — better for lean or obese bodies.
+        </div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:#64748b;margin-top:8px;">📚 Mifflin et al. 1990 · General population standard</div>
+      </div>`;
+  }
+
+  // TDEE + deficit breakdown
+  explanation += `
+    <div style="font-family:'Barlow',sans-serif;font-size:13px;color:#c8dde8;line-height:1.7;">
+      <strong style="color:#fff;">Step 1 — BMR:</strong> ${bmr} kcal/day — what your body burns at rest (${formulaName})<br>
+      <strong style="color:#fff;">Step 2 — TDEE:</strong> ${tdee} kcal/day — total daily energy expenditure<br>
+      <span style="color:#64748b;font-size:11px;">(${activityNote})</span><br>
+      <strong style="color:#fff;">Step 3 — Deficit:</strong> ${deficitLabel}<br>
+      <strong style="color:#fff;">Step 4 — Target:</strong> <span style="color:#14b8a6;font-weight:800;">${targetCals} kcal/day</span><br><br>
+      <strong style="color:#fff;">Macros:</strong><br>
+      • <strong style="color:#ef4444;">${proteinG}g protein</strong> — ${proteinNote}<br>
+      • <strong style="color:#a78bfa;">${fatG}g fat</strong> — ${fatNote}<br>
+      • <strong style="color:#facc15;">${carbG}g carbs</strong> — fills the remainder
+    </div>`;
+
+  // GLP-1 muscle-sparing card
+  if (glp1Adj.explanation && S.goal === 'cut') {
+    const ex = glp1Adj.explanation;
+    explanation += `<div style="margin-top:14px;padding:14px 16px;background:linear-gradient(135deg,rgba(20,184,166,.1),rgba(20,184,166,.02));border:1px solid rgba(20,184,166,.4);border-radius:6px;">` +
+      `<div style="font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:800;color:#14b8a6;margin-bottom:8px;">${ex.title}</div>` +
+      `<div style="color:#94a3b8;line-height:1.55;font-size:13px;margin-bottom:10px;">${ex.body}</div>` +
+      `<ul style="margin:0 0 10px 18px;padding:0;color:#cbd5e1;font-size:13px;line-height:1.8;">` +
+        ex.adjustments.map(a => `<li>${a}</li>`).join('') +
+      `</ul>` +
+      `<div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:#64748b;">📚 ${ex.source}</div>` +
+    `</div>`;
+  }
+
+  // Fiber warning if on any GLP-1
+  if (glp1Adj.glp1) {
+    explanation += `
+      <div style="margin-top:14px;padding:12px 14px;background:rgba(250,204,21,.08);border:1px solid rgba(250,204,21,.3);border-radius:4px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:#facc15;letter-spacing:.08em;line-height:1.55;">
+          🌾 <strong>35g+ FIBER/DAY REQUIRED.</strong> GLP-1s slow gastric emptying. Without fiber you'll be constipated and miserable by week 3. Oats, veggies, berries, psyllium — hit 35g minimum.
+        </div>
+      </div>`;
+  }
+
+  document.getElementById('explain-text').innerHTML = explanation;
+
+  // Timeline
+  // Read body fat from inputs in case they were just changed
+  const bfC = parseFloat(document.getElementById('n-bf-current').value) || S.bfCurrent || 20;
+  const bfG = parseFloat(document.getElementById('n-bf-goal').value) || S.bfGoal || 15;
+  S.bfCurrent = bfC; S.bfGoal = bfG;
+
+  if (S.goal === 'cut' && bfC > bfG) {
+    const lbsFat = w * (bfC - bfG) / 100;
+    const rate = glp1Adj.weeklyLossRate || 1.0; // lbs/week, adjusted for GLP-1 if active
+    const weeks = Math.max(1, Math.round(lbsFat / rate));
+    const rateLabel = glp1Adj.glp1
+      ? `~${rate} lbs/week (${glp1Adj.glp1} muscle-sparing)`
+      : '~1 lb/week with a 500 cal deficit';
+    document.getElementById('timeline-text').textContent = `~${weeks} weeks to reach ${bfG}% body fat`;
+    document.getElementById('timeline-detail').textContent = `${lbsFat.toFixed(1)} lbs of fat to lose at ${rateLabel}`;
+    document.getElementById('timeline-card').style.display = 'block';
+  } else {
+    document.getElementById('timeline-card').style.display = 'none';
+  }
+
+  // Always show timeline card and render intelligence
+  document.getElementById('timeline-card').style.display = 'block';
+  renderIntelligence();
+
+  return true;
+}
+
+function updateProteinSlider() {
+  S.proteinPerLb = parseFloat(document.getElementById('protein-slider').value);
+  document.getElementById('protein-slider-val').textContent = S.proteinPerLb.toFixed(1) + 'g';
+  if (S.profile) calculateTargets();
+  save();
+}
+
+// ══════════════════════════════════════════════════════════
+// INTELLIGENCE ENGINE — dynamic projections
+// ══════════════════════════════════════════════════════════
+function renderIntelligence() {
+  if (!S.profile || !S.profile.targets) return;
+  const t = S.profile.targets;
+  const w = S.profile.weight;
+  const bfC = S.bfCurrent || 20;
+  const bfG = S.bfGoal || 15;
+
+  // Gather check-in data
+  const checkinDays = Object.keys(S.checkins).sort();
+  const totalCheckins = checkinDays.length;
+
+  // Gather food log data
+  const logDays = Object.keys(S.foodLog).sort();
+  const totalLogDays = logDays.length;
+
+  // Calculate last 7 days of compliance
+  const last7 = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const key = d.toISOString().split('T')[0];
+    last7.push(key);
+  }
+  const daysLogged7 = last7.filter(k => S.foodLog[k] && Object.values(S.foodLog[k]).some(m => m.length > 0)).length;
+
+  // Protein compliance
+  let proteinHits = 0;
+  last7.forEach(k => {
+    if (S.foodLog[k]) {
+      let dayP = 0;
+      Object.values(S.foodLog[k]).forEach(meal => meal.forEach(f => dayP += f.p));
+      if (dayP >= t.protein * 0.8) proteinHits++;
+    }
+  });
+  const proteinCompliance = daysLogged7 > 0 ? Math.round((proteinHits / daysLogged7) * 100) : 0;
+
+  // Weight trend
+  const weights = [];
+  checkinDays.forEach(k => { if (S.checkins[k] && S.checkins[k].weight) weights.push({ date: k, w: S.checkins[k].weight }); });
+  const weeklyLoss = weights.length >= 2 ? ((weights[0].w - weights[weights.length - 1].w) / (weights.length > 7 ? weights.length / 7 : 1)) : null;
+
+  // Progress bar
+  const progressEl = document.getElementById('timeline-progress');
+  const barEl = document.getElementById('timeline-bar');
+  const startBfEl = document.getElementById('timeline-start-bf');
+  const goalBfEl = document.getElementById('timeline-goal-bf');
+  const pctEl = document.getElementById('timeline-pct');
+
+  if (S.goal === 'cut' && bfC > bfG) {
+    // Estimate current BF based on weight loss
+    const startWeight = S.profile.weight;
+    const currentWeight = weights.length > 0 ? weights[weights.length - 1].w : startWeight;
+    const fatLost = startWeight - currentWeight;
+    const totalFatToLose = startWeight * (bfC - bfG) / 100;
+    const progressPct = totalFatToLose > 0 ? Math.min(100, Math.round((fatLost / totalFatToLose) * 100)) : 0;
+
+    progressEl.style.display = 'block';
+    barEl.style.width = Math.max(0, progressPct) + '%';
+    startBfEl.textContent = bfC + '% start';
+    goalBfEl.textContent = bfG + '% goal';
+    pctEl.textContent = progressPct + '% there';
+
+    // Recalculate weeks remaining based on ACTUAL rate
+    if (weeklyLoss && weeklyLoss > 0) {
+      const lbsLeft = totalFatToLose - fatLost;
+      const weeksLeft = Math.round(lbsLeft / weeklyLoss);
+      const projDate = new Date();
+      projDate.setDate(projDate.getDate() + weeksLeft * 7);
+      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      const dateStr = months[projDate.getMonth()] + ' ' + projDate.getDate();
+
+      document.getElementById('timeline-text').textContent = `~${weeksLeft} weeks to reach ${bfG}% body fat`;
+      document.getElementById('timeline-detail').textContent = `${lbsLeft.toFixed(1)} lbs left · losing ${weeklyLoss.toFixed(1)} lbs/week · Projected: ${dateStr}`;
+    }
+  }
+
+  // Intelligence message
+  const intelEl = document.getElementById('timeline-intel');
+  const intelText = document.getElementById('timeline-intel-text');
+
+  if (totalLogDays === 0 && totalCheckins === 0) {
+    // No data yet
+    intelEl.style.display = 'block';
+    intelEl.style.background = 'rgba(255,255,255,.03)';
+    intelEl.style.borderColor = 'var(--border)';
+    intelText.innerHTML = '🔒 <strong>UNLOCK YOUR LIVE PROJECTION</strong><br>Log 7 days of food + check-ins to see your real-time progress forecast. The math only works with real data.';
+  } else if (totalLogDays < 7) {
+    // Building data
+    intelEl.style.display = 'block';
+    intelEl.style.background = 'rgba(250,204,21,.05)';
+    intelEl.style.borderColor = 'rgba(250,204,21,.2)';
+    intelText.innerHTML = `📊 <strong>${totalLogDays} of 7 days logged.</strong> ${7 - totalLogDays} more days to unlock your live projection. Keep going — consistency is what makes this work.`;
+  } else if (daysLogged7 >= 5 && proteinCompliance >= 80) {
+    // Crushing it
+    intelEl.style.display = 'block';
+    intelEl.style.background = 'rgba(0,196,140,.08)';
+    intelEl.style.borderColor = 'rgba(0,196,140,.25)';
+    let msg = `🔥 <strong>${daysLogged7} of 7 days logged this week. ${proteinCompliance}% protein compliance.</strong>`;
+    if (weeklyLoss && weeklyLoss > 1.2) {
+      msg += `<br>You're losing ${weeklyLoss.toFixed(1)} lbs/week — ahead of the 1 lb/week target. You're AHEAD of schedule.`;
+    } else if (weeklyLoss && weeklyLoss > 0) {
+      msg += `<br>Losing ${weeklyLoss.toFixed(1)} lbs/week. Steady and sustainable. Keep it up.`;
+    }
+    if (proteinCompliance >= 90) msg += `<br>💪 Protein game is elite. Your muscle is protected.`;
+    intelText.innerHTML = msg;
+  } else if (daysLogged7 >= 3) {
+    // Decent but could be better
+    intelEl.style.display = 'block';
+    intelEl.style.background = 'rgba(250,204,21,.05)';
+    intelEl.style.borderColor = 'rgba(250,204,21,.2)';
+    let msg = `⚡ <strong>${daysLogged7} of 7 days logged this week.</strong>`;
+    if (proteinCompliance < 80) msg += ` Protein compliance at ${proteinCompliance}% — aim for 80%+. That's what protects your muscle during a deficit.`;
+    if (weeklyLoss !== null && weeklyLoss <= 0) msg += `<br>Weight is flat or up this week. Review your portions — the tracker only works if the data is honest.`;
+    intelText.innerHTML = msg;
+  } else {
+    // Slipping
+    intelEl.style.display = 'block';
+    intelEl.style.background = 'rgba(239,68,68,.05)';
+    intelEl.style.borderColor = 'rgba(239,68,68,.2)';
+    intelText.innerHTML = `⚠️ <strong>You've logged ${daysLogged7} of 7 days this week.</strong> The projection only works with real data. Get back on track — one meal at a time. Open the tracker and log what you ate today.`;
+  }
+
+  // Peptide connection — read from protocol tracker localStorage
+  try {
+    const protoData = localStorage.getItem('apex_tracker');
+    if (protoData) {
+      const protoState = JSON.parse(protoData);
+      const activeProtos = (protoState.protocols || []).filter(p => p.status === 'active');
+      const glp1 = activeProtos.find(p => ['Semaglutide','Tirzepatide','Retatrutide'].includes(p.name));
+      const peptideEl = document.getElementById('timeline-peptide');
+      const peptideText = document.getElementById('timeline-peptide-text');
+
+      if (glp1) {
+        const daysSince = Math.floor((new Date() - new Date(glp1.startDate)) / 86400000);
+        const weekNum = Math.floor(daysSince / 7) + 1;
+        peptideEl.style.display = 'block';
+        let pepMsg = `💊 On <strong>${glp1.name}</strong> — Week ${weekNum}. `;
+
+        if (glp1.name === 'Semaglutide') {
+          if (weekNum <= 4) pepMsg += 'Starter dose. Appetite suppression building. Focus on protein — your body is adjusting.';
+          else if (weekNum <= 8) pepMsg += 'Step 2. Appetite suppression increasing. This is when the deficit gets easier — lean into it.';
+          else if (weekNum <= 12) pepMsg += 'Therapeutic dose range. Peak fat loss window. Keep protein high — this is where body comp changes happen fastest.';
+          else pepMsg += 'Full therapeutic dose. Maximize this window with consistent tracking and protein compliance.';
+        } else if (glp1.name === 'Tirzepatide') {
+          if (weekNum <= 4) pepMsg += 'Starter dose. Dual GIP/GLP-1 activation beginning. Appetite changes incoming.';
+          else if (weekNum <= 12) pepMsg += 'Ramping up. Appetite suppression is strong now. This is your window — stack the protein.';
+          else pepMsg += 'Peak therapeutic range. Maximum metabolic impact. Every day of compliance compounds.';
+        } else {
+          pepMsg += 'Triple agonist active. Powerful metabolic shift — stay consistent with nutrition for maximum results.';
+        }
+
+        // Fasting reminder
+        const trtOrGH = activeProtos.find(p => ['Tesamorelin','Ipamorelin','CJC-1295 No DAC'].includes(p.name));
+        if (trtOrGH) {
+          pepMsg += `<br><br>⚡ You're also on <strong>${trtOrGH.name}</strong> — inject fasted for best results. ${trtOrGH.timing === 'bedtime' ? 'Stop eating 2+ hours before bedtime injection.' : 'Morning injection before breakfast.'}`;
+        }
+
+        peptideText.innerHTML = pepMsg;
+      }
+    }
+  } catch(e) {}
+}
+
+// ══════════════════════════════════════════════════════════
+// STEP 3 — ROCKY ASKS (new flow) + FOOD PICKS (legacy fallback)
+// ══════════════════════════════════════════════════════════
+// ── Normalize text: lowercase, strip punctuation, collapse whitespace ──
+function normalizeText(s) {
+  if (!s) return '';
+  return s.toLowerCase()
+    .replace(/[''`""]/g, '')      // strip apostrophes + fancy quotes
+    .replace(/[.,;:!?\-_/\\()]/g, ' ') // strip common punct
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+// ── Split raw text into list of candidate food phrases ──
+// Handles compound sentences like "I eat Dave's killer bread with avocado and eggs"
+function parseRockyList(raw) {
+  if (!raw) return [];
+  // Split on commas, semicolons, newlines, and " and " / " with " / " plus " / " + "
+  return raw.split(/[,;\n]|\s+and\s+|\s+with\s+|\s+plus\s+|\s+\+\s+/i)
+    .map(s => s.trim())
+    .filter(Boolean)
+    // Also remove leading filler like "I like", "I eat", "typically", etc.
+    .map(s => s.replace(/^(i (like|eat|have|make|love|want|prefer)|typically|usually|often|sometimes|maybe|like|my)\s+/i, '').trim())
+    .filter(Boolean);
+}
+
+// ── Match a single phrase against FOODS + CUSTOM_FOODS ──
+// Returns {name, macros, isCustom, category, unit, gPerUnit} or null
+function matchFood(userText) {
+  if (!userText) return null;
+  const q = normalizeText(userText);
+  if (!q) return null;
+
+  // 1. Exact match in FOODS
+  for (const [name, d] of Object.entries(FOODS)) {
+    if (normalizeText(name) === q) return { name, macros:d, isCustom:false, category:d.cat };
+  }
+  // 2. Contains match in FOODS (e.g. "chicken" → "Chicken Breast", or "Chicken Breast" → "chicken")
+  for (const [name, d] of Object.entries(FOODS)) {
+    const nName = normalizeText(name);
+    if (nName.includes(q) || q.includes(nName)) {
+      return { name, macros:d, isCustom:false, category:d.cat };
+    }
+  }
+  // 3. Exact/alias/contains match in CUSTOM_FOODS
+  for (const [key, d] of Object.entries(CUSTOM_FOODS)) {
+    const nKey = normalizeText(key);
+    if (nKey === q) return { name:titleCase(key), macros:d, isCustom:true, category:d.cat, unit:d.unit, gPerUnit:d.gPerUnit };
+    if (d.alias) {
+      for (const a of d.alias) {
+        const nA = normalizeText(a);
+        if (nA === q || q.includes(nA) || nA.includes(q)) {
+          return { name:titleCase(key), macros:d, isCustom:true, category:d.cat, unit:d.unit, gPerUnit:d.gPerUnit };
+        }
+      }
+    }
+    if (nKey.includes(q) || q.includes(nKey)) {
+      return { name:titleCase(key), macros:d, isCustom:true, category:d.cat, unit:d.unit, gPerUnit:d.gPerUnit };
+    }
+  }
+  return null;
+}
+
+// ── Extract ALL matching foods from a free-form sentence ──
+// e.g. "Dave's killer bread with avocado and eggs" → [Daves Killer Bread, Avocado, Eggs]
+function extractFoodsFromText(raw) {
+  if (!raw) return [];
+  const phrases = parseRockyList(raw);
+  const found = [];
+  const seen = new Set();
+
+  // First: try matching each parsed phrase directly
+  phrases.forEach(p => {
+    const m = matchFood(p);
+    if (m && !seen.has(m.name)) {
+      seen.add(m.name);
+      found.push(m);
+    }
+  });
+
+  // Second: scan the full raw text for any FOODS or CUSTOM_FOODS keys that appear anywhere
+  // This catches cases where the compound sentence didn't split cleanly
+  const fullNorm = normalizeText(raw);
+  const scanList = [
+    ...Object.entries(FOODS).map(([name, d]) => ({ key:normalizeText(name), name, macros:d, isCustom:false, category:d.cat })),
+    ...Object.entries(CUSTOM_FOODS).map(([key, d]) => ({ key:normalizeText(key), name:titleCase(key), macros:d, isCustom:true, category:d.cat, unit:d.unit, gPerUnit:d.gPerUnit, aliases:(d.alias||[]).map(normalizeText) })),
+  ];
+  scanList.forEach(entry => {
+    if (seen.has(entry.name)) return;
+    if (fullNorm.includes(entry.key)) {
+      seen.add(entry.name);
+      found.push(entry);
+      return;
+    }
+    if (entry.aliases) {
+      for (const a of entry.aliases) {
+        if (a && fullNorm.includes(a)) {
+          seen.add(entry.name);
+          found.push(entry);
+          return;
+        }
+      }
+    }
+  });
+
+  return found;
+}
+
+function titleCase(s) {
+  return s.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+}
+
+function saveRockyAnswers() {
+  const fields = ['proteins','carbs','fats','restrictions','breakfast','lunch','dinner','snacks','shakes'];
+  const answers = {};
+  fields.forEach(f => {
+    const el = document.getElementById('rocky-' + f);
+    answers[f] = parseRockyList(el ? el.value : '');
+  });
+
+  // Build per-meal resolved food arrays. Each one is a list of matched food objects.
+  const resolved = {
+    proteins: (answers.proteins || []).flatMap(p => extractFoodsFromText(p)),
+    carbs:    (answers.carbs    || []).flatMap(p => extractFoodsFromText(p)),
+    fats:     (answers.fats     || []).flatMap(p => extractFoodsFromText(p)),
+    breakfast:(answers.breakfast|| []).flatMap(p => extractFoodsFromText(p)),
+    lunch:    (answers.lunch    || []).flatMap(p => extractFoodsFromText(p)),
+    dinner:   (answers.dinner   || []).flatMap(p => extractFoodsFromText(p)),
+    snacks:   (answers.snacks   || []).flatMap(p => extractFoodsFromText(p)),
+    shakes:   (answers.shakes   || []).flatMap(p => extractFoodsFromText(p)),
+  };
+  // De-duplicate each array by name
+  Object.keys(resolved).forEach(k => {
+    const seen = new Set();
+    resolved[k] = resolved[k].filter(f => {
+      if (seen.has(f.name)) return false;
+      seen.add(f.name);
+      return true;
+    });
+  });
+
+  // Also extract foods directly from the free-text for each meal
+  // (matchFood fallback for text user typed that didn't get parsed cleanly)
+  ['breakfast','lunch','dinner','snacks'].forEach(meal => {
+    const raw = (document.getElementById('rocky-' + meal) || {}).value || '';
+    if (raw && resolved[meal].length === 0) {
+      resolved[meal] = extractFoodsFromText(raw);
+    }
+  });
+
+  S.rockyAnswers = { raw: answers, resolved };
+
+  // Build foodPicks array (legacy meal plan builder fallback — only FOODS items, not CUSTOM)
+  const flatMatched = [
+    ...resolved.proteins, ...resolved.carbs, ...resolved.fats,
+    ...resolved.breakfast, ...resolved.lunch, ...resolved.dinner, ...resolved.snacks, ...resolved.shakes
+  ];
+  const dbMatchedNames = new Set();
+  flatMatched.forEach(m => { if (!m.isCustom) dbMatchedNames.add(m.name); });
+  S.foodPicks = Array.from(dbMatchedNames);
+  if (S.foodPicks.length < 3) {
+    S.foodPicks = ['Chicken Breast','Ground Beef','Eggs','White Rice','Oatmeal','Blueberries','Avocado','Almonds'];
+  }
+  S.restrictions = answers.restrictions;
+  save();
+  return true;
+}
+
+function initFoodPicks() {
+  // LEGACY — the old food-picks grid was replaced by Rocky's conversational
+  // intake in Step 3. These element IDs don't exist anymore, so we bail out
+  // gracefully. Kept as a no-op so existing call sites (swapFood, init)
+  // don't throw.
+  try {
+    ['protein','carbs','fats'].forEach(cat => {
+      const grid = document.getElementById('picks-' + cat);
+      if (!grid) return;
+      const foods = Object.entries(FOODS).filter(([n,d]) => d.cat === cat);
+      grid.innerHTML = foods.map(([name, d]) =>
+        `<a href="#" class="food-pick ${S.foodPicks.includes(name)?'selected':''}" onclick="toggleFoodPick('${name}');return false;" data-food="${name}">
+          <div class="food-pick-name">${name}</div>
+          <div class="food-pick-macro">P:${d.p} C:${d.c} F:${d.f}</div>
+        </a>`
+      ).join('');
+    });
+
+    const rGrid = document.getElementById('restrictions-grid');
+    if (rGrid) {
+      rGrid.innerHTML = RESTRICTIONS.map(r =>
+        `<a href="#" class="food-pick ${S.restrictions.includes(r)?'selected':''}" onclick="toggleRestriction('${r}');return false;" data-restriction="${r}" style="padding:8px 12px;min-height:auto;">
+          <div class="food-pick-name" style="font-size:11px;">${r}</div>
+        </a>`
+      ).join('');
+    }
+  } catch(e) { console.warn('initFoodPicks no-op', e); }
+}
+
+function toggleFoodPick(name) {
+  const idx = S.foodPicks.indexOf(name);
+  if (idx >= 0) S.foodPicks.splice(idx, 1);
+  else S.foodPicks.push(name);
+  save();
+  document.querySelectorAll(`.food-pick[data-food="${name}"]`).forEach(el => {
+    el.className = 'food-pick' + (S.foodPicks.includes(name) ? ' selected' : '');
+  });
+}
+
+function toggleRestriction(r) {
+  const idx = S.restrictions.indexOf(r);
+  if (idx >= 0) S.restrictions.splice(idx, 1);
+  else S.restrictions.push(r);
+  save();
+  document.querySelectorAll(`.food-pick[data-restriction="${r}"]`).forEach(el => {
+    el.className = 'food-pick' + (S.restrictions.includes(r) ? ' selected' : '');
+  });
+}
+
+// ══════════════════════════════════════════════════════════
+// STEP 4 — GENERATE MEAL PLAN (Rocky-aware, respects user's foods)
+// ══════════════════════════════════════════════════════════
+function makeFoodItem(foodObj, grams) {
+  // foodObj is either a FOODS entry (by name) or a resolved Rocky match
+  let name, macros;
+  if (typeof foodObj === 'string') {
+    name = foodObj;
+    macros = FOODS[foodObj];
+  } else {
+    name = foodObj.name;
+    macros = foodObj.macros;
+  }
+  if (!macros) return null;
+  const m = grams / 100;
+  return {
+    name, grams,
+    p: Math.round(macros.p * m),
+    c: Math.round(macros.c * m),
+    f: Math.round(macros.f * m),
+    cal: Math.round(macros.cal * m),
+    macros,
+  };
+}
+
+function getFoodCategory(foodObj) {
+  if (typeof foodObj === 'string') return FOODS[foodObj]?.cat;
+  return foodObj.category || foodObj.macros?.cat;
+}
+
+function portionFood(foodObj, targetCals) {
+  // Portion to hit targetCals, respecting serving caps
+  const macros = typeof foodObj === 'string' ? FOODS[foodObj] : foodObj.macros;
+  if (!macros || macros.cal <= 0) return 100;
+  const rawGrams = Math.round((targetCals / macros.cal) * 100);
+  const cat = getFoodCategory(foodObj);
+  const name = typeof foodObj === 'string' ? foodObj : foodObj.name;
+  const cap = SERVING_CAPS[cat]?.[name] ?? DEFAULT_CAPS[cat] ?? 200;
+  return Math.max(20, Math.min(rawGrams, cap));
+}
+
+// Build a meal from a list of user-named foods + a target calorie count
+function buildMealFromFoods(mealName, time, foodList, targetCals) {
+  if (!foodList || foodList.length === 0) return null;
+  // Split the target calories across the foods, biased toward protein first
+  const proteinFoods = foodList.filter(f => getFoodCategory(f) === 'protein');
+  const carbFoods    = foodList.filter(f => getFoodCategory(f) === 'carbs');
+  const fatFoods     = foodList.filter(f => getFoodCategory(f) === 'fats');
+
+  // Default cal split: 40% protein, 45% carbs, 15% fat
+  // Adjust if meal has no foods in a category
+  let pShare = proteinFoods.length > 0 ? 0.40 : 0;
+  let cShare = carbFoods.length > 0 ? 0.45 : 0;
+  let fShare = fatFoods.length > 0 ? 0.15 : 0;
+  const totalShare = pShare + cShare + fShare;
+  if (totalShare > 0) {
+    pShare /= totalShare; cShare /= totalShare; fShare /= totalShare;
+  } else {
+    // No category matches — distribute evenly by count
+    pShare = 1 / foodList.length;
+  }
+
+  const items = [];
+  if (proteinFoods.length > 0) {
+    const calPerItem = (targetCals * pShare) / proteinFoods.length;
+    proteinFoods.forEach(f => {
+      const grams = portionFood(f, calPerItem);
+      const item = makeFoodItem(f, grams);
+      if (item) items.push(item);
+    });
+  }
+  if (carbFoods.length > 0) {
+    const calPerItem = (targetCals * cShare) / carbFoods.length;
+    carbFoods.forEach(f => {
+      const grams = portionFood(f, calPerItem);
+      const item = makeFoodItem(f, grams);
+      if (item) items.push(item);
+    });
+  }
+  if (fatFoods.length > 0) {
+    const calPerItem = (targetCals * fShare) / fatFoods.length;
+    fatFoods.forEach(f => {
+      const grams = portionFood(f, calPerItem);
+      const item = makeFoodItem(f, grams);
+      if (item) items.push(item);
+    });
+  }
+  // If NO category matches, just portion evenly
+  if (items.length === 0) {
+    const calPerItem = targetCals / foodList.length;
+    foodList.forEach(f => {
+      const grams = portionFood(f, calPerItem);
+      const item = makeFoodItem(f, grams);
+      if (item) items.push(item);
+    });
+  }
+
+  const p = items.reduce((s, i) => s + i.p, 0);
+  const c = items.reduce((s, i) => s + i.c, 0);
+  const f = items.reduce((s, i) => s + i.f, 0);
+  const cal = items.reduce((s, i) => s + i.cal, 0);
+
+  // Smart meal name: if user has 1 protein + 1 carb, use "Protein + Carb"
+  let smartName = mealName;
+  if (proteinFoods.length === 1 && carbFoods.length >= 1) {
+    smartName = mealName + ' — ' + proteinFoods[0].name.replace(' Breast','').replace('Ground ','') + ' + ' + carbFoods[0].name;
+  } else if (proteinFoods.length === 1) {
+    smartName = mealName + ' — ' + proteinFoods[0].name;
+  }
+
+  return { name: smartName, time, items, p, c, f, cal };
+}
+
+function generateMealPlan() {
+  if (!S.profile || !S.profile.targets) return;
+  const t = S.profile.targets;
+
+  // ── Pull Rocky's resolved per-meal answers ──
+  const rocky = (S.rockyAnswers && S.rockyAnswers.resolved) || {};
+  const rockyBreakfast = rocky.breakfast || [];
+  const rockyLunch     = rocky.lunch || [];
+  const rockyDinner    = rocky.dinner || [];
+  const rockySnacks    = rocky.snacks || [];
+  const rockyShakes    = rocky.shakes || [];
+
+  // Also fold in top-level favorites as fallback pools
+  const rockyProteins = rocky.proteins || [];
+  const rockyCarbs    = rocky.carbs || [];
+  const rockyFats     = rocky.fats || [];
+
+  // ── Determine meal count based on calorie target ──
+  // 2500 cal → 5 meals, 2800 → 6 meals, 3200+ → 7 meals
+  let mealCount = 4;
+  if (t.cals >= 3200) mealCount = 7;
+  else if (t.cals >= 2800) mealCount = 6;
+  else if (t.cals >= 2200) mealCount = 5;
+
+  // ── Build meal skeleton with time labels ──
+  // Distribution by calorie %:
+  //   4 meals: 25 / 30 / 30 / 15
+  //   5 meals: 25 / 10 / 30 / 25 / 10
+  //   6 meals: 20 / 10 / 25 / 15 / 20 / 10
+  //   7 meals: 20 / 10 / 25 / 10 / 15 / 15 / 5
+  const MEAL_TEMPLATES = {
+    4: [
+      { label:'🌅 Breakfast',     time:'7:30 AM',  pct:0.25, source:'breakfast' },
+      { label:'☀️ Lunch',          time:'12:30 PM', pct:0.30, source:'lunch' },
+      { label:'🌙 Dinner',         time:'7:00 PM',  pct:0.30, source:'dinner' },
+      { label:'🥜 Snack',          time:'3:30 PM',  pct:0.15, source:'snacks' },
+    ],
+    5: [
+      { label:'🌅 Breakfast',     time:'7:30 AM',  pct:0.25, source:'breakfast' },
+      { label:'🥜 Mid-Morning',    time:'10:30 AM', pct:0.10, source:'snacks' },
+      { label:'☀️ Lunch',          time:'1:00 PM',  pct:0.30, source:'lunch' },
+      { label:'🌙 Dinner',         time:'7:00 PM',  pct:0.25, source:'dinner' },
+      { label:'🌙 Before Bed',     time:'9:30 PM',  pct:0.10, source:'shakes' },
+    ],
+    6: [
+      { label:'🌅 Breakfast',     time:'7:30 AM',  pct:0.22, source:'breakfast' },
+      { label:'🥜 Mid-Morning',    time:'10:30 AM', pct:0.10, source:'snacks' },
+      { label:'☀️ Lunch',          time:'1:00 PM',  pct:0.25, source:'lunch' },
+      { label:'💪 Post-Workout',   time:'4:00 PM',  pct:0.13, source:'shakes' },
+      { label:'🌙 Dinner',         time:'7:00 PM',  pct:0.22, source:'dinner' },
+      { label:'🌙 Before Bed',     time:'9:30 PM',  pct:0.08, source:'shakes' },
+    ],
+    7: [
+      { label:'🌅 Breakfast',     time:'7:30 AM',  pct:0.22, source:'breakfast' },
+      { label:'🥜 Mid-Morning',    time:'10:30 AM', pct:0.10, source:'snacks' },
+      { label:'☀️ Lunch',          time:'1:00 PM',  pct:0.22, source:'lunch' },
+      { label:'💪 Post-Workout',   time:'4:00 PM',  pct:0.10, source:'shakes' },
+      { label:'🍖 Afternoon',      time:'5:30 PM',  pct:0.13, source:'lunch' },
+      { label:'🌙 Dinner',         time:'7:30 PM',  pct:0.18, source:'dinner' },
+      { label:'🌙 Before Bed',     time:'9:30 PM',  pct:0.05, source:'shakes' },
+    ],
+  };
+
+  const template = MEAL_TEMPLATES[mealCount];
+
+  // Fallback pools if user didn't specify per-meal foods
+  function getFallbackFoodsFor(source) {
+    if (source === 'breakfast') {
+      const proteinFallback = rockyProteins.filter(f => ['Eggs','Egg Whites','Greek Yogurt','Whey Protein','Cottage Cheese'].includes(f.name));
+      const carbFallback    = rockyCarbs.filter(f => ['Oatmeal','Banana','Blueberries','Sourdough','Apple'].includes(f.name));
+      return [...proteinFallback, ...carbFallback];
+    }
+    if (source === 'lunch' || source === 'dinner') {
+      const proteinFallback = rockyProteins.filter(f => ['Chicken Breast','Ground Turkey','Ground Beef','Salmon','Steak','Tuna','Tilapia','Shrimp','Turkey Breast'].includes(f.name));
+      const carbFallback    = rockyCarbs.filter(f => ['White Rice','Brown Rice','Sweet Potato','Quinoa','Pasta','Potato','Carrots','Broccoli','Mixed Vegetables'].includes(f.name));
+      return [...proteinFallback, ...carbFallback];
+    }
+    if (source === 'snacks') {
+      const proteinFallback = rockyProteins.filter(f => ['Greek Yogurt','Whey Protein','Cottage Cheese','Egg Whites'].includes(f.name));
+      const carbFallback    = rockyCarbs.filter(f => ['Apple','Banana','Blueberries'].includes(f.name));
+      return [...proteinFallback, ...carbFallback];
+    }
+    if (source === 'shakes') {
+      return rockyShakes.length > 0 ? rockyShakes : rockyProteins.filter(f => f.name === 'Whey Protein');
+    }
+    return [];
+  }
+
+  // ── Build each meal ──
+  // Track which PROTEIN families have been used in the previous meal,
+  // so we don't put Greek Yogurt in both breakfast AND mid-morning.
+  const meals = [];
+  let recentProteinFamilies = new Set();
+
+  template.forEach((slot, idx) => {
+    const targetCal = Math.round(t.cals * slot.pct);
+    let foods = [];
+    if (slot.source === 'breakfast') foods = rockyBreakfast.slice();
+    else if (slot.source === 'lunch') foods = rockyLunch.slice();
+    else if (slot.source === 'dinner') foods = rockyDinner.slice();
+    else if (slot.source === 'snacks') foods = rockySnacks.slice();
+    else if (slot.source === 'shakes') foods = rockyShakes.slice();
+
+    // Fall back to mixed proteins/carbs if user didn't specify
+    if (foods.length === 0) {
+      foods = getFallbackFoodsFor(slot.source).slice();
+    }
+    // Last resort: generic defaults
+    if (foods.length === 0) {
+      const defaults = { breakfast:['Eggs','Oatmeal'], lunch:['Chicken Breast','White Rice'], dinner:['Ground Beef','Potato'], snacks:['Greek Yogurt','Blueberries'], shakes:['Whey Protein'] };
+      foods = (defaults[slot.source] || []).map(name => ({ name, macros:FOODS[name], category:FOODS[name]?.cat, isCustom:false }));
+    }
+
+    // 1. De-dupe by food family (oats 3x → oats 1x)
+    foods = dedupeByFamily(foods);
+
+    // 2. Filter out proteins that were used in the IMMEDIATELY previous meal
+    //    (avoid Greek Yogurt in breakfast AND mid-morning back-to-back)
+    foods = foods.filter(f => {
+      if (getFoodCategory(f) !== 'protein') return true;
+      const name = typeof f === 'string' ? f : f.name;
+      return !recentProteinFamilies.has(getFoodFamily(name));
+    });
+
+    // 3. Cap to realistic meal size based on meal type
+    //    Main meals (breakfast/lunch/dinner): 1 protein + 2 carbs + 1 fat = 4 items
+    //    Snacks / shakes: 1 protein + 1 carb = 2 items
+    const isMain = ['breakfast','lunch','dinner'].includes(slot.source);
+    if (isMain) {
+      foods = capMealItems(foods, 1, 2, 1);
+    } else {
+      foods = capMealItems(foods, 1, 1, 0);
+    }
+
+    // 4. If after dedup + cap we have zero foods, restore from original fallback
+    if (foods.length === 0) {
+      const fallback = dedupeByFamily(getFallbackFoodsFor(slot.source));
+      foods = isMain ? capMealItems(fallback, 1, 2, 1) : capMealItems(fallback, 1, 1, 0);
+    }
+
+    // 5. Track protein families from THIS meal so the NEXT meal can skip them
+    const thisProteinFamilies = new Set();
+    foods.forEach(f => {
+      if (getFoodCategory(f) === 'protein') {
+        const name = typeof f === 'string' ? f : f.name;
+        thisProteinFamilies.add(getFoodFamily(name));
+      }
+    });
+    recentProteinFamilies = thisProteinFamilies;
+
+    const meal = buildMealFromFoods(slot.label, slot.time, foods, targetCal);
+    if (meal) meals.push(meal);
+  });
+
+  // ── NORMALIZATION PASS — scale all meals to hit target calories exactly ──
+  let totalCal = meals.reduce((s, m) => s + m.cal, 0);
+  let totalP = meals.reduce((s, m) => s + m.p, 0);
+  let totalC = meals.reduce((s, m) => s + m.c, 0);
+  let totalF = meals.reduce((s, m) => s + m.f, 0);
+
+  if (totalCal > 0 && Math.abs(1 - t.cals / totalCal) > 0.02) {
+    const scale = t.cals / totalCal;
+    totalP = 0; totalC = 0; totalF = 0; totalCal = 0;
+    meals.forEach(meal => {
+      meal.items.forEach(i => {
+        i.grams = Math.max(5, Math.round(i.grams * scale));
+        i.p = Math.round(i.p * scale);
+        i.c = Math.round(i.c * scale);
+        i.f = Math.round(i.f * scale);
+        i.cal = Math.round(i.cal * scale);
+      });
+      meal.p = meal.items.reduce((s, i) => s + i.p, 0);
+      meal.c = meal.items.reduce((s, i) => s + i.c, 0);
+      meal.f = meal.items.reduce((s, i) => s + i.f, 0);
+      meal.cal = meal.items.reduce((s, i) => s + i.cal, 0);
+      totalP += meal.p; totalC += meal.c; totalF += meal.f; totalCal += meal.cal;
+    });
+  }
+
+  S.mealPlan = meals;
+  save();
+
+  // Rocky's tips — rotate through research-backed advice
+  const tips = [
+    "Studies show people who eat the <strong>same meals daily</strong> stick to their diet plans 2-3x longer. Consistency beats variety for results. Find meals you like and repeat them.",
+    "Protein is the <strong>most satiating macro</strong>. If you're hungry on a cut, add 20g more protein before adding carbs or fats. Your body has to work harder to digest it.",
+    "Meal prep on <strong>Sunday for the whole week</strong>. People who prep are 40% more likely to hit their macros consistently. Cook once, eat all week.",
+    "Don't drink your calories. That latte is 300 cal with zero protein. Switch to black coffee and <strong>eat those calories as real food</strong>.",
+    "Weigh yourself at the <strong>same time every morning</strong> — fasted, after bathroom, before food. Weight fluctuates 2-5 lbs daily from water. The 7-day average is what matters.",
+    "If you're on <strong>Semaglutide or Tirzepatide</strong>, protein becomes even more critical. GLP-1 agonists reduce appetite — but your muscles still need fuel. Hit your protein number even if you're not hungry.",
+    "Sleep is a macro. <strong>7-8 hours minimum.</strong> Poor sleep raises cortisol, increases hunger hormones, and tanks your testosterone. No amount of perfect eating fixes bad sleep.",
+    "The best diet is the one <strong>you actually follow</strong>. If you hate the foods, you won't stick with it. That's why we let you pick — your preferences, your plan.",
+  ];
+  const tipEl = document.getElementById('rocky-tip');
+  if (tipEl) tipEl.innerHTML = tips[Math.floor(Math.random() * tips.length)];
+
+  renderMealPlanOutput();
+}
+
+// ══════════════════════════════════════════════════════════
+// RENDER MEAL PLAN — pure render from S.mealPlan (no regeneration)
+// Separated so drag-and-drop moves can re-render without rebuilding
+// from scratch.
+// ══════════════════════════════════════════════════════════
+function renderMealPlanOutput() {
+  if (!S.mealPlan) return;
+  const meals = S.mealPlan;
+
+  // Totals
+  const totalP = meals.reduce((s, m) => s + (m.p || 0), 0);
+  const totalC = meals.reduce((s, m) => s + (m.c || 0), 0);
+  const totalF = meals.reduce((s, m) => s + (m.f || 0), 0);
+  const totalCal = meals.reduce((s, m) => s + (m.cal || 0), 0);
+
+  document.getElementById('mp-cals').textContent = totalCal;
+  document.getElementById('mp-protein').textContent = totalP + 'g';
+  document.getElementById('mp-carbs').textContent = totalC + 'g';
+  document.getElementById('mp-fat').textContent = totalF + 'g';
+
+  const output = document.getElementById('meal-plan-output');
+  output.innerHTML = `
+    <div id="drag-hint-slot"></div>
+    ${meals.map((meal, mi) =>
+      `<div class="meal-card" data-meal-idx="${mi}"
+            ondragover="onMealCardDragOver(event, ${mi})"
+            ondragleave="onMealCardDragLeave(event, ${mi})"
+            ondrop="onMealCardDrop(event, ${mi})"
+            onclick="onMealCardTap(event, ${mi})">
+        <div class="meal-card-header">
+          <div>
+            <div class="meal-card-title">${meal.name}</div>
+            ${meal.time ? `<div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;margin-top:2px;">${meal.time}</div>` : ''}
+          </div>
+          <span class="meal-card-cals">${meal.cal} cal · P:${meal.p}g C:${meal.c}g F:${meal.f}g</span>
+        </div>
+        <div class="meal-card-body">
+          ${meal.items.map((item, ii) =>
+            `<div class="meal-food-row"
+                  draggable="true"
+                  data-meal-idx="${mi}"
+                  data-item-idx="${ii}"
+                  ondragstart="onFoodRowDragStart(event, ${mi}, ${ii})"
+                  ondragend="onFoodRowDragEnd(event)"
+                  onclick="onFoodRowTap(event, ${mi}, ${ii})">
+              <div style="flex:1;min-width:0;">
+                <div class="meal-food-name"><span class="meal-food-handle">⋮⋮</span>${item.name.replace(/'/g, "&#39;")}<a href="#" onclick="event.stopPropagation();removeMealItem(${mi},${ii});return false;" style="margin-left:8px;color:#ef4444;text-decoration:none;font-size:14px;font-weight:700;-webkit-tap-highlight-color:transparent;" title="Remove">✕</a></div>
+                <div class="meal-food-macros">P:${item.p}g · C:${item.c}g · F:${item.f}g · ${item.cal} cal</div>
+              </div>
+              <div class="meal-food-portion">${formatServing(item.name, item.grams)}</div>
+            </div>`
+          ).join('')}
+          ${meal.items.length === 0 ? '<div style="text-align:center;padding:8px;font-family:\'Share Tech Mono\',monospace;font-size:10px;color:var(--muted);">Empty — drop foods here or tap ＋ below</div>' : ''}
+        </div>
+        <a href="#" onclick="event.stopPropagation();openAddToMealPlan(${mi});return false;" style="display:block;padding:10px;text-align:center;text-decoration:none;font-family:'Share Tech Mono',monospace;font-size:10px;color:#14b8a6;letter-spacing:.12em;border-top:1px solid rgba(20,184,166,.15);-webkit-tap-highlight-color:transparent;touch-action:manipulation;background:rgba(20,184,166,.03);">＋ ADD FOOD TO ${meal.name.replace(/[^\w\s]/g,'').trim().toUpperCase()}</a>
+      </div>`
+    ).join('')}
+    <div style="margin-top:8px;padding:10px 14px;background:rgba(20,184,166,.04);border:1px solid rgba(20,184,166,.15);border-radius:4px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);text-align:center;letter-spacing:.08em;">
+      💡 <strong style="color:#14b8a6;">TIP:</strong> Drag foods between meals on desktop · Tap a food then tap another meal on mobile
+    </div>
+  `;
+}
+
+// ══════════════════════════════════════════════════════════
+// DRAG & DROP — move foods between meals
+// Desktop: HTML5 drag-and-drop
+// Mobile/touch: tap-to-pick-up, tap-to-drop
+// ══════════════════════════════════════════════════════════
+let _mealDragState = null; // { sourceMealIdx, sourceItemIdx, mode: 'drag'|'tap' }
+let _justDragged = false;  // true for 200ms after a drag ends — suppresses spurious onclicks
+
+function showDragHint(msg) {
+  const slot = document.getElementById('drag-hint-slot');
+  if (!slot) return;
+  slot.innerHTML = `<div class="drag-hint-banner">${msg}</div>`;
+}
+function clearDragHint() {
+  const slot = document.getElementById('drag-hint-slot');
+  if (slot) slot.innerHTML = '';
+}
+
+// ── DESKTOP: HTML5 DRAG-DROP ──
+function onFoodRowDragStart(e, mealIdx, itemIdx) {
+  _mealDragState = { sourceMealIdx: mealIdx, sourceItemIdx: itemIdx, mode: 'drag' };
+  e.dataTransfer.effectAllowed = 'move';
+  try { e.dataTransfer.setData('text/plain', mealIdx + ':' + itemIdx); } catch(err) {}
+  e.currentTarget.classList.add('dragging');
+  document.querySelectorAll('.meal-card').forEach(c => c.classList.add('drop-zone-ready'));
+  const item = S.mealPlan[mealIdx].items[itemIdx];
+  if (item) showDragHint('🍽️ Dragging <strong>' + item.name + '</strong> — drop on a meal to move');
+  e.stopPropagation();
+}
+
+function onFoodRowDragEnd(e) {
+  document.querySelectorAll('.meal-food-row.dragging').forEach(r => r.classList.remove('dragging'));
+  document.querySelectorAll('.meal-card').forEach(c => c.classList.remove('drop-zone-ready','drop-target-hover'));
+  clearDragHint();
+  _mealDragState = null;
+  _justDragged = true;
+  setTimeout(() => { _justDragged = false; }, 250);
+}
+
+function onMealCardDragOver(e, mealIdx) {
+  if (!_mealDragState) return;
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  // Only highlight if not the source meal
+  if (_mealDragState.sourceMealIdx !== mealIdx) {
+    e.currentTarget.classList.add('drop-target-hover');
+  }
+}
+
+function onMealCardDragLeave(e, mealIdx) {
+  // Only remove if leaving the card itself, not a child
+  if (e.currentTarget.contains(e.relatedTarget)) return;
+  e.currentTarget.classList.remove('drop-target-hover');
+}
+
+function onMealCardDrop(e, targetMealIdx) {
+  e.preventDefault();
+  e.stopPropagation();
+  if (!_mealDragState) return;
+  const { sourceMealIdx, sourceItemIdx } = _mealDragState;
+  moveFoodBetweenMeals(sourceMealIdx, sourceItemIdx, targetMealIdx);
+  onFoodRowDragEnd(e);
+}
+
+// ── MOBILE: TAP-TO-PICK-UP, TAP-TO-DROP ──
+function onFoodRowTap(e, mealIdx, itemIdx) {
+  // If we're mid-drag on desktop, skip — drag handler wins
+  if (_mealDragState && _mealDragState.mode === 'drag') return;
+  // Suppress the spurious click that fires right after an HTML5 drag ends
+  if (_justDragged) { e.stopPropagation(); return; }
+
+  if (!_mealDragState) {
+    // Pick up
+    e.stopPropagation();
+    _mealDragState = { sourceMealIdx: mealIdx, sourceItemIdx: itemIdx, mode: 'tap' };
+    document.querySelectorAll('.meal-food-row.picked-up').forEach(r => r.classList.remove('picked-up'));
+    e.currentTarget.classList.add('picked-up');
+    document.querySelectorAll('.meal-card').forEach(c => c.classList.add('drop-zone-ready'));
+    const item = S.mealPlan[mealIdx].items[itemIdx];
+    if (item) showDragHint('✋ Holding <strong>' + item.name + '</strong> — tap a meal to move it (or tap again to cancel)');
+    return;
+  }
+
+  // If tapping the SAME item → cancel
+  if (_mealDragState.sourceMealIdx === mealIdx && _mealDragState.sourceItemIdx === itemIdx) {
+    e.stopPropagation();
+    cancelTapDrag();
+    return;
+  }
+  // Otherwise let the bubble reach onMealCardTap to drop
+}
+
+function onMealCardTap(e, targetMealIdx) {
+  if (_justDragged) return;
+  if (!_mealDragState || _mealDragState.mode !== 'tap') return;
+  // Ignore clicks that originated INSIDE a food row header/row if that row is the source
+  const { sourceMealIdx, sourceItemIdx } = _mealDragState;
+  if (sourceMealIdx === targetMealIdx) {
+    // Tapping source meal's card (not the picked-up item) → no-op
+    return;
+  }
+  moveFoodBetweenMeals(sourceMealIdx, sourceItemIdx, targetMealIdx);
+  cancelTapDrag();
+}
+
+function cancelTapDrag() {
+  document.querySelectorAll('.meal-food-row.picked-up').forEach(r => r.classList.remove('picked-up'));
+  document.querySelectorAll('.meal-card').forEach(c => c.classList.remove('drop-zone-ready','drop-target-hover'));
+  clearDragHint();
+  _mealDragState = null;
+}
+
+// ── CORE MOVE LOGIC ──
+function moveFoodBetweenMeals(sourceMealIdx, sourceItemIdx, targetMealIdx) {
+  if (!S.mealPlan) return;
+  if (sourceMealIdx === targetMealIdx) return;
+  const src = S.mealPlan[sourceMealIdx];
+  const tgt = S.mealPlan[targetMealIdx];
+  if (!src || !tgt) return;
+  const item = src.items[sourceItemIdx];
+  if (!item) return;
+
+  // Move
+  src.items.splice(sourceItemIdx, 1);
+  tgt.items.push(item);
+
+  // Recalc totals for BOTH meals
+  [src, tgt].forEach(m => {
+    m.p = Math.round(m.items.reduce((s, i) => s + (i.p || 0), 0));
+    m.c = Math.round(m.items.reduce((s, i) => s + (i.c || 0), 0));
+    m.f = Math.round(m.items.reduce((s, i) => s + (i.f || 0), 0));
+    m.cal = Math.round(m.items.reduce((s, i) => s + (i.cal || 0), 0));
+  });
+
+  save();
+  renderMealPlanOutput();
+}
+
+// ══════════════════════════════════════════════════════════
+// STEP 5 — DAILY TRACKER
+// ══════════════════════════════════════════════════════════
+let _pendingFood = null;
+
+function initTracker() {
+  if (!S.profile) return;
+  const t = S.profile.targets;
+  document.getElementById('g-cals').textContent = t.cals;
+  document.getElementById('g-protein').textContent = t.protein;
+  document.getElementById('g-carbs').textContent = t.carbs;
+  document.getElementById('g-fat').textContent = t.fat;
+
+  const d = new Date();
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  document.getElementById('tracker-date').textContent = months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+
+  // Init check-in dots
+  ['sleep','energy','mood','hunger'].forEach(cat => {
+    const container = document.getElementById('dots-' + cat);
+    container.innerHTML = [1,2,3,4,5].map(n =>
+      `<a href="#" class="checkin-dot" onclick="setRating('${cat}',${n});return false;">${n}</a>`
+    ).join('');
+  });
+
+  renderFoodLog();
+  renderCheckin();
+  renderTrend();
+}
+
+// ══════════════════════════════════════════════════════════
+// DAILY TRACKER — dump the plan into the log with checkboxes
+// ══════════════════════════════════════════════════════════
+function dumpMealPlanIntoLog() {
+  if (!S.mealPlan || !Array.isArray(S.mealPlan) || S.mealPlan.length === 0) {
+    alert('No meal plan yet — go build one first.');
+    return;
+  }
+  const today = todayKey();
+  if (!S.foodLog[today]) S.foodLog[today] = {breakfast:[],lunch:[],dinner:[],snacks:[]};
+  // Map the 4 plan meals to the 4 log slots
+  const slotByName = { '🌅 Breakfast':'breakfast', '☀️ Lunch':'lunch', '🌙 Dinner':'dinner', '🥜 Snacks':'snacks' };
+  S.mealPlan.forEach(meal => {
+    const slot = slotByName[meal.name] || 'snacks';
+    meal.items.forEach(item => {
+      S.foodLog[today][slot].push({
+        id: Date.now().toString() + Math.random().toString(36).slice(2, 7),
+        name: item.name,
+        grams: item.grams,
+        cal: item.cal,
+        p: item.p, c: item.c, f: item.f,
+        checked: false,
+        planned: true,
+      });
+    });
+  });
+  save();
+  renderFoodLog();
+}
+
+// Unplanned food modal — opens per-meal
+let _unplannedMeal = null;
+let _unplannedMode = 'tracker'; // 'tracker' = daily log (Step 5) · 'mealplan' = meal plan (Step 4)
+let _mealPlanTargetIdx = null;  // index into S.mealPlan when mode='mealplan'
+
+function openAddUnplanned(meal) {
+  _unplannedMode = 'tracker';
+  _unplannedMeal = meal;
+  _mealPlanTargetIdx = null;
+  document.getElementById('unplanned-meal-label').textContent = 'To ' + meal;
+  document.getElementById('unplanned-search').value = '';
+  document.getElementById('unplanned-results').innerHTML = '';
+  ['name','cal','p','c','f'].forEach(k => {
+    const el = document.getElementById('unplanned-custom-' + k);
+    if (el) el.value = '';
+  });
+  document.getElementById('unplanned-modal').style.display = 'flex';
+}
+
+function openAddToMealPlan(mealIdx) {
+  if (!S.mealPlan || !S.mealPlan[mealIdx]) return;
+  _unplannedMode = 'mealplan';
+  _mealPlanTargetIdx = mealIdx;
+  _unplannedMeal = null;
+  const mealName = S.mealPlan[mealIdx].name;
+  document.getElementById('unplanned-meal-label').textContent = 'To ' + mealName + ' (meal plan)';
+  document.getElementById('unplanned-search').value = '';
+  document.getElementById('unplanned-results').innerHTML = '';
+  ['name','cal','p','c','f'].forEach(k => {
+    const el = document.getElementById('unplanned-custom-' + k);
+    if (el) el.value = '';
+  });
+  document.getElementById('unplanned-modal').style.display = 'flex';
+  // Focus the search input for instant typing
+  setTimeout(() => {
+    const si = document.getElementById('unplanned-search');
+    if (si) si.focus();
+  }, 50);
+}
+
+// Add an item to whatever target the modal is currently pointed at
+function addItemToCurrentTarget(entry) {
+  if (_unplannedMode === 'mealplan' && _mealPlanTargetIdx !== null) {
+    const meal = S.mealPlan[_mealPlanTargetIdx];
+    if (!meal) return false;
+    meal.items.push(entry);
+    // Recalc meal totals
+    meal.p = Math.round(meal.items.reduce((s, i) => s + (i.p || 0), 0));
+    meal.c = Math.round(meal.items.reduce((s, i) => s + (i.c || 0), 0));
+    meal.f = Math.round(meal.items.reduce((s, i) => s + (i.f || 0), 0));
+    meal.cal = Math.round(meal.items.reduce((s, i) => s + (i.cal || 0), 0));
+    save();
+    renderMealPlanOutput();
+    return true;
+  }
+  // Default: tracker (daily log)
+  const today = todayKey();
+  if (!S.foodLog[today]) S.foodLog[today] = {breakfast:[],lunch:[],dinner:[],snacks:[]};
+  S.foodLog[today][_unplannedMeal].push(entry);
+  save();
+  renderFoodLog();
+  return true;
+}
+
+// Remove an item from a meal on the meal plan (used by the ✕ button)
+function removeMealItem(mealIdx, itemIdx) {
+  if (!S.mealPlan || !S.mealPlan[mealIdx]) return;
+  const meal = S.mealPlan[mealIdx];
+  if (!meal.items[itemIdx]) return;
+  meal.items.splice(itemIdx, 1);
+  meal.p = Math.round(meal.items.reduce((s, i) => s + (i.p || 0), 0));
+  meal.c = Math.round(meal.items.reduce((s, i) => s + (i.c || 0), 0));
+  meal.f = Math.round(meal.items.reduce((s, i) => s + (i.f || 0), 0));
+  meal.cal = Math.round(meal.items.reduce((s, i) => s + (i.cal || 0), 0));
+  save();
+  renderMealPlanOutput();
+}
+
+function searchUnplanned(q) {
+  const box = document.getElementById('unplanned-results');
+  if (!q || q.length < 2) { box.innerHTML = ''; return; }
+  const query = q.toLowerCase();
+  const dbMatches = Object.entries(FOODS).filter(([n]) => n.toLowerCase().includes(query)).slice(0, 5);
+  const customMatches = Object.entries(CUSTOM_FOODS).filter(([key, d]) => {
+    if (key.includes(query)) return true;
+    if (d.alias && d.alias.some(a => a.includes(query))) return true;
+    return false;
+  }).slice(0, 5);
+  const rows = [];
+  dbMatches.forEach(([name, d]) => {
+    rows.push(`<a href="#" onclick="pickUnplannedDb('${name}');return false;" style="display:block;padding:10px 12px;background:rgba(20,184,166,.05);border:1px solid rgba(20,184,166,.2);border-radius:4px;margin-bottom:4px;text-decoration:none;">
+      <div style="font-family:'Rajdhani',sans-serif;font-size:13px;color:#fff;font-weight:700;">${name}</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:#94a3b8;">per 100g · ${d.cal}cal · P${d.p} C${d.c} F${d.f}</div>
+    </a>`);
+  });
+  customMatches.forEach(([key, d]) => {
+    const display = titleCase(key);
+    rows.push(`<a href="#" onclick="pickUnplannedCustom('${key}');return false;" style="display:block;padding:10px 12px;background:rgba(20,184,166,.08);border:1px solid rgba(20,184,166,.3);border-radius:4px;margin-bottom:4px;text-decoration:none;">
+      <div style="font-family:'Rajdhani',sans-serif;font-size:13px;color:#fff;font-weight:700;">${display}</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:#94a3b8;">per ${d.unit || 'serving'} · ${d.cal}cal · P${d.p} C${d.c} F${d.f}</div>
+    </a>`);
+  });
+  box.innerHTML = rows.length ? rows.join('') : '<div style="padding:10px;font-family:monospace;font-size:10px;color:#64748b;text-align:center;">No match — type it in manually below ↓</div>';
+}
+
+function pickUnplannedDb(name) {
+  const d = FOODS[name];
+  if (!d) return;
+  // Use a reasonable default serving — larger for proteins/carbs, smaller for fats
+  const defaultGrams = d.cat === 'protein' ? 170 : d.cat === 'carbs' ? 150 : 28;
+  const m = defaultGrams / 100;
+  const entry = {
+    id: Date.now().toString() + Math.random().toString(36).slice(2,7),
+    name,
+    grams: defaultGrams,
+    cal: Math.round(d.cal * m),
+    p: Math.round(d.p * m),
+    c: Math.round(d.c * m),
+    f: Math.round(d.f * m),
+    checked: true, planned: false,
+  };
+  addItemToCurrentTarget(entry);
+  document.getElementById('unplanned-modal').style.display = 'none';
+}
+
+function pickUnplannedCustom(key) {
+  const d = CUSTOM_FOODS[key];
+  if (!d) return;
+  const grams = d.gPerUnit || 100;
+  const m = grams / 100;
+  const entry = {
+    id: Date.now().toString() + Math.random().toString(36).slice(2,7),
+    name: titleCase(key),
+    grams,
+    cal: Math.round(d.cal * m),
+    p: Math.round(d.p * m),
+    c: Math.round(d.c * m),
+    f: Math.round(d.f * m),
+    checked: true, planned: false,
+  };
+  addItemToCurrentTarget(entry);
+  document.getElementById('unplanned-modal').style.display = 'none';
+}
+
+function saveUnplannedCustom() {
+  const name = document.getElementById('unplanned-custom-name').value.trim();
+  const cal = parseFloat(document.getElementById('unplanned-custom-cal').value) || 0;
+  const p = parseFloat(document.getElementById('unplanned-custom-p').value) || 0;
+  const c = parseFloat(document.getElementById('unplanned-custom-c').value) || 0;
+  const f = parseFloat(document.getElementById('unplanned-custom-f').value) || 0;
+  if (!name || cal === 0) { alert('Enter a name and calories at minimum.'); return; }
+  const entry = {
+    id: Date.now().toString() + Math.random().toString(36).slice(2,7),
+    name, grams: 0, cal, p, c, f,
+    checked: true, planned: false,
+  };
+  addItemToCurrentTarget(entry);
+  document.getElementById('unplanned-modal').style.display = 'none';
+}
+
+function toggleFoodCheck(meal, id) {
+  const today = todayKey();
+  if (!S.foodLog[today] || !S.foodLog[today][meal]) return;
+  const item = S.foodLog[today][meal].find(f => f.id === id);
+  if (!item) return;
+  item.checked = !item.checked;
+  save();
+  renderFoodLog();
+}
+
+function removeLoggedFood(meal, id) {
+  const today = todayKey();
+  if (!S.foodLog[today] || !S.foodLog[today][meal]) return;
+  S.foodLog[today][meal] = S.foodLog[today][meal].filter(f => f.id !== id);
+  save();
+  renderFoodLog();
+}
+
+function searchFood(q) {
+  const results = document.getElementById('food-results');
+  if (!q || q.length < 2) { results.className = 'food-search-results'; return; }
+  const matches = Object.entries(FOODS).filter(([n]) => n.toLowerCase().includes(q.toLowerCase())).slice(0,8);
+  results.innerHTML = matches.length ? matches.map(([name,d]) =>
+    `<a href="#" class="food-search-item" onclick="openAddFood('${name}');return false;">
+      ${name} <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);margin-left:8px;">${d.cal}cal P:${d.p} C:${d.c} F:${d.f}</span>
+    </a>`
+  ).join('') : '<div style="padding:12px;color:var(--muted);font-size:13px;">No matches. Try the 👽 AI assistant!</div>';
+  results.className = 'food-search-results open';
+}
+
+function openAddFood(name) {
+  _pendingFood = name;
+  const d = FOODS[name];
+  document.getElementById('add-food-title').textContent = name;
+  document.getElementById('add-food-info').textContent = `Per 100g: ${d.cal} cal · P:${d.p}g · C:${d.c}g · F:${d.f}g`;
+  document.getElementById('add-food-grams').value = 100;
+  updateAddPreview();
+  document.getElementById('add-food-modal').style.display = 'flex';
+  document.getElementById('food-results').className = 'food-search-results';
+  document.getElementById('food-search').value = '';
+  document.body.style.overflow = 'hidden';
+  const hour = new Date().getHours();
+  document.getElementById('add-food-meal').value = hour<10?'breakfast':hour<14?'lunch':hour<18?'dinner':'snacks';
+}
+
+function updateAddPreview() {
+  if (!_pendingFood) return;
+  const d = FOODS[_pendingFood];
+  const g = parseFloat(document.getElementById('add-food-grams').value)||0;
+  const m = g/100;
+  document.getElementById('add-food-preview').innerHTML =
+    `<strong>${Math.round(d.cal*m)} cal</strong> · P:${Math.round(d.p*m)}g · C:${Math.round(d.c*m)}g · F:${Math.round(d.f*m)}g`;
+}
+
+function closeAddFood() {
+  document.getElementById('add-food-modal').style.display = 'none';
+  document.body.style.overflow = '';
+  _pendingFood = null;
+}
+
+function confirmAddFood() {
+  if (!_pendingFood) return;
+  const d = FOODS[_pendingFood];
+  const g = parseFloat(document.getElementById('add-food-grams').value)||100;
+  const meal = document.getElementById('add-food-meal').value;
+  const m = g/100;
+  const entry = { name:_pendingFood, grams:g, cal:Math.round(d.cal*m), p:Math.round(d.p*m), c:Math.round(d.c*m), f:Math.round(d.f*m), id:Date.now().toString() };
+  const today = todayKey();
+  if (!S.foodLog[today]) S.foodLog[today] = {breakfast:[],lunch:[],dinner:[],snacks:[]};
+  S.foodLog[today][meal].push(entry);
+  save();
+  closeAddFood();
+  renderFoodLog();
+}
+
+function removeFood(meal, id) {
+  const today = todayKey();
+  if (!S.foodLog[today]) return;
+  S.foodLog[today][meal] = S.foodLog[today][meal].filter(f => f.id !== id);
+  save();
+  renderFoodLog();
+}
+
+function renderFoodLog() {
+  if (!S.profile) return;
+  const today = todayKey();
+  const log = S.foodLog[today] || {breakfast:[],lunch:[],dinner:[],snacks:[]};
+  const t = S.profile.targets;
+  let tCal=0,tP=0,tC=0,tF=0;
+
+  ['breakfast','lunch','dinner','snacks'].forEach(meal => {
+    const items = log[meal]||[];
+    const body = document.getElementById('log-'+meal+'-body');
+    const calsEl = document.getElementById('log-'+meal+'-cals');
+    let mCal=0;
+    if (!items.length) {
+      body.innerHTML = '<div style="padding:12px;color:var(--muted);font-size:12px;text-align:center;">Tap "Load Today\'s Plan" above to dump your meals here.</div>';
+    } else {
+      body.innerHTML = items.map(i => {
+        // Only count CHECKED items toward totals (unchecked = not eaten yet)
+        if (i.checked) mCal += i.cal;
+        const checked = i.checked ? 'checked' : '';
+        const opacityStyle = i.checked ? '' : 'opacity:.55;';
+        const plannedBadge = i.planned
+          ? '<span style="font-family:\'Share Tech Mono\',monospace;font-size:8px;color:#14b8a6;letter-spacing:.1em;margin-left:6px;">PLANNED</span>'
+          : '<span style="font-family:\'Share Tech Mono\',monospace;font-size:8px;color:#facc15;letter-spacing:.1em;margin-left:6px;">ADDED</span>';
+        return `<div class="food-item" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.04);${opacityStyle}">
+          <input type="checkbox" ${checked} onchange="toggleFoodCheck('${meal}','${i.id}')" style="width:20px;height:20px;accent-color:#14b8a6;flex-shrink:0;cursor:pointer;">
+          <div style="flex:1;min-width:0;">
+            <div class="food-name" style="font-family:'Barlow',sans-serif;font-size:13px;color:#fff;font-weight:600;${i.checked ? '' : ''}">${i.name}${plannedBadge}</div>
+            <div class="food-macros" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:#94a3b8;margin-top:2px;">${i.grams > 0 ? i.grams + 'g · ' : ''}${i.cal}cal · P:${i.p}g C:${i.c}g F:${i.f}g</div>
+          </div>
+          <a href="#" onclick="removeLoggedFood('${meal}','${i.id}');return false;" style="color:#64748b;font-size:18px;text-decoration:none;padding:4px 8px;flex-shrink:0;">×</a>
+        </div>`;
+      }).join('');
+    }
+    calsEl.textContent = mCal + ' cal';
+    // Only sum CHECKED items
+    items.forEach(i => { if (i.checked) { tCal+=i.cal; tP+=i.p; tC+=i.c; tF+=i.f; } });
+  });
+
+  document.getElementById('e-cals').textContent = tCal;
+  document.getElementById('e-protein').textContent = tP;
+  document.getElementById('e-carbs').textContent = tC;
+  document.getElementById('e-fat').textContent = tF;
+  document.getElementById('g-cals').textContent = t.cals;
+  document.getElementById('g-protein').textContent = t.protein;
+  document.getElementById('g-carbs').textContent = t.carbs;
+  document.getElementById('g-fat').textContent = t.fat;
+
+  const pct = (v,g) => Math.min(100, Math.round((v/g)*100));
+  document.getElementById('bar-cals').style.width = pct(tCal,t.cals)+'%';
+  document.getElementById('bar-protein').style.width = pct(tP,t.protein)+'%';
+  document.getElementById('bar-carbs').style.width = pct(tC,t.carbs)+'%';
+  document.getElementById('bar-fat').style.width = pct(tF,t.fat)+'%';
+  document.getElementById('bar-cals').style.background = tCal>t.cals ? '#ef4444' : 'var(--accent2)';
+}
+
+function toggleLog(meal) {
+  const body = document.getElementById('log-'+meal+'-body');
+  body.style.display = body.style.display === 'none' ? 'block' : 'none';
+}
+
+// ══════════════════════════════════════════════════════════
+// CHECK-IN
+// ══════════════════════════════════════════════════════════
+function setRating(cat, val) {
+  const today = todayKey();
+  if (!S.checkins[today]) S.checkins[today] = {};
+  S.checkins[today][cat] = val;
+  save();
+  renderCheckin();
+}
+
+function saveCheckin() {
+  const today = todayKey();
+  if (!S.checkins[today]) S.checkins[today] = {};
+  const w = document.getElementById('ci-weight').value;
+  if (w) S.checkins[today].weight = parseFloat(w);
+  save();
+  renderTrend();
+}
+
+function renderCheckin() {
+  const today = todayKey();
+  const ci = S.checkins[today] || {};
+  ['sleep','energy','mood','hunger'].forEach(cat => {
+    const dots = document.querySelectorAll('#dots-'+cat+' .checkin-dot');
+    dots.forEach((d,i) => { d.className = 'checkin-dot' + (ci[cat] && i < ci[cat] ? ' active' : ''); });
+  });
+  if (ci.weight) { const el = document.getElementById('ci-weight'); if(el) el.value = ci.weight; }
+}
+
+// ══════════════════════════════════════════════════════════
+// 7-DAY TREND
+// ══════════════════════════════════════════════════════════
+function renderTrend() {
+  const card = document.getElementById('trend-card');
+  const days = [];
+  for (let i=6;i>=0;i--) {
+    const d = new Date(); d.setDate(d.getDate()-i);
+    const key = d.toISOString().split('T')[0];
+    const ci = S.checkins[key]||{};
+    const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    days.push({ label:dayNames[d.getDay()], weight:ci.weight||null, sleep:ci.sleep||null, energy:ci.energy||null, mood:ci.mood||null });
+  }
+  const hasData = days.some(d => d.weight||d.sleep||d.energy||d.mood);
+  if (!hasData) { card.innerHTML = '<div style="text-align:center;color:var(--muted);font-family:\'Share Tech Mono\',monospace;font-size:11px;padding:20px;">Check in daily to see trends</div>'; return; }
+
+  const weights = days.filter(d=>d.weight).map(d=>d.weight);
+  const wChange = weights.length>=2 ? (weights[weights.length-1]-weights[0]).toFixed(1) : null;
+  const wColor = wChange>0?'#ef4444':wChange<0?'var(--accent2)':'var(--muted)';
+  const wArrow = wChange>0?'↑':wChange<0?'↓':'→';
+  const colors = ['','#ef4444','#f97316','#facc15','#84cc16','#22c55e'];
+
+  card.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;margin-bottom:14px;">
+      ${days.map(d => `<div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--muted);margin-bottom:4px;">${d.label}</div>
+        <div style="font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:${d.weight?'var(--white)':'var(--border)'};">${d.weight||'—'}</div>
+        <div style="display:flex;justify-content:center;gap:2px;margin-top:4px;">
+          <div style="width:6px;height:6px;border-radius:50%;background:${d.sleep?colors[d.sleep]:'var(--border)'};"></div>
+          <div style="width:6px;height:6px;border-radius:50%;background:${d.energy?colors[d.energy]:'var(--border)'};"></div>
+          <div style="width:6px;height:6px;border-radius:50%;background:${d.mood?colors[d.mood]:'var(--border)'};"></div>
+        </div>
+      </div>`).join('')}
+    </div>
+    ${wChange!==null ? `<div style="text-align:center;padding-top:10px;border-top:1px solid var(--border);"><span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);">7-DAY: </span><span style="font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:${wColor};">${wArrow} ${Math.abs(wChange)} lbs</span></div>` : ''}`;
+}
+
+// ══════════════════════════════════════════════════════════
+// AI NUTRITION ASSISTANT
+// ══════════════════════════════════════════════════════════
+let _pendingSwapOut = null;
+
+function selectPrepDay(day) {
+  S.prepDay = day;
+  save();
+  document.querySelectorAll('#prep-day-grid .bf-option').forEach(el => {
+    el.className = 'bf-option' + (el.getAttribute('data-prep') === day ? ' active' : '');
+  });
+  const msgs = {
+    'Sun': "Sunday prep — classic. Cook everything, box it up, dominate the week.",
+    'Mon': "Monday prep — start the week with fresh meals and zero excuses.",
+    'Tue': "Tuesday prep — smart. Monday's chaos settles, then you prep.",
+    'Wed': "Mid-week prep — split the week. Fresh food when others are eating leftovers.",
+    'Thu': "Thursday prep — late-week warrior. Weekend ready.",
+    'Fri': "Friday prep — weekend warrior style. Prep and execute.",
+    'Sat': "Saturday prep — relaxed day, no rush. Set yourself up for the week.",
+  };
+  document.getElementById('prep-day-msg').textContent = '🥊 ' + (msgs[day] || 'Locked in.');
+}
+
+function buildShoppingList() {
+  if (!S.mealPlan) { alert('Generate a meal plan first'); return; }
+
+  // Aggregate all foods across all meals × 7 days
+  const list = {};
+  S.mealPlan.forEach(meal => {
+    meal.items.forEach(item => {
+      if (!list[item.name]) list[item.name] = { grams: 0, cat: FOODS[item.name] ? FOODS[item.name].cat : 'other' };
+      list[item.name].grams += item.grams * 7; // weekly
+    });
+  });
+
+  // Convert to shopping-friendly amounts
+  const lines = Object.entries(list).map(([name, data]) => {
+    const lbs = (data.grams / 453.6).toFixed(1);
+    const oz = (data.grams / 28.35).toFixed(0);
+    let amount = '';
+    if (data.cat === 'protein') {
+      amount = parseFloat(lbs) >= 1 ? `${lbs} lbs` : `${oz} oz`;
+    } else if (['Olive Oil','Coconut Oil','Butter'].includes(name)) {
+      amount = `${Math.ceil(data.grams / 14)} tbsp (~${Math.round(data.grams)}g)`;
+    } else if (['Almonds','Peanut Butter','Almond Butter','Walnuts','Cheese'].includes(name)) {
+      amount = `${oz} oz`;
+    } else {
+      const cups = (data.grams / 185).toFixed(1); // rough cup estimate
+      amount = parseFloat(cups) > 0.5 ? `~${cups} cups (${Math.round(data.grams)}g)` : `${Math.round(data.grams)}g`;
+    }
+    return { name, amount, cat: data.cat };
+  });
+
+  // Group by category
+  const proteins = lines.filter(l => l.cat === 'protein');
+  const carbsList = lines.filter(l => l.cat === 'carbs');
+  const fatsList = lines.filter(l => l.cat === 'fats');
+
+  let html = `<div class="ai-msg bot">🛒 <strong>WEEKLY SHOPPING LIST</strong><br><span style="font-size:10px;color:var(--muted);">Based on your meal plan × 7 days</span><br><br>`;
+  if (proteins.length) {
+    html += `<strong style="color:#ef4444;">PROTEIN:</strong><br>`;
+    proteins.forEach(p => { html += `☐ ${p.name} — ${p.amount}<br>`; });
+    html += '<br>';
+  }
+  if (carbsList.length) {
+    html += `<strong style="color:#facc15;">CARBS:</strong><br>`;
+    carbsList.forEach(p => { html += `☐ ${p.name} — ${p.amount}<br>`; });
+    html += '<br>';
+  }
+  if (fatsList.length) {
+    html += `<strong style="color:#a78bfa;">FATS:</strong><br>`;
+    fatsList.forEach(p => { html += `☐ ${p.name} — ${p.amount}<br>`; });
+  }
+  html += `</div>`;
+
+  const body = document.getElementById('ai-chat-body');
+  body.innerHTML += html;
+  body.scrollTop = body.scrollHeight;
+}
+
+function doSwap(oldFood, newFood) {
+  // Remove old from picks, add new
+  const idx = S.foodPicks.indexOf(oldFood);
+  if (idx >= 0) S.foodPicks.splice(idx, 1);
+  if (!S.foodPicks.includes(newFood)) S.foodPicks.push(newFood);
+  save();
+
+  // Regenerate meal plan
+  generateMealPlan();
+
+  // Update food pick grid visuals
+  initFoodPicks();
+
+  // Bot reply — offer shopping list
+  const body = document.getElementById('ai-chat-body');
+  body.innerHTML += `<div class="ai-msg bot">Done — swapped <strong>${oldFood}</strong> for <strong>${newFood}</strong>. Your meal plan is rebuilt. 🔥<br><br><a href="#" onclick="goToStep(4);toggleAiChat();return false;" style="display:inline-block;padding:6px 14px;background:rgba(0,196,140,.1);border:1px solid rgba(0,196,140,.3);border-radius:4px;color:var(--accent2);text-decoration:none;font-size:12px;font-weight:700;margin-right:6px;">→ View meal plan</a><a href="#" onclick="buildShoppingList();return false;" style="display:inline-block;padding:6px 14px;background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.3);border-radius:4px;color:var(--accent);text-decoration:none;font-size:12px;font-weight:700;">🛒 Shopping list</a></div>`;
+  body.scrollTop = body.scrollHeight;
+  _pendingSwapOut = null;
+}
+
+function toggleAiChat() {
+  const modal = document.getElementById('ai-modal');
+  modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+}
+
+function sendAiMsg() {
+  const input = document.getElementById('ai-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+
+  const body = document.getElementById('ai-chat-body');
+  body.innerHTML += `<div class="ai-msg user">${msg}</div>`;
+
+  // Simple local AI responses
+  const lower = msg.toLowerCase();
+  let reply = '';
+
+  // Check if there's a pending swap and they're just naming a food
+  if (_pendingSwapOut) {
+    const swapIn = Object.keys(FOODS).find(n => lower.includes(n.toLowerCase()));
+    if (swapIn) {
+      doSwap(_pendingSwapOut, swapIn);
+      return;
+    }
+  }
+
+  // ── MOVE FOOD BETWEEN MEALS ──
+  // Parse "move X from Y to Z" / "move the X in Y to Z" / "put X from Y into Z"
+  const moveIntent = /\b(move|shift|transfer|put)\b/.test(lower);
+  const mealWords = {
+    breakfast: ['breakfast','morning'],
+    lunch: ['lunch','midday','noon'],
+    dinner: ['dinner','supper','evening'],
+    snacks: ['snack','snacks'],
+  };
+  function findMealIdx(word) {
+    if (!S.mealPlan) return -1;
+    for (const [slot, keywords] of Object.entries(mealWords)) {
+      if (keywords.some(k => word.includes(k))) {
+        // Match the meal in S.mealPlan whose name contains this slot
+        return S.mealPlan.findIndex(m => m.name.toLowerCase().includes(slot));
+      }
+    }
+    return -1;
+  }
+  if (moveIntent && S.mealPlan && S.mealPlan.length >= 2) {
+    // Find the food name in the message
+    let foodInMsg = null;
+    let foundMealIdx = -1;
+    let foundItemIdx = -1;
+    outer: for (let mi = 0; mi < S.mealPlan.length; mi++) {
+      for (let ii = 0; ii < S.mealPlan[mi].items.length; ii++) {
+        const itemName = S.mealPlan[mi].items[ii].name.toLowerCase();
+        if (lower.includes(itemName)) {
+          foodInMsg = S.mealPlan[mi].items[ii].name;
+          foundMealIdx = mi;
+          foundItemIdx = ii;
+          break outer;
+        }
+      }
+    }
+    // Also try matching by FOODS database name (might not be in the current plan)
+    if (!foodInMsg) {
+      const dbMatch = Object.keys(FOODS).find(n => lower.includes(n.toLowerCase()));
+      if (dbMatch) {
+        // See if it's in any meal
+        for (let mi = 0; mi < S.mealPlan.length; mi++) {
+          const ii = S.mealPlan[mi].items.findIndex(it => it.name.toLowerCase() === dbMatch.toLowerCase());
+          if (ii >= 0) {
+            foodInMsg = S.mealPlan[mi].items[ii].name;
+            foundMealIdx = mi;
+            foundItemIdx = ii;
+            break;
+          }
+        }
+        if (!foodInMsg) {
+          // Food exists in DB but not in any meal
+          reply = `I couldn't find <strong>${dbMatch}</strong> in your current meal plan. It's only in one of your meals if it shows up on the plan page. Want to add it somewhere instead?`;
+        }
+      }
+    }
+
+    // Find "to <meal>" — the target meal
+    const toMatch = lower.match(/\bto\s+(breakfast|lunch|dinner|snack[s]?|morning|midday|noon|supper|evening)\b/);
+    let targetMealIdx = toMatch ? findMealIdx(toMatch[1]) : -1;
+
+    // Find the source meal (optional — "from X" or "in X")
+    const fromMatch = lower.match(/\b(?:from|in)\s+(breakfast|lunch|dinner|snack[s]?|morning|midday|noon|supper|evening)\b/);
+    if (fromMatch) {
+      const srcIdx = findMealIdx(fromMatch[1]);
+      if (srcIdx >= 0 && foodInMsg) {
+        // Find the food specifically inside that source meal
+        const ii = S.mealPlan[srcIdx].items.findIndex(it => it.name === foodInMsg);
+        if (ii >= 0) { foundMealIdx = srcIdx; foundItemIdx = ii; }
+      }
+    }
+
+    if (foodInMsg && foundMealIdx >= 0 && targetMealIdx >= 0) {
+      if (foundMealIdx === targetMealIdx) {
+        reply = `<strong>${foodInMsg}</strong> is already in that meal. 🤷‍♂️`;
+      } else {
+        const srcName = S.mealPlan[foundMealIdx].name;
+        const tgtName = S.mealPlan[targetMealIdx].name;
+        moveFoodBetweenMeals(foundMealIdx, foundItemIdx, targetMealIdx);
+        reply = `Done ✅ Moved <strong>${foodInMsg}</strong> from <strong>${srcName}</strong> to <strong>${tgtName}</strong>. Meal plan updated.<br><br><a href="#" onclick="goToStep(4);toggleAiChat();return false;" style="display:inline-block;padding:6px 14px;background:rgba(0,196,140,.1);border:1px solid rgba(0,196,140,.3);border-radius:4px;color:var(--accent2);text-decoration:none;font-size:12px;font-weight:700;">→ See the update</a>`;
+      }
+      setTimeout(() => {
+        body.innerHTML += `<div class="ai-msg bot">${reply}</div>`;
+        body.scrollTop = body.scrollHeight;
+      }, 400);
+      return;
+    }
+    if (moveIntent && !reply) {
+      reply = `I can move foods between meals! Try:<br>• <em>"move avocado from dinner to breakfast"</em><br>• <em>"shift eggs from breakfast to lunch"</em><br><br>Or just drag the food on the meal plan page — grab any row and drop it on another meal.`;
+      setTimeout(() => {
+        body.innerHTML += `<div class="ai-msg bot">${reply}</div>`;
+        body.scrollTop = body.scrollHeight;
+      }, 400);
+      return;
+    }
+  }
+
+  // Check if asking about a food
+  const foodMatch = Object.entries(FOODS).find(([n]) => lower.includes(n.toLowerCase()));
+  if (foodMatch) {
+    const [name, d] = foodMatch;
+    const inPlan = S.foodPicks.includes(name);
+    reply = `<strong>${name}</strong> — per 100g: ${d.cal} cal, P:${d.p}g, C:${d.c}g, F:${d.f}g.<br><br>` +
+      (inPlan ? `✅ Already in your food picks!` : `It's not in your current picks. Want to add it? Go to Step 3 and tap it, or just search for it in the food log.`) +
+      `<br><br>A typical serving would be about ${d.cat === 'protein' ? '170g (6oz)' : d.cat === 'carbs' ? '200g (1 cup cooked)' : '28g (1oz)'}.`;
+  }
+  else if (lower.includes('tired of') || lower.includes('sick of') || lower.includes('swap') || lower.includes('replace') || lower.includes('substitute') || lower.includes('instead of') || lower.includes('switch')) {
+    // Find what they want to swap OUT
+    const swapOut = Object.keys(FOODS).find(n => lower.includes(n.toLowerCase()));
+    if (swapOut) {
+      const cat = FOODS[swapOut].cat;
+      const alternatives = S.foodPicks.filter(n => FOODS[n] && FOODS[n].cat === cat && n !== swapOut);
+      const allAlts = Object.entries(FOODS).filter(([n,d]) => d.cat === cat && n !== swapOut).map(([n]) => n);
+      const showAlts = alternatives.length > 0 ? alternatives : allAlts.slice(0, 6);
+
+      _pendingSwapOut = swapOut;
+      reply = `No problem! What would you like instead of <strong>${swapOut}</strong>?<br><br>` +
+        showAlts.map(n => `<a href="#" onclick="doSwap('${swapOut}','${n}');return false;" style="display:inline-block;margin:3px;padding:6px 12px;background:rgba(0,196,140,.1);border:1px solid rgba(0,196,140,.3);border-radius:4px;color:var(--accent2);text-decoration:none;font-size:12px;font-weight:600;">${n}</a>`).join('') +
+        `<br><br><span style="font-size:10px;color:var(--muted);">Tap one and I'll rebuild your meal plan.</span>`;
+    } else {
+      reply = `What food do you want to swap out? Tell me something like "I'm tired of chicken" or "swap rice for sweet potato."`;
+    }
+  }
+  else if (lower.includes('post-workout') || lower.includes('post workout') || lower.includes('after workout')) {
+    reply = `Post-workout, prioritize:<br>• <strong>Fast protein</strong> — Whey Protein (40g) or Chicken Breast (6oz)<br>• <strong>Fast carbs</strong> — White Rice (1.5 cups) or Banana<br>• <strong>Low fat</strong> — fat slows absorption post-workout<br><br>Aim for 30-40g protein + 40-60g carbs within 1 hour of training.`;
+  }
+  else if (lower.includes('calorie') || lower.includes('how many')) {
+    reply = S.profile ? `Your daily target is <strong>${S.profile.targets.cals} calories</strong>. That's based on your TDEE of ${S.profile.tdee} with a ${S.goal === 'cut' ? '500 cal deficit' : S.goal === 'bulk' ? '300 cal surplus' : 'maintenance'} for your ${S.goal} goal.` : `Set up your profile first (Step 1) and I can tell you your exact targets!`;
+  }
+  else if (lower.includes('protein')) {
+    reply = S.profile ? `Your protein target is <strong>${S.profile.targets.protein}g/day</strong> (${S.proteinPerLb}g per lb). Good sources in your picks: ${S.foodPicks.filter(f => FOODS[f] && FOODS[f].cat === 'protein').join(', ') || 'none selected yet — go to Step 3!'}` : `Set up your profile first!`;
+  }
+  else if (lower.includes('shopping') || lower.includes('grocery') || lower.includes('buy') || lower.includes('store')) {
+    buildShoppingList();
+    return;
+  }
+  else if (lower.includes('add') && !foodMatch) {
+    // Trying to add something not in the database
+    reply = `I don't have that food in my database yet. In the app version, you'll be able to scan a barcode or take a photo of the nutrition label and it'll auto-add.<br><br>For now, try searching for a similar food in the tracker (Step 5). Our database covers the most common whole foods — chicken, rice, eggs, steak, etc.`;
+  }
+  else if (lower.includes('picture') || lower.includes('photo') || lower.includes('scan')) {
+    reply = `📸 Photo food scanning is coming in the app version! For now, you can:<br>1. Search for the food in the search bar<br>2. Or ask me here — tell me what you ate and I'll help you log it<br><br>Example: "I had 2 eggs and a banana for breakfast"`;
+  }
+  else {
+    reply = `I'm your local nutrition assistant — I work best with these questions:<br>• "Can I add [food]?"<br>• "How many calories in [food]?"<br>• "What should I eat post-workout?"<br>• "Swap [food] for something else"<br>• "What's my protein target?"<br><br>For the full AI experience with photo scanning and custom meal building, that's coming in the app! 🚀`;
+  }
+
+  setTimeout(() => {
+    body.innerHTML += `<div class="ai-msg bot">${reply}</div>`;
+    body.scrollTop = body.scrollHeight;
+  }, 500);
+}
+
+// ═══════════════════════════════════��══════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════
+load();
+initFoodPicks();
+
+// ── Wire the "Back to [Protocol] Setup" banner when ?return= is in the URL ──
+(function initReturnBanner() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const returnUrl = params.get('return');
+    const label = params.get('label');
+    if (!returnUrl) return;
+    const banner = document.getElementById('return-banner');
+    const link = document.getElementById('return-banner-link');
+    const labelEl = document.getElementById('return-banner-label');
+    if (!banner || !link) return;
+    banner.style.display = 'block';
+    link.href = decodeURIComponent(returnUrl);
+    if (labelEl) {
+      labelEl.textContent = label ? 'Back to ' + decodeURIComponent(label) : 'Back to your protocol setup';
+    }
+  } catch(e) { console.warn('return banner init', e); }
+})();
+
+// Restore state if profile exists
+if (S.profile && S.profile.targets) {
+  document.getElementById('n-weight').value = S.profile.weight||'';
+  const tIn = S.profile.heightIn||70;
+  document.getElementById('n-height-ft').value = Math.floor(tIn/12);
+  document.getElementById('n-height-in').value = tIn%12;
+  document.getElementById('n-age').value = S.profile.age||'';
+  document.getElementById('n-gender').value = S.profile.gender||'male';
+  document.getElementById('n-activity').value = S.profile.activity||'1.55';
+  selectGoal(S.goal||'cut');
+  document.getElementById('n-bf-current').value = S.bfCurrent||'';
+  document.getElementById('n-bf-goal').value = S.bfGoal||'';
+  goToStep(5);
+} else {
+  selectGoal('cut');
+}
+</script>
+<script src="assets/apex-nav-pill.js"></script>
+<script src="assets/apex-editorial.js"></script>
+<script src="assets/apex-social-proof.js"></script>
+</body>
+</html>

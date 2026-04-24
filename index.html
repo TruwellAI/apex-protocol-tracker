@@ -3,488 +3,324 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Apex — Free Peptide Protocol Encyclopedia & Tracker</title>
+<title>Apex — Peptide Protocol Builder & Tracker</title>
+<meta name="description" content="Research peptides, build your stack, track every dose. Free tool for serious peptide users. No fluff.">
+<meta property="og:title" content="Apex — Peptide Protocol Builder & Tracker">
+<meta property="og:description" content="Research peptides, build your stack, track every dose. Free.">
+<meta property="og:image" content="https://apexdosing.com/assets/og-preview.png">
+<meta property="og:url" content="https://apexdosing.com">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Apex — Peptide Protocol Builder & Tracker">
+<meta name="twitter:description" content="Research peptides, build your stack, track every dose. Free.">
+<meta name="twitter:image" content="https://apexdosing.com/assets/og-preview.png">
+<link rel="icon" href="assets/favicon.ico">
+<link rel="apple-touch-icon" href="assets/favicon.ico">
 <script>
-  // Gate check — no email = no encyclopedia access
-  if (!localStorage.getItem('apex_email')) {
-    window.location.href = 'protocol-tracker.html';
+  // Clear stale service workers / caches
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()));
+    caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
   }
+  // Open-access mode (gate disabled pre-launch)
+  localStorage.setItem('apex_email', 'open@apexprotocol');
+
+  // If user already picked a lane, auto-route them unless ?pick=1 forces the chooser
+  (function(){
+    try {
+      const params = new URLSearchParams(location.search);
+      if (params.get('pick') === '1') return;            // user explicitly asked for lane picker
+      if (params.get('browse') === '1') return;          // deep link to browse view
+      const lane = localStorage.getItem('apex_lane');
+      if (!lane) return;                                  // first-time visitor, show picker
+      if (lane === 'guided')    { location.replace('wizard.html');            return; }
+      if (lane === 'builder')   { location.replace('protocol-tracker.html');  return; }
+      if (lane === 'browsing')  { location.replace('browse.html');            return; }
+    } catch(e) {}
+  })();
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#080c10;--panel:#0d1318;--border:#1a2d3a;--accent:#00d4ff;--accent2:#00ff9d;--accent3:#ff6b35;--text:#c8dde8;--muted:#4a6272;--white:#eaf4f8;}
+:root {
+  --bg:#080c10; --panel:#0d1318; --panel2:#121a22; --border:#1a2d3a;
+  --accent:#00d4ff; --accent2:#00ff9d; --accent3:#ff6b35;
+  --text:#c8dde8; --muted:#4a6272; --white:#eaf4f8;
+}
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;line-height:1.6;min-height:100vh;}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 75% 0%,rgba(0,212,255,.07) 0%,transparent 55%),radial-gradient(ellipse at 15% 100%,rgba(255,107,53,.05) 0%,transparent 50%);pointer-events:none;}
+html,body{min-height:100%;}
+body{
+  background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;
+  font-size:14px;line-height:1.6;min-height:100vh;overflow-x:hidden;
+  display:flex;flex-direction:column;
+}
+body::before{
+  content:'';position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse at 80% 0%, rgba(0,212,255,.08) 0%, transparent 55%),
+    radial-gradient(ellipse at 10% 90%, rgba(0,255,157,.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 90% 100%, rgba(255,107,53,.04) 0%, transparent 45%);
+  pointer-events:none;z-index:0;
+}
+.wrap{max-width:1160px;margin:0 auto;padding:0 24px;position:relative;z-index:1;width:100%;}
+
+/* HEADER */
+.top{display:flex;justify-content:space-between;align-items:center;padding:28px 0;}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;}
+.brand-mark{
+  font-family:'Rajdhani',sans-serif;font-size:26px;font-weight:700;
+  color:var(--accent);letter-spacing:.16em;
+}
+.brand-tag{
+  font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.25em;
+  color:var(--muted);text-transform:uppercase;border-left:1px solid var(--border);padding-left:12px;
+}
+.top-right{display:flex;align-items:center;gap:20px;}
+.top-link{
+  font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.2em;
+  color:var(--muted);text-decoration:none;text-transform:uppercase;transition:color .15s;
+}
+.top-link:hover{color:var(--accent);}
 
 /* HERO */
-.hero{padding:72px 48px 60px;max-width:1200px;margin:0 auto;}
-.hero-eyebrow{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.3em;color:var(--accent);text-transform:uppercase;margin-bottom:20px;}
-.hero h1{font-family:'Rajdhani',sans-serif;font-size:80px;font-weight:700;color:var(--white);line-height:.95;letter-spacing:-2px;margin-bottom:20px;}
-.hero h1 span{color:var(--accent2);}
-.hero-sub{font-size:16px;color:var(--text);max-width:520px;margin-bottom:40px;line-height:1.7;}
-.hero-cta{display:inline-flex;align-items:center;gap:12px;}
-.btn-hero{background:var(--accent2);color:#080c10;font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;letter-spacing:.1em;padding:14px 32px;text-decoration:none;text-transform:uppercase;display:inline-block;}
-.btn-hero:hover{opacity:.88;}
-.btn-secondary{background:transparent;border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;padding:14px 24px;text-decoration:none;text-transform:uppercase;display:inline-block;}
-.btn-secondary:hover{border-color:var(--accent);color:var(--accent);}
+.hero{text-align:center;padding:56px 0 36px;}
+.eyebrow{
+  font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.35em;
+  color:var(--accent);text-transform:uppercase;margin-bottom:22px;
+}
+.hero h1{
+  font-family:'Rajdhani',sans-serif;font-weight:700;
+  font-size:clamp(40px,7vw,72px);line-height:1;letter-spacing:-1.5px;
+  color:var(--white);margin-bottom:18px;
+}
+.hero h1 .hl{color:var(--accent2);}
+.hero .sub{
+  font-size:clamp(15px,2.2vw,18px);color:var(--text);max-width:640px;margin:0 auto;line-height:1.55;
+}
 
-/* STATS BAR */
-.stats-bar{border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:20px 48px;display:flex;gap:48px;max-width:1200px;margin:0 auto;}
-.stat-item .sv{font-family:'Rajdhani',sans-serif;font-size:32px;font-weight:700;color:var(--accent2);}
-.stat-item .sl{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-top:2px;}
+/* LANES */
+.lanes{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;padding:32px 0 24px;}
+@media (max-width:900px){.lanes{grid-template-columns:1fr;}}
+.lane{
+  background:var(--panel);border:1px solid var(--border);border-top:3px solid transparent;
+  padding:32px 30px;text-decoration:none;color:inherit;display:flex;flex-direction:column;
+  transition:all .2s ease;cursor:pointer;position:relative;overflow:hidden;min-height:340px;
+}
+.lane::after{
+  content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%, currentColor 0%, transparent 70%);
+  opacity:0;transition:opacity .2s;pointer-events:none;
+}
+.lane:hover{transform:translateY(-4px);border-color:var(--accent);}
+.lane:hover::after{opacity:.05;}
+.lane.primary{border-top-color:var(--accent2);color:var(--accent2);}
+.lane.secondary{border-top-color:var(--accent);color:var(--accent);}
+.lane.tertiary{border-top-color:var(--accent3);color:var(--accent3);}
+.lane-icon{font-size:44px;line-height:1;margin-bottom:18px;}
+.lane-label{
+  font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.28em;
+  color:currentColor;text-transform:uppercase;margin-bottom:14px;
+}
+.lane-title{
+  font-family:'Rajdhani',sans-serif;font-weight:700;font-size:26px;color:var(--white);
+  line-height:1.05;margin-bottom:12px;letter-spacing:-.3px;
+}
+.lane-desc{font-size:14px;color:var(--text);line-height:1.55;flex:1;margin-bottom:20px;}
+.lane-cta{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:'Rajdhani',sans-serif;font-weight:600;font-size:14px;letter-spacing:.06em;
+  text-transform:uppercase;color:currentColor;border-top:1px solid rgba(255,255,255,.06);padding-top:18px;
+}
+.lane-cta .arrow{transition:transform .2s;}
+.lane:hover .lane-cta .arrow{transform:translateX(4px);}
+.lane-points{margin-bottom:18px;display:flex;flex-direction:column;gap:6px;}
+.lane-point{font-size:12px;color:var(--muted);line-height:1.5;padding-left:14px;position:relative;}
+.lane-point::before{content:'';position:absolute;left:0;top:7px;width:6px;height:1px;background:currentColor;opacity:.7;}
 
-/* MAIN */
-.main{max-width:1200px;margin:0 auto;padding:48px 48px 80px;}
-.section-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.25em;color:var(--muted);text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:12px;}
-.section-label::after{content:'';flex:1;height:1px;background:var(--border);}
+/* TRUST STRIP */
+.trust{
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  padding:22px 0;margin-top:36px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;
+}
+@media (max-width:700px){.trust{grid-template-columns:repeat(2,1fr);}}
+.trust-item{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;}
+.trust-v{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:26px;color:var(--accent2);line-height:1;}
+.trust-l{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;}
 
-/* TRACKER CTA */
-.tracker-banner{background:linear-gradient(135deg,#0a1f15 0%,#0d1318 60%,#0a1520 100%);border:1px solid rgba(0,255,157,.2);padding:36px 40px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:24px;margin-bottom:48px;}
-.tb-title{font-family:'Rajdhani',sans-serif;font-size:30px;font-weight:700;color:var(--white);margin-bottom:6px;}
-.tb-title span{color:var(--accent2);}
-.tb-sub{font-size:13px;color:var(--text);}
-.tb-features{display:flex;gap:20px;margin-top:12px;flex-wrap:wrap;}
-.tb-feature{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);display:flex;align-items:center;gap:6px;}
-.tb-feature::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--accent2);}
+/* PEN PROMO BAND */
+.pen-band{
+  display:flex;justify-content:space-between;align-items:center;gap:20px;
+  margin-top:32px;padding:22px 28px;
+  background:linear-gradient(135deg,rgba(0,212,255,.12),rgba(0,255,157,.04));
+  border:1px solid rgba(0,212,255,.4);border-left:4px solid var(--accent);
+  text-decoration:none;transition:all .2s;
+}
+.pen-band:hover{background:linear-gradient(135deg,rgba(0,212,255,.18),rgba(0,255,157,.08));transform:translateY(-2px);}
+.pb-left{display:flex;gap:18px;align-items:center;flex:1;}
+.pb-icon{font-size:42px;line-height:1;}
+.pb-title{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);margin-bottom:4px;letter-spacing:-.2px;}
+.pb-desc{font-size:13px;color:var(--text);line-height:1.55;max-width:540px;}
+.pb-right{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;flex-shrink:0;}
+@media(max-width:640px){.pen-band{flex-direction:column;align-items:flex-start;padding:18px 20px;}.pb-right{font-size:13px;}}
 
-/* PEPTIDE GRID */
-.category-block{margin-bottom:40px;}
-.category-title{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:10px;}
-.cat-dot{width:8px;height:8px;border-radius:50%;}
-.peptide-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;}
-.peptide-card{background:var(--panel);border:1px solid var(--border);border-top:2px solid transparent;padding:18px 20px;text-decoration:none;display:block;transition:all .2s;position:relative;overflow:hidden;}
-.peptide-card:hover{border-color:var(--accent);transform:translateY(-2px);}
-.peptide-card:hover .pc-arrow{opacity:1;}
-.pc-name{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--white);margin-bottom:4px;}
-.pc-sub{font-size:11px;color:var(--muted);line-height:1.4;}
-.pc-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;}
-.pc-tag{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.1em;padding:2px 6px;background:rgba(0,212,255,.06);color:var(--muted);border:1px solid var(--border);}
-.pc-arrow{position:absolute;right:14px;top:14px;color:var(--accent);font-size:12px;opacity:0;transition:opacity .2s;}
+/* FOOT */
+.foot{
+  padding:28px 0 40px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;
+  font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.15em;
+}
+.foot a{color:var(--muted);text-decoration:none;transition:color .15s;}
+.foot a:hover{color:var(--accent);}
 
-/* STACKS */
-.stacks-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:48px;}
-.stack-card{background:var(--panel);border:1px solid var(--border);border-left:3px solid var(--accent3);padding:22px 24px;text-decoration:none;display:block;transition:all .2s;}
-.stack-card:hover{border-color:var(--accent);transform:translateY(-2px);}
-.sc-name{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--white);margin-bottom:4px;}
-.sc-desc{font-size:12px;color:var(--text);line-height:1.5;}
-.sc-peptides{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:8px;}
-
-/* FOOTER */
-.footer{border-top:1px solid var(--border);padding:24px 48px;max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;}
-.footer-logo{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--accent);letter-spacing:.12em;}
-.footer-note{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.1em;}
-
-/* MOBILE CATEGORY NAV */
-#mobile-cat-nav{display:none;}
-#mobile-cat-back{display:none;margin-bottom:20px;}
-@media(max-width:768px){
-  .hero{padding:36px 20px 32px;}
-  .hero h1{font-size:44px;letter-spacing:-1px;}
-  .hero-sub{font-size:14px;}
-  .stats-bar{padding:16px 20px;gap:20px;flex-wrap:wrap;}
-  .main{padding:28px 20px 60px;}
-  .tracker-banner{grid-template-columns:1fr;gap:16px;padding:24px 20px;}
-  .footer{padding:20px;flex-direction:column;gap:10px;text-align:center;}
-
-  /* Hide desktop category layout on mobile */
-  .section-label{display:none;}
-  .category-block{display:none;}
-  .stacks-grid{display:none;}
-
-  /* Show mobile nav */
-  #mobile-cat-nav{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:8px;}
-  .mcat-tile{background:var(--panel);border:1px solid var(--border);padding:20px 16px;cursor:pointer;transition:all .2s;text-decoration:none;display:block;}
-  .mcat-tile:active{opacity:.75;}
-  .mcat-icon{font-size:24px;margin-bottom:8px;}
-  .mcat-label{font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;color:var(--white);line-height:1.1;margin-bottom:4px;}
-  .mcat-count{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.1em;}
-
-  /* Back button */
-  #mobile-cat-back{display:none;background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.3);color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;padding:12px 20px;cursor:pointer;text-transform:uppercase;width:100%;text-align:left;margin-bottom:20px;}
-
-  /* When a cat is open: show its block + back, hide nav */
-  body.cat-open #mobile-cat-nav{display:none;}
-  body.cat-open #mobile-cat-back{display:block;}
-  body.cat-open .category-block.cat-visible{display:block;}
-  body.cat-open .stacks-grid.cat-visible{display:grid;}
-  body.cat-open .section-label.cat-visible{display:flex;}
+/* RESPONSIVE TWEAKS */
+@media (max-width:640px){
+  .top{padding:22px 0;}
+  .hero{padding:28px 0 16px;}
+  .lanes{gap:14px;padding:20px 0 18px;}
+  .lane{padding:26px 22px;min-height:auto;}
+  .lane-icon{font-size:38px;margin-bottom:14px;}
+  .lane-title{font-size:22px;}
+  .brand-tag{display:none;}
+  .top-right{gap:14px;}
 }
 </style>
 </head>
 <body>
 
-<!-- HERO -->
-<div class="hero">
-  <div class="hero-eyebrow">Apex Protocol — Free Research Tool</div>
-  <h1>Your Free<br>Protocol <span>Encyclopedia</span><br>&amp; Tracker</h1>
-  <p class="hero-sub">Every peptide. Every dose. Every cycle — tracked and organized. The complete research reference + protocol manager built for serious stacks.</p>
-  <div class="hero-cta">
-    <a href="protocol-tracker.html" class="btn-hero">Open Free Tracker →</a>
-    <a href="#library" class="btn-secondary">Browse Encyclopedia</a>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="top">
+    <a href="./" class="brand">
+      <span class="brand-mark">APEX</span>
+      <span class="brand-tag">Protocol</span>
+    </a>
+    <div class="top-right">
+      <a href="browse.html" class="top-link">Encyclopedia</a>
+      <a href="protocol-tracker.html" class="top-link">Tracker</a>
+    </div>
   </div>
-</div>
 
-<!-- STATS BAR -->
-<div class="stats-bar">
-  <div class="stat-item"><div class="sv">35+</div><div class="sl">Peptide References</div></div>
-  <div class="stat-item"><div class="sv">8</div><div class="sl">Sections Per Peptide</div></div>
-  <div class="stat-item"><div class="sv">3</div><div class="sl">Pre-Built Stacks</div></div>
-  <div class="stat-item"><div class="sv">Free</div><div class="sl">Protocol Tracker</div></div>
-</div>
+  <!-- HERO -->
+  <div class="hero">
+    <div class="eyebrow">Peptide Protocol System · v4.0</div>
+    <h1>Where do you want to <span class="hl">start?</span></h1>
+    <p class="sub">Pick a lane. We'll never ask again — but you can switch any time. Everything here is free. Zero sales pressure. Research-grade references, built for humans.</p>
+  </div>
 
-<div class="main" id="library">
+  <!-- LANES -->
+  <div class="lanes">
 
-  <!-- TRACKER BANNER -->
-  <div class="tracker-banner">
-    <div>
-      <div class="tb-title">Free <span>Protocol Tracker</span></div>
-      <div class="tb-sub">Track every cycle, get your daily injection schedule, analyze your stack for redundancy and synergies.</div>
-      <div class="tb-features">
-        <div class="tb-feature">Daily schedule</div>
-        <div class="tb-feature">Cycle progress bars</div>
-        <div class="tb-feature">Break countdowns</div>
-        <div class="tb-feature">Stack analysis</div>
-        <div class="tb-feature">Annual planner</div>
+    <!-- LANE 1: GUIDED (novice) -->
+    <a href="wizard.html" class="lane primary" onclick="pickLane('guided')">
+      <div class="lane-icon">🧪</div>
+      <div class="lane-label">Guided</div>
+      <div class="lane-title">I'm new — walk me through it</div>
+      <div class="lane-desc">Never used peptides. Tell me what I'm trying to do. Teach me the basics. Recommend a safe starter stack. Set up reminders so I don't forget.</div>
+      <div class="lane-points">
+        <div class="lane-point">Pick your goal (fat loss, muscle, sleep, etc.)</div>
+        <div class="lane-point">60-second primer — only what you need</div>
+        <div class="lane-point">Starter stack built for you · no overlap</div>
+      </div>
+      <div class="lane-cta">Start the walk-through <span class="arrow">→</span></div>
+    </a>
+
+    <!-- LANE 2: BUILDER (experienced) -->
+    <a href="protocol-tracker.html" class="lane secondary" onclick="pickLane('builder')">
+      <div class="lane-icon">⚡</div>
+      <div class="lane-label">Express</div>
+      <div class="lane-title">I know what I want — build my stack</div>
+      <div class="lane-desc">Skip the tutorial. Drop me in the builder. I'll pick my peptides, set my doses, and go.</div>
+      <div class="lane-points">
+        <div class="lane-point">Full peptide catalog · 40+ compounds</div>
+        <div class="lane-point">Dose / timing / cycle length — editable</div>
+        <div class="lane-point">Annual planner · bottles needed · shelf-life math</div>
+      </div>
+      <div class="lane-cta">Build my stack <span class="arrow">→</span></div>
+    </a>
+
+    <!-- LANE 3: BROWSING -->
+    <a href="browse.html" class="lane tertiary" onclick="pickLane('browsing')">
+      <div class="lane-icon">📚</div>
+      <div class="lane-label">Research</div>
+      <div class="lane-title">Just browsing — show me everything</div>
+      <div class="lane-desc">No account, no pitch. I want to read the encyclopedia, look at studies, and decide later.</div>
+      <div class="lane-points">
+        <div class="lane-point">41 peptide pages · every citation linked</div>
+        <div class="lane-point">Compare tool · side-by-side mechanisms</div>
+        <div class="lane-point">"Cutting Through Bro Science" — fact-checks</div>
+      </div>
+      <div class="lane-cta">Open the encyclopedia <span class="arrow">→</span></div>
+    </a>
+
+  </div>
+
+  <!-- ═════ PROOF-OF-INTELLIGENCE BAND — shows the engine working before commit ═════ -->
+  <div style="margin:32px 0 8px;padding:26px 28px;background:linear-gradient(135deg,rgba(0,212,255,.06),rgba(0,255,157,.03));border:1px solid rgba(0,212,255,.35);border-radius:6px;">
+    <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.28em;color:var(--accent);margin-bottom:8px;text-transform:uppercase;">🧠 What the engine does</div>
+    <div style="font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;color:var(--white);margin-bottom:4px;letter-spacing:-.3px;">Watch what happens when you stack Retatrutide + Ipamorelin.</div>
+    <div style="font-family:'Barlow',sans-serif;font-size:13px;color:var(--text);line-height:1.55;margin-bottom:18px;">No guessing. No spreadsheet. Live receptor logic, overlap detection, and timeline math — the second you add a compound.</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+      <div style="padding:14px 16px;background:rgba(8,12,16,.6);border-left:3px solid #10b981;border-radius:3px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.2em;color:#10b981;margin-bottom:5px;">✓ SYNERGY DETECTED</div>
+        <div style="font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:#fff;line-height:1.25;">GH pulse preserves muscle during GLP-1-driven cut</div>
+      </div>
+      <div style="padding:14px 16px;background:rgba(8,12,16,.6);border-left:3px solid #fbbf24;border-radius:3px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.2em;color:#fbbf24;margin-bottom:5px;">⚠ TIMING CONFLICT</div>
+        <div style="font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:#fff;line-height:1.25;">Ipamorelin needs fasted bedtime — Reta AM won't clash</div>
+      </div>
+      <div style="padding:14px 16px;background:rgba(8,12,16,.6);border-left:3px solid var(--accent);border-radius:3px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.2em;color:var(--accent);margin-bottom:5px;">📅 TIMELINE</div>
+        <div style="font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:#fff;line-height:1.25;">Goal-hit date: Week 18 · Taper starts Week 22</div>
+      </div>
+      <div style="padding:14px 16px;background:rgba(8,12,16,.6);border-left:3px solid #60a5fa;border-radius:3px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.2em;color:#60a5fa;margin-bottom:5px;">💉 SUPPLY MATH</div>
+        <div style="font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:#fff;line-height:1.25;">2 vials Reta · 1 vial Ipa · 5mL BAC → 6 weeks</div>
       </div>
     </div>
-    <a href="protocol-tracker.html" class="btn-hero" style="white-space:nowrap;">Launch Tracker →</a>
-  </div>
-
-  <!-- MOBILE CATEGORY NAV -->
-  <button id="mobile-cat-back" onclick="closeMobileCat()">← All Categories</button>
-  <div id="mobile-cat-nav">
-    <div class="mcat-tile" onclick="openMobileCat('gh')" style="border-top:3px solid #00d4ff;">
-      <div class="mcat-icon">📈</div>
-      <div class="mcat-label">GH Axis</div>
-      <div class="mcat-count">7 PEPTIDES</div>
-    </div>
-    <div class="mcat-tile" onclick="openMobileCat('repair')" style="border-top:3px solid #00c48c;">
-      <div class="mcat-icon">🔧</div>
-      <div class="mcat-label">Tissue Repair</div>
-      <div class="mcat-count">6 PEPTIDES</div>
-    </div>
-    <div class="mcat-tile" onclick="openMobileCat('neuro')" style="border-top:3px solid #a855f7;">
-      <div class="mcat-icon">🧠</div>
-      <div class="mcat-label">Nootropics</div>
-      <div class="mcat-count">5 PEPTIDES</div>
-    </div>
-    <div class="mcat-tile" onclick="openMobileCat('fatloss')" style="border-top:3px solid #ff6b35;">
-      <div class="mcat-icon">🔥</div>
-      <div class="mcat-label">Fat Loss</div>
-      <div class="mcat-count">7 PEPTIDES</div>
-    </div>
-    <div class="mcat-tile" onclick="openMobileCat('longevity')" style="border-top:3px solid #f59e0b;">
-      <div class="mcat-icon">⏳</div>
-      <div class="mcat-label">Longevity</div>
-      <div class="mcat-count">8 PEPTIDES</div>
-    </div>
-    <div class="mcat-tile" onclick="openMobileCat('libido')" style="border-top:3px solid #f472b6;">
-      <div class="mcat-icon">⚡</div>
-      <div class="mcat-label">Libido</div>
-      <div class="mcat-count">2 PEPTIDES</div>
-    </div>
-    <div class="mcat-tile" onclick="openMobileCat('stacks')" style="border-top:3px solid #ff6b35;grid-column:span 2;">
-      <div class="mcat-icon">🧬</div>
-      <div class="mcat-label">Pre-Built Stacks</div>
-      <div class="mcat-count">3 CURATED STACKS</div>
+    <div style="margin-top:18px;text-align:center;">
+      <a href="protocol-tracker.html?demo=1" style="display:inline-block;padding:13px 34px;background:linear-gradient(135deg,rgba(251,191,36,.15),rgba(245,158,11,.05));color:#fbbf24;font-family:'Share Tech Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;text-decoration:none;border:1px solid rgba(251,191,36,.55);border-radius:4px;">👀 See it live — load the demo stack</a>
     </div>
   </div>
 
-  <!-- GH AXIS -->
-  <div class="section-label" data-cat="gh">GH Axis</div>
-  <div class="category-block" data-cat="gh">
-    <div class="peptide-grid">
-      <a href="ipamorelin.html" class="peptide-card" style="border-top-color:#00d4ff;">
-        <div class="pc-arrow">→</div>
-        <div class="pc-name">Ipamorelin</div>
-        <div class="pc-sub">Selective GHSR-1a agonist. Zero cortisol/prolactin.</div>
-        <div class="pc-tags"><span class="pc-tag">GH PULSE</span><span class="pc-tag">BEDTIME</span></div>
-      </a>
-      <a href="cjc-no-dac.html" class="peptide-card" style="border-top-color:#00d4ff;">
-        <div class="pc-arrow">→</div>
-        <div class="pc-name">CJC-1295 No DAC</div>
-        <div class="pc-sub">GHRH analogue. Pulsatile GH. Stack with Ipamorelin.</div>
-        <div class="pc-tags"><span class="pc-tag">GHRH</span><span class="pc-tag">PULSATILE</span></div>
-      </a>
-      <a href="cjc1295-dac.html" class="peptide-card" style="border-top-color:#00d4ff;">
-        <div class="pc-arrow">→</div>
-        <div class="pc-name">CJC-1295 DAC</div>
-        <div class="pc-sub">Long-acting GHRH. Weekly dosing. Sustained GH elevation.</div>
-        <div class="pc-tags"><span class="pc-tag">GHRH</span><span class="pc-tag">WEEKLY</span></div>
-      </a>
-      <a href="sermorelin.html" class="peptide-card" style="border-top-color:#00d4ff;">
-        <div class="pc-arrow">→</div>
-        <div class="pc-name">Sermorelin</div>
-        <div class="pc-sub">Natural GHRH(1-29). Bedtime protocol. Anti-aging GH axis support.</div>
-        <div class="pc-tags"><span class="pc-tag">GHRH</span><span class="pc-tag">ANTI-AGING</span></div>
-      </a>
-      <a href="tesamorelin.html" class="peptide-card" style="border-top-color:#00d4ff;">
-        <div class="pc-arrow">→</div>
-        <div class="pc-name">Tesamorelin</div>
-        <div class="pc-sub">FDA-approved GHRH. Visceral fat reduction. Clinical-grade.</div>
-        <div class="pc-tags"><span class="pc-tag">FDA</span><span class="pc-tag">FAT LOSS</span></div>
-      </a>
-      <a href="igf1-lr3.html" class="peptide-card" style="border-top-color:#00d4ff;">
-        <div class="pc-arrow">→</div>
-        <div class="pc-name">IGF-1 LR3</div>
-        <div class="pc-sub">Post-workout muscle growth. Hypoglycemia risk. Precision dosing.</div>
-        <div class="pc-tags"><span class="pc-tag">GROWTH</span><span class="pc-tag">POST-WO</span></div>
-      </a>
-      <a href="cjc-ipa-blend.html" class="peptide-card" style="border-top-color:#00d4ff;">
-        <div class="pc-arrow">→</div>
-        <div class="pc-name">CJC / Ipa Blend</div>
-        <div class="pc-sub">Pre-mixed CJC-1295 No DAC + Ipamorelin. One injection.</div>
-        <div class="pc-tags"><span class="pc-tag">BLEND</span><span class="pc-tag">CONVENIENT</span></div>
-      </a>
+  <!-- TRUST STRIP -->
+  <div class="trust">
+    <div class="trust-item"><div class="trust-v">41</div><div class="trust-l">Peptide Pages</div></div>
+    <div class="trust-item"><div class="trust-v">100+</div><div class="trust-l">Cited Studies</div></div>
+    <div class="trust-item"><div class="trust-v">$0</div><div class="trust-l">To Use</div></div>
+    <div class="trust-item"><div class="trust-v">0</div><div class="trust-l">Accounts Required</div></div>
+  </div>
+
+  <!-- PEN PROMO BAND -->
+  <a href="https://apexdosing.com/buy-pen" target="_blank" rel="noopener" class="pen-band">
+    <div class="pb-left">
+      <div class="pb-icon">️</div>
+      <div class="pb-text">
+        <div class="pb-title">The Apex V3 Pen — $39</div>
+        <div class="pb-desc">Stop doing math at dose time. Dial your units. Click. Done. Ships with 3mL cartridges, pen needles, and bacteriostatic water.</div>
+      </div>
+    </div>
+    <div class="pb-right">Shop the pen →</div>
+  </a>
+
+  <!-- FOOT -->
+  <div class="foot">
+    <div>© Apex Protocol · Research use only · Not medical advice · 17+</div>
+    <div>
+      <a href="basics.html">Basics</a> &nbsp;·&nbsp;
+      <a href="compare.html">Compare</a> &nbsp;·&nbsp;
+      <a href="privacy.html">Privacy</a> &nbsp;·&nbsp;
+      <a href="terms.html">Terms</a> &nbsp;·&nbsp;
+      <a href="?pick=1">Change lane</a>
     </div>
   </div>
 
-  <!-- TISSUE REPAIR -->
-  <div class="section-label" data-cat="repair">Tissue Repair &amp; Recovery</div>
-  <div class="category-block" data-cat="repair">
-    <div class="peptide-grid">
-      <a href="bpc157.html" class="peptide-card" style="border-top-color:#00ff9d;">
-        <div class="pc-arrow">→</div>
-        <div class="pc-name">BPC-157</div>
-        <div class="pc-sub">Body protection compound. Gut, tendon, ligament repair. Systemic.</div>
-        <div class="pc-tags"><span class="pc-tag">HEALING</span><span class="pc-tag">GUT</span></div>
-      </a>
-      <a href="tb500.html" class="peptide-card" style="border-top-color:#00ff9d;">
-        <div class="pc-arrow">→</div>
-        <div class="pc-name">TB-500</div>
-        <div class="pc-sub">Thymosin Beta-4 fragment. Actin modulation. Systemic mobility.</div>
-        <div class="pc-tags"><span class="pc-tag">REPAIR</span><span class="pc-tag">MOBILITY</span></div>
-      </a>
-      <a href="ghkcu.html" class="peptide-card" style="border-top-color:#00ff9d;">
-        <div class="pc-arrow">→</div>
-        <div class="pc-name">GHK-Cu</div>
-        <div class="pc-sub">Copper tripeptide. Collagen, wound healing, hair, skin, anti-aging.</div>
-        <div class="pc-tags"><span class="pc-tag">COLLAGEN</span><span class="pc-tag">SKIN</span></div>
-      </a>
-      <a href="kpv.html" class="peptide-card" style="border-top-color:#00ff9d;">
-        <div class="pc-arrow">→</div>
-        <div class="pc-name">KPV</div>
-        <div class="pc-sub">MSH fragment. Anti-inflammatory. IBD, gut, skin conditions.</div>
-        <div class="pc-tags"><span class="pc-tag">ANTI-INFLAM</span><span class="pc-tag">GUT</span></div>
-      </a>
-      <a href="ll37.html" class="peptide-card" style="border-top-color:#00ff9d;">
-        <div class="pc-arrow">→</div>
-        <div class="pc-name">LL-37</div>
-        <div class="pc-sub">Human cathelicidin. Immune defense, wound healing, antimicrobial.</div>
-        <div class="pc-tags"><span class="pc-tag">IMMUNE</span><span class="pc-tag">ANTIMICROBIAL</span></div>
-      </a>
-      <a href="ara290.html" class="peptide-card" style="border-top-color:#00ff9d;">
-        <div class="pc-arrow">→</div>
-        <div class="pc-name">ARA-290</div>
-        <div class="pc-sub">Cibinetide. EPO receptor agonist. Nerve regeneration.</div>
-        <div class="pc-tags"><span class="pc-tag">NEUROPROTECTION</span><span class="pc-tag">NERVE</span></div>
-      </a>
-    </div>
-  </div>
-
-  <!-- NOOTROPIC / CNS -->
-  <div class="section-label" data-cat="neuro">Nootropic / CNS</div>
-  <div class="category-block" data-cat="neuro">
-    <div class="peptide-grid">
-      <a href="semax.html" class="peptide-card" style="border-top-color:#a855f7;">
-        <div class="pc-arrow">→</div>
-        <div class="pc-name">Semax</div>
-        <div class="pc-sub">ACTH 4-7 PGP. BDNF 1.5–2× upregulation. Stimulating AM nootropic.</div>
-        <div class="pc-tags"><span class="pc-tag">BDNF</span><span class="pc-tag">FOCUS</span></div>
-      </a>
-      <a href="selank.html" class="peptide-card" style="border-top-color:#a855f7;">
-        <div class="pc-arrow">→</div>
-        <div class="pc-name">Selank</div>
-        <div class="pc-sub">Approved anxiolytic. No sedation, no addiction. PM protocol.</div>
-        <div class="pc-tags"><span class="pc-tag">ANXIETY</span><span class="pc-tag">BDNF</span></div>
-      </a>
-      <a href="dihexa.html" class="peptide-card" style="border-top-color:#a855f7;">
-        <div class="pc-arrow">→</div>
-        <div class="pc-name">Dihexa</div>
-        <div class="pc-sub">HGF/c-Met agonist. 10M× more potent than BDNF. Synaptogenic.</div>
-        <div class="pc-tags"><span class="pc-tag">SYNAPTOGENIC</span><span class="pc-tag">⚠ CANCER RISK</span></div>
-      </a>
-      <a href="pe2228.html" class="peptide-card" style="border-top-color:#a855f7;">
-        <div class="pc-arrow">→</div>
-        <div class="pc-name">PE-22-28</div>
-        <div class="pc-sub">TREK-1 blocker. Rapid-onset antidepressant. Hippocampal neurogenesis.</div>
-        <div class="pc-tags"><span class="pc-tag">ANTIDEPRESSANT</span><span class="pc-tag">HOURS</span></div>
-      </a>
-      <a href="dsip.html" class="peptide-card" style="border-top-color:#a855f7;">
-        <div class="pc-arrow">→</div>
-        <div class="pc-name">DSIP</div>
-        <div class="pc-sub">Delta sleep-inducing peptide. SWS promotion. GH pulse amplification.</div>
-        <div class="pc-tags"><span class="pc-tag">SLEEP</span><span class="pc-tag">GH</span></div>
-      </a>
-    </div>
-  </div>
-
-  <!-- FAT LOSS / METABOLIC -->
-  <div class="section-label" data-cat="fatloss">Fat Loss &amp; Metabolic</div>
-  <div class="category-block" data-cat="fatloss">
-    <div class="peptide-grid">
-      <a href="aod9604.html" class="peptide-card" style="border-top-color:#ff6b35;">
-        <div class="pc-arrow">→</div>
-        <div class="pc-name">AOD-9604</div>
-        <div class="pc-sub">GH fragment 176-191. Lipolysis without IGF-1 elevation.</div>
-        <div class="pc-tags"><span class="pc-tag">LIPOLYSIS</span><span class="pc-tag">FASTED</span></div>
-      </a>
-      <a href="5amino1mq.html" class="peptide-card" style="border-top-color:#ff6b35;">
-        <div class="pc-arrow">→</div>
-        <div class="pc-name">5-Amino-1MQ</div>
-        <div class="pc-sub">NNMT inhibitor. Metabolic reprogramming. Fat cell shrinkage.</div>
-        <div class="pc-tags"><span class="pc-tag">NNMT</span><span class="pc-tag">METABOLIC</span></div>
-      </a>
-      <a href="slu-pp-322.html" class="peptide-card" style="border-top-color:#ff6b35;">
-        <div class="pc-arrow">→</div>
-        <div class="pc-name">SLU-PP-332</div>
-        <div class="pc-sub">ERRα/γ agonist. Exercise mimetic. Preclinical only.</div>
-        <div class="pc-tags"><span class="pc-tag">ERRα</span><span class="pc-tag">PRECLINICAL</span></div>
-      </a>
-      <a href="retatrutide.html" class="peptide-card" style="border-top-color:#ff6b35;">
-        <div class="pc-arrow">→</div>
-        <div class="pc-name">Retatrutide</div>
-        <div class="pc-sub">Triple G agonist (GLP-1+GIP+GCG). 24.2% weight loss in Phase II.</div>
-        <div class="pc-tags"><span class="pc-tag">GLP-1</span><span class="pc-tag">TRIPLE</span></div>
-      </a>
-      <a href="semaglutide.html" class="peptide-card" style="border-top-color:#ff6b35;">
-        <div class="pc-arrow">→</div>
-        <div class="pc-name">Semaglutide</div>
-        <div class="pc-sub">GLP-1 agonist. Weekly injection. Ozempic/Wegovy equivalent.</div>
-        <div class="pc-tags"><span class="pc-tag">GLP-1</span><span class="pc-tag">WEEKLY</span></div>
-      </a>
-      <a href="tirzepatide.html" class="peptide-card" style="border-top-color:#ff6b35;">
-        <div class="pc-arrow">→</div>
-        <div class="pc-name">Tirzepatide</div>
-        <div class="pc-sub">Dual GLP-1 + GIP. Mounjaro equivalent. Superior to semaglutide.</div>
-        <div class="pc-tags"><span class="pc-tag">GLP-1</span><span class="pc-tag">DUAL</span></div>
-      </a>
-      <a href="melanotan2.html" class="peptide-card" style="border-top-color:#ff6b35;">
-        <div class="pc-arrow">→</div>
-        <div class="pc-name">Melanotan II</div>
-        <div class="pc-sub">MC1R-4R agonist. Tanning + libido. Loading + maintenance protocol.</div>
-        <div class="pc-tags"><span class="pc-tag">TANNING</span><span class="pc-tag">LIBIDO</span></div>
-      </a>
-    </div>
-  </div>
-
-  <!-- LONGEVITY -->
-  <div class="section-label" data-cat="longevity">Longevity &amp; Anti-Aging</div>
-  <div class="category-block" data-cat="longevity">
-    <div class="peptide-grid">
-      <a href="epitalon.html" class="peptide-card" style="border-top-color:#f59e0b;">
-        <div class="pc-arrow">→</div>
-        <div class="pc-name">Epitalon</div>
-        <div class="pc-sub">Telomerase activator. 10-day pulsed protocol. 28% mortality reduction.</div>
-        <div class="pc-tags"><span class="pc-tag">TELOMERE</span><span class="pc-tag">PULSED</span></div>
-      </a>
-      <a href="ss31.html" class="peptide-card" style="border-top-color:#f59e0b;">
-        <div class="pc-arrow">→</div>
-        <div class="pc-name">SS-31</div>
-        <div class="pc-sub">Mitochondrial membrane peptide. Cardiolipin binding. Elamipretide.</div>
-        <div class="pc-tags"><span class="pc-tag">MITO</span><span class="pc-tag">HEART</span></div>
-      </a>
-      <a href="motsc.html" class="peptide-card" style="border-top-color:#f59e0b;">
-        <div class="pc-arrow">→</div>
-        <div class="pc-name">MOTS-c</div>
-        <div class="pc-sub">Mitokine. AMPK activation. Centenarian plasma levels elevated.</div>
-        <div class="pc-tags"><span class="pc-tag">MITOKINE</span><span class="pc-tag">AMPK</span></div>
-      </a>
-      <a href="thymosin-alpha1.html" class="peptide-card" style="border-top-color:#f59e0b;">
-        <div class="pc-arrow">→</div>
-        <div class="pc-name">Thymosin Alpha-1</div>
-        <div class="pc-sub">Immune modulator. T-cell activation. Thymalfasin. FDA-adjacent.</div>
-        <div class="pc-tags"><span class="pc-tag">IMMUNE</span><span class="pc-tag">T-CELL</span></div>
-      </a>
-      <a href="fox04-dri.html" class="peptide-card" style="border-top-color:#f59e0b;">
-        <div class="pc-arrow">→</div>
-        <div class="pc-name">FOX04-DRI</div>
-        <div class="pc-sub">Senolytic peptide. Eliminates zombie cells. p53/FOX04 disruption.</div>
-        <div class="pc-tags"><span class="pc-tag">SENOLYTIC</span><span class="pc-tag">WEEKLY</span></div>
-      </a>
-      <a href="nad-plus.html" class="peptide-card" style="border-top-color:#f59e0b;">
-        <div class="pc-arrow">→</div>
-        <div class="pc-name">NAD+</div>
-        <div class="pc-sub">Sirtuin activator. Epigenetic age reversal. IV slow drip — critical.</div>
-        <div class="pc-tags"><span class="pc-tag">SIRTUIN</span><span class="pc-tag">SLOW IV</span></div>
-      </a>
-      <a href="cartalax.html" class="peptide-card" style="border-top-color:#f59e0b;">
-        <div class="pc-arrow">→</div>
-        <div class="pc-name">Cartalax</div>
-        <div class="pc-sub">Cartilage peptide bioregulator. Pulsed quarterly cycles.</div>
-        <div class="pc-tags"><span class="pc-tag">CARTILAGE</span><span class="pc-tag">PULSED</span></div>
-      </a>
-      <a href="glutathione.html" class="peptide-card" style="border-top-color:#f59e0b;">
-        <div class="pc-arrow">→</div>
-        <div class="pc-name">Glutathione</div>
-        <div class="pc-sub">Master antioxidant. Liver detox, immune support, anti-aging.</div>
-        <div class="pc-tags"><span class="pc-tag">ANTIOXIDANT</span><span class="pc-tag">LIVER</span></div>
-      </a>
-    </div>
-  </div>
-
-  <!-- LIBIDO / SEXUAL -->
-  <div class="section-label" data-cat="libido">Libido &amp; Sexual Health</div>
-  <div class="category-block" data-cat="libido">
-    <div class="peptide-grid">
-      <a href="pt141.html" class="peptide-card" style="border-top-color:#f472b6;">
-        <div class="pc-arrow">→</div>
-        <div class="pc-name">PT-141</div>
-        <div class="pc-sub">Bremelanotide. MC3R/MC4R. FDA-approved female sexual dysfunction.</div>
-        <div class="pc-tags"><span class="pc-tag">LIBIDO</span><span class="pc-tag">FDA</span></div>
-      </a>
-      <a href="melanotan2.html" class="peptide-card" style="border-top-color:#f472b6;">
-        <div class="pc-arrow">→</div>
-        <div class="pc-name">Melanotan II</div>
-        <div class="pc-sub">Dual tanning + on-demand libido. 0.5mg 90 min before.</div>
-        <div class="pc-tags"><span class="pc-tag">TANNING</span><span class="pc-tag">ON-DEMAND</span></div>
-      </a>
-    </div>
-  </div>
-
-  <!-- PRE-BUILT STACKS -->
-  <div class="section-label" data-cat="stacks">Pre-Built Stacks</div>
-  <div class="stacks-grid" data-cat="stacks">
-    <a href="wolverine.html" class="stack-card">
-      <div class="sc-name">🐺 Wolverine Stack</div>
-      <div class="sc-desc">Maximum healing and recovery. Structural repair + systemic tissue remodeling.</div>
-      <div class="sc-peptides">BPC-157 10mg + TB-500 10mg</div>
-    </a>
-    <a href="glow.html" class="stack-card" style="border-left-color:#f59e0b;">
-      <div class="sc-name">✨ GLOW Stack</div>
-      <div class="sc-desc">Skin, collagen, anti-aging, and systemic repair. Look and feel younger.</div>
-      <div class="sc-peptides">TB-500 10mg + BPC-157 10mg + GHK-Cu 50mg</div>
-    </a>
-    <a href="klow.html" class="stack-card" style="border-left-color:#00ff9d;">
-      <div class="sc-name">🛡 KLOW Stack</div>
-      <div class="sc-desc">Anti-inflammatory powerhouse. Gut, skin, immune, and full-body repair.</div>
-      <div class="sc-peptides">KPV + TB-500 + BPC-157 + GHK-Cu</div>
-    </a>
-  </div>
-
-</div>
-
-<!-- FOOTER -->
-<div class="footer">
-  <div class="footer-logo">APEX PROTOCOL</div>
-  <div class="footer-note">FOR RESEARCH PURPOSES ONLY — NOT MEDICAL ADVICE</div>
 </div>
 
 <script>
-function openMobileCat(cat) {
-  // Mark all elements with matching data-cat as visible
-  document.querySelectorAll('[data-cat]').forEach(el => {
-    el.classList.toggle('cat-visible', el.dataset.cat === cat);
-  });
-  document.body.classList.add('cat-open');
-  window.scrollTo(0, 0);
-}
-function closeMobileCat() {
-  document.querySelectorAll('[data-cat]').forEach(el => el.classList.remove('cat-visible'));
-  document.body.classList.remove('cat-open');
-  window.scrollTo(0, 0);
+function pickLane(lane) {
+  try { localStorage.setItem('apex_lane', lane); } catch(e) {}
+  // Link's default href takes the user there — we just record the choice.
 }
 </script>
+
+<script src="assets/apex-social-proof.js"></script>
 </body>
 </html>

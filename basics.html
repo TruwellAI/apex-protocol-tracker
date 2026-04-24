@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Peptide Basics — Read This First · Apex</title>
+<!-- apex-seo-injected -->
+<meta name="description" content="Peptide basics — reconstitution, BAC water, shelf life, storage, injection technique. Free research primer for new users.">
+<link rel="canonical" href="https://apexdosing.com/basics.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Peptide Basics — Read This First · Apex">
+<meta property="og:description" content="Peptide basics — reconstitution, BAC water, shelf life, storage, injection technique. Free research primer for new users.">
+<meta property="og:url" content="https://apexdosing.com/basics.html">
+<meta property="og:site_name" content="Apex Protocol">
+<meta property="og:image" content="https://apexdosing.com/assets/icon-1024.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Peptide Basics — Read This First · Apex">
+<meta name="twitter:description" content="Peptide basics — reconstitution, BAC water, shelf life, storage, injection technique. Free research primer for new users.">
+<meta name="twitter:image" content="https://apexdosing.com/assets/icon-1024.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "MedicalWebPage",
+  "name": "Peptide Basics — Read This First · Apex",
+  "description": "Peptide basics — reconstitution, BAC water, shelf life, storage, injection technique. Free research primer for new users.",
+  "url": "https://apexdosing.com/basics.html",
+  "audience": {
+    "@type": "MedicalAudience",
+    "audienceType": "researcher"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Apex Protocol",
+    "url": "https://apexdosing.com"
+  },
+  "inLanguage": "en-US",
+  "isFamilyFriendly": false
+}
+</script>
+<!-- /apex-seo-injected -->
+
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#080c10;--panel:#0d1318;--border:#1a2d3a;--accent:#00d4ff;--accent2:#00ff9d;--accent3:#ff6b35;--text:#c8dde8;--muted:#4a6272;--white:#eaf4f8;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-weight:300;min-height:100vh;padding:32px 20px;position:relative;overflow-x:hidden;}
+  body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse 60% 40% at 80% 10%,rgba(0,212,255,0.06) 0%,transparent 60%),radial-gradient(ellipse 40% 50% at 10% 80%,rgba(255,107,53,0.03) 0%,transparent 60%);pointer-events:none;z-index:0;}
+  .container{max-width:820px;margin:0 auto;position:relative;z-index:1;}
+  .header{border-left:3px solid var(--accent);padding-left:20px;margin-bottom:40px;animation:fadeSlide 0.6s ease both;}
+  .header .label{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:4px;color:var(--accent);text-transform:uppercase;margin-bottom:6px;}
+  .header h1{font-family:'Rajdhani',sans-serif;font-size:clamp(36px,8vw,60px);font-weight:700;color:var(--white);line-height:1;letter-spacing:1px;}
+  .header .subtitle{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted);margin-top:10px;letter-spacing:2px;}
+  .section{margin-bottom:22px;background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--accent);padding:24px 26px;animation:fadeSlide 0.6s ease both;}
+  .section-num{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;}
+  .section h2{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:600;letter-spacing:1px;color:var(--white);margin-bottom:16px;text-transform:uppercase;}
+  .section p{font-size:15px;line-height:1.75;color:var(--text);margin-bottom:12px;}
+  .section p:last-child{margin-bottom:0;}
+  .shelf-table{width:100%;border-collapse:collapse;margin-top:6px;}
+  .shelf-table th{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);background:rgba(0,212,255,0.04);}
+  .shelf-table td{font-size:13px;padding:12px 12px;border-bottom:1px solid rgba(26,45,58,0.6);color:var(--text);line-height:1.55;vertical-align:top;}
+  .shelf-class{font-weight:500;color:var(--white);font-family:'Rajdhani',sans-serif;font-size:14px;}
+  .shelf-examples{color:var(--muted);font-size:11px;font-family:'Share Tech Mono',monospace;margin-top:3px;display:block;}
+  .shelf-days{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--accent2);line-height:1;}
+  .shelf-days-suffix{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;}
+  .shelf-reason{font-size:12px;color:var(--text);margin-top:4px;display:block;line-height:1.5;}
+  .kill-list{list-style:none;padding:0;}
+  .kill-list li{padding:14px 16px;margin-bottom:10px;background:rgba(255,107,53,0.05);border-left:3px solid var(--accent3);display:flex;gap:14px;align-items:flex-start;}
+  .kill-icon{font-size:22px;line-height:1.1;flex-shrink:0;}
+  .kill-text{flex:1;}
+  .kill-title{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--white);line-height:1.25;margin-bottom:4px;}
+  .kill-body{font-size:13px;color:var(--text);line-height:1.55;}
+  .myth-list{list-style:none;padding:0;}
+  .myth-list li{padding:14px 16px;margin-bottom:10px;background:rgba(0,255,157,0.04);border-left:3px solid var(--accent2);display:flex;gap:14px;align-items:flex-start;}
+  .myth-icon{font-size:22px;line-height:1.1;flex-shrink:0;}
+  .pen-callout{background:linear-gradient(135deg,rgba(0,212,255,0.1),rgba(0,212,255,0.02));border:1px solid rgba(0,212,255,0.3);padding:18px 20px;border-radius:4px;margin-top:14px;}
+  .pen-callout .pen-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);margin-bottom:6px;}
+  .pen-callout .pen-title{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--white);margin-bottom:6px;}
+  .pen-callout p{font-size:14px;color:var(--text);line-height:1.65;}
+  .rule-box{background:rgba(255,107,53,0.08);border:1px solid rgba(255,107,53,0.3);padding:14px 16px;margin-top:14px;display:flex;gap:12px;align-items:flex-start;}
+  .rule-box .rule-icon{font-size:22px;line-height:1.1;flex-shrink:0;}
+  .rule-box .rule-text{font-size:13px;color:var(--text);line-height:1.6;}
+  .rule-box strong{color:var(--accent3);}
+  .jump-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;}
+  .jump-btn{display:flex;align-items:center;justify-content:center;gap:10px;padding:16px 18px;background:transparent;color:var(--text);text-decoration:none;border:1px solid var(--border);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;letter-spacing:.05em;text-transform:uppercase;transition:all .2s;-webkit-tap-highlight-color:transparent;}
+  .jump-btn:hover{background:rgba(0,212,255,0.06);border-color:var(--accent);color:var(--accent);}
+  .jump-btn.primary{background:linear-gradient(135deg,var(--accent2),#0d9488);color:#060a0d;border-color:var(--accent2);}
+  .jump-btn.primary:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,255,157,.25);}
+  @keyframes fadeSlide{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+  @media(max-width:540px){.jump-grid{grid-template-columns:1fr;}.shelf-table td{padding:10px 8px;font-size:12px;}.shelf-table th{padding:8px 8px;}}
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="index.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;color:var(--muted);text-decoration:none;text-transform:uppercase;margin-bottom:28px;padding:8px 14px;border:1px solid var(--border);transition:all .2s;" onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">← Back to Encyclopedia</a>
+
+  <div class="header">
+    <div class="label">Read This First</div>
+    <h1>Peptide Basics</h1>
+    <div class="subtitle">THE 5-MIN FOUNDATION EVERY USER NEEDS BEFORE RUNNING A PROTOCOL</div>
+  </div>
+
+  <div class="section" style="animation-delay:0.05s;border-top-color:var(--accent);">
+    <div class="section-num">01 — The Quick Why</div>
+    <h2>Before you start</h2>
+    <p>Peptides are short chains of amino acids — the body's signaling molecules. Ones like BPC-157, Semaglutide, and Ipamorelin are <strong style="color:var(--white);">remarkably effective when stored and handled correctly — and remarkably inert when they're not</strong>.</p>
+    <p>The top reasons a peptide "isn't working" have almost nothing to do with the peptide itself. They have to do with <strong style="color:var(--accent3);">how you reconstituted it, how you stored it, and how long ago you mixed it</strong>. This page is the 5-minute primer so you don't waste your time or your money.</p>
+  </div>
+
+  <div class="section" style="animation-delay:0.1s;border-top-color:var(--accent2);">
+    <div class="section-num">02 — What "reconstitution" means</div>
+    <h2>From powder to injectable</h2>
+    <p>Peptides ship as a <strong style="color:var(--white);">freeze-dried (lyophilized) powder</strong> inside a sealed glass vial. That form is stable at room temperature for months because water is what accelerates degradation.</p>
+    <p>Before you can inject, you have to add a solvent — usually <strong style="color:var(--white);">bacteriostatic water</strong> (sterile water + 0.9% benzyl alcohol, which prevents bacterial growth). For some peptides like AOD-9604, you use <strong style="color:var(--white);">dilute acetic acid</strong> instead (see your peptide page for specifics). Once the powder dissolves, the peptide is in solution and ready to draw into a syringe or cartridge.</p>
+    <div class="rule-box">
+      <div class="rule-icon">⚠️</div>
+      <div class="rule-text"><strong>The moment water touches the powder, the clock starts ticking.</strong> From that point on, the peptide is chemically degrading every day — slowly in the fridge, quickly at room temperature. How long it stays "good" depends on the peptide class.</div>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:0.12s;border-top-color:var(--accent3);">
+    <div class="section-num">02.5 — SubQ vs IM</div>
+    <h2>"Subcutaneous" vs "Intramuscular" — for peptides, it's basically the same</h2>
+    <p>This trips up a lot of beginners. You'll see protocols say "inject SubQ" or "inject IM" and wonder which one is right and whether the difference matters.</p>
+    <p><strong style="color:var(--accent2);">For peptides, there is essentially no practical difference.</strong> Peptides are water-based molecules that absorb into the bloodstream quickly from either layer. You get the same mg into your body either way. The pharmacokinetic curves look nearly identical for SubQ vs IM for the vast majority of peptides.</p>
+    <table class="shelf-table" style="margin:14px 0;">
+      <thead>
+        <tr>
+          <th>Route</th>
+          <th>What it means</th>
+          <th>Best for</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong style="color:var(--accent2);">SubQ</strong><br><span style="font-size:11px;color:var(--muted);">Subcutaneous</span></td>
+          <td>Shallow — into the fat layer under the skin (belly, love handles, thigh). Small 30g x ½" insulin syringe.</td>
+          <td><strong>95% of peptides.</strong> Easier, less pain, smaller needle, same efficacy.</td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--accent3);">IM</strong><br><span style="font-size:11px;color:var(--muted);">Intramuscular</span></td>
+          <td>Deeper — into muscle tissue (glute, quad, delt). Larger 22–23g x 1–1.5" needle.</td>
+          <td><strong>Oil-based compounds</strong> (testosterone, long-acting esters) where the muscle serves as a slow-release depot.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rule-box" style="background:rgba(0,255,157,.06);border-color:rgba(0,255,157,.2);">
+      <div class="rule-icon">✅</div>
+      <div class="rule-text"><strong>Bottom line for peptides:</strong> use SubQ by default. Less pain, thinner needles, same results. The only time you'd pick IM is for oil-based TRT (testosterone cypionate, etc.) — and even that can be done SubQ now with clinical equivalence (Kovac 2018, Pastuszak 2018).</div>
+    </div>
+    <div class="rule-box">
+      <div class="rule-icon">💡</div>
+      <div class="rule-text"><strong>What about pen injections?</strong> The Apex V3 pen uses a short fine-gauge needle (31g × ¼–⅜") that lands SubQ by default. You don't have to think about SubQ vs IM — the pen handles it.</div>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:0.15s;border-top-color:var(--accent);">
+    <div class="section-num">03 — Shelf life</div>
+    <h2>How long is a reconstituted vial good for?</h2>
+    <p>Once reconstituted, every peptide has a window. These numbers are based on compounding pharmacy BUDs (beyond-use dates), manufacturer stability data, and published stability studies — whichever is shorter.</p>
+    <table class="shelf-table">
+      <thead>
+        <tr>
+          <th>Peptide Class</th>
+          <th style="text-align:right;">Fridge Life (36–46°F / 2–8°C)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <div class="shelf-class">GH Secretagogues</div>
+            <span class="shelf-examples">Ipamorelin, CJC-1295 No DAC, Sermorelin, Tesamorelin, Hexarelin</span>
+            <span class="shelf-reason">Extremely sensitive to hydrolysis + oxidation.</span>
+          </td>
+          <td style="text-align:right;white-space:nowrap;">
+            <span class="shelf-days">21</span>
+            <span class="shelf-days-suffix"> DAYS</span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div class="shelf-class">GLP-1 Agonists</div>
+            <span class="shelf-examples">Semaglutide, Tirzepatide, Retatrutide, Mazdutide</span>
+            <span class="shelf-reason">Most stable injectables — compounding pharmacies typically label 28 days.</span>
+          </td>
+          <td style="text-align:right;white-space:nowrap;">
+            <span class="shelf-days">30</span>
+            <span class="shelf-days-suffix"> DAYS</span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div class="shelf-class">Healing Peptides</div>
+            <span class="shelf-examples">BPC-157, TB-500, KPV, GHK-Cu</span>
+            <span class="shelf-reason">Relatively robust — potency drops off after 4 weeks.</span>
+          </td>
+          <td style="text-align:right;white-space:nowrap;">
+            <span class="shelf-days">30</span>
+            <span class="shelf-days-suffix"> DAYS</span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div class="shelf-class">Hydrophobic Peptides</div>
+            <span class="shelf-examples">AOD-9604, MOTS-c, SS-31</span>
+            <span class="shelf-reason">Hydrophobic residues accelerate aggregation/degradation.</span>
+          </td>
+          <td style="text-align:right;white-space:nowrap;">
+            <span class="shelf-days">21</span>
+            <span class="shelf-days-suffix"> DAYS</span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div class="shelf-class">Khavinson / Larger Peptides</div>
+            <span class="shelf-examples">Thymosin Alpha-1, Epitalon, Cartalax</span>
+            <span class="shelf-reason">Moderately stable — 28 days is the conservative target.</span>
+          </td>
+          <td style="text-align:right;white-space:nowrap;">
+            <span class="shelf-days">28</span>
+            <span class="shelf-days-suffix"> DAYS</span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div class="shelf-class">Libido / Melanocortin</div>
+            <span class="shelf-examples">PT-141, Melanotan I, Melanotan II</span>
+            <span class="shelf-reason">α-MSH analogs — standard 28-day window.</span>
+          </td>
+          <td style="text-align:right;white-space:nowrap;">
+            <span class="shelf-days">28</span>
+            <span class="shelf-days-suffix"> DAYS</span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div class="shelf-class">Nootropic / CNS</div>
+            <span class="shelf-examples">Semax, Selank, Dihexa, PE-22-28, DSIP</span>
+            <span class="shelf-reason">Short peptides — hydrolysis-sensitive.</span>
+          </td>
+          <td style="text-align:right;white-space:nowrap;">
+            <span class="shelf-days">21</span>
+            <span class="shelf-days-suffix"> DAYS</span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div class="shelf-class">Testosterone (Oil-Based)</div>
+            <span class="shelf-examples">Test Cypionate, Test Enanthate, Test Propionate, Test Cream</span>
+            <span class="shelf-reason">Oil phase protects from hydrolysis — stable for years.</span>
+          </td>
+          <td style="text-align:right;white-space:nowrap;">
+            <span class="shelf-days">2</span>
+            <span class="shelf-days-suffix"> YEARS</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="rule-box">
+      <div class="rule-icon">📌</div>
+      <div class="rule-text"><strong>Rule of thumb:</strong> If your vendor doesn't specify, assume <strong>30 days max</strong> in bacteriostatic water. Past that window, potency is unreliable — you're guessing. Toss it and reconstitute a new vial.</div>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:0.2s;border-top-color:var(--accent3);">
+    <div class="section-num">04 — What kills a peptide</div>
+    <h2>The 6 ways peptides degrade</h2>
+    <ul class="kill-list">
+      <li>
+        <div class="kill-icon">💧</div>
+        <div class="kill-text">
+          <div class="kill-title">Hydrolysis</div>
+          <div class="kill-body">Water molecules literally break peptide bonds. This happens constantly at any temp — faster at room temp, slower in the fridge. Why we refrigerate.</div>
+        </div>
+      </li>
+      <li>
+        <div class="kill-icon">💨</div>
+        <div class="kill-text">
+          <div class="kill-title">Oxidation</div>
+          <div class="kill-body">Oxygen attacks sulfur-containing residues (cysteine, methionine), breaks disulfide bonds, and misfolds the peptide. Every puncture of the vial septum introduces air.</div>
+        </div>
+      </li>
+      <li>
+        <div class="kill-icon">🧬</div>
+        <div class="kill-text">
+          <div class="kill-title">Aggregation</div>
+          <div class="kill-body">Peptide molecules clump together (the AOD-9604 gelling problem). Once aggregated, biological activity drops fast. Hydrophobic peptides are most prone.</div>
+        </div>
+      </li>
+      <li>
+        <div class="kill-icon">🦠</div>
+        <div class="kill-text">
+          <div class="kill-title">Bacterial / fungal contamination</div>
+          <div class="kill-body">If bacteriostatic water fails (past 28 days opened), or if air gets in during multiple punctures, microbial growth is possible. Preloading reduces punctures dramatically.</div>
+        </div>
+      </li>
+      <li>
+        <div class="kill-icon">☀️</div>
+        <div class="kill-text">
+          <div class="kill-title">Light exposure</div>
+          <div class="kill-body">UV light breaks aromatic bonds in tyrosine, tryptophan, and phenylalanine. Store vials in their original box or wrapped in foil.</div>
+        </div>
+      </li>
+      <li>
+        <div class="kill-icon">🌡️</div>
+        <div class="kill-text">
+          <div class="kill-title">Temperature cycling</div>
+          <div class="kill-body">Every trip out of the fridge accelerates degradation. Get in, get your dose, get it back in. Don't leave peptides on the counter "for later."</div>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="section" style="animation-delay:0.25s;border-top-color:var(--accent2);">
+    <div class="section-num">05 — What doesn't kill them</div>
+    <h2>Myth-busters</h2>
+    <ul class="myth-list">
+      <li>
+        <div class="myth-icon">✅</div>
+        <div class="kill-text">
+          <div class="kill-title">Brief room-temp exposure during injection</div>
+          <div class="kill-body">10 minutes out of the fridge while you draw and inject is fine. Don't stress. Just don't leave it out for hours.</div>
+        </div>
+      </li>
+      <li>
+        <div class="myth-icon">✅</div>
+        <div class="kill-text">
+          <div class="kill-title">Cold shipping without dry ice</div>
+          <div class="kill-body">Lyophilized peptide powder is stable at room temp for 1–2 weeks. Shipping delays aren't destroying your peptide. The issue is mostly the carrier not the product.</div>
+        </div>
+      </li>
+      <li>
+        <div class="myth-icon">✅</div>
+        <div class="kill-text">
+          <div class="kill-title">Standard refrigerator (NOT freezer)</div>
+          <div class="kill-body">Fridge is correct. Freezer is NOT — freezing a reconstituted peptide forms ice crystals that physically shear the peptide and destroy activity. If someone tells you to freeze it, they're wrong.</div>
+        </div>
+      </li>
+      <li>
+        <div class="myth-icon">✅</div>
+        <div class="kill-text">
+          <div class="kill-title">Gentle swirling</div>
+          <div class="kill-body">Swirling the vial is fine. <strong>Shaking</strong> is what damages the peptide — mechanical agitation denatures protein structure. Always swirl, never shake.</div>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="section" style="animation-delay:0.3s;border-top-color:var(--accent);">
+    <div class="section-num">06 — Storage rules (the short list)</div>
+    <h2>How to actually store it</h2>
+    <p style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--accent);letter-spacing:1px;margin-bottom:14px;">FIVE RULES, IN ORDER OF IMPORTANCE:</p>
+    <ol style="padding-left:22px;margin-bottom:4px;">
+      <li style="margin-bottom:12px;font-size:14px;line-height:1.65;color:var(--text);"><strong style="color:var(--white);">Refrigerator, 36–46°F (36–46°F / 2–8°C).</strong> Not freezer. Not counter.</li>
+      <li style="margin-bottom:12px;font-size:14px;line-height:1.65;color:var(--text);"><strong style="color:var(--white);">Protected from light.</strong> Leave in the original box, or wrap in foil.</li>
+      <li style="margin-bottom:12px;font-size:14px;line-height:1.65;color:var(--text);"><strong style="color:var(--white);">Minimize punctures.</strong> Every time you pierce the septum, you introduce air and pressure changes. Preloading once means one puncture, not thirty.</li>
+      <li style="margin-bottom:12px;font-size:14px;line-height:1.65;color:var(--text);"><strong style="color:var(--white);">Write the reconstitution date on the vial.</strong> Use a Sharpie. You'll thank yourself in 3 weeks.</li>
+      <li style="font-size:14px;line-height:1.65;color:var(--text);"><strong style="color:var(--white);">Toss at expiration.</strong> Past the shelf window, potency is a gamble. Don't cheap out on a $40 vial and waste a cycle.</li>
+    </ol>
+  </div>
+
+  <div class="section" style="animation-delay:0.32s;border-top-color:var(--accent3);">
+    <div class="section-num">06.5 — Needles + reuse</div>
+    <h2>Single-use is best. Here's the honest truth about reuse.</h2>
+    <p><strong style="color:var(--white);">Best practice: one needle per injection.</strong> Insulin syringes are under $0.30 in bulk. Sterile is always safest. If you can afford single-use, do single-use.</p>
+    <p>That said — a lot of peptide users reuse their own needles 2–3 times. If you're going to do it, follow these rules so you don't trade saved money for a preventable infection:</p>
+    <div class="rule-box" style="background:rgba(0,255,157,.06);border-color:rgba(0,255,157,.2);">
+      <div class="rule-icon">✅</div>
+      <div class="rule-text"><strong>If you reuse:</strong>
+        <ol style="margin:8px 0 0 18px;padding:0;">
+          <li style="margin-bottom:4px;">NEVER share a needle. Not with a partner, not with a friend. Bloodborne pathogens (HIV, Hep B, Hep C) only need trace amounts to transmit.</li>
+          <li style="margin-bottom:4px;">Wipe the needle with a fresh alcohol swab <em>after</em> use before recapping.</li>
+          <li style="margin-bottom:4px;">Replace immediately if the tip feels dull, catches on your skin, or the plunger sticks.</li>
+          <li style="margin-bottom:4px;">Never reuse if the needle is visibly bent.</li>
+          <li>Store the capped needle in a clean container between uses — not rolling around in a drawer.</li>
+        </ol>
+      </div>
+    </div>
+    <div class="rule-box" style="background:rgba(255,107,53,.06);border-color:rgba(255,107,53,.2);">
+      <div class="rule-icon">⚠️</div>
+      <div class="rule-text"><strong>When to absolutely NOT reuse:</strong> When drawing from a new vial (risk of contaminating the vial with skin flora from your previous injection site) · when the needle has already been used 3+ times · when you're sick or have any open skin infection at the injection site.</div>
+    </div>
+    <p style="font-size:13px;color:var(--muted);font-style:italic;margin-top:14px;">The Apex V3 pen uses short 31g pen needles — you can realistically reuse the same pen needle across the cartridge's lifespan (~14–30 days) because only the needle tip penetrates, not the cartridge septum. But replace the pen needle at the start of each cycle.</p>
+  </div>
+
+  <div class="section" style="animation-delay:0.35s;border-top-color:var(--accent);">
+    <div class="section-num">07 — Why the Apex pen changes the game</div>
+    <h2>Preload once, done</h2>
+    <p>The #3 storage rule — <em>minimize punctures</em> — is the hidden reason many peptides "stop working." Every time you pull a syringe, you:</p>
+    <ul style="padding-left:22px;margin-bottom:14px;">
+      <li style="font-size:14px;line-height:1.7;color:var(--text);">Introduce air (oxidation)</li>
+      <li style="font-size:14px;line-height:1.7;color:var(--text);">Create pressure/suction turbulence (shakes the peptide)</li>
+      <li style="font-size:14px;line-height:1.7;color:var(--text);">Risk "coring" (a rubber fragment from the septum falls into the solution)</li>
+      <li style="font-size:14px;line-height:1.7;color:var(--text);">Re-trigger aggregation for hydrophobic peptides</li>
+    </ul>
+    <div class="pen-callout">
+      <div class="pen-label">💡 THE PEN SOLUTION</div>
+      <div class="pen-title">Reconstitute once. Preload the cartridge once. Dose from the pen without disturbing the solution.</div>
+      <p>With an Apex V3 pen, every future dose is drawn from a sealed cartridge — zero additional air exposure, zero shaking, zero re-punctures. It's the protocol that actually preserves what the peptide was when you mixed it. For hydrophobic peptides especially (AOD-9604, MOTS-c, SS-31), this isn't optional. It's the difference between a working protocol and a gelled vial.</p>
+      <a href="https://apexdosing.com" target="_blank" style="display:inline-block;margin-top:14px;padding:12px 20px;background:linear-gradient(135deg,#00d4ff,#0891b2);color:#060a0d;text-decoration:none;border-radius:4px;font-family:'Rajdhani',sans-serif;font-weight:800;font-size:13px;letter-spacing:.1em;text-transform:uppercase;transition:all .2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 16px rgba(0,212,255,.4)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='none'">💉 Get the Apex V3 Pen + Cartridges →</a>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:0.4s;border-top-color:var(--accent2);">
+    <div class="section-num">08 — Ready to go deeper?</div>
+    <h2>Jump in</h2>
+    <p>Now you know what most protocols gloss over. Pick your next step:</p>
+    <div class="jump-grid">
+      <a href="index.html" class="jump-btn primary">📖 Browse the Encyclopedia</a>
+      <a href="protocol-tracker.html" class="jump-btn">🎯 Go to My Tracker</a>
+    </div>
+  </div>
+
+  <div style="margin-top:30px;padding:14px 18px;background:rgba(255,107,53,0.05);border:1px solid rgba(255,107,53,0.2);font-size:12px;line-height:1.65;color:var(--muted);font-style:italic;">
+    ⚠ RESEARCH USE ONLY. This page is for research and educational purposes. Not medical advice. Peptides (except FDA-approved forms like certain GLP-1s) are not approved by the FDA for human use. Consult a licensed healthcare provider before beginning any protocol.
+  </div>
+</div>
+
+<!-- PERSISTENT WIZARD TRIGGER -->
+<a href="wizard.html" id="apex-fab" style="position:fixed;bottom:20px;right:20px;background:#00ff9d;color:#080c10;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;padding:12px 18px;text-decoration:none;z-index:9999;box-shadow:0 6px 24px rgba(0,255,157,.35);display:flex;align-items:center;gap:8px;border-radius:2px;">🧪 Walk me through</a>
+<style>@media(max-width:640px){#apex-fab{bottom:20px!important;right:16px!important;font-size:11px!important;padding:10px 14px!important;}}</style>
+
+<script src="assets/apex-nav-pill.js"></script>
+<script src="assets/apex-editorial.js"></script>
+<script src="assets/apex-social-proof.js"></script>
+</body>
+</html>

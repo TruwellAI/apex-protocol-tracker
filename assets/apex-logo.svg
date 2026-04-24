@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 90" width="380" height="90">
+  <defs>
+    <radialGradient id="iconGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00D4FF" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#00D4FF" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="peakGlow" cx="50%" cy="0%" r="80%">
+      <stop offset="0%" stop-color="#00D4FF" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#00D4FF" stop-opacity="0.3"/>
+    </radialGradient>
+    <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <linearGradient id="peakFill" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#00D4FF" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#00D4FF" stop-opacity="0.04"/>
+    </linearGradient>
+    <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00C48C" stop-opacity="0"/>
+      <stop offset="30%" stop-color="#00C48C" stop-opacity="1"/>
+      <stop offset="70%" stop-color="#00C48C" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#00C48C" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- ── ICON MARK ── -->
+  <!-- Outer glow circle -->
+  <circle cx="45" cy="45" r="42" fill="url(#iconGlow)"/>
+
+  <!-- Hexagon outline — scientific/molecular -->
+  <polygon
+    points="45,6 74,22.5 74,55.5 45,72 16,55.5 16,22.5"
+    fill="#0B1D3A"
+    stroke="#00D4FF"
+    stroke-width="1.2"
+    stroke-opacity="0.3"/>
+
+  <!-- Inner hex subtle fill line -->
+  <polygon
+    points="45,11 70,25.5 70,52.5 45,67 20,52.5 20,25.5"
+    fill="none"
+    stroke="#00D4FF"
+    stroke-width="0.4"
+    stroke-opacity="0.12"/>
+
+  <!-- Peak shape — the APEX mark -->
+  <path
+    d="M45,17 L65,60 H25 Z"
+    fill="url(#peakFill)"
+    stroke="none"/>
+  <path
+    d="M45,17 L65,60 H25 Z"
+    fill="none"
+    stroke="#00D4FF"
+    stroke-width="1.8"
+    stroke-linejoin="round"
+    filter="url(#softGlow)"/>
+
+  <!-- Precision crossbar — green health indicator line -->
+  <line x1="32" y1="50" x2="58" y2="50" stroke="url(#lineGrad)" stroke-width="1.4"/>
+  <circle cx="32" cy="50" r="1.8" fill="#00C48C"/>
+  <circle cx="58" cy="50" r="1.8" fill="#00C48C"/>
+
+  <!-- Peak tip — glowing dot -->
+  <circle cx="45" cy="17" r="3" fill="#00D4FF" filter="url(#softGlow)"/>
+  <circle cx="45" cy="17" r="1.5" fill="#ffffff"/>
+
+  <!-- ── WORDMARK ── -->
+  <!-- APEX — bold, wide tracking, near white -->
+  <text
+    x="96" y="50"
+    font-family="'Rajdhani', 'Arial Narrow', Arial, sans-serif"
+    font-size="34"
+    font-weight="700"
+    letter-spacing="8"
+    fill="#EAF4F8">APEX</text>
+
+  <!-- PROTOCOL — monospace, cyan, smaller -->
+  <text
+    x="99" y="68"
+    font-family="'Share Tech Mono', 'Courier New', monospace"
+    font-size="11"
+    letter-spacing="9"
+    fill="#00D4FF"
+    opacity="0.72">PROTOCOL</text>
+
+  <!-- Thin separator line between icon and text -->
+  <line x1="85" y1="20" x2="85" y2="72" stroke="#00D4FF" stroke-width="0.6" stroke-opacity="0.2"/>
+</svg>

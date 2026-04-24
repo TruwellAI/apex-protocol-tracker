@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "apex-tracker",
-      "runtimeExecutable": "npx",
-      "runtimeArgs": ["serve", "-p", "8741", "."],
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8741"],
       "port": 8741
     }
   ]

@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mitochondrial Reset — Protocol Reference</title>
+<!-- apex-seo-injected -->
+<meta name="description" content="Mitochondrial reset protocol — MOTS-c + NAD+ + SS-31. Energy, metabolic resilience, dosing, cycle planning.">
+<link rel="canonical" href="https://apexdosing.com/mito-reset.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mitochondrial Reset — Protocol Reference">
+<meta property="og:description" content="Mitochondrial reset protocol — MOTS-c + NAD+ + SS-31. Energy, metabolic resilience, dosing, cycle planning.">
+<meta property="og:url" content="https://apexdosing.com/mito-reset.html">
+<meta property="og:site_name" content="Apex Protocol">
+<meta property="og:image" content="https://apexdosing.com/assets/icon-1024.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Mitochondrial Reset — Protocol Reference">
+<meta name="twitter:description" content="Mitochondrial reset protocol — MOTS-c + NAD+ + SS-31. Energy, metabolic resilience, dosing, cycle planning.">
+<meta name="twitter:image" content="https://apexdosing.com/assets/icon-1024.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "MedicalWebPage",
+  "name": "Mitochondrial Reset — Protocol Reference",
+  "description": "Mitochondrial reset protocol — MOTS-c + NAD+ + SS-31. Energy, metabolic resilience, dosing, cycle planning.",
+  "url": "https://apexdosing.com/mito-reset.html",
+  "audience": {
+    "@type": "MedicalAudience",
+    "audienceType": "researcher"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Apex Protocol",
+    "url": "https://apexdosing.com"
+  },
+  "inLanguage": "en-US",
+  "isFamilyFriendly": false
+}
+</script>
+<!-- /apex-seo-injected -->
+
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#080c10;--panel:#0d1318;--border:#1a2d3a;--accent:#00d4ff;--accent2:#00ff9d;--accent3:#ff6b35;--text:#c8dde8;--muted:#4a6272;--white:#eaf4f8;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-weight:300;min-height:100vh;padding:32px 20px;position:relative;overflow-x:hidden;}
+  body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:
+    radial-gradient(ellipse 60% 50% at 50% 0%,rgba(0,212,255,0.09) 0%,transparent 60%),
+    radial-gradient(ellipse 40% 30% at 0% 80%,rgba(0,255,157,0.05) 0%,transparent 60%),
+    radial-gradient(ellipse 30% 40% at 100% 50%,rgba(0,212,255,0.03) 0%,transparent 60%);
+    pointer-events:none;z-index:0;}
+  .container{max-width:720px;margin:0 auto;position:relative;z-index:1;}
+
+  /* HEADER */
+  .header{padding-left:20px;border-left:3px solid var(--accent);margin-bottom:36px;animation:fadeSlide 0.5s ease both;}
+  .header .label{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:4px;color:var(--accent);text-transform:uppercase;margin-bottom:6px;}
+  .header h1{font-family:'Rajdhani',sans-serif;font-size:clamp(36px,9vw,68px);font-weight:700;color:var(--white);line-height:1;letter-spacing:2px;}
+  .header .tagline{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted);margin-top:8px;letter-spacing:2px;}
+  .header .sub{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent);margin-top:6px;letter-spacing:2px;opacity:0.8;}
+
+  /* TARGET BAND */
+  .target-band{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:28px;animation:fadeSlide 0.5s ease both;animation-delay:0.1s;}
+  .target-cell{background:var(--panel);padding:16px 12px;text-align:center;}
+  .target-cell.active{background:rgba(0,212,255,0.06);}
+  .target-icon{font-size:22px;margin-bottom:6px;}
+  .target-name{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:var(--white);margin-bottom:3px;}
+  .target-pep{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:1px;}
+  .target-mech{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.4;}
+
+  /* SECTION */
+  .section{margin-bottom:24px;background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--accent);padding:22px 24px;animation:fadeSlide 0.5s ease both;}
+  .section.green{border-top-color:var(--accent2);}
+  .section.orange{border-top-color:var(--accent3);}
+  .section-num{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:4px;}
+  .section h2{font-family:'Rajdhani',sans-serif;font-size:21px;font-weight:600;letter-spacing:1px;color:var(--white);margin-bottom:14px;text-transform:uppercase;}
+  .section p{font-size:14px;line-height:1.7;color:var(--text);margin-bottom:10px;}
+  .section p:last-child{margin-bottom:0;}
+
+  /* PEPTIDE DEEP DIVES */
+  .peptide-block{border:1px solid var(--border);margin-bottom:14px;overflow:hidden;}
+  .pb-header{padding:14px 16px;display:flex;align-items:center;gap:14px;}
+  .pb-header.ss{background:rgba(0,212,255,0.07);}
+  .pb-header.mots{background:rgba(0,255,157,0.07);}
+  .pb-header.amino{background:rgba(255,107,53,0.07);}
+  .pb-name{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);}
+  .pb-sub{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;margin-top:2px;}
+  .pb-sub.ss{color:var(--accent);}
+  .pb-sub.mots{color:var(--accent2);}
+  .pb-sub.amino{color:var(--accent3);}
+  .pb-body{padding:14px 16px;display:grid;grid-template-columns:1fr 1fr;gap:14px;background:rgba(0,0,0,0.1);}
+  .pb-mech h4{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:6px;}
+  .pb-mech p{font-size:12px;color:var(--text);line-height:1.6;margin:0;}
+  .pb-protocol h4{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:6px;}
+  .pb-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid rgba(26,45,58,0.4);}
+  .pb-row:last-child{border-bottom:none;}
+  .pb-row-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;}
+  .pb-row-val{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--white);font-weight:600;}
+
+  /* THREE-TARGET VISUAL */
+  .three-target{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border:1px solid var(--border);margin-bottom:16px;}
+  .tt-cell{padding:16px 12px;text-align:center;border-right:1px solid var(--border);}
+  .tt-cell:last-child{border-right:none;}
+  .tt-layer{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);margin-bottom:6px;}
+  .tt-name{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--white);margin-bottom:4px;}
+  .tt-target{font-family:'Share Tech Mono',monospace;font-size:10px;margin-bottom:4px;}
+  .tt-target.ss{color:var(--accent);}
+  .tt-target.mots{color:var(--accent2);}
+  .tt-target.amino{color:var(--accent3);}
+  .tt-desc{font-size:11px;color:var(--text);line-height:1.5;}
+
+  /* SYNERGY */
+  .synergy-row{display:flex;flex-direction:column;gap:8px;}
+  .synergy-item{display:grid;grid-template-columns:160px 1fr;gap:12px;align-items:start;padding:10px 12px;background:rgba(0,212,255,0.03);border:1px solid var(--border);}
+  .synergy-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:1px;padding-top:2px;line-height:1.4;}
+  .synergy-text{font-size:12px;color:var(--text);line-height:1.6;}
+
+  /* TIMELINE */
+  .week-timeline{display:flex;gap:0;border:1px solid var(--border);margin-bottom:14px;overflow:hidden;}
+  .wt-phase{flex:1;padding:12px 10px;text-align:center;border-right:1px solid var(--border);}
+  .wt-phase:last-child{border-right:none;}
+  .wt-phase.load{background:rgba(0,212,255,0.07);}
+  .wt-phase.core{background:rgba(0,255,157,0.07);}
+  .wt-phase.taper{background:rgba(255,107,53,0.06);}
+  .wt-phase.off{background:rgba(0,0,0,0.2);}
+  .wt-weeks{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:4px;letter-spacing:1px;}
+  .wt-name{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:var(--white);}
+  .wt-desc{font-size:11px;color:var(--text);margin-top:3px;line-height:1.4;}
+
+  /* DOSE TABLE */
+  .dose-table{width:100%;border-collapse:collapse;}
+  .dose-table th{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);}
+  .dose-table td{font-size:13px;padding:9px 10px;border-bottom:1px solid rgba(26,45,58,0.6);color:var(--text);vertical-align:top;line-height:1.5;}
+  .dose-table tr:last-child td{border-bottom:none;}
+  .dose-table tr:hover td{background:rgba(0,212,255,0.02);}
+  .dv{font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--accent2);font-weight:bold;}
+
+  /* BIO TABLE */
+  .bio-category{margin-bottom:20px;}
+  .bio-cat-title{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--accent3);text-transform:uppercase;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid rgba(255,107,53,0.2);}
+  .bio-table{width:100%;border-collapse:collapse;}
+  .bio-table th{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;text-align:left;padding:7px 10px;border-bottom:1px solid var(--border);background:rgba(0,212,255,0.04);}
+  .bio-table td{font-size:12px;padding:8px 10px;border-bottom:1px solid rgba(26,45,58,0.5);color:var(--text);vertical-align:top;line-height:1.5;}
+  .bio-table tr:last-child td{border-bottom:none;}
+  .bio-table tr:hover td{background:rgba(0,212,255,0.025);}
+  .bio-name{font-weight:500;color:var(--white);font-size:12px;}
+  .bio-test{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent2);display:block;margin-top:1px;}
+  .range-c{color:var(--muted);font-size:11px;}
+  .range-o{color:var(--accent2);font-size:11px;font-weight:500;}
+  .rl{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;display:block;margin-bottom:1px;opacity:0.7;}
+
+  .note-box{margin-top:14px;background:rgba(255,107,53,0.06);border-left:3px solid var(--accent3);padding:12px 16px;font-size:13px;line-height:1.6;color:var(--text);}
+  .disclaimer-box{margin-top:16px;background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.12);padding:14px 16px;font-size:12px;line-height:1.7;color:var(--muted);font-style:italic;}
+
+  /* SUMMARY */
+  .protocol-summary{background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.2);padding:18px 20px;}
+  .proto-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin-top:12px;}
+  .proto-tile{text-align:center;padding:10px 8px;background:var(--bg);border:1px solid var(--border);}
+  .proto-val{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--white);}
+  .proto-label{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);margin-top:2px;}
+
+  @keyframes fadeSlide{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+  @media(max-width:540px){.target-band,.three-target,.pb-body{grid-template-columns:1fr;}.week-timeline{flex-direction:column;}.wt-phase{border-right:none;border-bottom:1px solid var(--border);}.synergy-item{grid-template-columns:1fr;}.bio-table th,.bio-table td{padding:7px 6px;font-size:11px;}}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- BACK NAV -->
+  <div style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+    <a href="index.html" style="font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--muted);text-decoration:none;display:flex;align-items:center;gap:8px;transition:color .2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'">
+      ← BACK TO ENCYCLOPEDIA
+    </a>
+    <a href="protocol-tracker.html" style="font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.35);color:var(--accent);text-decoration:none;padding:8px 16px;display:flex;align-items:center;gap:8px;transition:all .2s;" onmouseover="this.style.background='rgba(0,212,255,.15)'" onmouseout="this.style.background='rgba(0,212,255,.08)'">
+      OPEN PROTOCOL TRACKER →
+    </a>
+  </div>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="label">Stack Protocol Reference</div>
+    <h1>MITOCHONDRIAL RESET</h1>
+    <div class="tagline">SS-31 &nbsp;+&nbsp; MOTS-c &nbsp;+&nbsp; 5-AMINO-1MQ &nbsp;|&nbsp; THREE-TARGET CELLULAR ENERGY RESET</div>
+    <div class="sub">Cardiolipin Protection · AMPK Activation · NAD⁺ Restoration &nbsp;|&nbsp; 10–12 Week Block</div>
+  </div>
+
+  <!-- THREE TARGET VISUAL -->
+  <div class="target-band">
+    <div class="target-cell active">
+      <div class="target-icon">⚡</div>
+      <div class="target-name">SS-31</div>
+      <div class="target-pep">CARDIOLIPIN / ETC</div>
+      <div class="target-mech">Protects the structural integrity of the electron transport chain at the inner mitochondrial membrane</div>
+    </div>
+    <div class="target-cell active">
+      <div class="target-icon">🔄</div>
+      <div class="target-name">MOTS-c</div>
+      <div class="target-pep">AMPK / MITOPHAGY</div>
+      <div class="target-mech">Activates the master metabolic switch — triggers mitochondrial quality control and energy sensing</div>
+    </div>
+    <div class="target-cell active">
+      <div class="target-icon">🧬</div>
+      <div class="target-name">5-Amino-1MQ</div>
+      <div class="target-pep">NAD⁺ / SIRT1</div>
+      <div class="target-mech">Elevates intracellular NAD⁺ by blocking its consumption — fuels the enzymatic machinery of the ETC and sirtuins</div>
+    </div>
+  </div>
+
+  <!-- 01 OVERVIEW -->
+  <div class="section" style="animation-delay:0.15s;">
+    <div class="section-num">01 — Overview</div>
+    <h2>What Is the Mitochondrial Reset</h2>
+    <p>The Mitochondrial Reset is a focused <strong style="color:var(--white)">10–12 week three-peptide block</strong> targeting the three most mechanistically distinct and non-redundant points of mitochondrial dysfunction. It is designed to be run as a standalone protocol or as Tier 2 of the full Longevity Stack — twice per year, in Q1 and Q3.</p>
+    <p>Each compound in the stack addresses a completely different cellular target. <strong style="color:var(--white)">SS-31</strong> works at the structural level — protecting cardiolipin and restoring ETC supercomplex architecture. <strong style="color:var(--white)">MOTS-c</strong> works at the signaling level — activating AMPK to drive mitochondrial quality control, mitophagy, and metabolic flexibility. <strong style="color:var(--white)">5-Amino-1MQ</strong> works at the substrate level — elevating NAD⁺ by blocking the enzyme that consumes it in fat tissue, fueling everything else in the chain.</p>
+    <p>Together they address the <strong style="color:var(--white)">three primary reasons mitochondria fail with aging</strong>: structural membrane degradation, impaired quality control signaling, and declining fuel substrate availability. No other combination in the research peptide space covers all three simultaneously.</p>
+  </div>
+
+  <!-- 02 WHY MITOCHONDRIA MATTER -->
+  <div class="section green" style="animation-delay:0.2s;">
+    <div class="section-num">02 — The Problem</div>
+    <h2>Why Mitochondrial Decline Drives Aging</h2>
+    <p>Mitochondrial dysfunction is not just a symptom of aging — accumulating evidence positions it as a <strong style="color:var(--white)">primary driver</strong>. As mitochondria fail, ATP production drops, ROS increases, NAD⁺ declines, and the cellular energy budget that powers every repair process in the body shrinks. This creates a self-reinforcing spiral: less energy → less repair → more damage → less energy.</p>
+    <p>The three specific failure modes this stack addresses:</p>
+    <div style="display:grid;grid-template-columns:1fr;gap:8px;margin-top:10px;">
+      <div style="padding:12px 14px;background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.15);display:grid;grid-template-columns:120px 1fr;gap:12px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:1px;padding-top:2px;">CARDIOLIPIN LOSS</div>
+        <div style="font-size:12px;color:var(--text);line-height:1.6;">The phospholipid scaffold that organizes ETC supercomplexes oxidizes and fragments with age — causing electron leakage, ROS production, and ATP inefficiency. SS-31 addresses this directly.</div>
+      </div>
+      <div style="padding:12px 14px;background:rgba(0,255,157,0.04);border:1px solid rgba(0,255,157,0.12);display:grid;grid-template-columns:120px 1fr;gap:12px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent2);letter-spacing:1px;padding-top:2px;">AMPK DECLINE</div>
+        <div style="font-size:12px;color:var(--text);line-height:1.6;">AMPK — the energy sensor that triggers mitophagy (clearing damaged mitochondria) and new mitochondrial biogenesis — becomes less responsive with age. Dysfunctional mitochondria accumulate rather than being replaced. MOTS-c restores this signal.</div>
+      </div>
+      <div style="padding:12px 14px;background:rgba(255,107,53,0.05);border:1px solid rgba(255,107,53,0.15);display:grid;grid-template-columns:120px 1fr;gap:12px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent3);letter-spacing:1px;padding-top:2px;">NAD⁺ COLLAPSE</div>
+        <div style="font-size:12px;color:var(--text);line-height:1.6;">NAD⁺ levels drop 50%+ between age 40 and 60. Sirtuins (SIRT1–3) that regulate mitochondrial biogenesis, repair, and stress resistance are NAD⁺-dependent. Without adequate NAD⁺, these longevity enzymes can't function. 5-Amino-1MQ restores the pool.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 EACH PEPTIDE -->
+  <div class="section" style="animation-delay:0.25s;border-top-color:var(--accent);">
+    <div class="section-num">03 — The Three Compounds</div>
+    <h2>Mechanism Deep Dive</h2>
+
+    <div class="three-target">
+      <div class="tt-cell">
+        <div class="tt-layer">TARGET 1 — STRUCTURE</div>
+        <div class="tt-name">SS-31</div>
+        <div class="tt-target ss">CARDIOLIPIN → ETC</div>
+        <div class="tt-desc">Selectively concentrates in the inner mitochondrial membrane. Binds cardiolipin — preventing oxidation and preserving the lipid scaffold that holds ETC supercomplexes together. Restores ATP synthesis efficiency and reduces pathological ROS.</div>
+      </div>
+      <div class="tt-cell">
+        <div class="tt-layer">TARGET 2 — SIGNALING</div>
+        <div class="tt-name">MOTS-c</div>
+        <div class="tt-target mots">AMPK → MITOPHAGY</div>
+        <div class="tt-desc">Mitochondria-encoded peptide. Activates AMPK → triggers mitophagy (clearance of damaged mitochondria) and biogenesis of new ones. Regulates the folate-methionine cycle. Exercise mimetic — rises with physical activity; declines with age and inactivity.</div>
+      </div>
+      <div class="tt-cell">
+        <div class="tt-layer">TARGET 3 — FUEL</div>
+        <div class="tt-name">5-Amino-1MQ</div>
+        <div class="tt-target amino">NNMT → NAD⁺ → SIRT1</div>
+        <div class="tt-desc">Blocks NNMT in adipose tissue — the enzyme that consumes SAM and depresses NAD⁺ precursor availability. Elevating NAD⁺ activates SIRT1/SIRT3, which deacetylate and activate key mitochondrial enzymes, PGC-1α, and DNA repair proteins.</div>
+      </div>
+    </div>
+
+    <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent3);margin-bottom:10px;margin-top:4px;padding-bottom:6px;border-bottom:1px solid rgba(255,107,53,0.2);">▸ SYNERGISTIC INTERACTIONS — WHY ALL THREE TOGETHER</div>
+    <div class="synergy-row">
+      <div class="synergy-item">
+        <div class="synergy-label">SS-31 + NAD⁺ (5-Amino-1MQ)</div>
+        <div class="synergy-text">SS-31 restores ETC structural integrity; NAD⁺ provides the electron carrier substrate for Complex I that the restored ETC needs to function efficiently. Structure without fuel, or fuel without structure — neither alone achieves full mitochondrial restoration.</div>
+      </div>
+      <div class="synergy-item">
+        <div class="synergy-label">MOTS-c + SS-31</div>
+        <div class="synergy-text">MOTS-c's AMPK activation triggers mitophagy — clearing damaged mitochondria. SS-31 simultaneously protects the healthy mitochondria that remain. Together they execute a quality-control reset: remove the damaged, protect the functional.</div>
+      </div>
+      <div class="synergy-item">
+        <div class="synergy-label">NAD⁺ + MOTS-c</div>
+        <div class="synergy-text">AMPK and sirtuins are synergistic partners — AMPK elevates NAD⁺ through its own pathways; NAD⁺ activates SIRT1 which deacetylates and activates LKB1 (the AMPK kinase). A positive feedback loop: 5-Amino-1MQ raising NAD⁺ amplifies MOTS-c's AMPK signal.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 BLOCK PROTOCOL -->
+  <div class="section green" style="animation-delay:0.3s;">
+    <div class="section-num">04 — Block Protocol</div>
+    <h2>The 12-Week Reset Block</h2>
+
+    <div class="week-timeline">
+      <div class="wt-phase load">
+        <div class="wt-weeks">WEEKS 1–2</div>
+        <div class="wt-name">Load</div>
+        <div class="wt-desc">Start all three at low end of dose range. Allow body to adapt. Monitor for any unexpected responses. Energy dip common in week 1–2 as mitophagy begins clearing damaged mitochondria.</div>
+      </div>
+      <div class="wt-phase core">
+        <div class="wt-weeks">WEEKS 3–10</div>
+        <div class="wt-name">Core Block</div>
+        <div class="wt-desc">Titrate to full working doses by week 3. This is where the structural and signaling reset occurs. Most users report measurable improvements in energy, exercise capacity, and sleep quality from week 4–6 onward.</div>
+      </div>
+      <div class="wt-phase taper">
+        <div class="wt-weeks">WEEKS 11–12</div>
+        <div class="wt-name">Maintain</div>
+        <div class="wt-desc">Hold at working doses. Run final biomarker panel at week 12 to capture end-of-cycle data. Do not taper — simply complete the cycle and enter the break period.</div>
+      </div>
+      <div class="wt-phase off">
+        <div class="wt-weeks">WEEKS 13–20</div>
+        <div class="wt-name">Break</div>
+        <div class="wt-desc">6–8 week break. The mitochondrial structural and signaling changes achieved persist well into the off period. Use this time for the Q2 tissue maintenance layer (Glow/Klow).</div>
+      </div>
+    </div>
+
+    <table class="dose-table">
+      <thead><tr><th>Compound</th><th>Starting Dose</th><th>Working Dose</th><th>Route</th><th>Frequency</th><th>Timing</th></tr></thead>
+      <tbody>
+        <tr><td style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);">SS-31</td><td><span class="dv">5–10 mg</span></td><td><span class="dv">10–30 mg</span></td><td>SC</td><td>Daily</td><td>AM — either fed state</td></tr>
+        <tr><td style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);">MOTS-c</td><td><span class="dv">50 mcg</span></td><td><span class="dv">100–300 mcg</span></td><td>SC</td><td>3–5×/week</td><td>AM fasted / pre-workout</td></tr>
+        <tr><td style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent3);">5-Amino-1MQ</td><td><span class="dv">50 mg</span></td><td><span class="dv">100–200 mg</span></td><td>Oral</td><td>Daily</td><td>AM with food</td></tr>
+      </tbody>
+    </table>
+
+    <div class="note-box">The <strong style="color:var(--white)">week 1–2 energy dip</strong> is expected and is mechanistically meaningful — MOTS-c-driven AMPK activation triggers mitophagy, temporarily increasing cellular energy demand as dysfunctional mitochondria are cleared. This typically resolves by week 3 and is followed by a noticeable improvement in baseline energy. If the dip is severe, reduce MOTS-c dose and titrate more gradually. SS-31 and 5-Amino-1MQ do not typically cause this — it is MOTS-c-specific.</div>
+  </div>
+
+  <!-- 05 DETAILED PROTOCOLS -->
+  <div class="section" style="animation-delay:0.35s;border-top-color:var(--accent);">
+    <div class="section-num">05 — Individual Protocols</div>
+    <h2>Per-Compound Protocol Details</h2>
+
+    <div class="peptide-block">
+      <div class="pb-header ss">
+        <div>
+          <div class="pb-name">SS-31</div>
+          <div class="pb-sub ss">ELAMIPRETIDE · CARDIOLIPIN PROTECTOR · DAILY SC</div>
+        </div>
+      </div>
+      <div class="pb-body">
+        <div class="pb-mech">
+          <h4>MECHANISM</h4>
+          <p>Penetrates IMM via electrostatic attraction to cardiolipin. Prevents cardiolipin peroxidation — preserving the lipid scaffold that organizes Complexes I, III, IV into supercomplexes for efficient electron transfer. Reduces cytochrome c release. Reverses cristae architecture collapse. Nature Aging 2021: reversed cardiac aging in mice within weeks.</p>
+        </div>
+        <div class="pb-protocol">
+          <h4>PROTOCOL</h4>
+          <div class="pb-row"><span class="pb-row-label">DOSE</span><span class="pb-row-val">10–30 mg/day</span></div>
+          <div class="pb-row"><span class="pb-row-label">ROUTE</span><span class="pb-row-val">SC injection</span></div>
+          <div class="pb-row"><span class="pb-row-label">FREQUENCY</span><span class="pb-row-val">Daily</span></div>
+          <div class="pb-row"><span class="pb-row-label">TIMING</span><span class="pb-row-val">AM — either fed state</span></div>
+          <div class="pb-row"><span class="pb-row-label">HALF-LIFE</span><span class="pb-row-val">~30 min plasma</span></div>
+          <div class="pb-row"><span class="pb-row-label">NOTE</span><span class="pb-row-val">Mitochondrial retention prolonged despite short plasma t½</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="peptide-block">
+      <div class="pb-header mots">
+        <div>
+          <div class="pb-name">MOTS-c</div>
+          <div class="pb-sub mots">MITOKINE · AMPK ACTIVATOR · 3–5×/WEEK SC</div>
+        </div>
+      </div>
+      <div class="pb-body">
+        <div class="pb-mech">
+          <h4>MECHANISM</h4>
+          <p>Encoded in mitochondrial DNA — the first mitochondria-derived peptide with systemic metabolic effects. Translocates to nucleus under metabolic stress. Activates AMPK → triggers mitophagy, PGC-1α-driven biogenesis, and GLUT4 translocation for insulin-independent glucose uptake. Regulates folate-methionine cycle. Centenarian studies: elevated in exceptionally long-lived individuals.</p>
+        </div>
+        <div class="pb-protocol">
+          <h4>PROTOCOL</h4>
+          <div class="pb-row"><span class="pb-row-label">DOSE</span><span class="pb-row-val">100–300 mcg</span></div>
+          <div class="pb-row"><span class="pb-row-label">ROUTE</span><span class="pb-row-val">SC injection</span></div>
+          <div class="pb-row"><span class="pb-row-label">FREQUENCY</span><span class="pb-row-val">3–5×/week</span></div>
+          <div class="pb-row"><span class="pb-row-label">TIMING</span><span class="pb-row-val">AM fasted / pre-workout</span></div>
+          <div class="pb-row"><span class="pb-row-label">NOTE</span><span class="pb-row-val">Pre-workout timing mimics natural exercise-induced MOTS-c surge</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="peptide-block">
+      <div class="pb-header amino">
+        <div>
+          <div class="pb-name">5-Amino-1MQ</div>
+          <div class="pb-sub amino">NNMT INHIBITOR · NAD⁺ RESTORER · DAILY ORAL</div>
+        </div>
+      </div>
+      <div class="pb-body">
+        <div class="pb-mech">
+          <h4>MECHANISM</h4>
+          <p>Selective NNMT inhibitor — blocks the enzyme in adipose tissue that consumes SAM and suppresses NAD⁺ precursor availability. Unlike NMN/NR which add NAD⁺ precursors, 5-Amino-1MQ stops their consumption. Raises intracellular NAD⁺ → activates SIRT1 → promotes fat oxidation, mitochondrial biogenesis, and DNA repair. Animal studies: 7–10% body fat reduction without caloric restriction.</p>
+        </div>
+        <div class="pb-protocol">
+          <h4>PROTOCOL</h4>
+          <div class="pb-row"><span class="pb-row-label">DOSE</span><span class="pb-row-val">100–200 mg/day</span></div>
+          <div class="pb-row"><span class="pb-row-label">ROUTE</span><span class="pb-row-val">Oral capsule</span></div>
+          <div class="pb-row"><span class="pb-row-label">FREQUENCY</span><span class="pb-row-val">Daily (1–2× split)</span></div>
+          <div class="pb-row"><span class="pb-row-label">TIMING</span><span class="pb-row-val">AM with food</span></div>
+          <div class="pb-row"><span class="pb-row-label">MONITOR</span><span class="pb-row-val">Homocysteine / SAM:SAH ratio</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 06 STORAGE -->
+  <div class="section green" style="animation-delay:0.38s;">
+    <div class="section-num">06 — Storage</div>
+    <h2>Reconstitution & Storage — All Three</h2>
+    <table class="dose-table">
+      <thead><tr><th>Compound</th><th>Dry (Lyophilized)</th><th>Reconstituted</th><th>Shelf Life (Recon)</th><th>Special Notes</th></tr></thead>
+      <tbody>
+        <tr><td style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);">SS-31</td><td>–20°C freezer</td><td>36–46°F / 2–8°C fridge</td><td>4–6 weeks</td><td>Light-sensitive; no freeze-thaw once reconstituted</td></tr>
+        <tr><td style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);">MOTS-c</td><td>–20°C freezer</td><td>36–46°F / 2–8°C fridge</td><td>4–6 weeks</td><td>Stable small peptide; handle gently</td></tr>
+        <tr><td style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent3);">5-Amino-1MQ</td><td>Room temp (sealed)</td><td>N/A — oral capsule</td><td>12–24 months</td><td>Protect from moisture and heat; no refrigeration required for capsules</td></tr>
+      </tbody>
+    </table>
+    <div class="note-box" style="margin-top:12px;">SS-31 and MOTS-c require full cold chain. 5-Amino-1MQ as an oral small molecule is significantly more stable — capsules can be kept at room temperature. Reconstitute SS-31 and MOTS-c separately with BAC water; they can be drawn into the same syringe for a single daily injection on days when both are dosed.</div>
+  </div>
+
+  <!-- 07 BIOMARKERS -->
+  <div class="section orange" style="animation-delay:0.4s;">
+    <div class="section-num">07 — Monitoring</div>
+    <h2>Biomarkers — Before, Week 6, Week 12</h2>
+    <p style="font-size:13px;margin-bottom:18px;">Run baseline before starting, mid-cycle at week 6, and end-of-cycle at week 12. These are the most direct indicators of mitochondrial function improvement available through commercial labs.</p>
+
+    <div class="bio-category">
+      <div class="bio-cat-title">▸ Primary Mitochondrial Markers</div>
+      <table class="bio-table">
+        <thead><tr><th>Biomarker</th><th>Lab Test</th><th>Clinical Range</th><th>Goal on Protocol</th></tr></thead>
+        <tbody>
+          <tr><td><span class="bio-name">NAD⁺ (Intracellular)</span><br><span style="font-size:10px;color:var(--muted);">5-Amino-1MQ primary marker</span></td><td><span class="bio-test">Jinfiniti Intracellular NAD⁺</span></td><td><span class="rl">CLINICAL</span><span class="range-c">No standard reference</span></td><td><span class="rl">GOAL</span><span class="range-o">&gt;40 µM whole blood; expect measurable rise from week 4</span></td></tr>
+          <tr><td><span class="bio-name">CoQ10 (Ubiquinol)</span><br><span style="font-size:10px;color:var(--muted);">ETC function cofactor</span></td><td><span class="bio-test">Plasma CoQ10</span></td><td><span class="rl">CLINICAL</span><span class="range-c">0.4–1.9 µg/mL</span></td><td><span class="rl">GOAL</span><span class="range-o">1.5–3.5 µg/mL; trending up on SS-31 + MOTS-c</span></td></tr>
+          <tr><td><span class="bio-name">GDF-15</span><br><span style="font-size:10px;color:var(--muted);">Mitochondrial stress signal</span></td><td><span class="bio-test">Serum GDF-15</span></td><td><span class="rl">CLINICAL</span><span class="range-c">&lt;1200 pg/mL</span></td><td><span class="rl">GOAL</span><span class="range-o">&lt;400 pg/mL; declining trend = reduced mito stress</span></td></tr>
+          <tr><td><span class="bio-name">Resting Lactate</span><br><span style="font-size:10px;color:var(--muted);">Aerobic efficiency marker</span></td><td><span class="bio-test">Serum Lactate (resting)</span></td><td><span class="rl">CLINICAL</span><span class="range-c">0.5–2.2 mmol/L</span></td><td><span class="rl">GOAL</span><span class="range-o">0.5–1.0 mmol/L; declining = improved aerobic metabolism</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-cat-title">▸ Oxidative Damage</div>
+      <table class="bio-table">
+        <thead><tr><th>Biomarker</th><th>Lab Test</th><th>Clinical Range</th><th>Goal on Protocol</th></tr></thead>
+        <tbody>
+          <tr><td><span class="bio-name">8-OHdG</span><br><span style="font-size:10px;color:var(--muted);">Oxidative DNA damage</span></td><td><span class="bio-test">Urine 8-OHdG</span></td><td><span class="rl">CLINICAL</span><span class="range-c">&lt;15 ng/mg creatinine</span></td><td><span class="rl">GOAL</span><span class="range-o">&lt;5 ng/mg creatinine; SS-31 reduces pathological ROS</span></td></tr>
+          <tr><td><span class="bio-name">Oxidized LDL</span><br><span style="font-size:10px;color:var(--muted);">Lipid peroxidation</span></td><td><span class="bio-test">Serum oxLDL</span></td><td><span class="rl">CLINICAL</span><span class="range-c">&lt;60 U/L</span></td><td><span class="rl">GOAL</span><span class="range-o">&lt;40 U/L; declining on mito reset</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-cat-title">▸ Metabolic Response</div>
+      <table class="bio-table">
+        <thead><tr><th>Biomarker</th><th>Lab Test</th><th>Clinical Range</th><th>Goal on Protocol</th></tr></thead>
+        <tbody>
+          <tr><td><span class="bio-name">HOMA-IR</span><br><span style="font-size:10px;color:var(--muted);">Insulin resistance — MOTS-c target</span></td><td><span class="bio-test">Fasting glucose + insulin (calculated)</span></td><td><span class="rl">CLINICAL</span><span class="range-c">&lt;2.0</span></td><td><span class="rl">GOAL</span><span class="range-o">&lt;1.0; expect improvement from MOTS-c AMPK activation</span></td></tr>
+          <tr><td><span class="bio-name">Triglycerides</span><br><span style="font-size:10px;color:var(--muted);">5-Amino-1MQ fat oxidation marker</span></td><td><span class="bio-test">Lipid Panel</span></td><td><span class="rl">CLINICAL</span><span class="range-c">&lt;150 mg/dL</span></td><td><span class="rl">GOAL</span><span class="range-o">&lt;80 mg/dL; declining on 5-Amino-1MQ + MOTS-c</span></td></tr>
+          <tr><td><span class="bio-name">Fasting Glucose</span></td><td><span class="bio-test">Fasting Blood Glucose</span></td><td><span class="rl">CLINICAL</span><span class="range-c">70–99 mg/dL</span></td><td><span class="rl">GOAL</span><span class="range-o">75–90 mg/dL</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-cat-title">▸ Methylation (5-Amino-1MQ Specific)</div>
+      <table class="bio-table">
+        <thead><tr><th>Biomarker</th><th>Lab Test</th><th>Clinical Range</th><th>Goal on Protocol</th></tr></thead>
+        <tbody>
+          <tr><td><span class="bio-name">Homocysteine</span><br><span style="font-size:10px;color:var(--muted);">Methylation cycle proxy</span></td><td><span class="bio-test">Serum Homocysteine</span></td><td><span class="rl">CLINICAL</span><span class="range-c">&lt;15 µmol/L</span></td><td><span class="rl">GOAL</span><span class="range-o">5–8 µmol/L; NNMT inhibition affects methionine cycle — monitor</span></td></tr>
+          <tr><td><span class="bio-name">SAM:SAH Ratio</span></td><td><span class="bio-test">Plasma SAM/SAH (specialty)</span></td><td><span class="rl">CLINICAL</span><span class="range-c">SAM/SAH &gt;4.5</span></td><td><span class="rl">GOAL</span><span class="range-o">&gt;6.0; 5-Amino-1MQ should improve this ratio</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-cat-title">▸ Safety</div>
+      <table class="bio-table">
+        <thead><tr><th>Biomarker</th><th>Lab Test</th><th>Clinical Range</th><th>Goal</th></tr></thead>
+        <tbody>
+          <tr><td><span class="bio-name">AST / ALT</span></td><td><span class="bio-test">CMP</span></td><td><span class="rl">CLINICAL</span><span class="range-c">AST 10–40 / ALT 7–56 U/L</span></td><td><span class="rl">GOAL</span><span class="range-o">AST &lt;26 / ALT &lt;26; stable throughout</span></td></tr>
+          <tr><td><span class="bio-name">CBC</span></td><td><span class="bio-test">Complete Blood Count</span></td><td><span class="rl">CLINICAL</span><span class="range-c">Standard ranges</span></td><td><span class="rl">GOAL</span><span class="range-o">Mid-range; WBC 4.5–6.0; stable</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="disclaimer-box">⚠ None of the three compounds in this stack are FDA-approved for the indications listed. 5-Amino-1MQ has no published human clinical trials — monitor homocysteine and SAM:SAH closely, especially in individuals with MTHFR variants or elevated baseline homocysteine. SS-31 had Phase 2/3 clinical trials but did not receive final approval. MOTS-c has early human data from aging studies. Work with a qualified practitioner.</div>
+  </div>
+
+  <!-- 08 SUMMARY -->
+  <div class="section" style="animation-delay:0.45s;border-top-color:var(--accent);">
+    <div class="section-num">08 — Summary</div>
+    <h2>Mitochondrial Reset at a Glance</h2>
+    <div class="protocol-summary">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent);margin-bottom:4px;">MITOCHONDRIAL RESET — PROTOCOL SUMMARY</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:14px;">SS-31 + MOTS-c + 5-Amino-1MQ &nbsp;|&nbsp; Three Targets: Cardiolipin · AMPK · NAD⁺</div>
+      <div class="proto-grid">
+        <div class="proto-tile"><div class="proto-val">10–12 wk</div><div class="proto-label">BLOCK LENGTH</div></div>
+        <div class="proto-tile"><div class="proto-val">2× / yr</div><div class="proto-label">Q1 AND Q3</div></div>
+        <div class="proto-tile"><div class="proto-val">SC + Oral</div><div class="proto-label">ROUTES</div></div>
+        <div class="proto-tile"><div class="proto-val">AM</div><div class="proto-label">TIMING</div></div>
+        <div class="proto-tile"><div class="proto-val">Wk 1–2 dip</div><div class="proto-label">EXPECT MITO ADAPT</div></div>
+        <div class="proto-tile"><div class="proto-val">6–8 wk</div><div class="proto-label">BREAK AFTER</div></div>
+        <div class="proto-tile"><div class="proto-val">3 panels</div><div class="proto-label">BL / WK6 / WK12</div></div>
+        <div class="proto-tile"><div class="proto-val">NAD⁺ / GDF-15</div><div class="proto-label">PRIMARY MARKERS</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM CTA -->
+  <div style="margin-top:32px;background:rgba(0,212,255,.05);border:1px solid rgba(0,212,255,.2);border-top:2px solid var(--accent);padding:24px;text-align:center;">
+    <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:8px;">READY TO RUN THIS PROTOCOL?</div>
+    <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);margin-bottom:6px;">Build Your Mitochondrial Reset Stack</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:18px;">Add SS-31, MOTS-c, and 5-Amino-1MQ to your personal tracker with a single click — cycle timer, dose calculator, and daily log included.</div>
+    <a href="protocol-tracker.html" style="display:inline-block;font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:3px;background:var(--accent);color:#080c10;text-decoration:none;padding:14px 32px;font-weight:700;transition:all .2s;" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+      OPEN MY PROTOCOL TRACKER →
+    </a>
+    <div style="margin-top:16px;">
+      <a href="index.html" style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);text-decoration:none;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'">← BACK TO ENCYCLOPEDIA</a>
+    </div>
+  </div>
+
+</div>
+<script src="assets/peptide-footer.js" defer></script>
+
+
+    <!-- 🧊 RECONSTITUTED SHELF LIFE — auto-injected -->
+    <div style="margin-top:14px;padding:14px 16px;background:linear-gradient(135deg,rgba(96,165,250,.1),rgba(59,130,246,.02));border:1.5px solid rgba(96,165,250,.4);border-radius:6px;">
+      <div style="display:flex;align-items:flex-start;gap:12px;">
+        <div style="font-size:24px;line-height:1.1;flex-shrink:0;">🧊</div>
+        <div style="flex:1;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.18em;color:#60a5fa;margin-bottom:4px;">RECONSTITUTED SHELF LIFE</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:800;color:#fff;line-height:1.15;margin-bottom:6px;">21 days after mixing</div>
+          <div style="font-family:'Barlow',sans-serif;font-size:13px;color:#cbd5e1;line-height:1.55;margin-bottom:8px;">MOTS-c + SS-31 mitochondrial blend. Hydrophobic — 21-day cap.</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:#94a3b8;line-height:1.65;">
+            Storage: 2–8°C (fridge) · Protected from light · Do NOT freeze<br>
+            Preload syringes/cartridges to minimize vial disturbance
+          </div>
+        </div>
+      </div>
+  
+  <!-- ⚖️ COMPARE PEPTIDES — auto-injected -->
+  <div style="margin-top:28px;padding:18px 22px;background:linear-gradient(135deg,rgba(99,102,241,.1),rgba(67,56,202,.02));border:1px solid rgba(99,102,241,.35);border-radius:6px;max-width:900px;margin-left:auto;margin-right:auto;text-align:center;">
+    <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.18em;color:#a5b4fc;margin-bottom:8px;">⚖️ NOT SURE IF THIS IS THE RIGHT PEPTIDE?</div>
+    <div style="font-family:'Barlow',sans-serif;font-size:13px;color:#cbd5e1;line-height:1.55;margin-bottom:14px;">Put this peptide head-to-head with similar compounds. See ratings, costs, stacking conflicts — pick the right one for your goal.</div>
+    <a href="compare.html" style="display:inline-block;padding:11px 24px;background:linear-gradient(135deg,#6366f1,#4338ca);color:#fff;text-decoration:none;border-radius:4px;font-family:'Rajdhani',sans-serif;font-weight:800;font-size:13px;letter-spacing:.08em;text-transform:uppercase;">Compare Peptides →</a>
+  </div>
+
+<!-- 🧭 FOOTER NAV — auto-injected (Add to Stack + Back to Encyclopedia) -->
+  <div style="margin-top:40px;padding-top:30px;border-top:1px solid rgba(26,45,58,.6);">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:900px;margin:0 auto;">
+      <a href="protocol-tracker.html?add=Mito%20Reset" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:18px 20px;background:linear-gradient(135deg,#14b8a6,#0d9488);color:#fff;text-decoration:none;border-radius:6px;font-family:'Rajdhani',sans-serif;font-weight:800;font-size:15px;letter-spacing:.06em;text-transform:uppercase;box-shadow:0 4px 16px rgba(20,184,166,.25);transition:all .2s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(20,184,166,.4)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 16px rgba(20,184,166,.25)'">
+        <span style="font-size:20px;line-height:1;">＋</span> ADD TO MY STACK
+      </a>
+      <a href="index.html" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:18px 20px;background:transparent;color:#cbd5e1;text-decoration:none;border:1px solid rgba(26,45,58,.8);border-radius:6px;font-family:'Rajdhani',sans-serif;font-weight:800;font-size:15px;letter-spacing:.06em;text-transform:uppercase;transition:all .2s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;" onmouseover="this.style.background='rgba(20,184,166,.08)';this.style.borderColor='rgba(20,184,166,.4)';this.style.color='#14b8a6'" onmouseout="this.style.background='transparent';this.style.borderColor='rgba(26,45,58,.8)';this.style.color='#cbd5e1'">
+        <span style="font-size:18px;line-height:1;">←</span> BACK TO ENCYCLOPEDIA
+      </a>
+    </div>
+    <div style="text-align:center;margin-top:18px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.15em;color:#4a6272;">
+      APEX · RESEARCH USE ONLY · NOT MEDICAL ADVICE
+    </div>
+  </div>
+
+
+    </div>
+
+
+<!--️ APEX PEN CALLOUT — auto-injected -->
+<a href="https://apexdosing.com/buy-pen" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:14px;margin:20px 0;padding:16px 18px;background:linear-gradient(135deg,rgba(0,212,255,.1),rgba(0,255,157,.04));border:1px solid rgba(0,212,255,.35);border-left:3px solid #00d4ff;text-decoration:none;transition:all .2s;">
+  <div style="font-size:32px;line-height:1;flex-shrink:0;">️</div>
+  <div style="flex:1;">
+    <div style="font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:#eaf4f8;margin-bottom:2px;">Ditch the math — get the Apex pen</div>
+    <div style="font-size:12px;color:#c8dde8;line-height:1.5;">Dial your dose in units. Click. Done. No more mcg/mL calculations every time. $39 · ships with cartridges + needles + BAC water.</div>
+  </div>
+  <div style="font-family:'Rajdhani',sans-serif;font-size:13px;color:#00d4ff;font-weight:700;letter-spacing:.05em;flex-shrink:0;">Shop →</div>
+</a>
+
+<script src="assets/apex-nav-pill.js"></script>
+<script src="assets/apex-editorial.js"></script>
+<script src="assets/apex-social-proof.js"></script>
+</body>
+</html>

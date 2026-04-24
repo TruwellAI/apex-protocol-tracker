@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Longevity Stack — Protocol Reference</title>
+<!-- apex-seo-injected -->
+<meta name="description" content="Longevity stack — telomere, mitochondrial, sirtuin, and collagen peptides. Annual cycle planning, dosing, research citations.">
+<link rel="canonical" href="https://apexdosing.com/longevity-stack.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Longevity Stack — Protocol Reference">
+<meta property="og:description" content="Longevity stack — telomere, mitochondrial, sirtuin, and collagen peptides. Annual cycle planning, dosing, research citations.">
+<meta property="og:url" content="https://apexdosing.com/longevity-stack.html">
+<meta property="og:site_name" content="Apex Protocol">
+<meta property="og:image" content="https://apexdosing.com/assets/icon-1024.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Longevity Stack — Protocol Reference">
+<meta name="twitter:description" content="Longevity stack — telomere, mitochondrial, sirtuin, and collagen peptides. Annual cycle planning, dosing, research citations.">
+<meta name="twitter:image" content="https://apexdosing.com/assets/icon-1024.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "MedicalWebPage",
+  "name": "Longevity Stack — Protocol Reference",
+  "description": "Longevity stack — telomere, mitochondrial, sirtuin, and collagen peptides. Annual cycle planning, dosing, research citations.",
+  "url": "https://apexdosing.com/longevity-stack.html",
+  "audience": {
+    "@type": "MedicalAudience",
+    "audienceType": "researcher"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Apex Protocol",
+    "url": "https://apexdosing.com"
+  },
+  "inLanguage": "en-US",
+  "isFamilyFriendly": false
+}
+</script>
+<!-- /apex-seo-injected -->
+
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#080c10;--panel:#0d1318;--border:#1a2d3a;--accent:#00d4ff;--accent2:#00ff9d;--accent3:#ff6b35;--text:#c8dde8;--muted:#4a6272;--white:#eaf4f8;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-weight:300;min-height:100vh;padding:32px 20px;position:relative;overflow-x:hidden;}
+  body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:
+    radial-gradient(ellipse 80% 40% at 50% 0%,rgba(0,255,157,0.07) 0%,transparent 55%),
+    radial-gradient(ellipse 40% 30% at 10% 90%,rgba(0,212,255,0.04) 0%,transparent 60%),
+    radial-gradient(ellipse 30% 30% at 90% 60%,rgba(255,107,53,0.03) 0%,transparent 60%);
+    pointer-events:none;z-index:0;}
+  .container{max-width:760px;margin:0 auto;position:relative;z-index:1;}
+
+  /* HEADER */
+  .header{padding-left:20px;border-left:3px solid var(--accent2);margin-bottom:36px;animation:fadeSlide 0.5s ease both;}
+  .header .label{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:4px;color:var(--accent2);text-transform:uppercase;margin-bottom:6px;}
+  .header h1{font-family:'Rajdhani',sans-serif;font-size:clamp(48px,11vw,84px);font-weight:700;color:var(--white);line-height:1;letter-spacing:3px;}
+  .header .tagline{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted);margin-top:8px;letter-spacing:2px;}
+  .header .sub{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent2);margin-top:6px;letter-spacing:2px;opacity:0.8;}
+
+  /* HALLMARK GRID */
+  .hallmark-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:28px;animation:fadeSlide 0.5s ease both;animation-delay:0.1s;}
+  .hallmark{background:var(--panel);padding:12px 10px;text-align:center;}
+  .hallmark-icon{font-size:18px;margin-bottom:5px;}
+  .hallmark-name{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;color:var(--white);margin-bottom:3px;}
+  .hallmark-pep{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--accent2);letter-spacing:1px;line-height:1.5;}
+
+  /* SECTION */
+  .section{margin-bottom:24px;background:var(--panel);border:1px solid var(--border);border-top:2px solid var(--accent2);padding:22px 24px;animation:fadeSlide 0.5s ease both;}
+  .section.cyan{border-top-color:var(--accent);}
+  .section.orange{border-top-color:var(--accent3);}
+  .section.gold{border-top-color:#c9a227;}
+  .section-num{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:4px;}
+  .section h2{font-family:'Rajdhani',sans-serif;font-size:21px;font-weight:600;letter-spacing:1px;color:var(--white);margin-bottom:14px;text-transform:uppercase;}
+  .section p{font-size:14px;line-height:1.7;color:var(--text);margin-bottom:10px;}
+  .section p:last-child{margin-bottom:0;}
+
+  /* TIER CARDS */
+  .tier{margin-bottom:20px;border:1px solid var(--border);overflow:hidden;}
+  .tier-header{padding:12px 16px;display:flex;align-items:center;gap:14px;}
+  .tier-header.t1{background:rgba(0,255,157,0.08);}
+  .tier-header.t2{background:rgba(0,212,255,0.07);}
+  .tier-header.t3{background:rgba(255,107,53,0.07);}
+  .tier-header.t4{background:rgba(201,162,39,0.07);}
+  .tier-num{font-family:'Rajdhani',sans-serif;font-size:32px;font-weight:700;line-height:1;flex-shrink:0;}
+  .tier-num.t1{color:var(--accent2);}
+  .tier-num.t2{color:var(--accent);}
+  .tier-num.t3{color:var(--accent3);}
+  .tier-num.t4{color:#c9a227;}
+  .tier-info{}
+  .tier-title{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--white);}
+  .tier-sub{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:2px;margin-top:2px;}
+  .tier-body{padding:14px 16px;display:flex;flex-direction:column;gap:10px;background:rgba(0,0,0,0.15);}
+  .tier-peptide{display:grid;grid-template-columns:130px 1fr auto;gap:12px;align-items:start;padding:10px 12px;background:rgba(255,255,255,0.02);border:1px solid var(--border);}
+  .tp-name{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--white);}
+  .tp-mech{font-size:12px;color:var(--text);line-height:1.5;}
+  .tp-cycle{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent2);text-align:right;letter-spacing:1px;line-height:1.6;white-space:nowrap;}
+
+  /* CALENDAR */
+  .calendar{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .quarter{background:rgba(0,0,0,0.2);border:1px solid var(--border);padding:14px;}
+  .q-header{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--white);margin-bottom:3px;}
+  .q-months{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:2px;margin-bottom:10px;}
+  .q-item{display:flex;gap:8px;align-items:flex-start;margin-bottom:6px;}
+  .q-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+  .q-dot.green{background:var(--accent2);}
+  .q-dot.cyan{background:var(--accent);}
+  .q-dot.orange{background:var(--accent3);}
+  .q-dot.gold{background:#c9a227;}
+  .q-text{font-size:12px;color:var(--text);line-height:1.5;}
+  .q-note{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px solid var(--border);}
+
+  /* DOSE TABLE */
+  .dose-table{width:100%;border-collapse:collapse;}
+  .dose-table th{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);}
+  .dose-table td{font-size:12px;padding:9px 10px;border-bottom:1px solid rgba(26,45,58,0.6);color:var(--text);vertical-align:top;line-height:1.5;}
+  .dose-table tr:last-child td{border-bottom:none;}
+  .dose-table tr:hover td{background:rgba(0,255,157,0.02);}
+  .dv{font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--accent2);font-weight:bold;}
+
+  /* BIO TABLE */
+  .bio-category{margin-bottom:20px;}
+  .bio-cat-title{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--accent3);text-transform:uppercase;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid rgba(255,107,53,0.2);}
+  .bio-table{width:100%;border-collapse:collapse;}
+  .bio-table th{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;text-align:left;padding:7px 10px;border-bottom:1px solid var(--border);background:rgba(0,212,255,0.04);}
+  .bio-table td{font-size:12px;padding:8px 10px;border-bottom:1px solid rgba(26,45,58,0.5);color:var(--text);vertical-align:top;line-height:1.5;}
+  .bio-table tr:last-child td{border-bottom:none;}
+  .bio-table tr:hover td{background:rgba(0,212,255,0.025);}
+  .bio-name{font-weight:500;color:var(--white);font-size:12px;}
+  .bio-test{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent2);display:block;margin-top:1px;}
+  .range-c{color:var(--muted);font-size:11px;}
+  .range-o{color:var(--accent2);font-size:11px;font-weight:500;}
+  .rl{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;display:block;margin-bottom:1px;opacity:0.7;}
+
+  .note-box{margin-top:14px;background:rgba(255,107,53,0.06);border-left:3px solid var(--accent3);padding:12px 16px;font-size:13px;line-height:1.6;color:var(--text);}
+  .disclaimer-box{margin-top:16px;background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.12);padding:14px 16px;font-size:12px;line-height:1.7;color:var(--muted);font-style:italic;}
+
+  /* SUMMARY */
+  .protocol-summary{background:rgba(0,255,157,0.05);border:1px solid rgba(0,255,157,0.2);padding:18px 20px;}
+  .proto-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin-top:12px;}
+  .proto-tile{text-align:center;padding:10px 8px;background:var(--bg);border:1px solid var(--border);}
+  .proto-val{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--white);}
+  .proto-label{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);margin-top:2px;}
+
+  @keyframes fadeSlide{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+  @media(max-width:540px){.hallmark-grid{grid-template-columns:repeat(2,1fr);}.calendar{grid-template-columns:1fr;}.tier-peptide{grid-template-columns:1fr;}.tp-cycle{text-align:left;}}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- BACK NAV -->
+  <div style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+    <a href="index.html" style="font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--muted);text-decoration:none;display:flex;align-items:center;gap:8px;transition:color .2s;" onmouseover="this.style.color='var(--accent2)'" onmouseout="this.style.color='var(--muted)'">
+      ← BACK TO ENCYCLOPEDIA
+    </a>
+    <a href="protocol-tracker.html" style="font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;background:rgba(0,255,157,.08);border:1px solid rgba(0,255,157,.35);color:var(--accent2);text-decoration:none;padding:8px 16px;display:flex;align-items:center;gap:8px;transition:all .2s;" onmouseover="this.style.background='rgba(0,255,157,.15)'" onmouseout="this.style.background='rgba(0,255,157,.08)'">
+      OPEN PROTOCOL TRACKER →
+    </a>
+  </div>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="label">Stack Protocol Reference</div>
+    <h1>LONGEVITY</h1>
+    <div class="tagline">FULL-SPECTRUM ANNUAL ANTI-AGING PROTOCOL &nbsp;|&nbsp; 8 HALLMARKS OF AGING ADDRESSED</div>
+    <div class="sub">Foundation + Mitochondrial + Tissue + Neurological Layers &nbsp;|&nbsp; Year-Round Calendar</div>
+  </div>
+
+  <!-- HALLMARK MAP -->
+  <div class="hallmark-grid">
+    <div class="hallmark">
+      <div class="hallmark-icon">🧬</div>
+      <div class="hallmark-name">Telomeres</div>
+      <div class="hallmark-pep">Epithalon</div>
+    </div>
+    <div class="hallmark">
+      <div class="hallmark-icon">⚡</div>
+      <div class="hallmark-name">Mitochondria</div>
+      <div class="hallmark-pep">SS-31 · MOTS-c · 5-Amino-1MQ</div>
+    </div>
+    <div class="hallmark">
+      <div class="hallmark-icon">🔥</div>
+      <div class="hallmark-name">Inflammaging</div>
+      <div class="hallmark-pep">KPV · GHK-Cu · BPC-157</div>
+    </div>
+    <div class="hallmark">
+      <div class="hallmark-icon">🌙</div>
+      <div class="hallmark-name">Circadian</div>
+      <div class="hallmark-pep">Epithalon · CJC/Ipam</div>
+    </div>
+    <div class="hallmark">
+      <div class="hallmark-icon">🌿</div>
+      <div class="hallmark-name">Stem Cells</div>
+      <div class="hallmark-pep">TB-500 · GHK-Cu</div>
+    </div>
+    <div class="hallmark">
+      <div class="hallmark-icon">🧠</div>
+      <div class="hallmark-name">Neuro Aging</div>
+      <div class="hallmark-pep">Semax · Selank · Epithalon</div>
+    </div>
+    <div class="hallmark">
+      <div class="hallmark-icon">🔄</div>
+      <div class="hallmark-name">Epigenetics</div>
+      <div class="hallmark-pep">Epithalon · GHK-Cu</div>
+    </div>
+    <div class="hallmark">
+      <div class="hallmark-icon">🛡️</div>
+      <div class="hallmark-name">Proteostasis</div>
+      <div class="hallmark-pep">MOTS-c · SS-31</div>
+    </div>
+  </div>
+
+  <!-- 01 PHILOSOPHY -->
+  <div class="section green" style="animation-delay:0.15s;">
+    <div class="section-num">01 — Philosophy</div>
+    <h2>How to Think About a Longevity Stack</h2>
+    <p>A longevity protocol is not a single cycle — it is a <strong style="color:var(--white)">layered annual architecture</strong> where different peptides address different aging mechanisms on different timescales. Some interventions are run continuously (the hormonal foundation), some in long seasonal blocks (mitochondrial and tissue repair), and some in short targeted bursts (telomere and neurological reset).</p>
+    <p>The organizing principle is <strong style="color:var(--white)">non-redundancy and sequencing</strong>. Every peptide in the stack hits a mechanistically distinct target. Nothing is doubled up. And the order matters — you lay the metabolic and hormonal foundation first, then layer mitochondrial reset, then structural tissue repair, then neurological maintenance. Epithalon runs as a burst course 2–3× per year across all other layers as the cellular aging anchor.</p>
+    <p>This stack is not aggressive — it is <strong style="color:var(--white)">restorative</strong>. The goal is to bring aging systems back toward youthful baseline function, not to supraphysiologically push any single axis. Every peptide here works through the body's own endogenous pathways.</p>
+  </div>
+
+  <!-- 02 THE FOUR TIERS -->
+  <div class="section cyan" style="animation-delay:0.2s;">
+    <div class="section-num">02 — Protocol Architecture</div>
+    <h2>The Four-Tier Stack</h2>
+
+    <!-- TIER 1 -->
+    <div class="tier">
+      <div class="tier-header t1">
+        <div class="tier-num t1">01</div>
+        <div class="tier-info">
+          <div class="tier-title">Foundation Layer</div>
+          <div class="tier-sub">RUN YEAR-ROUND &nbsp;|&nbsp; HORMONAL & CELLULAR BASE</div>
+        </div>
+      </div>
+      <div class="tier-body">
+        <div class="tier-peptide">
+          <div>
+            <div class="tp-name">Epithalon</div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--accent2);margin-top:2px;">TELOMERE ANCHOR</div>
+          </div>
+          <div class="tp-mech">Telomerase activation — the only compound with published human telomere lengthening data. Restores pineal melatonin and circadian rhythm. Anti-cancer, anti-senescence, lifespan extension across species. The non-negotiable core of any serious longevity protocol.</div>
+          <div class="tp-cycle">10–20 days<br>2–3× per year<br>Pre-bed SC<br>5 mg/day<br>4+ mo between</div>
+        </div>
+        <div class="tier-peptide">
+          <div>
+            <div class="tp-name">CJC-1295 / Ipamorelin</div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--accent2);margin-top:2px;">GH AXIS FOUNDATION</div>
+          </div>
+          <div class="tp-mech">Restores youthful GH pulse amplitude — drives fat oxidation, lean mass maintenance, deep sleep architecture, IGF-1 mediated tissue repair, and neuroplasticity. The metabolic and recovery foundation all other tiers build upon. Preserves endogenous GH axis unlike rhGH.</div>
+          <div class="tp-cycle">3–6 months on<br>1–2 months off<br>Pre-bed nightly<br>200–300 mcg each<br>Fasted 2–3 hr</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIER 2 -->
+    <div class="tier">
+      <div class="tier-header t2">
+        <div class="tier-num t2">02</div>
+        <div class="tier-info">
+          <div class="tier-title">Mitochondrial Reset Layer</div>
+          <div class="tier-sub">8–12 WEEK BLOCKS &nbsp;|&nbsp; 2× PER YEAR &nbsp;|&nbsp; Q1 AND Q3</div>
+        </div>
+      </div>
+      <div class="tier-body">
+        <div class="tier-peptide">
+          <div>
+            <div class="tp-name">SS-31</div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--accent);margin-top:2px;">CARDIOLIPIN PROTECTOR</div>
+          </div>
+          <div class="tp-mech">Binds and protects cardiolipin in the inner mitochondrial membrane — restores ETC supercomplex organization and ATP synthesis efficiency. Reverses age-related mitochondrial collapse. Daily dosing essential given short half-life (~30 min).</div>
+          <div class="tp-cycle">8–12 weeks<br>Daily SC<br>10–30 mg/day<br>AM preferred<br>Either fed state</div>
+        </div>
+        <div class="tier-peptide">
+          <div>
+            <div class="tp-name">MOTS-c</div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--accent);margin-top:2px;">AMPK ACTIVATOR</div>
+          </div>
+          <div class="tp-mech">Mitochondrial-encoded peptide that activates AMPK — the master metabolic regulator. Drives mitophagy, exercise mimetic effects, fat oxidation, and insulin sensitivity. Centenarian data links MOTS-c levels to exceptional longevity. Non-overlapping with SS-31.</div>
+          <div class="tp-cycle">12 weeks<br>3–5×/week SC<br>100–300 mcg<br>AM fasted<br>Pre-workout</div>
+        </div>
+        <div class="tier-peptide">
+          <div>
+            <div class="tp-name">5-Amino-1MQ</div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--accent);margin-top:2px;">NAD⁺ RESTORER</div>
+          </div>
+          <div class="tp-mech">Blocks NNMT in adipose tissue — elevates intracellular NAD⁺ by stopping consumption rather than adding precursors. Activates SIRT1 sirtuins. Improves metabolic flexibility and fat oxidation. Oral route. Completes the three-target mitochondrial reset with SS-31 and MOTS-c.</div>
+          <div class="tp-cycle">8–16 weeks<br>Daily oral<br>100–200 mg<br>AM with food<br>4–8 wk break</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIER 3 -->
+    <div class="tier">
+      <div class="tier-header t3">
+        <div class="tier-num t3">03</div>
+        <div class="tier-info">
+          <div class="tier-title">Tissue & Structural Maintenance Layer</div>
+          <div class="tier-sub">4–12 WEEK CYCLES &nbsp;|&nbsp; Q2 AND Q4 &nbsp;|&nbsp; GLOW OR KLOW PROTOCOL</div>
+        </div>
+      </div>
+      <div class="tier-body">
+        <div class="tier-peptide">
+          <div>
+            <div class="tp-name">GHK-Cu</div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--accent3);margin-top:2px;">GENE RESET</div>
+          </div>
+          <div class="tp-mech">Modulates 4,000+ genes toward repair and anti-aging expression. Collagen synthesis, SOD antioxidant upregulation, stem cell recruitment, wound healing acceleration. Resets aging fibroblast gene expression toward youthful patterns. Topical continuous; injectable cycles.</div>
+          <div class="tp-cycle">12–16 wk inj<br>5–7×/week SC<br>1–3 mg/day<br>AM preferred<br>Topical: continuous</div>
+        </div>
+        <div class="tier-peptide">
+          <div>
+            <div class="tp-name">BPC-157 + TB-500</div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--accent3);margin-top:2px;">HEALING PAIR</div>
+          </div>
+          <div class="tp-mech">The foundational healing stack. BPC-157 upregulates GH receptors and orchestrates systemic repair; TB-500 mobilizes cells to injury sites and drives angiogenesis. Together they maintain connective tissue health to support decades of progressive training and daily movement.</div>
+          <div class="tp-cycle">4–8 weeks<br>Daily SC<br>500 mcg BPC<br>2–5 mg TB<br>2–4 wk break</div>
+        </div>
+        <div class="tier-peptide">
+          <div>
+            <div class="tp-name">KPV (optional)</div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--accent3);margin-top:2px;">INFLAMMATION GATE</div>
+          </div>
+          <div class="tp-mech">Add KPV to upgrade the Glow cycle to Klow — direct NF-κB suppression removes the inflammatory brake on all other tissue repair mechanisms. Essential if gut dysbiosis, IBD, or high systemic inflammatory load is present. Oral preferred for gut targeting.</div>
+          <div class="tp-cycle">Add to Glow cycle<br>Daily oral or SC<br>500 mcg–1 mg<br>With food (oral)<br>Same cycle length</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIER 4 -->
+    <div class="tier">
+      <div class="tier-header t4">
+        <div class="tier-num t4">04</div>
+        <div class="tier-info">
+          <div class="tier-title">Neurological Maintenance Layer</div>
+          <div class="tier-sub">2–4 WEEK CYCLES &nbsp;|&nbsp; 2–3× PER YEAR &nbsp;|&nbsp; BRAIN AGING PREVENTION</div>
+        </div>
+      </div>
+      <div class="tier-body">
+        <div class="tier-peptide">
+          <div>
+            <div class="tp-name">Semax</div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:#c9a227;margin-top:2px;">BDNF / NGF / DOPAMINE</div>
+          </div>
+          <div class="tp-mech">Rapid BDNF and NGF upregulation within hours. Dopaminergic potentiation for working memory and executive function. Neuroprotective against ischemia and excitotoxicity. The cognitive activation arm of the neuro pair.</div>
+          <div class="tp-cycle">2–4 weeks<br>Daily AM only<br>100–300 mcg<br>N-Ac Amidate<br>Nasal preferred</div>
+        </div>
+        <div class="tier-peptide">
+          <div>
+            <div class="tp-name">Selank</div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:#c9a227;margin-top:2px;">GABA / BDNF / ENKEPHALIN</div>
+          </div>
+          <div class="tp-mech">GABAergic normalization without sedation, BDNF upregulation, serotonin modulation, stress resilience. The anxiolytic and sleep quality arm of the neuro pair. Smooths Semax's stimulating quality. The canonical Russian neuropeptide combination.</div>
+          <div class="tp-cycle">2–4 weeks<br>AM + Pre-bed<br>250–500 mcg<br>SC or nasal<br>2–4 wk break</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 ANNUAL CALENDAR -->
+  <div class="section green" style="animation-delay:0.3s;">
+    <div class="section-num">03 — Annual Calendar</div>
+    <h2>The Longevity Year — Quarterly Sequencing</h2>
+    <div class="calendar">
+      <div class="quarter">
+        <div class="q-header" style="color:var(--accent);">Q1</div>
+        <div class="q-months">JANUARY — MARCH</div>
+        <div class="q-item"><div class="q-dot cyan"></div><div class="q-text"><strong style="color:var(--white);">CJC/Ipamorelin</strong> — nightly pre-bed (continuous)</div></div>
+        <div class="q-item"><div class="q-dot cyan"></div><div class="q-text"><strong style="color:var(--white);">SS-31 + MOTS-c + 5-Amino-1MQ</strong> — 10–12 week mitochondrial reset block</div></div>
+        <div class="q-item"><div class="q-dot green"></div><div class="q-text"><strong style="color:var(--white);">Epithalon Course 1</strong> — 10–20 days in January, pre-bed (post-new year biological reset)</div></div>
+        <div class="q-note">FOCUS: Metabolic foundation + full mitochondrial reset to open the year. Mito block runs through Feb–March.</div>
+      </div>
+      <div class="quarter">
+        <div class="q-header" style="color:var(--accent2);">Q2</div>
+        <div class="q-months">APRIL — JUNE</div>
+        <div class="q-item"><div class="q-dot cyan"></div><div class="q-text"><strong style="color:var(--white);">CJC/Ipamorelin</strong> — nightly pre-bed (continuous)</div></div>
+        <div class="q-item"><div class="q-dot orange"></div><div class="q-text"><strong style="color:var(--white);">Glow / Klow Cycle</strong> — GHK-Cu + BPC-157 + TB-500 (± KPV), 4–8 weeks</div></div>
+        <div class="q-item"><div class="q-dot gold"></div><div class="q-text"><strong style="color:var(--white);">Semax + Selank</strong> — 2–4 week neuro cycle, April</div></div>
+        <div class="q-item"><div class="q-dot green"></div><div class="q-text"><strong style="color:var(--white);">Epithalon Course 2</strong> — spring equinox timing (Khavinson protocol), pre-bed</div></div>
+        <div class="q-note">FOCUS: Structural tissue repair + skin + neuro maintenance. Epithalon timed to spring equinox per original Russian clinical protocol.</div>
+      </div>
+      <div class="quarter">
+        <div class="q-header" style="color:var(--accent);">Q3</div>
+        <div class="q-months">JULY — SEPTEMBER</div>
+        <div class="q-item"><div class="q-dot cyan"></div><div class="q-text"><strong style="color:var(--white);">CJC/Ipamorelin</strong> — nightly pre-bed (continuous)</div></div>
+        <div class="q-item"><div class="q-dot cyan"></div><div class="q-text"><strong style="color:var(--white);">SS-31 + MOTS-c + 5-Amino-1MQ</strong> — second mitochondrial reset block, 10–12 weeks</div></div>
+        <div class="q-item"><div class="q-dot gold"></div><div class="q-text"><strong style="color:var(--white);">Semax + Selank</strong> — second neuro cycle, August</div></div>
+        <div class="q-note">FOCUS: Mid-year mitochondrial reset. Maintains metabolic gains from Q1 block. Neuro cycle timed mid-summer when cognitive demands and performance goals are high.</div>
+      </div>
+      <div class="quarter">
+        <div class="q-header" style="color:var(--accent2);">Q4</div>
+        <div class="q-months">OCTOBER — DECEMBER</div>
+        <div class="q-item"><div class="q-dot cyan"></div><div class="q-text"><strong style="color:var(--white);">CJC/Ipamorelin</strong> — nightly pre-bed (continuous)</div></div>
+        <div class="q-item"><div class="q-dot orange"></div><div class="q-text"><strong style="color:var(--white);">Glow / Klow Cycle</strong> — second tissue and skin maintenance cycle, 4–8 weeks</div></div>
+        <div class="q-item"><div class="q-dot green"></div><div class="q-text"><strong style="color:var(--white);">Epithalon Course 3</strong> — autumn equinox timing (Khavinson protocol), pre-bed</div></div>
+        <div class="q-note">FOCUS: Year-end structural repair and cellular reset. Autumn Epithalon course closes the year with telomere protection and circadian normalization heading into winter.</div>
+      </div>
+    </div>
+    <div class="note-box" style="margin-top:14px;">CJC/Ipamorelin runs as the continuous year-round foundation with 1–2 month breaks built in during peptide-dense cycle blocks if needed. Epithalon's spring and autumn timing follows Khavinson's original protocols aligning with neuroendocrine reset points. The mitochondrial blocks and Glow/Klow cycles alternate quarters so you never run both simultaneously — allowing clear attribution of effects and preventing biomarker noise.</div>
+  </div>
+
+  <!-- 04 DOSING REFERENCE -->
+  <div class="section cyan" style="animation-delay:0.35s;">
+    <div class="section-num">04 — Dosing Reference</div>
+    <h2>Full Stack Dosing at a Glance</h2>
+    <table class="dose-table">
+      <thead><tr><th>Peptide</th><th>Dose</th><th>Route</th><th>Frequency</th><th>Timing</th><th>Cycle</th></tr></thead>
+      <tbody>
+        <tr style="background:rgba(0,255,157,0.03);"><td style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);">Epithalon</td><td><span class="dv">5 mg</span></td><td>SC</td><td>Daily (course)</td><td>Pre-bed</td><td>10–20 days, 2–3×/yr</td></tr>
+        <tr style="background:rgba(0,255,157,0.03);"><td style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);">CJC-1295</td><td><span class="dv">200–300 mcg</span></td><td>SC</td><td>Daily</td><td>Pre-bed fasted</td><td>3–6 mo on / 1–2 mo off</td></tr>
+        <tr style="background:rgba(0,255,157,0.03);"><td style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);">Ipamorelin</td><td><span class="dv">200–300 mcg</span></td><td>SC</td><td>Daily</td><td>Pre-bed fasted</td><td>Same as CJC</td></tr>
+        <tr style="background:rgba(0,212,255,0.03);"><td style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);">SS-31</td><td><span class="dv">10–30 mg</span></td><td>SC</td><td>Daily</td><td>AM</td><td>8–12 wk, 2×/yr</td></tr>
+        <tr style="background:rgba(0,212,255,0.03);"><td style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);">MOTS-c</td><td><span class="dv">100–300 mcg</span></td><td>SC</td><td>3–5×/week</td><td>AM fasted / pre-WO</td><td>12 wk, 2×/yr</td></tr>
+        <tr style="background:rgba(0,212,255,0.03);"><td style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);">5-Amino-1MQ</td><td><span class="dv">100–200 mg</span></td><td>Oral</td><td>Daily</td><td>AM with food</td><td>8–16 wk, 2×/yr</td></tr>
+        <tr style="background:rgba(255,107,53,0.03);"><td style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent3);">GHK-Cu</td><td><span class="dv">1–3 mg</span></td><td>SC + topical</td><td>5–7×/wk (inj)</td><td>AM</td><td>12–16 wk, 2×/yr</td></tr>
+        <tr style="background:rgba(255,107,53,0.03);"><td style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent3);">BPC-157</td><td><span class="dv">250–500 mcg</span></td><td>SC</td><td>Daily</td><td>AM</td><td>4–8 wk, 2×/yr</td></tr>
+        <tr style="background:rgba(255,107,53,0.03);"><td style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent3);">TB-500</td><td><span class="dv">2–5 mg</span></td><td>SC</td><td>2–3×/wk load, 1×/wk maintain</td><td>AM</td><td>6–8 wk, 2×/yr</td></tr>
+        <tr style="background:rgba(201,162,39,0.03);"><td style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#c9a227;">Semax (N-Ac Amid)</td><td><span class="dv">100–300 mcg</span></td><td>Nasal</td><td>Daily</td><td>AM only</td><td>2–4 wk, 2–3×/yr</td></tr>
+        <tr style="background:rgba(201,162,39,0.03);"><td style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#c9a227;">Selank</td><td><span class="dv">250–500 mcg</span></td><td>SC or nasal</td><td>Daily</td><td>AM + pre-bed</td><td>2–4 wk, 2–3×/yr</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 05 BIOMARKERS -->
+  <div class="section orange" style="animation-delay:0.4s;">
+    <div class="section-num">05 — Monitoring</div>
+    <h2>Annual Biomarker Panel</h2>
+    <p style="font-size:13px;margin-bottom:18px;">Run a comprehensive baseline before starting the protocol. Retest at 6 months and 12 months. Specific biomarkers should also be tested at the start and end of each individual cycle block.</p>
+
+    <div class="bio-category">
+      <div class="bio-cat-title">▸ Biological Age & Longevity</div>
+      <table class="bio-table">
+        <thead><tr><th>Biomarker</th><th>Test</th><th>Clinical</th><th>Optimal Goal</th></tr></thead>
+        <tbody>
+          <tr><td><span class="bio-name">Telomere Length</span><br><span style="font-size:10px;color:var(--muted);">Primary Epithalon marker</span></td><td><span class="bio-test">LifeLength / Teloyears</span></td><td><span class="rl">CLINICAL</span><span class="range-c">Declines with age</span></td><td><span class="rl">GOAL</span><span class="range-o">At or above median; lengthening trend year-over-year</span></td></tr>
+          <tr><td><span class="bio-name">Biological Age</span></td><td><span class="bio-test">TruAge / DunedinPACE</span></td><td><span class="rl">CLINICAL</span><span class="range-c">Within ±5 yrs chronological</span></td><td><span class="rl">GOAL</span><span class="range-o">5–10 yrs below chronological; slowing pace annually</span></td></tr>
+          <tr><td><span class="bio-name">IGF-1</span></td><td><span class="bio-test">Serum IGF-1</span></td><td><span class="rl">CLINICAL</span><span class="range-c">115–355 ng/mL</span></td><td><span class="rl">GOAL</span><span class="range-o">Upper third of age range (~200–300 ng/mL) — CJC/Ipam response</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-cat-title">▸ Mitochondrial Function</div>
+      <table class="bio-table">
+        <thead><tr><th>Biomarker</th><th>Test</th><th>Clinical</th><th>Optimal Goal</th></tr></thead>
+        <tbody>
+          <tr><td><span class="bio-name">NAD⁺ (whole blood)</span></td><td><span class="bio-test">Jinfiniti Intracellular NAD⁺</span></td><td><span class="rl">CLINICAL</span><span class="range-c">No standard reference</span></td><td><span class="rl">GOAL</span><span class="range-o">&gt;40 µM; expect increase on 5-Amino-1MQ</span></td></tr>
+          <tr><td><span class="bio-name">CoQ10 (Ubiquinol)</span></td><td><span class="bio-test">Plasma CoQ10</span></td><td><span class="rl">CLINICAL</span><span class="range-c">0.4–1.9 µg/mL</span></td><td><span class="rl">GOAL</span><span class="range-o">1.5–3.5 µg/mL; trending up on SS-31 + MOTS-c</span></td></tr>
+          <tr><td><span class="bio-name">GDF-15</span><br><span style="font-size:10px;color:var(--muted);">Mitochondrial stress</span></td><td><span class="bio-test">Serum GDF-15</span></td><td><span class="rl">CLINICAL</span><span class="range-c">&lt;1200 pg/mL</span></td><td><span class="rl">GOAL</span><span class="range-o">&lt;400 pg/mL; declining trend indicates mito improvement</span></td></tr>
+          <tr><td><span class="bio-name">Resting Lactate</span></td><td><span class="bio-test">Serum Lactate</span></td><td><span class="rl">CLINICAL</span><span class="range-c">0.5–2.2 mmol/L</span></td><td><span class="rl">GOAL</span><span class="range-o">0.5–1.0 mmol/L</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-cat-title">▸ Inflammation & Oxidative Stress</div>
+      <table class="bio-table">
+        <thead><tr><th>Biomarker</th><th>Test</th><th>Clinical</th><th>Optimal Goal</th></tr></thead>
+        <tbody>
+          <tr><td><span class="bio-name">hsCRP</span></td><td><span class="bio-test">High-sensitivity CRP</span></td><td><span class="rl">CLINICAL</span><span class="range-c">&lt;3.0 mg/L</span></td><td><span class="rl">GOAL</span><span class="range-o">&lt;0.5 mg/L</span></td></tr>
+          <tr><td><span class="bio-name">IL-6</span></td><td><span class="bio-test">Serum IL-6</span></td><td><span class="rl">CLINICAL</span><span class="range-c">&lt;7.0 pg/mL</span></td><td><span class="rl">GOAL</span><span class="range-o">&lt;1.5 pg/mL</span></td></tr>
+          <tr><td><span class="bio-name">8-OHdG</span></td><td><span class="bio-test">Urine 8-OHdG</span></td><td><span class="rl">CLINICAL</span><span class="range-c">&lt;15 ng/mg creatinine</span></td><td><span class="rl">GOAL</span><span class="range-o">&lt;5 ng/mg creatinine</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-cat-title">▸ Hormonal & Sleep</div>
+      <table class="bio-table">
+        <thead><tr><th>Biomarker</th><th>Test</th><th>Clinical</th><th>Optimal Goal</th></tr></thead>
+        <tbody>
+          <tr><td><span class="bio-name">Nocturnal Melatonin</span><br><span style="font-size:10px;color:var(--muted);">Epithalon pineal marker</span></td><td><span class="bio-test">Urine 6-sulfatoxymelatonin</span></td><td><span class="rl">CLINICAL</span><span class="range-c">Declines with age</span></td><td><span class="rl">GOAL</span><span class="range-o">Upper quartile for age; increasing on Epithalon</span></td></tr>
+          <tr><td><span class="bio-name">GH (fasting)</span></td><td><span class="bio-test">Serum Growth Hormone</span></td><td><span class="rl">CLINICAL</span><span class="range-c">M: &lt;5 / F: &lt;10 ng/mL</span></td><td><span class="rl">GOAL</span><span class="range-o">Monitor via IGF-1 — do not exceed upper age reference</span></td></tr>
+          <tr><td><span class="bio-name">TSH / Free T3</span></td><td><span class="bio-test">Thyroid panel</span></td><td><span class="rl">CLINICAL</span><span class="range-c">TSH 0.4–4.0 mIU/L</span></td><td><span class="rl">GOAL</span><span class="range-o">TSH 1.0–2.5; Free T3 upper third of range</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-cat-title">▸ Neurotrophins</div>
+      <table class="bio-table">
+        <thead><tr><th>Biomarker</th><th>Test</th><th>Clinical</th><th>Optimal Goal</th></tr></thead>
+        <tbody>
+          <tr><td><span class="bio-name">BDNF</span></td><td><span class="bio-test">Serum BDNF (fasting AM)</span></td><td><span class="rl">CLINICAL</span><span class="range-c">~10,000–30,000 pg/mL</span></td><td><span class="rl">GOAL</span><span class="range-o">Upper half of lab range; trending up on Semax cycles</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bio-category">
+      <div class="bio-cat-title">▸ Safety (Full Panel — Run Annually)</div>
+      <table class="bio-table">
+        <thead><tr><th>Biomarker</th><th>Test</th><th>Clinical</th><th>Optimal Goal</th></tr></thead>
+        <tbody>
+          <tr><td><span class="bio-name">AST / ALT</span></td><td><span class="bio-test">CMP</span></td><td><span class="rl">CLINICAL</span><span class="range-c">AST 10–40 / ALT 7–56 U/L</span></td><td><span class="rl">GOAL</span><span class="range-o">AST &lt;26 / ALT &lt;26 U/L</span></td></tr>
+          <tr><td><span class="bio-name">CBC with differential</span></td><td><span class="bio-test">Complete Blood Count</span></td><td><span class="rl">CLINICAL</span><span class="range-c">Standard ranges</span></td><td><span class="rl">GOAL</span><span class="range-o">Mid-range; WBC 4.5–6.0; stable across the year</span></td></tr>
+          <tr><td><span class="bio-name">Lipid Panel (advanced)</span></td><td><span class="bio-test">apoB, LDL-P, TG, HDL</span></td><td><span class="rl">CLINICAL</span><span class="range-c">Standard lipid references</span></td><td><span class="rl">GOAL</span><span class="range-o">apoB &lt;60 / TG &lt;80 / HDL &gt;60</span></td></tr>
+          <tr><td><span class="bio-name">Fasting Glucose / Insulin</span></td><td><span class="bio-test">Fasting glucose + insulin</span></td><td><span class="rl">CLINICAL</span><span class="range-c">Glucose 70–99 / Insulin 2–25</span></td><td><span class="rl">GOAL</span><span class="range-o">Glucose 75–90 / Insulin 2–6 / HOMA-IR &lt;1.0</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="disclaimer-box">⚠ This protocol is not FDA-approved. Individual peptide contraindications apply — particularly angiogenesis caution (BPC-157, TB-500, VEGF) in anyone with cancer history. IGF-1 must stay within the upper-normal age reference — not supraphysiologic. All individual peptide decks contain specific contraindications, dosing notes, and side effect profiles. Work with a qualified practitioner experienced in peptide therapy and longevity medicine. Biomarkers should be tracked quarterly minimum.</div>
+  </div>
+
+  <!-- 06 SUMMARY -->
+  <div class="section green" style="animation-delay:0.45s;">
+    <div class="section-num">06 — Summary</div>
+    <h2>Longevity Stack at a Glance</h2>
+    <div class="protocol-summary">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent2);margin-bottom:4px;">LONGEVITY STACK — ANNUAL PROTOCOL</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:14px;">4 Tiers · 11 Peptides · 8 Aging Hallmarks Addressed · Year-Round Architecture</div>
+      <div class="proto-grid">
+        <div class="proto-tile"><div class="proto-val">4 Tiers</div><div class="proto-label">ARCHITECTURE</div></div>
+        <div class="proto-tile"><div class="proto-val">11</div><div class="proto-label">PEPTIDES TOTAL</div></div>
+        <div class="proto-tile"><div class="proto-val">Year-Round</div><div class="proto-label">CJC / IPAM BASE</div></div>
+        <div class="proto-tile"><div class="proto-val">2× / yr</div><div class="proto-label">MITO RESET</div></div>
+        <div class="proto-tile"><div class="proto-val">2–3× / yr</div><div class="proto-label">EPITHALON</div></div>
+        <div class="proto-tile"><div class="proto-val">Q2 + Q4</div><div class="proto-label">GLOW / KLOW</div></div>
+        <div class="proto-tile"><div class="proto-val">2–3× / yr</div><div class="proto-label">NEURO CYCLE</div></div>
+        <div class="proto-tile"><div class="proto-val">Quarterly</div><div class="proto-label">BIOMARKERS</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM CTA -->
+  <div style="margin-top:32px;background:rgba(0,255,157,.05);border:1px solid rgba(0,255,157,.2);border-top:2px solid var(--accent2);padding:24px;text-align:center;">
+    <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:8px;">READY TO BUILD YOUR LONGEVITY PROTOCOL?</div>
+    <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);margin-bottom:6px;">Track Your Full-Year Protocol</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:18px;">Add individual peptides from this stack to your personal tracker — cycle timers, dose calculators, and daily logs for each compound.</div>
+    <a href="protocol-tracker.html" style="display:inline-block;font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:3px;background:var(--accent2);color:#080c10;text-decoration:none;padding:14px 32px;font-weight:700;transition:all .2s;" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+      OPEN MY PROTOCOL TRACKER →
+    </a>
+    <div style="margin-top:16px;">
+      <a href="index.html" style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);text-decoration:none;" onmouseover="this.style.color='var(--accent2)'" onmouseout="this.style.color='var(--muted)'">← BACK TO ENCYCLOPEDIA</a>
+    </div>
+  </div>
+
+</div>
+<script src="assets/peptide-footer.js" defer></script>
+
+
+    <!-- 🧊 RECONSTITUTED SHELF LIFE — auto-injected -->
+    <div style="margin-top:14px;padding:14px 16px;background:linear-gradient(135deg,rgba(96,165,250,.1),rgba(59,130,246,.02));border:1.5px solid rgba(96,165,250,.4);border-radius:6px;">
+      <div style="display:flex;align-items:flex-start;gap:12px;">
+        <div style="font-size:24px;line-height:1.1;flex-shrink:0;">🧊</div>
+        <div style="flex:1;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.18em;color:#60a5fa;margin-bottom:4px;">RECONSTITUTED SHELF LIFE</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:800;color:#fff;line-height:1.15;margin-bottom:6px;">28 days after mixing</div>
+          <div style="font-family:'Barlow',sans-serif;font-size:13px;color:#cbd5e1;line-height:1.55;margin-bottom:8px;">Multi-peptide longevity blend. 28-day window (shortest member).</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:#94a3b8;line-height:1.65;">
+            Storage: 2–8°C (fridge) · Protected from light · Do NOT freeze<br>
+            Preload syringes/cartridges to minimize vial disturbance
+          </div>
+        </div>
+      </div>
+  
+  <!-- ⚖️ COMPARE PEPTIDES — auto-injected -->
+  <div style="margin-top:28px;padding:18px 22px;background:linear-gradient(135deg,rgba(99,102,241,.1),rgba(67,56,202,.02));border:1px solid rgba(99,102,241,.35);border-radius:6px;max-width:900px;margin-left:auto;margin-right:auto;text-align:center;">
+    <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.18em;color:#a5b4fc;margin-bottom:8px;">⚖️ NOT SURE IF THIS IS THE RIGHT PEPTIDE?</div>
+    <div style="font-family:'Barlow',sans-serif;font-size:13px;color:#cbd5e1;line-height:1.55;margin-bottom:14px;">Put this peptide head-to-head with similar compounds. See ratings, costs, stacking conflicts — pick the right one for your goal.</div>
+    <a href="compare.html" style="display:inline-block;padding:11px 24px;background:linear-gradient(135deg,#6366f1,#4338ca);color:#fff;text-decoration:none;border-radius:4px;font-family:'Rajdhani',sans-serif;font-weight:800;font-size:13px;letter-spacing:.08em;text-transform:uppercase;">Compare Peptides →</a>
+  </div>
+
+<!-- 🧭 FOOTER NAV — auto-injected (Add to Stack + Back to Encyclopedia) -->
+  <div style="margin-top:40px;padding-top:30px;border-top:1px solid rgba(26,45,58,.6);">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:900px;margin:0 auto;">
+      <a href="protocol-tracker.html?add=Longevity%20Stack" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:18px 20px;background:linear-gradient(135deg,#14b8a6,#0d9488);color:#fff;text-decoration:none;border-radius:6px;font-family:'Rajdhani',sans-serif;font-weight:800;font-size:15px;letter-spacing:.06em;text-transform:uppercase;box-shadow:0 4px 16px rgba(20,184,166,.25);transition:all .2s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(20,184,166,.4)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 16px rgba(20,184,166,.25)'">
+        <span style="font-size:20px;line-height:1;">＋</span> ADD TO MY STACK
+      </a>
+      <a href="index.html" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:18px 20px;background:transparent;color:#cbd5e1;text-decoration:none;border:1px solid rgba(26,45,58,.8);border-radius:6px;font-family:'Rajdhani',sans-serif;font-weight:800;font-size:15px;letter-spacing:.06em;text-transform:uppercase;transition:all .2s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;" onmouseover="this.style.background='rgba(20,184,166,.08)';this.style.borderColor='rgba(20,184,166,.4)';this.style.color='#14b8a6'" onmouseout="this.style.background='transparent';this.style.borderColor='rgba(26,45,58,.8)';this.style.color='#cbd5e1'">
+        <span style="font-size:18px;line-height:1;">←</span> BACK TO ENCYCLOPEDIA
+      </a>
+    </div>
+    <div style="text-align:center;margin-top:18px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.15em;color:#4a6272;">
+      APEX · RESEARCH USE ONLY · NOT MEDICAL ADVICE
+    </div>
+  </div>
+
+
+    </div>
+
+
+<!--️ APEX PEN CALLOUT — auto-injected -->
+<a href="https://apexdosing.com/buy-pen" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:14px;margin:20px 0;padding:16px 18px;background:linear-gradient(135deg,rgba(0,212,255,.1),rgba(0,255,157,.04));border:1px solid rgba(0,212,255,.35);border-left:3px solid #00d4ff;text-decoration:none;transition:all .2s;">
+  <div style="font-size:32px;line-height:1;flex-shrink:0;">️</div>
+  <div style="flex:1;">
+    <div style="font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:#eaf4f8;margin-bottom:2px;">Ditch the math — get the Apex pen</div>
+    <div style="font-size:12px;color:#c8dde8;line-height:1.5;">Dial your dose in units. Click. Done. No more mcg/mL calculations every time. $39 · ships with cartridges + needles + BAC water.</div>
+  </div>
+  <div style="font-family:'Rajdhani',sans-serif;font-size:13px;color:#00d4ff;font-weight:700;letter-spacing:.05em;flex-shrink:0;">Shop →</div>
+</a>
+
+<script src="assets/apex-nav-pill.js"></script>
+<script src="assets/apex-editorial.js"></script>
+<script src="assets/apex-social-proof.js"></script>
+</body>
+</html>
