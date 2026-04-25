@@ -70,6 +70,7 @@
           '<a href="browse.html"'+(section==='Research'?' class="active"':'')+'>Research</a>'+
           '<a href="compare.html">Compare</a>'+
           '<a href="basics.html">Basics</a>'+
+          '<a href="affiliate.html" style="color:#fbbf24;">🎁 Earn $1/mo</a>'+
           (pretty ? '<span class="apex-crumb-inline">›&nbsp;<b>'+pretty+'</b></span>' : '')+
         '</div>'+
         (activeStackCount > 0 ?
