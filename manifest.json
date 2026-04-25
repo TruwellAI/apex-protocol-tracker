@@ -5,6 +5,7 @@
   "start_url": "protocol-tracker.html",
   "scope": "./",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "orientation": "portrait",
   "background_color": "#080c10",
   "theme_color": "#080c10",
@@ -13,16 +14,69 @@
       "src": "assets/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "assets/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
-  "categories": ["health", "medical", "fitness"],
+  "shortcuts": [
+    {
+      "name": "Today's Doses",
+      "short_name": "Today",
+      "description": "Your daily injection card",
+      "url": "protocol-tracker.html",
+      "icons": [{ "src": "assets/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Add Protocol",
+      "short_name": "Add",
+      "description": "Add a new peptide protocol",
+      "url": "protocol-tracker.html?action=add",
+      "icons": [{ "src": "assets/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Build Stack",
+      "short_name": "Goals",
+      "description": "Build a stack from your goals",
+      "url": "protocol-tracker.html?action=goals",
+      "icons": [{ "src": "assets/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Encyclopedia",
+      "short_name": "Browse",
+      "description": "Research peptides",
+      "url": "browse.html",
+      "icons": [{ "src": "assets/icon-192.png", "sizes": "192x192" }]
+    }
+  ],
+  "share_target": {
+    "action": "protocol-tracker.html?shared=1",
+    "method": "GET",
+    "enctype": "application/x-www-form-urlencoded",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  "categories": ["health", "medical", "fitness", "lifestyle"],
   "lang": "en-US",
-  "dir": "ltr"
+  "dir": "ltr",
+  "prefer_related_applications": false
 }

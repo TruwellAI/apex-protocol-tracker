@@ -411,10 +411,39 @@
     haptic('light');
   }, { capture: true });
 
+  // ── Service worker registration (offline + push) ──────────────────
+  function registerSW() {
+    if (!('serviceWorker' in navigator)) return;
+    // Skip on insecure context except localhost
+    if (location.protocol !== 'https:' && location.hostname !== 'localhost' && !location.hostname.startsWith('127.')) return;
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+    // Listen for "flush queued events" message from SW
+    navigator.serviceWorker.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'flush-events') {
+        // Replay queued tracking events (apex-tracking.js handles the queue)
+        try {
+          const queue = JSON.parse(localStorage.getItem('apex_event_queue') || '[]');
+          if (queue.length && window.GHL_WEBHOOK_URL) {
+            queue.forEach((p) => {
+              fetch(window.GHL_WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(p),
+                keepalive: true,
+              }).catch(() => {});
+            });
+            localStorage.setItem('apex_event_queue', '[]');
+          }
+        } catch(e) {}
+      }
+    });
+  }
+
   // ── Boot ──────────────────────────────────────────────────────────
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', maybePromptInstall);
+    document.addEventListener('DOMContentLoaded', () => { maybePromptInstall(); registerSW(); });
   } else {
     maybePromptInstall();
+    registerSW();
   }
 })();
