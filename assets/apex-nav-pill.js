@@ -34,13 +34,43 @@
     else if (/stack$|stack\./i.test(fileSlug)) section = 'Stacks';
     else if (/nutrition|privacy|terms|reset/i.test(fileSlug)) section = 'Info';
 
+    // ── Smart back: figure out the best "back" target ────────────────────────
+    var backHref = '';
+    var backLabel = '';
+    var canHistoryBack = false;
+    try {
+      var ref = document.referrer || '';
+      var refHost = '';
+      try { refHost = new URL(ref).hostname; } catch(e) {}
+      var sameOrigin = refHost && refHost === location.hostname;
+      if (sameOrigin && ref) {
+        canHistoryBack = true;
+        if (ref.indexOf('protocol-tracker') > -1) backLabel = '← Tracker';
+        else if (ref.indexOf('browse') > -1) backLabel = '← Encyclopedia';
+        else if (ref.indexOf('compare') > -1) backLabel = '← Compare';
+        else if (ref.indexOf('wizard') > -1) backLabel = '← Setup';
+        else if (ref.indexOf('basics') > -1) backLabel = '← Basics';
+        else if (ref.indexOf('index.html') > -1 || ref.match(/\/$/)) backLabel = '← Home';
+        else backLabel = '← Back';
+      } else {
+        // Fallback: pick the most likely parent based on current page section
+        if (section === 'Research') { backHref = 'browse.html'; backLabel = '← Encyclopedia'; }
+        else if (section === 'Stacks') { backHref = 'browse.html'; backLabel = '← Encyclopedia'; }
+        else { backHref = 'index.html'; backLabel = '← Home'; }
+      }
+    } catch(e) {
+      backHref = 'index.html'; backLabel = '← Home';
+    }
+
     // ── Inject unified top bar ──────────────────────────────────────────────
     var top = document.createElement('div');
     top.id = 'apex-nav-top';
     top.innerHTML = ''+
       '<style>'+
         '#apex-nav-top{position:sticky;top:0;z-index:9996;width:100%;background:rgba(8,12,16,.94);backdrop-filter:blur(10px);border-bottom:1px solid rgba(20,184,166,.22);font-family:"Share Tech Mono",monospace;}'+
-        '#apex-nav-top .apex-nav-inner{max-width:1160px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:20px;}'+
+        '#apex-nav-top .apex-nav-inner{max-width:1160px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:14px;}'+
+        '#apex-nav-top .apex-back-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;background:transparent;color:#cbd5e1;border:1px solid rgba(0,255,157,.35);border-radius:18px;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;cursor:pointer;transition:all .15s;flex-shrink:0;min-height:36px;font-family:inherit;}'+
+        '#apex-nav-top .apex-back-btn:hover{background:rgba(0,255,157,.1);color:#00ff9d;border-color:#00ff9d;}'+
         '#apex-nav-top .apex-brand{font-family:"Rajdhani",sans-serif;font-size:19px;font-weight:700;color:#14b8a6;letter-spacing:.18em;text-decoration:none;flex-shrink:0;}'+
         '#apex-nav-top .apex-nav-sep{color:rgba(148,163,184,.3);font-size:10px;}'+
         '#apex-nav-top .apex-nav-links{display:flex;align-items:center;gap:18px;flex:1;}'+
@@ -56,15 +86,23 @@
         '#apex-nav-top .apex-crumb-inline{font-size:10px;letter-spacing:.12em;color:#64748b;}'+
         '#apex-nav-top .apex-crumb-inline b{color:#cbd5e1;font-weight:600;}'+
         '@media (max-width:760px){'+
-          '#apex-nav-top .apex-nav-inner{gap:12px;padding:8px 14px;}'+
-          '#apex-nav-top .apex-brand{font-size:16px;}'+
-          '#apex-nav-top .apex-nav-links{gap:12px;}'+
-          '#apex-nav-top .apex-nav-links a{font-size:9px;letter-spacing:.12em;}'+
+          '#apex-nav-top .apex-nav-inner{gap:8px;padding:8px 12px;}'+
+          '#apex-nav-top .apex-back-btn{padding:8px 10px;font-size:10px;letter-spacing:.1em;}'+
+          '#apex-nav-top .apex-brand{font-size:14px;letter-spacing:.14em;}'+
+          '#apex-nav-top .apex-nav-links{gap:10px;}'+
+          '#apex-nav-top .apex-nav-links a{font-size:9px;letter-spacing:.1em;}'+
           '#apex-nav-top .apex-crumb-inline{display:none;}'+
           '#apex-nav-top .apex-stack-pill,#apex-nav-top .apex-stack-pill-empty{padding:5px 10px;font-size:9px;}'+
         '}'+
+        '@media (max-width:480px){'+
+          '#apex-nav-top .apex-brand{display:none;}'+ // back button replaces brand on tiny screens
+          '#apex-nav-top .apex-nav-links a:not(.active){display:none;}'+ // hide non-active links
+        '}'+
       '</style>'+
       '<div class="apex-nav-inner">'+
+        (canHistoryBack
+          ? '<button class="apex-back-btn" onclick="if(history.length>1){history.back()}else{location.href=\''+(backHref||'index.html')+'\'}">'+backLabel+'</button>'
+          : '<a class="apex-back-btn" href="'+backHref+'">'+backLabel+'</a>')+
         '<a href="index.html" class="apex-brand">APEX</a>'+
         '<div class="apex-nav-links">'+
           '<a href="browse.html"'+(section==='Research'?' class="active"':'')+'>Research</a>'+
