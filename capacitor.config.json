@@ -1,0 +1,36 @@
+{
+  "appId": "com.apexdosing.app",
+  "appName": "Apex",
+  "webDir": ".",
+  "server": {
+    "androidScheme": "https"
+  },
+  "ios": {
+    "contentInset": "automatic",
+    "preferredContentMode": "mobile",
+    "scrollEnabled": true,
+    "limitsNavigationsToAppBoundDomains": false
+  },
+  "android": {
+    "allowMixedContent": false,
+    "captureInput": true
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchAutoHide": true,
+      "launchShowDuration": 1200,
+      "backgroundColor": "#080c10",
+      "androidSplashResourceName": "splash",
+      "iosSpinnerStyle": "small",
+      "spinnerColor": "#14b8a6",
+      "showSpinner": true,
+      "androidScaleType": "CENTER_CROP",
+      "useDialog": false
+    },
+    "StatusBar": {
+      "style": "DARK",
+      "backgroundColor": "#080c10",
+      "overlaysWebView": false
+    }
+  }
+}

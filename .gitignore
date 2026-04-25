@@ -37,6 +37,24 @@ node_modules/
 dist/
 build/
 
+# Capacitor — generated native projects
+ios/App/Pods/
+ios/App/build/
+ios/DerivedData/
+ios/App/App.xcworkspace/xcuserdata/
+ios/App/App.xcodeproj/xcuserdata/
+android/.gradle/
+android/build/
+android/app/build/
+android/app/src/main/assets/public/
+android/local.properties
+.cxx/
+*.iml
+
+# Capacitor lockfiles (regenerated on cap sync)
+package-lock.json
+yarn.lock
+
 # Local-only
 local/
 private/
