@@ -694,8 +694,17 @@ button:not(.btn-primary):not(.btn-cancel):not(.goal-btn):not(.day-btn):not(.mb-t
       <div class="break-grid" id="break-grid"></div>
     </div>
 
+    <!-- PROFILE + PRO ENTRY — top-right pill row -->
+    <div id="profile-entry-row" style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px;flex-wrap:wrap;">
+      <button onclick="openProfileModal();return false;" style="display:inline-flex;align-items:center;gap:8px;background:rgba(20,184,166,.1);color:#14b8a6;border:1px solid rgba(20,184,166,.4);font-family:'Share Tech Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.12em;padding:8px 14px;cursor:pointer;text-transform:uppercase;border-radius:20px;">
+        <span id="profile-entry-avatar" style="width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#14b8a6,#0d9488);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:10px;">A</span>
+        <span>👤 PROFILE</span>
+      </button>
+      <button onclick="openPricingModal();return false;" style="background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#080c10;border:0;font-family:'Share Tech Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.12em;padding:8px 14px;cursor:pointer;text-transform:uppercase;border-radius:20px;box-shadow:0 3px 10px rgba(251,191,36,.35);">⭐ PRO · $2.99</button>
+    </div>
+
     <!-- GOALS BUILDER ENTRY — always-visible re-run / adjust button -->
-    <div id="goals-entry-row" style="margin-top:24px;padding:14px 18px;background:linear-gradient(135deg,rgba(0,255,157,.06),rgba(16,185,129,.02));border:1px solid rgba(0,255,157,.28);border-left:4px solid #00ff9d;border-radius:6px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+    <div id="goals-entry-row" style="margin-top:14px;padding:14px 18px;background:linear-gradient(135deg,rgba(0,255,157,.06),rgba(16,185,129,.02));border:1px solid rgba(0,255,157,.28);border-left:4px solid #00ff9d;border-radius:6px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
       <div>
         <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.18em;color:#10b981;text-transform:uppercase;margin-bottom:2px;">🎯 STACK BUILDER</div>
         <div style="font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:#fff;line-height:1.2;" id="goals-entry-headline">Adjust your goals or add a new one</div>
@@ -2893,6 +2902,14 @@ function loadState() {
   state.missedToday = state.missedToday || {};
   state.lastDoneDate = state.lastDoneDate || '';
   state.progressLog = state.progressLog || [];  // {id, ts, date, weight, mood, energy, sleep, notes, photo(base64)}
+  state.profile = state.profile || {
+    firstName: '', lastName: '', city: '',
+    joinedAt: state.profile?.joinedAt || Date.now(),
+    payoutMethod: '', payoutHandle: '',
+    membership: 'free',       // 'free' | 'pro'
+    proStartedAt: null,
+    affiliateActive: false,   // becomes true after they enable it
+  };
   // Reset missed/done marks each new day
   const today = todayStr();
   if (state.lastDoneDate !== today) { state.doneToday = {}; state.missedToday = {}; state.lastDoneDate = today; }
@@ -3591,6 +3608,353 @@ function commitGoalsStack(peptideNames) {
   const msg = (added ? added + ' added' : 'Already in your stack') + (skipped.length ? ' · ' + skipped.length + ' skipped (already running)' : '');
   showToast('success', '🎯 Custom stack live', msg + '. Edit any to fine-tune dose or schedule.', 5500);
   try { ghlFire({ event: 'goals_stack_committed', added: added, skipped: skipped.length, peptides: peptideNames }); } catch(e) {}
+}
+
+// ══════════════════════════════════════════════════════════
+// PROFILE + AFFILIATE DASHBOARD
+// User profile, QR code, earnings, payout config, Pro upgrade
+// ══════════════════════════════════════════════════════════
+const APEX_PRICING = {
+  monthly: 2.99,
+  affiliatePerSub: 1.00,    // affiliate gets $1/mo per active sub they refer
+  netToApex: 1.99,
+};
+
+function getProfile() {
+  state.profile = state.profile || {
+    firstName: '', lastName: '', city: '',
+    joinedAt: Date.now(), payoutMethod: '', payoutHandle: '',
+    membership: 'free', proStartedAt: null, affiliateActive: false,
+  };
+  return state.profile;
+}
+
+function getDisplayName() {
+  const p = getProfile();
+  if (p.firstName) return p.firstName + (p.lastName ? ' ' + p.lastName.charAt(0) + '.' : '');
+  return localStorage.getItem('apex_email') || 'Apex User';
+}
+
+function getInitials() {
+  const p = getProfile();
+  if (p.firstName) return (p.firstName[0] + (p.lastName[0] || '')).toUpperCase();
+  const e = localStorage.getItem('apex_email') || '';
+  return (e[0] || 'A').toUpperCase();
+}
+
+function getAffiliateStats() {
+  // Will pull from real backend once Stripe webhooks are wired.
+  // For now, layer base referral counter + simulated payouts from any tracked conversions.
+  const refStats = (typeof getReferralStats === 'function') ? getReferralStats() : { invited: 0, joined: 0 };
+  const conversions = parseInt(localStorage.getItem('apex_affiliate_conversions') || '0', 10) || refStats.joined || 0;
+  const monthly = conversions * APEX_PRICING.affiliatePerSub;
+  const lifetime = parseFloat(localStorage.getItem('apex_affiliate_lifetime') || '0');
+  return {
+    invited: refStats.invited,
+    joined: conversions,
+    activeMonthly: monthly,
+    lifetime: lifetime,
+    pending: monthly,  // pending = current month not yet paid
+  };
+}
+
+function buildQrUrl(text, size) {
+  size = size || 240;
+  return 'https://api.qrserver.com/v1/create-qr-code/?size=' + size + 'x' + size +
+    '&bgcolor=0d1318&color=00ff9d&margin=8&format=svg&data=' + encodeURIComponent(text);
+}
+
+function openProfileModal() {
+  const profile = getProfile();
+  const stats = getAffiliateStats();
+  const refLink = (typeof buildReferralLink === 'function') ? buildReferralLink() : 'https://apexdosing.com/';
+  const refCode = (typeof getReferralCode === 'function') ? getReferralCode() : 'APX00000';
+  const email = localStorage.getItem('apex_email') || '';
+  const isPro = profile.membership === 'pro';
+  const joined = new Date(profile.joinedAt).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+
+  const overlay = document.createElement('div');
+  overlay.id = 'apex-profile-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(4,6,8,.92);z-index:10005;display:flex;align-items:center;justify-content:center;padding:16px;overflow-y:auto;';
+  overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+
+  overlay.innerHTML = `
+    <div class="modal" style="width:760px;max-width:95vw;max-height:92vh;background:#0d1318;border:1px solid var(--border);border-radius:8px;overflow:hidden;display:flex;flex-direction:column;animation:apexModalIn .24s cubic-bezier(.2,.8,.2,1);">
+      <div class="modal-header">
+        <div class="modal-title">👤 My Profile</div>
+        <button class="modal-close" onclick="document.getElementById('apex-profile-overlay').remove()">✕</button>
+      </div>
+      <div class="modal-body" style="flex:1;overflow-y:auto;padding:24px 26px;">
+
+        <!-- IDENTITY ROW -->
+        <div style="display:flex;align-items:center;gap:18px;margin-bottom:24px;">
+          <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#14b8a6,#0d9488);display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;flex-shrink:0;">${getInitials()}</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:#fff;line-height:1.15;">${getDisplayName()}</div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#94a3b8;margin-top:2px;letter-spacing:.05em;">${email || 'no email set'}</div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:#64748b;margin-top:3px;letter-spacing:.1em;">JOINED ${joined.toUpperCase()} · CODE ${refCode}</div>
+          </div>
+          <div style="text-align:right;">
+            ${isPro
+              ? '<div style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#080c10;border-radius:14px;font-family:\'Share Tech Mono\',monospace;font-size:10px;font-weight:700;letter-spacing:.15em;">⭐ APEX PRO</div>'
+              : '<button onclick="openPricingModal();return false;" style="background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#080c10;border:0;font-family:\'Rajdhani\',sans-serif;font-size:12px;font-weight:700;letter-spacing:.1em;padding:8px 14px;cursor:pointer;text-transform:uppercase;border-radius:14px;box-shadow:0 4px 14px rgba(251,191,36,.4);white-space:nowrap;">⭐ Go Pro $2.99</button>'}
+          </div>
+        </div>
+
+        <!-- PROFILE EDIT FIELDS -->
+        <details style="background:rgba(15,20,28,.6);border:1px solid rgba(148,163,184,.15);border-radius:6px;margin-bottom:24px;padding:14px 16px;" ${profile.firstName ? '' : 'open'}>
+          <summary style="cursor:pointer;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.18em;color:#94a3b8;text-transform:uppercase;list-style:none;">✎ EDIT PROFILE</summary>
+          <div class="form-grid-2" style="margin-top:14px;">
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">First Name</label>
+              <input id="profile-fn" type="text" class="form-input" value="${profile.firstName || ''}" placeholder="John">
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">Last Name</label>
+              <input id="profile-ln" type="text" class="form-input" value="${profile.lastName || ''}" placeholder="Smith">
+            </div>
+          </div>
+          <div class="form-group" style="margin-top:12px;">
+            <label class="form-label">City</label>
+            <input id="profile-city" type="text" class="form-input" value="${profile.city || ''}" placeholder="Denver">
+          </div>
+          <button onclick="saveProfileFields();return false;" style="margin-top:8px;background:#14b8a6;color:#fff;border:0;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;letter-spacing:.1em;padding:8px 16px;cursor:pointer;text-transform:uppercase;border-radius:4px;">SAVE</button>
+        </details>
+
+        <!-- AFFILIATE TRIBE PANEL -->
+        <div style="padding:20px 22px;background:linear-gradient(135deg,rgba(0,255,157,.06),rgba(16,185,129,.02));border:1px solid rgba(0,255,157,.3);border-radius:8px;margin-bottom:18px;">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+            <div>
+              <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.22em;color:#10b981;text-transform:uppercase;margin-bottom:2px;">🎁 Your Tribe — Affiliate Program</div>
+              <div style="font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:#fff;">Earn $${APEX_PRICING.affiliatePerSub.toFixed(2)}/month per referral · forever</div>
+            </div>
+          </div>
+
+          <!-- QR + LINK -->
+          <div style="display:flex;gap:18px;margin-bottom:18px;align-items:center;flex-wrap:wrap;">
+            <div style="background:#0d1318;padding:10px;border-radius:8px;flex-shrink:0;">
+              <img src="${buildQrUrl(refLink, 180)}" width="180" height="180" alt="Your referral QR code" style="display:block;border-radius:4px;"/>
+            </div>
+            <div style="flex:1;min-width:200px;">
+              <div style="font-family:'Share Tech Mono',monospace;font-size:9.5px;letter-spacing:.18em;color:#64748b;margin-bottom:4px;">SHARE YOUR LINK</div>
+              <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#fff;background:rgba(8,12,16,.7);padding:8px 12px;border-radius:4px;word-break:break-all;margin-bottom:8px;">${refLink}</div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                <button onclick="copyReferralLink();return false;" style="background:#10b981;color:#080c10;border:0;font-family:'Share Tech Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.1em;padding:7px 12px;cursor:pointer;border-radius:3px;text-transform:uppercase;">COPY</button>
+                <button onclick="shareReferral('sms');return false;" style="background:transparent;color:#10b981;border:1px solid rgba(16,185,129,.4);font-family:'Share Tech Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.1em;padding:7px 10px;cursor:pointer;border-radius:3px;text-transform:uppercase;">SMS</button>
+                <button onclick="shareReferral('twitter');return false;" style="background:transparent;color:#10b981;border:1px solid rgba(16,185,129,.4);font-family:'Share Tech Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.1em;padding:7px 10px;cursor:pointer;border-radius:3px;text-transform:uppercase;">𝕏</button>
+                <button onclick="downloadQrCode();return false;" style="background:transparent;color:#10b981;border:1px solid rgba(16,185,129,.4);font-family:'Share Tech Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.1em;padding:7px 10px;cursor:pointer;border-radius:3px;text-transform:uppercase;">↓ QR</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- STATS -->
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;">
+            <div style="padding:12px;background:rgba(8,12,16,.55);border-radius:4px;text-align:center;">
+              <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:#fff;">${stats.invited}</div>
+              <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:#94a3b8;letter-spacing:.12em;margin-top:2px;">INVITED</div>
+            </div>
+            <div style="padding:12px;background:rgba(8,12,16,.55);border-radius:4px;text-align:center;">
+              <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:#10b981;">${stats.joined}</div>
+              <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:#94a3b8;letter-spacing:.12em;margin-top:2px;">PAYING</div>
+            </div>
+            <div style="padding:12px;background:rgba(0,255,157,.08);border-radius:4px;text-align:center;border:1px solid rgba(0,255,157,.25);">
+              <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:#00ff9d;">$${stats.activeMonthly.toFixed(2)}</div>
+              <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:#10b981;letter-spacing:.12em;margin-top:2px;">PER MONTH</div>
+            </div>
+            <div style="padding:12px;background:rgba(8,12,16,.55);border-radius:4px;text-align:center;">
+              <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:#fff;">$${stats.lifetime.toFixed(2)}</div>
+              <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:#94a3b8;letter-spacing:.12em;margin-top:2px;">LIFETIME</div>
+            </div>
+          </div>
+
+          <!-- PAYOUT CONFIG -->
+          <details style="background:rgba(8,12,16,.55);border-radius:4px;padding:12px 14px;">
+            <summary style="cursor:pointer;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.15em;color:#94a3b8;text-transform:uppercase;list-style:none;">💰 PAYOUT METHOD${profile.payoutMethod ? ' · ' + profile.payoutMethod.toUpperCase() : ''}</summary>
+            <div style="margin-top:12px;display:grid;grid-template-columns:1fr 2fr;gap:8px;">
+              <select id="payout-method" class="form-select">
+                <option value="">Pick one</option>
+                <option value="venmo" ${profile.payoutMethod==='venmo'?'selected':''}>Venmo</option>
+                <option value="cashapp" ${profile.payoutMethod==='cashapp'?'selected':''}>Cash App</option>
+                <option value="paypal" ${profile.payoutMethod==='paypal'?'selected':''}>PayPal</option>
+                <option value="zelle" ${profile.payoutMethod==='zelle'?'selected':''}>Zelle</option>
+                <option value="ach" ${profile.payoutMethod==='ach'?'selected':''}>ACH (US bank)</option>
+              </select>
+              <input id="payout-handle" type="text" class="form-input" value="${profile.payoutHandle || ''}" placeholder="@username, email, or account">
+            </div>
+            <div style="font-size:11px;color:#94a3b8;margin-top:8px;line-height:1.5;">Payouts go out monthly once you cross <b style="color:#fff;">$10</b>. Below threshold rolls forward.</div>
+            <button onclick="savePayoutMethod();return false;" style="margin-top:10px;background:#10b981;color:#fff;border:0;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;letter-spacing:.1em;padding:8px 16px;cursor:pointer;text-transform:uppercase;border-radius:4px;">SAVE PAYOUT METHOD</button>
+          </details>
+
+          <div style="margin-top:14px;padding:12px 14px;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.3);border-radius:4px;">
+            <div style="font-family:'Share Tech Mono',monospace;font-size:9.5px;letter-spacing:.15em;color:#fbbf24;margin-bottom:4px;">📈 SCALE THE PLAY</div>
+            <div style="font-size:12px;color:#cbd5e1;line-height:1.5;">Refer 100 paying users → <b style="color:#10b981;">$100/mo recurring forever</b>. 500 → $500/mo. Top recruiters get featured + sponsored content opportunities.</div>
+          </div>
+        </div>
+
+        <!-- ACCOUNT FOOTER -->
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:#64748b;text-align:center;letter-spacing:.1em;padding-top:8px;">
+          Need help? <a href="mailto:hello@apexdosing.com" style="color:#14b8a6;text-decoration:none;">hello@apexdosing.com</a>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+}
+
+function saveProfileFields() {
+  const fn = (document.getElementById('profile-fn') || {}).value || '';
+  const ln = (document.getElementById('profile-ln') || {}).value || '';
+  const city = (document.getElementById('profile-city') || {}).value || '';
+  const p = getProfile();
+  p.firstName = fn.trim();
+  p.lastName = ln.trim();
+  p.city = city.trim();
+  state.profile = p;
+  saveState();
+  if (fn) localStorage.setItem('apex_name', fn + (ln ? ' ' + ln : ''));
+  showToast('success', 'Profile saved', 'Your name is locked in.');
+  // Refresh modal
+  document.getElementById('apex-profile-overlay').remove();
+  openProfileModal();
+}
+
+function savePayoutMethod() {
+  const m = (document.getElementById('payout-method') || {}).value || '';
+  const h = (document.getElementById('payout-handle') || {}).value || '';
+  if (m && !h) { showToast('error', 'Add a handle', 'Pick a method and enter your username/email.'); return; }
+  const p = getProfile();
+  p.payoutMethod = m;
+  p.payoutHandle = h.trim();
+  p.affiliateActive = !!(m && h);
+  state.profile = p;
+  saveState();
+  showToast('success', 'Payout method saved', 'You\'re ready to earn. Share your link and watch the tribe grow.');
+  try { ghlFire({ event: 'affiliate_payout_set', method: m }); } catch(e) {}
+  document.getElementById('apex-profile-overlay').remove();
+  openProfileModal();
+}
+
+function downloadQrCode() {
+  const refLink = (typeof buildReferralLink === 'function') ? buildReferralLink() : 'https://apexdosing.com/';
+  const url = buildQrUrl(refLink, 600);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'apex-referral-qr.svg';
+  a.target = '_blank';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  showToast('success', 'QR downloaded', 'Save it to your phone, post it on socials, print it on a sticker.');
+}
+
+// ══════════════════════════════════════════════════════════
+// PRICING / PRO PAYWALL — $2.99/mo
+// Stripe Checkout integration stub (wire when keys live)
+// ══════════════════════════════════════════════════════════
+const STRIPE_CONFIG = {
+  publishableKey: '', // set in production
+  monthlyPriceId: '', // set in production (price_xxx)
+  checkoutUrl: 'https://buy.stripe.com/PLACEHOLDER',  // replace with real Stripe Payment Link
+};
+
+function openPricingModal() {
+  const profile = getProfile();
+  const isPro = profile.membership === 'pro';
+  const refCode = (typeof getReferralCode === 'function') ? getReferralCode() : '';
+
+  const overlay = document.createElement('div');
+  overlay.id = 'apex-pricing-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(4,6,8,.92);z-index:10006;display:flex;align-items:center;justify-content:center;padding:16px;overflow-y:auto;';
+  overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+
+  overlay.innerHTML = `
+    <div class="modal" style="width:760px;max-width:95vw;max-height:92vh;background:#0d1318;border:1px solid var(--border);border-radius:8px;overflow:hidden;display:flex;flex-direction:column;animation:apexModalIn .24s cubic-bezier(.2,.8,.2,1);">
+      <div class="modal-header" style="background:linear-gradient(180deg,rgba(251,191,36,.12),rgba(251,191,36,0));">
+        <div class="modal-title">⭐ Apex Pro</div>
+        <button class="modal-close" onclick="document.getElementById('apex-pricing-overlay').remove()">✕</button>
+      </div>
+      <div class="modal-body" style="flex:1;overflow-y:auto;padding:24px 26px;">
+
+        <!-- HERO -->
+        <div style="text-align:center;margin-bottom:26px;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.28em;color:#fbbf24;margin-bottom:6px;">SUBSCRIPTION</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-size:54px;font-weight:700;color:#fff;line-height:1;">$${APEX_PRICING.monthly.toFixed(2)}<span style="font-size:18px;color:#94a3b8;">/mo</span></div>
+          <div style="font-size:13px;color:#94a3b8;margin-top:8px;">Cancel anytime. Lock-in pricing if you join now.</div>
+        </div>
+
+        <!-- COMPARISON GRID -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px;">
+          <div style="padding:18px 20px;background:rgba(15,20,28,.6);border:1px solid rgba(148,163,184,.15);border-radius:6px;">
+            <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.18em;color:#94a3b8;margin-bottom:6px;">FREE FOREVER</div>
+            <div style="font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:14px;">Tracker · Encyclopedia · Goals Builder</div>
+            <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;font-size:13px;color:#cbd5e1;line-height:1.4;">
+              <li>✓ Full peptide encyclopedia (46+)</li>
+              <li>✓ Protocol tracker (unlimited stacks)</li>
+              <li>✓ Goals-based stack builder</li>
+              <li>✓ Conflict detection + receptor map</li>
+              <li>✓ Cost tracker</li>
+              <li>✓ Progress photos + weight log</li>
+              <li>✓ Adam-voiced site tour</li>
+              <li>✓ Export / Import (manual sync)</li>
+            </ul>
+          </div>
+          <div style="padding:18px 20px;background:linear-gradient(135deg,rgba(251,191,36,.1),rgba(245,158,11,.04));border:1.5px solid #fbbf24;border-radius:6px;position:relative;box-shadow:0 8px 28px rgba(251,191,36,.2);">
+            <div style="position:absolute;top:-10px;right:14px;background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#080c10;padding:4px 10px;border-radius:10px;font-family:'Share Tech Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.15em;">⭐ APEX PRO</div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.18em;color:#fbbf24;margin-bottom:6px;">$${APEX_PRICING.monthly.toFixed(2)}/MO</div>
+            <div style="font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:14px;">Everything Free + power features</div>
+            <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;font-size:13px;color:#fff;line-height:1.4;">
+              <li>✨ <b>Cloud sync</b> — phone + desktop, auto</li>
+              <li>✨ <b>Unlimited progress photos</b> + cycle compare</li>
+              <li>✨ <b>Lab integration</b> — import labs, see deltas</li>
+              <li>✨ <b>AI protocol coach</b> — "what should I run next?"</li>
+              <li>✨ <b>Member-only stacks</b> + early peptide research</li>
+              <li>✨ <b>Affiliate program</b> — earn $${APEX_PRICING.affiliatePerSub}/mo per referral</li>
+              <li>✨ <b>Priority support</b> + Apex Pro Discord</li>
+              <li>✨ <b>20% off</b> Apex pen, BAC water, supplies</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- AFFILIATE OFFSET CALLOUT -->
+        <div style="padding:16px 18px;background:rgba(0,255,157,.06);border:1px solid rgba(0,255,157,.3);border-left:4px solid #00ff9d;border-radius:6px;margin-bottom:22px;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.18em;color:#10b981;margin-bottom:4px;">💸 PRO PAYS FOR ITSELF</div>
+          <div style="font-size:14px;color:#fff;line-height:1.5;">Refer just <b>3 friends</b> who join Pro and your <b>$2.99/mo is fully covered</b> — every additional referral is straight cash.</div>
+        </div>
+
+        <!-- CTA -->
+        ${isPro
+          ? '<div style="text-align:center;padding:28px;background:linear-gradient(135deg,rgba(251,191,36,.1),rgba(245,158,11,.02));border-radius:6px;"><div style="font-family:\'Rajdhani\',sans-serif;font-size:22px;font-weight:700;color:#fbbf24;">⭐ You\'re already Pro</div><div style="font-size:13px;color:#94a3b8;margin-top:6px;">Manage your subscription anytime in your profile.</div></div>'
+          : `<div style="text-align:center;">
+              <button onclick="startProCheckout('${refCode}');return false;" style="background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#080c10;border:0;font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:800;letter-spacing:.1em;padding:18px 48px;cursor:pointer;text-transform:uppercase;border-radius:8px;box-shadow:0 6px 24px rgba(251,191,36,.45);transition:transform .15s,box-shadow .15s;" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 8px 28px rgba(251,191,36,.6)';" onmouseout="this.style.transform='';this.style.boxShadow='0 6px 24px rgba(251,191,36,.45)';">⭐ Start Pro · $${APEX_PRICING.monthly.toFixed(2)}/mo</button>
+              <div style="font-size:11px;color:#64748b;margin-top:14px;font-family:'Share Tech Mono',monospace;letter-spacing:.1em;">CANCEL ANYTIME · 30-DAY MONEY-BACK</div>
+            </div>`}
+
+        <div style="margin-top:24px;padding-top:20px;border-top:1px solid rgba(148,163,184,.12);text-align:center;font-size:11px;color:#64748b;line-height:1.6;">
+          Apex Pro is a research-tool subscription. Not medical advice. Not a substitute for licensed providers.<br>
+          Affiliate earnings paid monthly via your chosen method once you cross $10.
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  try { ghlFire({ event: 'pricing_viewed', from: 'profile' }); } catch(e) {}
+}
+
+function startProCheckout(refCode) {
+  // Stripe Checkout / Payment Link integration.
+  // Until backend is live, this:
+  //  1) fires the GHL event so you can attribute conversions
+  //  2) opens the Stripe Payment Link with referral code in metadata
+  try { ghlFire({ event: 'pro_checkout_started', referral_code: refCode || '', referred_by: localStorage.getItem('apex_referred_by') || null }); } catch(e) {}
+  if (!STRIPE_CONFIG.checkoutUrl || STRIPE_CONFIG.checkoutUrl.includes('PLACEHOLDER')) {
+    showToast('info', 'Checkout coming soon', 'Stripe integration is being wired. Get on the waitlist — we\'ll grandfather your $2.99 lock-in.', 6000);
+    return;
+  }
+  const refBy = localStorage.getItem('apex_referred_by') || '';
+  const url = STRIPE_CONFIG.checkoutUrl + '?client_reference_id=' + encodeURIComponent(refCode || '') +
+    '&prefilled_email=' + encodeURIComponent(localStorage.getItem('apex_email') || '') +
+    (refBy ? '&utm_source=referral&utm_campaign=' + encodeURIComponent(refBy) : '');
+  window.location.href = url;
 }
 
 // ══════════════════════════════════════════════════════════
@@ -9235,6 +9599,23 @@ function render() {
 
   // Active cycles
   renderActiveCycles(active);
+
+  // Profile entry pill — refresh avatar initials + hide Pro CTA if subscribed
+  try {
+    const av = document.getElementById('profile-entry-avatar');
+    if (av) av.textContent = getInitials();
+    const proBtn = document.querySelector('#profile-entry-row button[onclick*="openPricingModal"]');
+    if (proBtn) {
+      const profile = getProfile();
+      if (profile.membership === 'pro') {
+        proBtn.innerHTML = '⭐ APEX PRO · ACTIVE';
+        proBtn.style.background = 'transparent';
+        proBtn.style.color = '#fbbf24';
+        proBtn.style.border = '1px solid rgba(251,191,36,.5)';
+        proBtn.style.boxShadow = 'none';
+      }
+    }
+  } catch(e) {}
 
   // Goals coverage — refresh headline + suggest missing goals based on stack
   try {
