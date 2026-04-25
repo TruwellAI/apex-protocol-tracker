@@ -1109,6 +1109,22 @@ function renderRunningStack() {
 let maxStepReached = 1;
 
 function goStep(n) {
+  // Skip Step 2 (60-second primer) on repeat visits — only show once per user.
+  // Detect direction so Back from Step 3 goes straight to Step 1, not 2.
+  try {
+    if (n === 2 && localStorage.getItem('apex_primer_seen') === '1') {
+      // Forward navigation → jump to 3, backward → jump to 1
+      const direction = (n > (window._wizLastStep || 0)) ? 3 : 1;
+      window._wizLastStep = direction;
+      return goStep(direction);
+    }
+    if (n === 2) {
+      // Mark primer as seen the moment they land on it
+      localStorage.setItem('apex_primer_seen', '1');
+    }
+    window._wizLastStep = n;
+  } catch(e) {}
+
   document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
   const target = document.querySelector('.step[data-step="' + n + '"]');
   if (!target) return;
@@ -1151,6 +1167,13 @@ function updateDots(current) {
 
 // Wire clickable progress dots
 document.addEventListener('DOMContentLoaded', () => {
+  // Hide the Step 2 dot for returning users — primer is one-and-done
+  try {
+    if (localStorage.getItem('apex_primer_seen') === '1') {
+      const dot2 = document.querySelector('.pdot[data-step="2"]');
+      if (dot2) dot2.style.display = 'none';
+    }
+  } catch(e) {}
   document.querySelectorAll('.pdot').forEach(btn => {
     btn.addEventListener('click', () => {
       if (btn.disabled) return;

@@ -609,11 +609,13 @@ button:not(.btn-primary):not(.btn-cancel):not(.goal-btn):not(.day-btn):not(.mb-t
       ⚠ Research &amp; educational use only · Not medical advice · Talk to a licensed provider
     </div>
 
-    <!-- EMPTY STATE CTA — shown only when no protocols exist. Big pulsing button right at the top. -->
+    <!-- EMPTY STATE CTA — shown only when no protocols exist. Goals-first primary path. -->
     <div id="empty-state-hero" style="display:none;text-align:center;padding:32px 20px 24px;">
-      <div style="font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:6px;">Ready to start your protocol?</div>
-      <div style="font-family:'Barlow',sans-serif;font-size:13px;color:#94a3b8;margin-bottom:20px;line-height:1.5;">We'll walk you through your dose, schedule, and nutrition — step by step.</div>
-      <a href="#" onclick="try{openModal()}catch(e){document.getElementById('modal-overlay').style.display='flex';document.body.style.overflow='hidden'};return false;" style="display:inline-block;padding:18px 48px;background:#14b8a6;color:#fff;font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;border-radius:8px;box-shadow:0 6px 24px rgba(20,184,166,.5);-webkit-tap-highlight-color:transparent;touch-action:manipulation;animation:pulse 2s infinite;">＋ ADD PROTOCOL</a>
+      <div style="font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;color:#fff;margin-bottom:6px;letter-spacing:-.3px;">What are you trying to solve?</div>
+      <div style="font-family:'Barlow',sans-serif;font-size:14px;color:#94a3b8;margin-bottom:24px;line-height:1.55;max-width:440px;margin-left:auto;margin-right:auto;">Pick your goals — we'll build a no-conflict stack instantly. Or add a single protocol manually below.</div>
+      <a href="#" onclick="openGoalsBuilder();return false;" style="display:inline-block;padding:18px 38px;background:linear-gradient(135deg,#00ff9d,#10b981);color:#080c10;font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;border-radius:8px;box-shadow:0 6px 24px rgba(0,255,157,.5);-webkit-tap-highlight-color:transparent;touch-action:manipulation;">🎯 BUILD MY STACK FROM GOALS</a>
+      <div style="margin-top:14px;">
+        <a href="#" onclick="try{openModal()}catch(e){document.getElementById('modal-overlay').style.display='flex';document.body.style.overflow='hidden'};return false;" style="font-family:'Share Tech Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.18em;color:#94a3b8;text-decoration:none;text-transform:uppercase;border-bottom:1px solid rgba(148,163,184,.3);padding-bottom:1px;">or add a single protocol manually →</a>
       <div style="margin-top:18px;">
         <a href="#" onclick="loadDemoSeed();setTimeout(startSiteTour,700);return false;" style="display:inline-block;padding:10px 22px;background:transparent;color:#fbbf24;font-family:'Share Tech Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;border:1px solid rgba(251,191,36,.55);border-radius:4px;-webkit-tap-highlight-color:transparent;">👀 See it in action</a>
         <div style="font-family:'Barlow',sans-serif;font-size:11px;color:#64748b;margin-top:8px;">Load a sample stack — see streaks, progress rings, overlap detection, and timeline math in 1 click.</div>
@@ -690,6 +692,16 @@ button:not(.btn-primary):not(.btn-cancel):not(.goal-btn):not(.day-btn):not(.mb-t
         <div class="sec-badge break" id="break-badge">0</div>
       </div>
       <div class="break-grid" id="break-grid"></div>
+    </div>
+
+    <!-- GOALS BUILDER ENTRY — always-visible re-run / adjust button -->
+    <div id="goals-entry-row" style="margin-top:24px;padding:14px 18px;background:linear-gradient(135deg,rgba(0,255,157,.06),rgba(16,185,129,.02));border:1px solid rgba(0,255,157,.28);border-left:4px solid #00ff9d;border-radius:6px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+      <div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.18em;color:#10b981;text-transform:uppercase;margin-bottom:2px;">🎯 STACK BUILDER</div>
+        <div style="font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:#fff;line-height:1.2;" id="goals-entry-headline">Adjust your goals or add a new one</div>
+        <div style="font-size:11.5px;color:#94a3b8;margin-top:2px;line-height:1.4;" id="goals-entry-sub">Re-run the engine to see what's missing or stack a new goal in.</div>
+      </div>
+      <button onclick="openGoalsBuilder();return false;" style="background:#00ff9d;color:#080c10;border:0;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;letter-spacing:.1em;padding:10px 18px;cursor:pointer;text-transform:uppercase;border-radius:4px;box-shadow:0 3px 12px rgba(0,255,157,.35);white-space:nowrap;">🎯 OPEN GOALS</button>
     </div>
 
     <!-- PROGRESS + COST ROW — mid-page callouts -->
@@ -3321,6 +3333,264 @@ function maybeFireContextualHints() {
     setTimeout(() => showHint('demoMode', 'demo-banner',
       '<b>Demo mode.</b> When you\'re ready to start tracking your real stack, hit <b>CLEAR DEMO → START MINE</b>.'), 1800);
   }
+}
+
+// ══════════════════════════════════════════════════════════
+// GOALS-FIRST STACK BUILDER
+// User picks goals → engine builds a no-conflict stack and explains why
+// ══════════════════════════════════════════════════════════
+const GOAL_DEFS = [
+  { key:'fatloss',   icon:'🔥', label:'Fat Loss',         desc:'Drop weight, recompose body' },
+  { key:'muscle',    icon:'💪', label:'Muscle Growth',    desc:'Lean mass, recovery, hypertrophy' },
+  { key:'recovery',  icon:'🩹', label:'Joint / Tissue Recovery', desc:'Tendons, ligaments, lingering injury' },
+  { key:'sleep',     icon:'😴', label:'Better Sleep',     desc:'Deep sleep, sleep architecture' },
+  { key:'cognitive', icon:'🧠', label:'Cognitive Edge',   desc:'Focus, mood, neuroprotection' },
+  { key:'skin',      icon:'✨', label:'Skin / Hair',      desc:'Collagen, complexion, hair quality' },
+  { key:'longevity', icon:'🧬', label:'Longevity',        desc:'Telomere, mitochondrial, anti-aging' },
+  { key:'energy',    icon:'⚡', label:'Energy',           desc:'Cellular energy, fight fatigue' },
+  { key:'libido',    icon:'❤️', label:'Libido',           desc:'Sexual function, drive' },
+  { key:'gut',       icon:'🌿', label:'Gut Healing',      desc:'IBS, leaky gut, inflammation' },
+  { key:'immune',    icon:'🛡️', label:'Immune Boost',     desc:'T-cell modulation, defense' },
+];
+
+const PEPTIDE_PROFILES = {
+  'Retatrutide':       { goals:['fatloss','energy'], conflict:'glp1', score:9.5, why:'NEJM Phase 2: 24% weight loss at 12mg — best-in-class GLP-1.', priority:1 },
+  'Tirzepatide':       { goals:['fatloss','energy'], conflict:'glp1', score:8.8, why:'GLP-1 + GIP dual agonist. Better tolerability than semaglutide.', priority:2 },
+  'Semaglutide':       { goals:['fatloss','energy'], conflict:'glp1', score:7.5, why:'Most-studied GLP-1. Solid first-time choice.', priority:3 },
+  'Ipamorelin':        { goals:['muscle','sleep','recovery'], conflict:'ghrelin', score:9.2, why:'Selective GH pulse — no cortisol/prolactin. Pairs with CJC.' },
+  'CJC-1295 No DAC':   { goals:['muscle','sleep','recovery'], conflict:'ghrh', score:9.0, why:'GHRH analog — 2-4× GH pulse paired with Ipamorelin.' },
+  'Tesamorelin':       { goals:['muscle','fatloss'], conflict:'ghrh', score:7.0, why:'GHRH analog with visceral fat reduction.', priority:5 },
+  'Sermorelin':        { goals:['muscle','sleep'], conflict:'ghrh', score:6.5, why:'Shorter GHRH analog.', priority:6 },
+  'BPC-157':           { goals:['recovery','gut','skin'], conflict:null, score:9.5, why:'Foundation tissue repair — local + gut + connective tissue.' },
+  'TB-500':            { goals:['recovery','muscle'], conflict:null, score:9.0, why:'Systemic mobility + recovery. Wolverine Stack with BPC.' },
+  'GHK-Cu':            { goals:['skin','recovery','longevity'], conflict:null, score:8.8, why:'Copper peptide — collagen remodeling, ~400 documented effects.' },
+  'MOTS-c':            { goals:['energy','fatloss','longevity'], conflict:null, score:9.0, why:'Mitokine — fights GLP-1 fatigue, AMPK activation.' },
+  'NAD+':              { goals:['energy','longevity'], conflict:null, score:8.5, why:'Cellular energy + sirtuin activation.' },
+  'SS-31':             { goals:['energy','longevity'], conflict:null, score:7.8, why:'Inner mitochondrial membrane peptide.', priority:8 },
+  'Epitalon':          { goals:['longevity','sleep'], conflict:null, score:8.6, why:'Telomere maintenance + pineal axis.' },
+  'AOD-9604':          { goals:['fatloss'], conflict:null, score:6.5, why:'GH fragment — targeted fat lipolysis.', priority:7 },
+  'L-Carnitine':       { goals:['fatloss','energy'], conflict:null, score:6.0, why:'Fatty acid transport. Cheap adjunct on a cut.', priority:9 },
+  'Semax':             { goals:['cognitive'], conflict:null, score:9.0, why:'BDNF upregulation — focus + mood. AM dosing.' },
+  'Selank':            { goals:['cognitive','sleep'], conflict:null, score:8.8, why:'Anxiolytic without sedation. PM dosing — pairs with Semax.' },
+  'Dihexa':            { goals:['cognitive'], conflict:null, score:7.5, why:'Angiotensin IV analog — neuroplasticity.', priority:8 },
+  'DSIP':              { goals:['sleep','longevity'], conflict:null, score:8.0, why:'Deep sleep architecture. Amplifies GH peptide effects.' },
+  'Thymosin Alpha-1':  { goals:['immune'], conflict:null, score:9.0, why:'T-cell modulator. Foundational immune peptide.' },
+  'KPV':               { goals:['gut','immune'], conflict:null, score:8.5, why:'Anti-inflammatory tripeptide. Local gut healing.' },
+  'PT-141':            { goals:['libido'], conflict:'melanocortin', score:8.5, why:'Central libido via melanocortin. Cleanest pure-libido pick.' },
+  'Melanotan II':      { goals:['libido','skin'], conflict:'melanocortin', score:7.0, why:'Tan + libido. More side effects than PT-141.', priority:5 },
+};
+
+// Detect which goals the active stack already covers (for live "missing goals" hints)
+function getActiveGoalCoverage() {
+  const active = (state.protocols || []).filter(p => (p.status||'active')==='active' && !p.isDemoSeed);
+  const covered = new Set();
+  active.forEach(p => {
+    const profile = PEPTIDE_PROFILES[p.name];
+    if (profile) profile.goals.forEach(g => covered.add(g));
+  });
+  return { covered, allGoals: GOAL_DEFS.map(g => g.key) };
+}
+
+function buildStackFromGoals(selectedGoals) {
+  if (!selectedGoals || !selectedGoals.length) return { stack: [], coverage: {}, uncovered: [] };
+  const goalSet = new Set(selectedGoals);
+  const candidates = [];
+  Object.entries(PEPTIDE_PROFILES).forEach(([name, profile]) => {
+    const matched = profile.goals.filter(g => goalSet.has(g));
+    if (!matched.length) return;
+    candidates.push({ name, conflict: profile.conflict, score: profile.score + matched.length * 0.5, goals: matched, why: profile.why, priority: profile.priority || 0 });
+  });
+  candidates.sort((a, b) => (b.score - a.score) || (a.priority - b.priority));
+
+  const picked = [];
+  const usedConflicts = new Set();
+  const coveredGoals = new Set();
+  for (const c of candidates) {
+    if (c.goals.every(g => coveredGoals.has(g))) continue;
+    if (c.conflict && usedConflicts.has(c.conflict)) continue;
+    picked.push(c);
+    if (c.conflict) usedConflicts.add(c.conflict);
+    c.goals.forEach(g => coveredGoals.add(g));
+  }
+  const coverage = {};
+  selectedGoals.forEach(g => { coverage[g] = picked.filter(p => p.goals.includes(g)).map(p => p.name); });
+  const uncovered = selectedGoals.filter(g => !coveredGoals.has(g));
+  return { stack: picked, coverage, uncovered };
+}
+
+function openGoalsBuilder(prefilledGoals) {
+  const overlay = document.createElement('div');
+  overlay.id = 'apex-goals-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(4,6,8,.92);z-index:10004;display:flex;align-items:center;justify-content:center;padding:16px;overflow-y:auto;';
+  overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+
+  // Pre-fill with currently-active goals if user is editing
+  const activeCovered = getActiveGoalCoverage().covered;
+  const startSet = new Set();
+  if (Array.isArray(prefilledGoals)) prefilledGoals.forEach(g => startSet.add(g));
+  else activeCovered.forEach(g => startSet.add(g));
+
+  const goalChips = GOAL_DEFS.map(g => {
+    const isOn = startSet.has(g.key);
+    const onAttr = isOn ? '1' : '';
+    const styles = isOn
+      ? 'background:rgba(0,255,157,.08);border-color:#00ff9d;box-shadow:0 0 0 1px #00ff9d inset, 0 6px 22px rgba(0,255,157,.12);'
+      : 'background:#0f1820;border-color:rgba(148,163,184,.16);';
+    return `<button data-goal="${g.key}" data-active="${onAttr}" class="apex-goal-tile" onclick="toggleGoalChip(this)" style="text-align:left;border:1.5px solid;padding:20px 22px;border-radius:10px;cursor:pointer;font-family:'Barlow',sans-serif;transition:transform .15s,border-color .15s,background .15s,box-shadow .2s;display:flex;flex-direction:column;gap:8px;min-height:104px;${styles}" onmouseover="if(this.dataset.active!=='1'){this.style.borderColor='rgba(0,255,157,.35)';this.style.transform='translateY(-1px)';}" onmouseout="if(this.dataset.active!=='1'){this.style.borderColor='rgba(148,163,184,.16)';this.style.transform='';}">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span style="font-size:26px;line-height:1;">${g.icon}</span>
+        <span style="font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:#fff;letter-spacing:-.2px;">${g.label}</span>
+      </div>
+      <div style="font-size:13px;color:#94a3b8;line-height:1.45;">${g.desc}</div>
+    </button>`;
+  }).join('');
+
+  const initCount = startSet.size;
+  overlay.innerHTML = `
+    <div class="modal" style="width:760px;max-width:95vw;max-height:92vh;background:#0d1318;border:1px solid var(--border);border-radius:8px;overflow:hidden;display:flex;flex-direction:column;animation:apexModalIn .24s cubic-bezier(.2,.8,.2,1);">
+      <div class="modal-header">
+        <div class="modal-title">🎯 What are you trying to solve?</div>
+        <button class="modal-close" onclick="document.getElementById('apex-goals-overlay').remove()">✕</button>
+      </div>
+      <div class="modal-body" style="flex:1;overflow-y:auto;padding:24px 26px;">
+        <div style="font-family:'Barlow',sans-serif;font-size:14px;color:#94a3b8;line-height:1.55;margin-bottom:18px;">Pick everything you want to improve. We'll build a stack that hits all of them — <span style="color:#10b981;font-weight:700;">with zero receptor conflicts</span>. Change anytime.</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:24px;" id="apex-goal-grid">${goalChips}</div>
+        <div id="apex-goal-counter" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#64748b;letter-spacing:.15em;text-align:center;">${initCount === 0 ? 'SELECT AT LEAST ONE GOAL' : initCount + ' GOAL' + (initCount > 1 ? 'S' : '') + ' SELECTED'}</div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="document.getElementById('apex-goals-overlay').remove()">CANCEL</button>
+        <button class="btn-cancel" onclick="window.location.href='browse.html'">📚 Browse Research First</button>
+        <button class="btn-primary" id="apex-build-stack-btn" onclick="runStackBuilder()" ${initCount === 0 ? 'disabled style="opacity:.4;"' : ''}>BUILD MY STACK →</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+}
+
+function toggleGoalChip(btn) {
+  const active = btn.dataset.active === '1';
+  btn.dataset.active = active ? '' : '1';
+  if (active) {
+    btn.style.background = '#0f1820';
+    btn.style.borderColor = 'rgba(148,163,184,.18)';
+    btn.style.color = '#cbd5e1';
+    btn.style.boxShadow = '';
+  } else {
+    btn.style.background = 'rgba(20,184,166,.12)';
+    btn.style.borderColor = '#14b8a6';
+    btn.style.color = '#fff';
+    btn.style.boxShadow = '0 0 0 1px #14b8a6 inset, 0 4px 12px rgba(20,184,166,.18)';
+  }
+  const sel = document.querySelectorAll('#apex-goal-grid [data-active="1"]').length;
+  const counter = document.getElementById('apex-goal-counter');
+  const submit = document.getElementById('apex-build-stack-btn');
+  if (counter) counter.textContent = sel === 0 ? 'SELECT AT LEAST ONE GOAL' : (sel + ' GOAL' + (sel > 1 ? 'S' : '') + ' SELECTED');
+  if (submit) { submit.disabled = sel === 0; submit.style.opacity = sel === 0 ? '.4' : '1'; }
+}
+
+function runStackBuilder() {
+  const selected = [...document.querySelectorAll('#apex-goal-grid [data-active="1"]')].map(b => b.dataset.goal);
+  if (!selected.length) return;
+  const result = buildStackFromGoals(selected);
+  showStackPreview(selected, result);
+  try { ghlFire({ event: 'goals_builder_run', goals: selected, peptides: result.stack.map(s => s.name) }); } catch(e) {}
+}
+
+function showStackPreview(selectedGoals, result) {
+  const overlay = document.getElementById('apex-goals-overlay');
+  if (!overlay) return;
+  const goalLabels = {};
+  GOAL_DEFS.forEach(g => goalLabels[g.key] = g);
+  const goalChips = selectedGoals.map(g => {
+    const def = goalLabels[g];
+    const covered = (result.coverage[g] || []).length > 0;
+    return `<div style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:${covered ? 'rgba(16,185,129,.12)' : 'rgba(220,38,38,.12)'};border:1px solid ${covered ? 'rgba(16,185,129,.35)' : 'rgba(220,38,38,.35)'};border-radius:14px;font-family:'Share Tech Mono',monospace;font-size:10px;color:${covered ? '#10b981' : '#dc2626'};letter-spacing:.1em;text-transform:uppercase;">${covered ? '✓' : '✗'} ${def.icon} ${def.label}</div>`;
+  }).join(' ');
+  const stackCards = result.stack.map(p => {
+    const goalIcons = p.goals.map(g => goalLabels[g] ? goalLabels[g].icon : '').join('');
+    return `<div style="padding:14px 16px;background:#0f1820;border:1px solid rgba(20,184,166,.25);border-left:3px solid #14b8a6;border-radius:4px;margin-bottom:8px;">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;">
+        <div style="font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;color:#fff;">${p.name}</div>
+        <div style="font-size:14px;letter-spacing:2px;">${goalIcons}</div>
+      </div>
+      <div style="font-size:12.5px;color:#94a3b8;margin-top:4px;line-height:1.5;">${p.why}</div>
+    </div>`;
+  }).join('');
+  const conflictsRemoved = [...new Set(result.stack.filter(p => p.conflict).map(p => p.conflict))];
+  const dedupNote = conflictsRemoved.length > 0 ? `<div style="margin-top:8px;font-family:'Share Tech Mono',monospace;font-size:10.5px;color:#10b981;letter-spacing:.1em;">✓ Engine ruled out conflicting alternatives in ${conflictsRemoved.length} category(s) — no double-stacked GLP-1, GHRH, or other receptor overlaps.</div>` : '';
+  const uncoveredNote = result.uncovered.length > 0 ? `<div style="margin-top:14px;padding:12px 14px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.35);border-radius:4px;font-size:12px;color:#fbbf24;">⚠ Couldn't fully cover: ${result.uncovered.map(g => goalLabels[g].label).join(', ')}.</div>` : '';
+  overlay.innerHTML = `
+    <div class="modal" style="width:760px;max-width:95vw;max-height:92vh;background:#0d1318;border:1px solid var(--border);border-radius:8px;overflow:hidden;display:flex;flex-direction:column;animation:apexModalIn .24s cubic-bezier(.2,.8,.2,1);">
+      <div class="modal-header">
+        <div class="modal-title">🧠 Your Custom Stack</div>
+        <button class="modal-close" onclick="document.getElementById('apex-goals-overlay').remove()">✕</button>
+      </div>
+      <div class="modal-body" style="flex:1;overflow-y:auto;padding:24px 26px;">
+        <div style="margin-bottom:20px;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.18em;color:#14b8a6;margin-bottom:8px;">YOUR GOALS</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;">${goalChips}</div>
+          ${dedupNote}
+        </div>
+        <div style="margin-bottom:20px;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.18em;color:#14b8a6;margin-bottom:8px;">RECOMMENDED STACK · ${result.stack.length} PEPTIDE${result.stack.length === 1 ? '' : 'S'}</div>
+          ${stackCards}
+        </div>
+        ${uncoveredNote}
+        <div style="margin-top:20px;padding:14px 16px;background:rgba(8,12,16,.5);border-radius:4px;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:9.5px;color:#64748b;letter-spacing:.15em;margin-bottom:6px;">ℹ HOW THE ENGINE PICKED</div>
+          <div style="font-size:12px;color:#94a3b8;line-height:1.55;">Scored every peptide on goal coverage + research evidence, then ruled out anything that conflicts with what was already chosen (e.g. once Retatrutide is in, Tirzepatide and Semaglutide are skipped — same receptor). Smallest stack, no cross-signals.</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick='openGoalsBuilder(${JSON.stringify(selectedGoals)});return false;'>← BACK</button>
+        <button class="btn-primary" onclick='commitGoalsStack(${JSON.stringify(result.stack.map(p => p.name))})'>＋ ADD ${result.stack.length} TO MY STACK</button>
+      </div>
+    </div>
+  `;
+}
+
+function commitGoalsStack(peptideNames) {
+  const overlay = document.getElementById('apex-goals-overlay');
+  if (overlay) overlay.remove();
+  let added = 0;
+  const skipped = [];
+  peptideNames.forEach(name => {
+    const existing = (state.protocols || []).some(p =>
+      (p.status || 'active') === 'active' &&
+      (p.name || '').toLowerCase().replace(/\s+/g,'') === name.toLowerCase().replace(/\s+/g,'')
+    );
+    if (existing) { skipped.push(name); return; }
+    const cat = (typeof CATALOG !== 'undefined' && CATALOG[name]) || {};
+    const dose = cat.doseRanges ? (cat.doseRanges.mid || cat.doseRanges.medium || 0) : 0;
+    state.protocols.push({
+      id: 'goals_' + Date.now() + '_' + name.replace(/\s/g,''),
+      name,
+      dose: dose ? (dose >= 1000 ? (dose/1000)+'mg' : dose+'mcg') : '',
+      units: '—',
+      concMcgPerUnit: 0,
+      vialMg: cat.vialMg || null,
+      bacMl: cat.bacMl || 3.0,
+      freq: cat.freq || 'daily',
+      timing: cat.timing || 'am',
+      fasted: cat.fasted === 'yes',
+      startDate: todayStr(),
+      cycleWk: cat.cycleWk || null,
+      breakWk: cat.breakWk || null,
+      notes: 'Built from Goals Wizard',
+      status: 'active',
+      mechs: cat.mechs || ['other'],
+      vialRunOutDate: null,
+      daysPerVial: 0,
+      supplyAlertFired: false,
+      isDemoSeed: false,
+    });
+    added++;
+  });
+  saveState();
+  try { render(); } catch(e) {}
+  const msg = (added ? added + ' added' : 'Already in your stack') + (skipped.length ? ' · ' + skipped.length + ' skipped (already running)' : '');
+  showToast('success', '🎯 Custom stack live', msg + '. Edit any to fine-tune dose or schedule.', 5500);
+  try { ghlFire({ event: 'goals_stack_committed', added: added, skipped: skipped.length, peptides: peptideNames }); } catch(e) {}
 }
 
 // ══════════════════════════════════════════════════════════
@@ -8965,6 +9235,33 @@ function render() {
 
   // Active cycles
   renderActiveCycles(active);
+
+  // Goals coverage — refresh headline + suggest missing goals based on stack
+  try {
+    const cov = getActiveGoalCoverage();
+    const headlineEl = document.getElementById('goals-entry-headline');
+    const subEl = document.getElementById('goals-entry-sub');
+    const activeProtoCount = (state.protocols || []).filter(p => (p.status||'active')==='active' && !p.isDemoSeed).length;
+    if (headlineEl && activeProtoCount > 0) {
+      const coveredCount = cov.covered.size;
+      const totalGoals = cov.allGoals.length;
+      // Surface 1-2 high-leverage missing goals (smart suggestions, not all 11)
+      const SUGGESTION_PRIORITY = ['recovery','muscle','sleep','energy','longevity','skin'];
+      const missing = SUGGESTION_PRIORITY.filter(g => !cov.covered.has(g));
+      if (missing.length > 0 && coveredCount > 0) {
+        const goalLabels = {recovery:'recovery',muscle:'muscle',sleep:'sleep',energy:'energy',longevity:'longevity',skin:'skin & hair'};
+        const top = missing.slice(0, 2).map(g => goalLabels[g] || g);
+        headlineEl.innerHTML = '💡 You\'re not covering <span style="color:#fbbf24;">' + top.join(' or ') + '</span> yet';
+        if (subEl) subEl.textContent = 'Tap below to layer it in — engine will pick a non-conflicting peptide.';
+      } else if (coveredCount === totalGoals) {
+        headlineEl.textContent = '✅ All goals covered';
+        if (subEl) subEl.textContent = 'Your stack hits every category. Edit goals to refocus.';
+      } else {
+        headlineEl.textContent = 'Adjust your goals or add a new one';
+        if (subEl) subEl.textContent = 'Currently covering ' + coveredCount + ' of ' + totalGoals + ' goal categories.';
+      }
+    }
+  } catch(e) {}
 
   // Cost summary — show aggregated monthly/annual if any protocols have prices,
   // else show the "Add prices" prompt if there are ≥1 active protocols
