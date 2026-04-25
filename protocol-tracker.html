@@ -633,9 +633,10 @@ button:not(.btn-primary):not(.btn-cancel):not(.goal-btn):not(.day-btn):not(.mb-t
     <!-- ═════ TAB: TODAY (home — desktop default) ═════ -->
     <div class="tab-pane tab-today tab-active" id="tab-today">
 
-    <!-- 🪪 TODAY CARD — hidden from home view (user requested stats + active cycles as welcome screen).
-         Still available via MY CARD button in header. -->
-    <div id="tab-card-inline-in-today" style="display:none;padding:6px 0 16px;"></div>
+    <!-- 🪪 QUICK REFERENCE CARD — promoted to PRIMARY daily view (April 2026).
+         "What do I do right now" — dial-the-pen action card lives here.
+         The detailed multi-card cycle grid below is now a collapsible secondary view. -->
+    <div id="tab-card-inline-in-today" style="padding:6px 0 16px;"></div>
 
     <!-- STATS ROW -->
     <div class="stat-row" id="tour-stats">
@@ -668,10 +669,17 @@ button:not(.btn-primary):not(.btn-cancel):not(.goal-btn):not(.day-btn):not(.mb-t
       </div>
     </div>
 
-    <!-- ACTIVE CYCLES -->
-    <div class="sec-header">
+    <!-- ACTIVE CYCLES — Detailed view (collapsible secondary view since Apr 2026) -->
+    <details id="active-cycles-details" style="margin-top:24px;background:rgba(15,20,28,.55);border:1px solid var(--border);border-radius:6px;">
+      <summary style="cursor:pointer;list-style:none;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.18em;color:#94a3b8;text-transform:uppercase;">
+        <span>📋 Detailed View · Active Cycles · Supply Status · Edit</span>
+        <span id="active-badge" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent2);">0 running</span>
+      </summary>
+      <div style="padding:0 18px 18px;">
+        <div style="font-size:12px;color:#64748b;line-height:1.5;margin-bottom:14px;font-family:'Barlow',sans-serif;">Per-protocol supply countdown, dose history, edit and end-cycle controls.</div>
+        <span style="display:none;" id="sec-header-spacer"></span>
+    <div class="sec-header" style="display:none;">
       <div class="sec-title">Active Cycles</div>
-      <div class="sec-badge active" id="active-badge">0 running</div>
     </div>
     <div class="cycle-grid" id="active-grid">
       <div class="empty-state" style="padding:48px 32px;">
@@ -684,6 +692,8 @@ button:not(.btn-primary):not(.btn-cancel):not(.goal-btn):not(.day-btn):not(.mb-t
         </div>
       </div>
     </div>
+      </div>
+    </details>
 
     <!-- ON BREAK -->
     <div id="break-section" style="display:none;">
@@ -694,13 +704,12 @@ button:not(.btn-primary):not(.btn-cancel):not(.goal-btn):not(.day-btn):not(.mb-t
       <div class="break-grid" id="break-grid"></div>
     </div>
 
-    <!-- PROFILE + PRO ENTRY — top-right pill row -->
+    <!-- PROFILE — top-right pill (Pro pricing hidden until PMF launch) -->
     <div id="profile-entry-row" style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px;flex-wrap:wrap;">
       <button onclick="openProfileModal();return false;" style="display:inline-flex;align-items:center;gap:8px;background:rgba(20,184,166,.1);color:#14b8a6;border:1px solid rgba(20,184,166,.4);font-family:'Share Tech Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.12em;padding:8px 14px;cursor:pointer;text-transform:uppercase;border-radius:20px;">
         <span id="profile-entry-avatar" style="width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#14b8a6,#0d9488);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:10px;">A</span>
         <span>👤 PROFILE</span>
       </button>
-      <button onclick="openPricingModal();return false;" style="background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#080c10;border:0;font-family:'Share Tech Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.12em;padding:8px 14px;cursor:pointer;text-transform:uppercase;border-radius:20px;box-shadow:0 3px 10px rgba(251,191,36,.35);">⭐ PRO · $2.99</button>
     </div>
 
     <!-- GOALS BUILDER ENTRY — always-visible re-run / adjust button -->
@@ -737,17 +746,16 @@ button:not(.btn-primary):not(.btn-cancel):not(.goal-btn):not(.day-btn):not(.mb-t
       </div>
     </div>
 
-    <!-- SHARE + REFER — viral loop + social proof -->
-    <div id="share-row" style="margin-top:22px;padding:16px 18px;background:linear-gradient(135deg,rgba(251,191,36,.08),rgba(245,158,11,.02));border:1px solid rgba(251,191,36,.28);border-radius:6px;">
+    <!-- SHARE ROW — share-stack lives, paid affiliate program paused until PMF launch -->
+    <div id="share-row" style="margin-top:22px;padding:16px 18px;background:rgba(15,20,28,.6);border:1px solid rgba(148,163,184,.15);border-radius:6px;">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
         <div>
-          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.2em;color:#fbbf24;text-transform:uppercase;margin-bottom:4px;">🎁 REFER + REWARD</div>
-          <div style="font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:#fff;">Invite 3 → free BAC water · Invite 10 → free pen</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.2em;color:#94a3b8;text-transform:uppercase;margin-bottom:4px;">🔗 SHARE YOUR STACK</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:#fff;">Send your full stack to a friend in one click.</div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <button onclick="openReferralModal();return false;" style="background:#fbbf24;color:#080c10;border:0;border-radius:4px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;letter-spacing:.1em;padding:9px 18px;cursor:pointer;text-transform:uppercase;box-shadow:0 3px 12px rgba(251,191,36,.35);">🎁 Invite Friends</button>
-          <button onclick="shareStreakCard();return false;" style="background:transparent;color:#fbbf24;border:1px solid rgba(251,191,36,.45);border-radius:4px;font-family:'Share Tech Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.12em;padding:9px 14px;cursor:pointer;text-transform:uppercase;">Share Streak</button>
-          <button onclick="buildShareableStackUrl();return false;" style="background:transparent;color:#fbbf24;border:1px solid rgba(251,191,36,.45);border-radius:4px;font-family:'Share Tech Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.12em;padding:9px 14px;cursor:pointer;text-transform:uppercase;">Share Stack</button>
+          <button onclick="shareStreakCard();return false;" style="background:transparent;color:#14b8a6;border:1px solid rgba(20,184,166,.45);border-radius:4px;font-family:'Share Tech Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.12em;padding:9px 14px;cursor:pointer;text-transform:uppercase;">Share Streak</button>
+          <button onclick="buildShareableStackUrl();return false;" style="background:transparent;color:#14b8a6;border:1px solid rgba(20,184,166,.45);border-radius:4px;font-family:'Share Tech Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.12em;padding:9px 14px;cursor:pointer;text-transform:uppercase;">Share Stack</button>
         </div>
       </div>
     </div>
@@ -1774,7 +1782,7 @@ button:not(.btn-primary):not(.btn-cancel):not(.goal-btn):not(.day-btn):not(.mb-t
         </div>
         <div style="margin-bottom:12px;">
           <label class="form-label">Your Prescribed Weekly Dose</label>
-          <!-- SPIN DIAL — mL/week in 0.05 increments, range 0.20 - 2.00 -->
+          <!-- SPIN DIAL — mL/week in 0.05 increments, range 0.20 - 3.00 -->
           <div style="background:#060a0d;border:1px solid rgba(20,184,166,.25);padding:14px;border-radius:6px;">
             <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
               <a href="#" onclick="trtDialDown();return false;" ontouchstart="event.preventDefault();trtDialDown()" style="display:flex;align-items:center;justify-content:center;width:48px;height:48px;background:#0f1820;border:1.5px solid rgba(20,184,166,.5);border-radius:50%;color:#14b8a6;text-decoration:none;font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;-webkit-tap-highlight-color:transparent;touch-action:manipulation;">−</a>
@@ -1789,7 +1797,7 @@ button:not(.btn-primary):not(.btn-cancel):not(.goal-btn):not(.day-btn):not(.mb-t
             </div>
             <div style="display:flex;justify-content:space-between;font-family:'Share Tech Mono',monospace;font-size:9px;color:#64748b;margin-top:4px;letter-spacing:.1em;">
               <span>0.20 mL</span>
-              <span>2.00 mL</span>
+              <span>3.00 mL</span>
             </div>
           </div>
           <!-- Hidden legacy inputs for save compat -->
@@ -8434,11 +8442,11 @@ function updateTrtFromMg() {
 }
 
 // ══════════════════════════════════════════════════════════════════════
-// TRT SPIN DIAL — 0.20 to 2.00 mL/week, 0.05 increments
+// TRT SPIN DIAL — 0.20 to 3.00 mL/week, 0.05 increments
 // Replaces manual ml/mg number inputs. Drives hidden legacy fields for save compat.
 // ══════════════════════════════════════════════════════════════════════
 function trtDialSet(ml) {
-  ml = Math.max(0.20, Math.min(2.00, Math.round(ml * 20) / 20)); // snap to 0.05 increments
+  ml = Math.max(0.20, Math.min(3.00, Math.round(ml * 20) / 20)); // snap to 0.05 increments
   const sel = document.getElementById('f-peptide').value;
   const cat = CATALOG[sel];
   if (!cat || !cat.concMgMl) return;
@@ -8455,8 +8463,8 @@ function trtDialSet(ml) {
   const injPerWeek = (typeof _selectedDays !== 'undefined' && _selectedDays.length > 0) ? _selectedDays.length : 2;
   const unitsPerInj = Math.round((mg / injPerWeek) / cat.concMgMl * 100);
   if (dialUnits) dialUnits.textContent = unitsPerInj;
-  // Progress track (0.20 → 2.00 = 0% → 100%)
-  const pct = Math.round(((ml - 0.20) / (2.00 - 0.20)) * 100);
+  // Progress track (0.20 → 3.00 = 0% → 100%)
+  const pct = Math.round(((ml - 0.20) / (3.00 - 0.20)) * 100);
   if (dialTrack) dialTrack.style.width = pct + '%';
   // Sync hidden legacy fields
   if (hiddenMl) hiddenMl.value = ml.toFixed(2);
@@ -13604,12 +13612,10 @@ document.addEventListener('DOMContentLoaded', function() {
   render();
   renderLabInputGrid();
 
-  // ── MOBILE: auto-render My Card since it's the default tab ──
-  if (window.innerWidth <= 768) {
-    setTimeout(function() {
-      try { renderCardInline(); } catch(e) { console.warn('card render', e); }
-    }, 100);
-  }
+  // ── ALL VIEWS: render Quick Reference Card as primary daily view (Apr 2026) ──
+  setTimeout(function() {
+    try { renderCardInline(); } catch(e) { console.warn('card render', e); }
+  }, 100);
 
   // ── MOBILE ADD BUTTON (center of bottom nav) ──────────────
   const mobileAdd = document.getElementById('mobile-add-btn');
