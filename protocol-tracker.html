@@ -3963,11 +3963,61 @@ function startProCheckout(refCode) {
 function getReferralCode() {
   let code = localStorage.getItem('apex_ref_code');
   if (!code) {
-    // 6-char random code (alphanumeric, uppercase)
+    // 6-char random fallback (alphanumeric, uppercase) — overridden by user-chosen code on signup
     code = 'APX' + Math.random().toString(36).slice(2, 7).toUpperCase();
     localStorage.setItem('apex_ref_code', code);
   }
   return code;
+}
+
+// Validate + set a custom user-chosen referral code.
+// Format: 3-16 chars, alphanumeric + dash. We strip & uppercase.
+function setCustomReferralCode(raw) {
+  if (!raw) return { ok:false, error:'Pick a code (3-16 chars, letters/numbers).' };
+  const code = String(raw).trim().toUpperCase().replace(/[^A-Z0-9-]/g,'');
+  if (code.length < 3 || code.length > 16) return { ok:false, error:'Code must be 3-16 chars.' };
+  // Reserve some prefixes (admin, apex, system) but allow 'APX'
+  if (/^(ADMIN|SYSTEM|APEX|TEST|NULL)$/.test(code)) return { ok:false, error:'That code is reserved. Try another.' };
+  localStorage.setItem('apex_ref_code', code);
+  return { ok:true, code };
+}
+
+// One-shot affiliate signup — name + email + chosen code → GHL.
+// Returns the resolved code (or null on validation fail). Works without backend
+// because GHL is the source of truth for cross-device uniqueness.
+function affiliateSignup({ firstName, lastName, email, customCode, sourcePage }) {
+  const fn = (firstName || '').trim();
+  const ln = (lastName || '').trim();
+  const em = (email || '').trim().toLowerCase();
+  if (!fn) return { ok:false, error:'First name required.' };
+  if (!em || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) return { ok:false, error:'Valid email required.' };
+  const codeResult = setCustomReferralCode(customCode);
+  if (!codeResult.ok) return codeResult;
+
+  // Persist to profile
+  const p = getProfile();
+  p.firstName = fn;
+  p.lastName = ln;
+  p.affiliateActive = true;
+  state.profile = p;
+  localStorage.setItem('apex_email', em);
+  localStorage.setItem('apex_name', fn + (ln ? ' ' + ln : ''));
+  saveState();
+
+  // Fire to GHL — this is where uniqueness check + lock-in happens server-side
+  try {
+    ghlFire({
+      event: 'affiliate_signup',
+      first_name: fn,
+      last_name: ln,
+      email: em,
+      requested_code: codeResult.code,
+      source_page: sourcePage || location.pathname,
+      referred_by: localStorage.getItem('apex_referred_by') || null,
+    });
+  } catch(e) {}
+
+  return { ok:true, code: codeResult.code, link: 'https://apexdosing.com/?ref=' + codeResult.code };
 }
 
 function captureIncomingReferral() {
