@@ -1,0 +1,306 @@
+/* ═════════════════════════════════════════════════════════════
+   APEX UNIFIED COLOR SYSTEM
+   Single source of truth for buttons, accents, and text colors.
+   Loaded last so !important overrides win cleanly against inline styles.
+
+   Rules:
+   - Every PRIMARY action button = #00ff9d (electric green)
+   - Every SECONDARY/GHOST button = outline style, brighter text
+   - All eyebrow/label text bumped from #94a3b8 → #cbd5e1
+   - Borders bumped from #1a2d3a → #2a3f4f
+   - Destructive (delete) stays red — intentional semantic signal
+   ═════════════════════════════════════════════════════════════ */
+
+/* ── ROOT VARIABLES — brighter palette ─────────────────────── */
+:root {
+  --apex-primary:        #00ff9d !important;
+  --apex-primary-hover:  #33ffb1 !important;
+  --apex-primary-text:   #080c10 !important;
+  --apex-secondary-text: #7fffc8 !important;
+  --apex-ghost-text:     #cbd5e1 !important;
+  --apex-label:          #cbd5e1 !important;
+  --apex-eyebrow:        #00ff9d !important;
+  --apex-body-text:      #d4e0e8 !important;
+  --apex-muted:          #94a3b8 !important;
+  --apex-border:         #2a3f4f !important;
+  --apex-bg:             #080c10 !important;
+  --apex-panel:          #0d1318 !important;
+  --apex-danger:         #ef4444 !important;
+  --apex-warning:        #fbbf24 !important;
+  --apex-success:        #00ff9d !important;
+  --apex-info:           #38bdf8 !important;
+
+  /* Override existing variable names so legacy CSS picks up the brighter palette */
+  --accent:  #00ff9d !important;
+  --accent2: #00ff9d !important;
+  --accent3: #fbbf24 !important;
+  --text:    #d4e0e8 !important;
+  --muted:   #94a3b8 !important;
+  --border:  #2a3f4f !important;
+  --white:   #eaf4f8 !important;
+}
+
+/* ── PRIMARY BUTTONS — every "do this thing" CTA ─────────── */
+button.btn-primary,
+.btn-primary,
+button.btn-add,
+.btn-add,
+button.btn-hero,
+.btn-hero,
+input[type="submit"],
+button[type="submit"],
+button.apex-cta-btn,
+a.apex-cta-btn,
+button.pwa-cta {
+  background: #00ff9d !important;
+  background-image: linear-gradient(135deg, #00ff9d, #00e589) !important;
+  color: #080c10 !important;
+  border: 0 !important;
+  font-weight: 800 !important;
+  box-shadow: 0 4px 14px rgba(0, 255, 157, 0.35) !important;
+  transition: transform .1s ease, box-shadow .15s ease, filter .15s ease !important;
+}
+button.btn-primary:hover,
+.btn-primary:hover,
+button.btn-add:hover,
+.btn-add:hover,
+button.btn-hero:hover,
+.btn-hero:hover,
+button.apex-cta-btn:hover,
+a.apex-cta-btn:hover {
+  background-image: linear-gradient(135deg, #33ffb1, #00ff9d) !important;
+  box-shadow: 0 6px 18px rgba(0, 255, 157, 0.5) !important;
+  filter: none !important;
+}
+button.btn-primary:active,
+.btn-primary:active,
+button.btn-hero:active,
+.btn-hero:active {
+  transform: translateY(1px) scale(.98) !important;
+  box-shadow: 0 2px 8px rgba(0, 255, 157, 0.3) !important;
+}
+button.btn-primary:disabled,
+.btn-primary:disabled {
+  opacity: .45 !important;
+  filter: grayscale(.4) !important;
+}
+
+/* ── SECONDARY / GHOST BUTTONS — outline style ──────────── */
+button.btn-cancel,
+.btn-cancel,
+button.btn-secondary,
+.btn-secondary,
+button.btn-sm:not(.danger),
+.btn-sm:not(.danger),
+button.top-link,
+a.top-link {
+  background: transparent !important;
+  border: 1px solid rgba(0, 255, 157, 0.35) !important;
+  color: #00ff9d !important;
+  transition: border-color .15s, color .15s, background .15s !important;
+}
+button.btn-cancel:hover,
+.btn-cancel:hover,
+button.btn-secondary:hover,
+.btn-secondary:hover,
+button.btn-sm:not(.danger):hover {
+  background: rgba(0, 255, 157, 0.08) !important;
+  border-color: #00ff9d !important;
+  color: #fff !important;
+}
+
+/* ── DESTRUCTIVE (delete only) ───────────────────────────── */
+button.btn-sm.danger,
+.btn-sm.danger,
+.btn-danger {
+  background: transparent !important;
+  border: 1px solid rgba(239, 68, 68, 0.45) !important;
+  color: #ef4444 !important;
+}
+button.btn-sm.danger:hover,
+.btn-sm.danger:hover {
+  background: rgba(239, 68, 68, 0.1) !important;
+  border-color: #ef4444 !important;
+  color: #ff6b6b !important;
+}
+
+/* ── BRIGHTER TEXT ─────────────────────────────────────── */
+/* Every label + eyebrow gets the brighter slate */
+.form-label,
+.eyebrow,
+.section-eyebrow,
+.lane-label,
+.brand-tag,
+.fine,
+.foot,
+.foot a,
+.stat-item .sl,
+.trust-l,
+.lane-point,
+.who-desc,
+.step-desc,
+.sec-badge {
+  color: #cbd5e1 !important;
+}
+
+/* Specifically brighten the dim greys in inline styles */
+[style*="color:#94a3b8"],
+[style*="color: #94a3b8"],
+[style*="color:#64748b"],
+[style*="color: #64748b"] {
+  color: #cbd5e1 !important;
+}
+[style*="color:#4a6272"],
+[style*="color: #4a6272"] {
+  color: #94a3b8 !important;
+}
+
+/* But keep darker greys for very subtle elements (eyebrows on dark bg) */
+.foot,
+.foot a {
+  color: #94a3b8 !important;
+}
+
+/* ── BORDER COLOR BUMP ─────────────────────────────────── */
+[style*="border:1px solid var(--border)"],
+[style*="border: 1px solid var(--border)"] {
+  border-color: #2a3f4f !important;
+}
+[style*="border-color:#1a2d3a"],
+[style*="border-color: #1a2d3a"] {
+  border-color: #2a3f4f !important;
+}
+
+/* ── ALL gold/amber actiony buttons → brand green ────────── */
+/* The Pro/Affiliate buttons used #fbbf24 backgrounds — unify to green
+   except where we use gold as a status badge (warning, popular star) */
+button[style*="background:#fbbf24"],
+button[style*="background: #fbbf24"],
+button[onclick*="Goals"][style*="background:#00ff9d"],
+button[style*="background:linear-gradient(135deg,#fbbf24,#f59e0b)"]:not([class*="badge"]):not([class*="MOST POPULAR"]),
+a[style*="background:linear-gradient(135deg,#fbbf24,#f59e0b)"]:not([class*="badge"]) {
+  background: #00ff9d !important;
+  background-image: linear-gradient(135deg, #00ff9d, #00e589) !important;
+  color: #080c10 !important;
+  box-shadow: 0 4px 14px rgba(0, 255, 157, 0.35) !important;
+}
+
+/* ── Cyan #14b8a6 primary buttons → brand green ─────────── */
+button[style*="background:#14b8a6"],
+button[style*="background: #14b8a6"],
+a[style*="background:#14b8a6"],
+a[style*="background: #14b8a6"],
+input[style*="background:#14b8a6"] {
+  background: #00ff9d !important;
+  color: #080c10 !important;
+  font-weight: 700 !important;
+}
+
+/* But keep #14b8a6 borders/accents (not buttons) — they look fine */
+[style*="border-color:#14b8a6"],
+[style*="border: 1px solid #14b8a6"] {
+  border-color: #00ff9d !important;
+}
+
+/* ── Form inputs — brighter focus ring ──────────────────── */
+.form-input:focus,
+.form-select:focus,
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: #00ff9d !important;
+  box-shadow: 0 0 0 3px rgba(0, 255, 157, 0.18) !important;
+  outline: none !important;
+}
+
+/* ── Eyebrow text in monospace blocks (currently various) ──── */
+[style*="color:#14b8a6"]:not([class*="btn"]):not(button):not(a),
+[style*="color: #14b8a6"]:not([class*="btn"]):not(button):not(a) {
+  color: #00ff9d !important;
+}
+
+/* ── Top nav / sticky header brightening ─────────────────── */
+#apex-nav-top .apex-nav-links a {
+  color: #cbd5e1 !important;
+}
+#apex-nav-top .apex-nav-links a.active,
+#apex-nav-top .apex-nav-links a:hover {
+  color: #00ff9d !important;
+}
+#apex-nav-top .apex-brand {
+  color: #00ff9d !important;
+}
+
+/* ── Live counter / streak text — keep visible ──────────── */
+#stat-streak {
+  color: #00ff9d !important;
+}
+
+/* ── Active/On-cycle status badges remain green ──────────── */
+.sec-badge.active,
+.sec-badge.info {
+  color: #00ff9d !important;
+  border-color: rgba(0, 255, 157, 0.4) !important;
+}
+.sec-badge.warn-card,
+.warn-card {
+  color: #fbbf24 !important;
+}
+
+/* ── Mobile bottom nav ─────────────────────────────────── */
+.mb-tab,
+.mb-tab-active {
+  color: #cbd5e1 !important;
+}
+.mb-tab-active {
+  color: #00ff9d !important;
+}
+
+/* ── Modal close X visibility ──────────────────────────── */
+.modal-close {
+  color: #cbd5e1 !important;
+}
+.modal-close:hover {
+  color: #fff !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* ── Profile entry pill — brighter ──────────────────────── */
+#profile-entry-row button {
+  color: #00ff9d !important;
+  border-color: rgba(0, 255, 157, 0.4) !important;
+}
+#profile-entry-row button:hover {
+  background: rgba(0, 255, 157, 0.1) !important;
+}
+
+/* ── Goals entry row — make it pop more ─────────────────── */
+#goals-entry-row {
+  border-color: rgba(0, 255, 157, 0.4) !important;
+  border-left-color: #00ff9d !important;
+}
+#goals-entry-row button {
+  background: #00ff9d !important;
+  color: #080c10 !important;
+  font-weight: 800 !important;
+}
+
+/* ── Alerts panel — brighter green for synergy ──────────── */
+.alert-item.synergy { color: #00ff9d !important; border-color: rgba(0, 255, 157, 0.35) !important; }
+.alert-item.gap { color: #38bdf8 !important; border-color: rgba(56, 189, 248, 0.35) !important; }
+.alert-item.redundant { color: #fbbf24 !important; border-color: rgba(251, 191, 36, 0.4) !important; }
+
+/* ── Prevent the override from breaking gradient backgrounds where they're decorative ── */
+[style*="linear-gradient"][class*="lane"],
+.lane-icon,
+.who-icon,
+.step-num {
+  /* let gradients survive */
+}
+
+/* ── Final tap-target size on mobile (ensure all buttons hit 44px) ── */
+@media (max-width: 768px) {
+  button, [role="button"], a.btn-primary, a.btn-secondary, a.btn-hero, a.btn-add {
+    min-height: 44px !important;
+  }
+}
