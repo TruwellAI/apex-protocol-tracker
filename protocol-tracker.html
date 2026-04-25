@@ -555,7 +555,7 @@ button:not(.btn-primary):not(.btn-cancel):not(.goal-btn):not(.day-btn):not(.mb-t
 <body>
 
 <!-- ═══════════════════ MOBILE FAB + BOTTOM NAV ══════════ -->
-<button id="mobile-fab" onclick="try{openModal()}catch(e){document.getElementById('modal-overlay').style.display='flex';document.body.style.overflow='hidden'}" style="position:fixed;bottom:80px;right:16px;z-index:10001;background:var(--accent2);color:#080c10;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:.08em;border:none;cursor:pointer;box-shadow:0 4px 24px rgba(0,196,140,.5);padding:14px 20px;border-radius:32px;align-items:center;gap:8px;white-space:nowrap;-webkit-tap-highlight-color:transparent;touch-action:manipulation;">
+<button id="mobile-fab" onclick="try{openCategoryPicker()}catch(e){try{openModal()}catch(_){document.getElementById('modal-overlay').style.display='flex';document.body.style.overflow='hidden'}}" style="position:fixed;bottom:80px;right:16px;z-index:10001;background:var(--accent2);color:#080c10;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:.08em;border:none;cursor:pointer;box-shadow:0 4px 24px rgba(0,196,140,.5);padding:14px 20px;border-radius:32px;align-items:center;gap:8px;white-space:nowrap;-webkit-tap-highlight-color:transparent;touch-action:manipulation;">
   <span style="font-size:20px;line-height:1;">＋</span> ADD PROTOCOL
 </button>
 
@@ -563,7 +563,7 @@ button:not(.btn-primary):not(.btn-cancel):not(.goal-btn):not(.day-btn):not(.mb-t
   <a href="#" class="mb-tab mb-tab-active" data-tab="today" onclick="showTab('today');return false;" style="color:#14b8a6;font-family:'Rajdhani',sans-serif;font-size:9px;font-weight:700;letter-spacing:.06em;cursor:pointer;padding:8px 2px;display:flex;flex-direction:column;align-items:center;gap:3px;text-transform:uppercase;text-decoration:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation;min-height:52px;">
     <span style="font-size:20px;">💉</span>TODAY
   </a>
-  <a href="#" id="mobile-add-btn" onclick="try{openModal()}catch(e){document.getElementById('modal-overlay').style.display='flex';document.body.style.overflow='hidden'};return false;" style="color:#14b8a6;font-family:'Rajdhani',sans-serif;font-size:9px;font-weight:700;letter-spacing:.06em;cursor:pointer;padding:4px 2px;display:flex;flex-direction:column;align-items:center;gap:2px;text-transform:uppercase;text-decoration:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation;min-height:52px;">
+  <a href="#" id="mobile-add-btn" onclick="try{openCategoryPicker()}catch(e){try{openModal()}catch(_){document.getElementById('modal-overlay').style.display='flex';document.body.style.overflow='hidden'}};return false;" style="color:#14b8a6;font-family:'Rajdhani',sans-serif;font-size:9px;font-weight:700;letter-spacing:.06em;cursor:pointer;padding:4px 2px;display:flex;flex-direction:column;align-items:center;gap:2px;text-transform:uppercase;text-decoration:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation;min-height:52px;">
     <span style="display:flex;align-items:center;justify-content:center;width:46px;height:46px;background:#14b8a6;color:#fff;border-radius:50%;font-size:26px;font-weight:900;margin-top:-14px;box-shadow:0 4px 14px rgba(20,184,166,.55);">＋</span>ADD
   </a>
   <a href="#" class="mb-tab" data-tab="analysis" onclick="showTab('analysis');return false;" style="color:#8899aa;font-family:'Rajdhani',sans-serif;font-size:9px;font-weight:700;letter-spacing:.06em;cursor:pointer;padding:8px 2px;display:flex;flex-direction:column;align-items:center;gap:3px;text-transform:uppercase;text-decoration:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation;min-height:52px;">
@@ -587,7 +587,7 @@ button:not(.btn-primary):not(.btn-cancel):not(.goal-btn):not(.day-btn):not(.mb-t
       <button onclick="window.location.href='research.html'" style="background:#14b8a6;border:1px solid #14b8a6;color:#fff;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.15em;padding:8px 18px;cursor:pointer;text-transform:uppercase;transition:all .2s;box-shadow:0 2px 10px rgba(20,184,166,.4);">📚 <span class="btn-label">RESEARCH</span></button>
       <!-- NUTRITION hidden — available standalone at /nutrition.html -->
       <button onclick="window.location.href='index.html'" style="background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.35);color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.15em;padding:8px 18px;cursor:pointer;text-transform:uppercase;transition:all .2s;">📖 <span class="btn-label">WIKI</span></button>
-      <button class="btn-add" onclick="try{openModal()}catch(e){document.getElementById('modal-overlay').style.display='flex';document.body.style.overflow='hidden'}">+ ADD PROTOCOL</button>
+      <button class="btn-add" onclick="try{openCategoryPicker()}catch(e){try{openModal()}catch(_){document.getElementById('modal-overlay').style.display='flex';document.body.style.overflow='hidden'}}">+ ADD PROTOCOL</button>
     </div>
   </div>
 
@@ -615,7 +615,7 @@ button:not(.btn-primary):not(.btn-cancel):not(.goal-btn):not(.day-btn):not(.mb-t
       <div style="font-family:'Barlow',sans-serif;font-size:14px;color:#94a3b8;margin-bottom:24px;line-height:1.55;max-width:440px;margin-left:auto;margin-right:auto;">Pick your goals — we'll build a no-conflict stack instantly. Or add a single protocol manually below.</div>
       <a href="#" onclick="openGoalsBuilder();return false;" style="display:inline-block;padding:18px 38px;background:linear-gradient(135deg,#00ff9d,#10b981);color:#080c10;font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;border-radius:8px;box-shadow:0 6px 24px rgba(0,255,157,.5);-webkit-tap-highlight-color:transparent;touch-action:manipulation;">🎯 BUILD MY STACK FROM GOALS</a>
       <div style="margin-top:14px;">
-        <a href="#" onclick="try{openModal()}catch(e){document.getElementById('modal-overlay').style.display='flex';document.body.style.overflow='hidden'};return false;" style="font-family:'Share Tech Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.18em;color:#94a3b8;text-decoration:none;text-transform:uppercase;border-bottom:1px solid rgba(148,163,184,.3);padding-bottom:1px;">or add a single protocol manually →</a>
+        <a href="#" onclick="try{openCategoryPicker()}catch(e){try{openModal()}catch(_){document.getElementById('modal-overlay').style.display='flex';document.body.style.overflow='hidden'}};return false;" style="font-family:'Share Tech Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.18em;color:#94a3b8;text-decoration:none;text-transform:uppercase;border-bottom:1px solid rgba(148,163,184,.3);padding-bottom:1px;">or add a single protocol manually →</a>
       <div style="margin-top:18px;">
         <a href="#" onclick="loadDemoSeed();setTimeout(startSiteTour,700);return false;" style="display:inline-block;padding:10px 22px;background:transparent;color:#fbbf24;font-family:'Share Tech Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;border:1px solid rgba(251,191,36,.55);border-radius:4px;-webkit-tap-highlight-color:transparent;">👀 See it in action</a>
         <div style="font-family:'Barlow',sans-serif;font-size:11px;color:#64748b;margin-top:8px;">Load a sample stack — see streaks, progress rings, overlap detection, and timeline math in 1 click.</div>
@@ -686,7 +686,7 @@ button:not(.btn-primary):not(.btn-cancel):not(.goal-btn):not(.day-btn):not(.mb-t
         <div style="font-size:48px;margin-bottom:16px;">⚗️</div>
         <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:8px;">Add your first protocol to get started</div>
         <div style="font-family:'Barlow',sans-serif;font-size:13px;color:#94a3b8;margin-bottom:28px;max-width:320px;margin-left:auto;margin-right:auto;line-height:1.5;">Pick a peptide, we'll walk you through your dose, schedule, and nutrition — step by step.</div>
-        <a href="#" onclick="try{openModal()}catch(e){document.getElementById('modal-overlay').style.display='flex';document.body.style.overflow='hidden'};return false;" style="display:inline-block;padding:18px 48px;background:#14b8a6;color:#fff;font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;border-radius:8px;box-shadow:0 6px 24px rgba(20,184,166,.5);-webkit-tap-highlight-color:transparent;touch-action:manipulation;animation:pulse 2s infinite;">＋ ADD PROTOCOL</a>
+        <a href="#" onclick="try{openCategoryPicker()}catch(e){try{openModal()}catch(_){document.getElementById('modal-overlay').style.display='flex';document.body.style.overflow='hidden'}};return false;" style="display:inline-block;padding:18px 48px;background:#14b8a6;color:#fff;font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;border-radius:8px;box-shadow:0 6px 24px rgba(20,184,166,.5);-webkit-tap-highlight-color:transparent;touch-action:manipulation;animation:pulse 2s infinite;">＋ ADD PROTOCOL</a>
         <div style="margin-top:20px;">
           <a href="#" onclick="loadDemoSeed();setTimeout(startSiteTour,700);return false;" style="display:inline-block;padding:10px 22px;background:transparent;color:#fbbf24;font-family:'Share Tech Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;border:1px solid rgba(251,191,36,.55);border-radius:4px;-webkit-tap-highlight-color:transparent;">👀 See it in action (demo)</a>
         </div>
@@ -3358,6 +3358,195 @@ function maybeFireContextualHints() {
     setTimeout(() => showHint('demoMode', 'demo-banner',
       '<b>Demo mode.</b> When you\'re ready to start tracking your real stack, hit <b>CLEAR DEMO → START MINE</b>.'), 1800);
   }
+}
+
+// ══════════════════════════════════════════════════════════
+// CATEGORY PICKER — replaces the dropdown for ADD PROTOCOL
+// Category tiles → Peptide tiles → existing dose dial modal
+// ══════════════════════════════════════════════════════════
+const CATEGORY_DEFS = [
+  { key:'stacks',     icon:'⭐', label:'Pre-Built Stacks',        desc:'Curated multi-peptide protocols — Wolverine, GLOW, KLOW' },
+  { key:'fatloss',    icon:'🔥', label:'Fat Loss & Metabolic',    desc:'GLP-1s, AOD-9604, MOTS-c, L-Carnitine' },
+  { key:'gh',         icon:'💪', label:'GH Axis',                 desc:'Ipamorelin, CJC, Sermorelin, Tesamorelin' },
+  { key:'repair',     icon:'🩹', label:'Tissue Repair',           desc:'BPC-157, TB-500, GHK-Cu, KPV, LL-37, ARA-290' },
+  { key:'nootropic',  icon:'🧠', label:'Cognitive / Nootropic',   desc:'Semax, Selank, Dihexa, PE-22-28, DSIP' },
+  { key:'longevity',  icon:'🧬', label:'Longevity & Anti-Aging',  desc:'Epitalon, SS-31, MOTS-c, NAD+, Cartalax' },
+  { key:'libido',     icon:'❤️', label:'Libido & Sexual',         desc:'PT-141, Melanotan' },
+  { key:'immune',     icon:'🛡️', label:'Immune & Gut',            desc:'Thymosin Alpha-1, KPV, LL-37' },
+  { key:'trt',        icon:'⚡', label:'Testosterone / TRT',      desc:'Cypionate, Enanthate, Propionate, Cream' },
+  { key:'aesthetic',  icon:'✨', label:'Skin & Aesthetic',        desc:'GHK-Cu, Melanotan, GLOW Stack' },
+  { key:'supplements',icon:'🌿', label:'Supplements & Other',     desc:'L-Glutamine, IGF-1 LR3, Custom' },
+];
+
+// Maps category → peptides (mirrors the dropdown <optgroup> structure)
+const CATEGORY_PEPTIDES = {
+  stacks: [
+    { value:'_GOAL_FATLOSS',    icon:'🔥', name:'Fat Loss Stack',     sub:'Reta + MOTS-c + AOD + L-Carnitine' },
+    { value:'_GOAL_RECOVERY',   icon:'🏋️', name:'Recovery Stack',      sub:'5-layer healing protocol' },
+    { value:'_GOAL_LONGEVITY',  icon:'🧬', name:'Longevity Stack',    sub:'Telomere + mito + tissue + matrix' },
+    { value:'_GOAL_MITO',       icon:'⚡', name:'Mitochondria Reset', sub:'MOTS-c + NAD+ + SS-31' },
+    { value:'_GOAL_COGNITION',  icon:'🧠', name:'Cognitive Stack',     sub:'Semax AM + Selank PM + neuroplasticity' },
+    { value:'_GOAL_IMMUNE',     icon:'🛡️', name:'Immune Optimization',sub:'T-cell + gut + antimicrobial' },
+    { value:'_GOAL_BEAUTY',     icon:'✨', name:'Skin & Hair Beauty', sub:'5-layer skin + hair protocol' },
+    { value:'_GOAL_CARDIAC',    icon:'🫀', name:'Cardiac Stack',      sub:'CV support · MD oversight' },
+    { value:'Wolverine Stack',  icon:'🐺', name:'Wolverine Stack',    sub:'BPC-157 + TB-500 — fastest recovery' },
+    { value:'GLOW Stack',       icon:'✨', name:'GLOW Stack',         sub:'GHK-Cu + TB-500 + BPC-157' },
+    { value:'KLOW Stack',       icon:'💫', name:'KLOW Stack',         sub:'KPV + TB-500 + BPC-157 + GHK-Cu' },
+  ],
+  fatloss: [
+    { value:'Retatrutide', icon:'🔥', name:'Retatrutide',  sub:'GLP-3 — best-in-class · 24% weight loss' },
+    { value:'Tirzepatide', icon:'⚖️', name:'Tirzepatide',  sub:'GLP-1 + GIP dual agonist' },
+    { value:'Semaglutide', icon:'💉', name:'Semaglutide',  sub:'Most-studied GLP-1 (Ozempic / Wegovy)' },
+    { value:'AOD-9604',    icon:'🎯', name:'AOD-9604',     sub:'Targeted lipolysis without IGF-1' },
+    { value:'5-Amino-1MQ', icon:'⚗️', name:'5-Amino-1MQ',  sub:'NNMT inhibitor · oral fat loss' },
+    { value:'SLU-PP-332',  icon:'💊', name:'SLU-PP-332',   sub:'ERR agonist · exercise mimetic' },
+    { value:'MOTS-c',      icon:'🔋', name:'MOTS-c',       sub:'Mitokine · fights GLP-1 fatigue' },
+  ],
+  gh: [
+    { value:'Ipamorelin',       icon:'💪', name:'Ipamorelin',         sub:'Selective GH pulse · no cortisol' },
+    { value:'CJC-1295 No DAC',  icon:'⚡', name:'CJC-1295 No DAC',    sub:'Pairs with Ipa for 2-4× GH pulse' },
+    { value:'CJC + Ipa Blend',  icon:'🌟', name:'CJC + Ipa Blend',    sub:'Pre-mixed gold standard' },
+    { value:'CJC-1295 DAC',     icon:'⏱', name:'CJC-1295 DAC',       sub:'Long-acting · weekly dose' },
+    { value:'Sermorelin',       icon:'🧪', name:'Sermorelin',         sub:'Shorter GHRH analog' },
+    { value:'Tesamorelin',      icon:'📉', name:'Tesamorelin',        sub:'Visceral fat focus' },
+    { value:'IGF-1 LR3',        icon:'🧬', name:'IGF-1 LR3',          sub:'Long-acting IGF-1 analog' },
+  ],
+  repair: [
+    { value:'BPC-157', icon:'🩹', name:'BPC-157',    sub:'Local + gut + tissue repair foundation' },
+    { value:'TB-500',  icon:'🦴', name:'TB-500',     sub:'Systemic mobility · Wolverine pair' },
+    { value:'GHK-Cu',  icon:'🧬', name:'GHK-Cu',     sub:'Copper peptide · collagen remodeling' },
+    { value:'KPV',     icon:'🌿', name:'KPV',        sub:'Anti-inflammatory · gut healing' },
+    { value:'LL-37',   icon:'🛡', name:'LL-37',      sub:'Antimicrobial cathelicidin' },
+    { value:'ARA-290', icon:'🧠', name:'ARA-290',    sub:'EPO-derived neuroprotective' },
+  ],
+  nootropic: [
+    { value:'Semax',     icon:'☀️', name:'Semax',      sub:'BDNF upregulation · AM dosing' },
+    { value:'Selank',    icon:'🌙', name:'Selank',     sub:'Anxiolytic without sedation · PM' },
+    { value:'Dihexa',    icon:'🧠', name:'Dihexa',     sub:'Neuroplasticity (research-grade)' },
+    { value:'PE-22-28',  icon:'⚡', name:'PE-22-28',   sub:'TREK-1 channel · mood' },
+    { value:'DSIP',      icon:'😴', name:'DSIP',       sub:'Deep sleep architecture' },
+  ],
+  longevity: [
+    { value:'Epitalon',  icon:'🧬', name:'Epitalon',   sub:'Telomere + pineal axis' },
+    { value:'SS-31',     icon:'🔋', name:'SS-31',      sub:'Inner mitochondrial membrane' },
+    { value:'MOTS-c',    icon:'⚡', name:'MOTS-c',     sub:'Mitokine · AMPK activation' },
+    { value:'FOX04-DRI', icon:'⏳', name:'FOXO4-DRI',  sub:'Senolytic · senescent cells' },
+    { value:'NAD+',      icon:'💎', name:'NAD+',       sub:'Cellular energy · sirtuin activation' },
+    { value:'Cartalax',  icon:'🦴', name:'Cartalax',   sub:'Cartilage bioregulator' },
+  ],
+  libido: [
+    { value:'PT-141',       icon:'❤️', name:'PT-141',       sub:'Central libido · cleanest pick' },
+    { value:'Melanotan II', icon:'🌅', name:'Melanotan II', sub:'Tan + libido · melanocortin' },
+    { value:'Melanotan I',  icon:'☀️', name:'Melanotan I',  sub:'Tanning only — no libido effect' },
+  ],
+  immune: [
+    { value:'Thymosin Alpha-1', icon:'🛡', name:'Thymosin Alpha-1', sub:'T-cell modulator · foundational' },
+    { value:'KPV',              icon:'🌿', name:'KPV',              sub:'Anti-inflammatory tripeptide' },
+    { value:'LL-37',            icon:'⚔', name:'LL-37',            sub:'Antimicrobial defense' },
+  ],
+  trt: [
+    { value:'Test Cypionate 200', icon:'⚡', name:'Test Cypionate 200', sub:'200 mg/mL · most common' },
+    { value:'Test Cypionate 250', icon:'⚡', name:'Test Cypionate 250', sub:'250 mg/mL · compounded' },
+    { value:'Test Cypionate 100', icon:'⚡', name:'Test Cypionate 100', sub:'100 mg/mL · microdose' },
+    { value:'Test Enanthate 250', icon:'⚡', name:'Test Enanthate 250', sub:'250 mg/mL · long-acting' },
+    { value:'Test Propionate 100',icon:'⚡', name:'Test Propionate',    sub:'100 mg/mL · short-acting' },
+    { value:'Test Cream 200',     icon:'🧴', name:'Testosterone Cream', sub:'Topical · daily application' },
+  ],
+  aesthetic: [
+    { value:'GHK-Cu',       icon:'✨', name:'GHK-Cu',       sub:'Skin · hair · collagen' },
+    { value:'Melanotan I',  icon:'☀️', name:'Melanotan I',  sub:'Tanning peptide' },
+    { value:'Melanotan II', icon:'🌅', name:'Melanotan II', sub:'Tan + libido' },
+    { value:'GLOW Stack',   icon:'✨', name:'GLOW Stack',   sub:'4-week aesthetic protocol' },
+  ],
+  supplements: [
+    { value:'L-Glutamine', icon:'🌿', name:'L-Glutamine', sub:'Gut + recovery · oral powder' },
+    { value:'Custom',      icon:'➕', name:'Custom / Other', sub:'Add a custom compound manually' },
+  ],
+};
+
+function openCategoryPicker() {
+  // If overlay already exists, dismiss old one first
+  const existing = document.getElementById('apex-category-overlay');
+  if (existing) existing.remove();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'apex-category-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(4,6,8,.92);z-index:10005;display:flex;align-items:center;justify-content:center;padding:16px;overflow-y:auto;';
+  overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+
+  const tiles = CATEGORY_DEFS.map(cat => `
+    <button onclick="openCategoryPeptides('${cat.key}')" style="text-align:left;background:#0f1820;border:1.5px solid rgba(148,163,184,.16);border-radius:10px;padding:20px 22px;cursor:pointer;font-family:'Barlow',sans-serif;transition:transform .15s,border-color .15s,background .15s,box-shadow .2s;display:flex;flex-direction:column;gap:8px;min-height:108px;-webkit-tap-highlight-color:transparent;" onmouseover="this.style.borderColor='rgba(0,255,157,.5)';this.style.background='#12222c';this.style.transform='translateY(-2px)';" onmouseout="this.style.borderColor='rgba(148,163,184,.16)';this.style.background='#0f1820';this.style.transform='';">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span style="font-size:26px;line-height:1;">${cat.icon}</span>
+        <span style="font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:#fff;letter-spacing:-.2px;">${cat.label}</span>
+      </div>
+      <div style="font-size:13px;color:#94a3b8;line-height:1.45;">${cat.desc}</div>
+    </button>
+  `).join('');
+
+  overlay.innerHTML = `
+    <div class="modal" style="width:780px;max-width:95vw;max-height:92vh;background:#0d1318;border:1px solid var(--border);border-radius:8px;overflow:hidden;display:flex;flex-direction:column;animation:apexModalIn .24s cubic-bezier(.2,.8,.2,1);">
+      <div class="modal-header">
+        <div class="modal-title">＋ Add Protocol</div>
+        <button class="modal-close" onclick="document.getElementById('apex-category-overlay').remove()">✕</button>
+      </div>
+      <div class="modal-body" style="flex:1;overflow-y:auto;padding:24px 26px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.22em;color:#14b8a6;margin-bottom:6px;text-transform:uppercase;">① PICK A CATEGORY</div>
+        <div style="font-family:'Barlow',sans-serif;font-size:14px;color:#94a3b8;line-height:1.55;margin-bottom:20px;">Pick the category that matches what you're trying to do. We'll show you the peptides for that path.</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;">${tiles}</div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="document.getElementById('apex-category-overlay').remove()">CANCEL</button>
+        <button class="btn-cancel" onclick="document.getElementById('apex-category-overlay').remove();openGoalsBuilder();" style="border-color:rgba(0,255,157,.4);color:#00ff9d;">🎯 BUILD FULL STACK FROM GOALS →</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+}
+
+function openCategoryPeptides(catKey) {
+  const cat = CATEGORY_DEFS.find(c => c.key === catKey);
+  const peptides = CATEGORY_PEPTIDES[catKey] || [];
+  const overlay = document.getElementById('apex-category-overlay');
+  if (!overlay) return;
+
+  const tiles = peptides.map(p => `
+    <button onclick="pickPeptideFromCategory('${(p.value||'').replace(/'/g,'&#39;')}')" style="text-align:left;background:#0f1820;border:1.5px solid rgba(148,163,184,.16);border-radius:10px;padding:18px 20px;cursor:pointer;font-family:'Barlow',sans-serif;transition:transform .15s,border-color .15s,background .15s,box-shadow .2s;display:flex;flex-direction:column;gap:6px;min-height:90px;-webkit-tap-highlight-color:transparent;" onmouseover="this.style.borderColor='#14b8a6';this.style.background='#12222c';this.style.transform='translateY(-2px)';" onmouseout="this.style.borderColor='rgba(148,163,184,.16)';this.style.background='#0f1820';this.style.transform='';">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:22px;line-height:1;">${p.icon}</span>
+        <span style="font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:#fff;letter-spacing:-.1px;">${p.name}</span>
+      </div>
+      <div style="font-size:12px;color:#94a3b8;line-height:1.4;">${p.sub}</div>
+    </button>
+  `).join('');
+
+  overlay.querySelector('.modal-body').innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+      <button onclick="openCategoryPicker()" style="background:transparent;color:#94a3b8;border:0;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;padding:4px 0;cursor:pointer;text-transform:uppercase;">← back</button>
+    </div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.22em;color:#14b8a6;margin-bottom:4px;text-transform:uppercase;">② PICK YOUR PEPTIDE · ${cat ? cat.label.toUpperCase() : ''}</div>
+    <div style="font-family:'Barlow',sans-serif;font-size:13px;color:#94a3b8;line-height:1.5;margin-bottom:20px;">Tap any peptide to dial in your dose, schedule, and start tracking.</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;">${tiles}</div>
+  `;
+  overlay.querySelector('.modal-footer').innerHTML = `
+    <button class="btn-cancel" onclick="openCategoryPicker()">← BACK TO CATEGORIES</button>
+    <button class="btn-cancel" onclick="document.getElementById('apex-category-overlay').remove()">CANCEL</button>
+  `;
+}
+
+function pickPeptideFromCategory(value) {
+  const overlay = document.getElementById('apex-category-overlay');
+  if (overlay) overlay.remove();
+  // Open existing dose-dial modal with the peptide pre-selected
+  try { openModal(); } catch(e) { document.getElementById('modal-overlay').style.display='flex'; document.body.style.overflow='hidden'; }
+  setTimeout(() => {
+    const sel = document.getElementById('f-peptide');
+    if (sel) {
+      sel.value = value;
+      try { sel.dispatchEvent(new Event('change')); } catch(e) {}
+      try { autofill(); } catch(e) {}
+    }
+  }, 50);
 }
 
 // ══════════════════════════════════════════════════════════
@@ -9868,7 +10057,7 @@ function renderTodayColumns(active) {
 function renderActiveCycles(active) {
   const grid = document.getElementById('active-grid');
   if (active.length === 0) {
-    grid.innerHTML = `<div class="empty-state"><div class="empty-icon">⚗️</div><p>No active protocols yet.</p><button class="btn-add" onclick="try{openModal()}catch(e){document.getElementById('modal-overlay').style.display='flex';document.body.style.overflow='hidden'}">+ Add Your First Protocol</button></div>`;
+    grid.innerHTML = `<div class="empty-state"><div class="empty-icon">⚗️</div><p>No active protocols yet.</p><button class="btn-add" onclick="try{openCategoryPicker()}catch(e){try{openModal()}catch(_){document.getElementById('modal-overlay').style.display='flex';document.body.style.overflow='hidden'}}">+ Add Your First Protocol</button></div>`;
     return;
   }
   grid.innerHTML = active.map(p => {
