@@ -3622,13 +3622,27 @@ function buildStackFromGoals(selectedGoals) {
   const picked = [];
   const usedConflicts = new Set();
   const coveredGoals = new Set();
+  const altsByConflict = {}; // conflict-group → list of suppressed alternatives
   for (const c of candidates) {
     if (c.goals.every(g => coveredGoals.has(g))) continue;
-    if (c.conflict && usedConflicts.has(c.conflict)) continue;
+    if (c.conflict && usedConflicts.has(c.conflict)) {
+      // Track alternatives that got suppressed by conflict dedup
+      if (!altsByConflict[c.conflict]) altsByConflict[c.conflict] = [];
+      altsByConflict[c.conflict].push(c);
+      continue;
+    }
     picked.push(c);
     if (c.conflict) usedConflicts.add(c.conflict);
     c.goals.forEach(g => coveredGoals.add(g));
   }
+  // Attach alts to each picked peptide that has a conflict group
+  picked.forEach(p => {
+    if (p.conflict && altsByConflict[p.conflict]) {
+      p.alternatives = altsByConflict[p.conflict].slice(0, 3); // cap at 3
+    } else {
+      p.alternatives = [];
+    }
+  });
   const coverage = {};
   selectedGoals.forEach(g => { coverage[g] = picked.filter(p => p.goals.includes(g)).map(p => p.name); });
   const uncovered = selectedGoals.filter(g => !coveredGoals.has(g));

@@ -25,19 +25,8 @@
   // Open-access mode (gate disabled pre-launch)
   localStorage.setItem('apex_email', 'open@apexprotocol');
 
-  // If user already picked a lane, auto-route them unless ?pick=1 forces the chooser
-  (function(){
-    try {
-      const params = new URLSearchParams(location.search);
-      if (params.get('pick') === '1') return;            // user explicitly asked for lane picker
-      if (params.get('browse') === '1') return;          // deep link to browse view
-      const lane = localStorage.getItem('apex_lane');
-      if (!lane) return;                                  // first-time visitor, show picker
-      if (lane === 'guided')    { location.replace('wizard.html');            return; }
-      if (lane === 'builder')   { location.replace('protocol-tracker.html');  return; }
-      if (lane === 'browsing')  { location.replace('browse.html');            return; }
-    } catch(e) {}
-  })();
+  // Auto-redirect removed — landing page now shows goal lanes for everyone.
+  // Returning users use the "Go To My Daily Protocol" button to jump in.
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -99,7 +88,23 @@ body::before{
 
 /* LANES */
 .lanes{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;padding:32px 0 24px;}
-@media (max-width:900px){.lanes{grid-template-columns:1fr;}}
+.goal-lanes{grid-template-columns:repeat(3,1fr);}
+@media (max-width:900px){.lanes,.goal-lanes{grid-template-columns:1fr 1fr;}}
+@media (max-width:560px){.lanes,.goal-lanes{grid-template-columns:1fr;}}
+
+/* RETURNING USER CTA */
+.returning-cta{
+  display:inline-flex;align-items:center;gap:14px;padding:18px 36px;
+  background:linear-gradient(135deg,#00ff9d,#10b981);color:#080c10;
+  border-radius:8px;text-decoration:none;
+  font-family:'Rajdhani',sans-serif;font-weight:800;font-size:16px;
+  letter-spacing:.12em;text-transform:uppercase;
+  box-shadow:0 6px 22px rgba(0,255,157,.35);
+  transition:transform .15s,box-shadow .15s;
+}
+.returning-cta:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,255,157,.5);}
+.rc-icon{font-size:20px;}
+.rc-arrow{font-family:'Share Tech Mono',monospace;font-size:18px;}
 .lane{
   background:var(--panel);border:1px solid var(--border);border-top:3px solid transparent;
   padding:32px 30px;text-decoration:none;color:inherit;display:flex;flex-direction:column;
@@ -201,55 +206,95 @@ body::before{
   <!-- HERO -->
   <div class="hero">
     <div class="eyebrow">Peptide Protocol System · v4.0</div>
-    <h1>Where do you want to <span class="hl">start?</span></h1>
-    <p class="sub">Pick a lane. We'll never ask again — but you can switch any time. Everything here is free. Zero sales pressure. Research-grade references, built for humans.</p>
+    <h1>What are you <span class="hl">running?</span></h1>
+    <p class="sub">Pick your path. We'll show you the peptides that fit, you pick the ones you want, dial in your dose, and start tracking. Free. No accounts. No fluff.</p>
   </div>
 
-  <!-- LANES -->
-  <div class="lanes">
+  <!-- GOAL LANES -->
+  <div class="lanes goal-lanes">
 
-    <!-- LANE 1: GUIDED (novice) -->
-    <a href="wizard.html" class="lane primary" onclick="pickLane('guided')">
-      <div class="lane-icon">🧪</div>
-      <div class="lane-label">Guided</div>
-      <div class="lane-title">I'm new — walk me through it</div>
-      <div class="lane-desc">Never used peptides. Tell me what I'm trying to do. Teach me the basics. Recommend a safe starter stack. Set up reminders so I don't forget.</div>
+    <a href="protocol-tracker.html?goal=fatloss" class="lane primary" onclick="pickLane('fatloss')">
+      <div class="lane-icon">🔥</div>
+      <div class="lane-label">Lane 01</div>
+      <div class="lane-title">Fat Loss</div>
+      <div class="lane-desc">GLP-1s, GLP-3s, metabolic peptides. Cut weight, preserve muscle.</div>
       <div class="lane-points">
-        <div class="lane-point">Pick your goal (fat loss, muscle, sleep, etc.)</div>
-        <div class="lane-point">60-second primer — only what you need</div>
-        <div class="lane-point">Starter stack built for you · no overlap</div>
+        <div class="lane-point">Semaglutide · Tirzepatide · Retatrutide</div>
+        <div class="lane-point">AOD-9604 · MOTS-c</div>
       </div>
-      <div class="lane-cta">Start the walk-through <span class="arrow">→</span></div>
+      <div class="lane-cta">Start this lane <span class="arrow">→</span></div>
     </a>
 
-    <!-- LANE 2: BUILDER (experienced) -->
-    <a href="protocol-tracker.html" class="lane secondary" onclick="pickLane('builder')">
+    <a href="protocol-tracker.html?goal=gh" class="lane secondary" onclick="pickLane('gh')">
+      <div class="lane-icon">💪</div>
+      <div class="lane-label">Lane 02</div>
+      <div class="lane-title">GH Axis</div>
+      <div class="lane-desc">Growth hormone secretagogues. Build muscle, recover faster, burn fat overnight.</div>
+      <div class="lane-points">
+        <div class="lane-point">Ipamorelin · CJC-1295</div>
+        <div class="lane-point">IGF-1 · GH stacks</div>
+      </div>
+      <div class="lane-cta">Start this lane <span class="arrow">→</span></div>
+    </a>
+
+    <a href="protocol-tracker.html?goal=recovery" class="lane tertiary" onclick="pickLane('recovery')">
+      <div class="lane-icon">🔧</div>
+      <div class="lane-label">Lane 03</div>
+      <div class="lane-title">Recovery & Healing</div>
+      <div class="lane-desc">Heal injuries, repair tissue, kill inflammation. The original "wolverine" stack.</div>
+      <div class="lane-points">
+        <div class="lane-point">BPC-157 · TB-500</div>
+        <div class="lane-point">KPV · GHK-Cu</div>
+      </div>
+      <div class="lane-cta">Start this lane <span class="arrow">→</span></div>
+    </a>
+
+    <a href="protocol-tracker.html?goal=trt" class="lane primary" onclick="pickLane('trt')">
       <div class="lane-icon">⚡</div>
-      <div class="lane-label">Express</div>
-      <div class="lane-title">I know what I want — build my stack</div>
-      <div class="lane-desc">Skip the tutorial. Drop me in the builder. I'll pick my peptides, set my doses, and go.</div>
+      <div class="lane-label">Lane 04</div>
+      <div class="lane-title">TRT / Hormone</div>
+      <div class="lane-desc">Testosterone support, fertility preservation, post-cycle recovery.</div>
       <div class="lane-points">
-        <div class="lane-point">Full peptide catalog · 40+ compounds</div>
-        <div class="lane-point">Dose / timing / cycle length — editable</div>
-        <div class="lane-point">Annual planner · bottles needed · shelf-life math</div>
+        <div class="lane-point">HCG · Gonadorelin · Kisspeptin</div>
+        <div class="lane-point">Enclomiphene</div>
       </div>
-      <div class="lane-cta">Build my stack <span class="arrow">→</span></div>
+      <div class="lane-cta">Start this lane <span class="arrow">→</span></div>
     </a>
 
-    <!-- LANE 3: BROWSING -->
-    <a href="browse.html" class="lane tertiary" onclick="pickLane('browsing')">
-      <div class="lane-icon">📚</div>
-      <div class="lane-label">Research</div>
-      <div class="lane-title">Just browsing — show me everything</div>
-      <div class="lane-desc">No account, no pitch. I want to read the encyclopedia, look at studies, and decide later.</div>
+    <a href="protocol-tracker.html?goal=cognitive" class="lane secondary" onclick="pickLane('cognitive')">
+      <div class="lane-icon">🧠</div>
+      <div class="lane-label">Lane 05</div>
+      <div class="lane-title">Cognitive & Mood</div>
+      <div class="lane-desc">Sharper focus, better mood, deeper sleep. Brain peptides + nootropic stacks.</div>
       <div class="lane-points">
-        <div class="lane-point">41 peptide pages · every citation linked</div>
-        <div class="lane-point">Compare tool · side-by-side mechanisms</div>
-        <div class="lane-point">"Cutting Through Bro Science" — fact-checks</div>
+        <div class="lane-point">Selank · Semax · DSIP</div>
+        <div class="lane-point">Cerebrolysin</div>
       </div>
-      <div class="lane-cta">Open the encyclopedia <span class="arrow">→</span></div>
+      <div class="lane-cta">Start this lane <span class="arrow">→</span></div>
     </a>
 
+    <a href="protocol-tracker.html?goal=longevity" class="lane tertiary" onclick="pickLane('longevity')">
+      <div class="lane-icon">✨</div>
+      <div class="lane-label">Lane 06</div>
+      <div class="lane-title">Longevity & Anti-Aging</div>
+      <div class="lane-desc">Mitochondrial repair, telomere support, the bioregulators stack.</div>
+      <div class="lane-points">
+        <div class="lane-point">Epithalon · SS-31 · Cartalax</div>
+        <div class="lane-point">Glutathione · NAD+</div>
+      </div>
+      <div class="lane-cta">Start this lane <span class="arrow">→</span></div>
+    </a>
+
+  </div>
+
+  <!-- RETURNING USER CTA -->
+  <div style="text-align:center;margin:32px 0 8px;">
+    <a href="protocol-tracker.html" class="returning-cta" onclick="pickLane('builder')">
+      <span class="rc-icon">📋</span>
+      <span class="rc-label">Go To My Daily Protocol</span>
+      <span class="rc-arrow">→</span>
+    </a>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.22em;color:var(--muted);text-transform:uppercase;margin-top:10px;">Already tracking? Jump straight in.</div>
   </div>
 
   <!-- ═════ PROOF-OF-INTELLIGENCE BAND — shows the engine working before commit ═════ -->
@@ -288,8 +333,8 @@ body::before{
     <div class="trust-item"><div class="trust-v">0</div><div class="trust-l">Accounts Required</div></div>
   </div>
 
-  <!-- PRICING ANCHOR — 3-tier bundle with savings math -->
-  <div style="margin-top:40px;">
+  <!-- PRICING ANCHOR — hidden pre-launch, no checkout wired up yet -->
+  <div style="margin-top:40px;display:none;">
     <div style="text-align:center;margin-bottom:8px;">
       <div style="font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.28em;color:var(--accent);text-transform:uppercase;margin-bottom:6px;">⚙ THE HARDWARE</div>
       <h2 style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:clamp(28px,4vw,40px);color:var(--white);letter-spacing:-.5px;line-height:1.1;margin-bottom:8px;">Stop fighting with syringes.<br><span style="color:var(--accent2);">Dial. Click. Done.</span></h2>
@@ -402,9 +447,7 @@ function pickLane(lane) {
 <script src="assets/apex-input-polish.js" defer></script>
 <script src="assets/apex-a11y.js" defer></script>
 <script src="assets/apex-capacitor.js" defer></script>
-<script src="assets/apex-persona.js" defer></script>
-<script src="assets/apex-quickadd.js" defer></script>
-<script src="assets/apex-experience.js" defer></script>
+<!-- persona / quickadd / experience scripts removed from landing — they belong inside the tracker, not the front door -->
 <script src="assets/apex-mobile.js" defer></script>
 </body>
 </html>
