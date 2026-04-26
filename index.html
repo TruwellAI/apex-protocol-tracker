@@ -2,189 +2,198 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover">
 <title>Apex — Peptide Protocol Builder & Tracker</title>
-<meta name="description" content="Research peptides, build your stack, track every dose. Free tool for serious peptide users. No fluff.">
+<meta name="description" content="Track your peptide protocols. Research the science. Free, simple, no fluff.">
 <meta property="og:title" content="Apex — Peptide Protocol Builder & Tracker">
-<meta property="og:description" content="Research peptides, build your stack, track every dose. Free.">
+<meta property="og:description" content="Track your peptide protocols. Research the science. Free.">
 <meta property="og:image" content="https://apexdosing.com/assets/og-preview.png">
 <meta property="og:url" content="https://apexdosing.com">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Apex — Peptide Protocol Builder & Tracker">
-<meta name="twitter:description" content="Research peptides, build your stack, track every dose. Free.">
-<meta name="twitter:image" content="https://apexdosing.com/assets/og-preview.png">
 <link rel="icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" href="assets/favicon.ico">
 <script>
-  // Clear stale service workers / caches
+  // Clear stale service workers / caches on every load
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()));
     caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
   }
-  // Open-access mode (gate disabled pre-launch)
+  // Open-access mode (no gate pre-launch)
   localStorage.setItem('apex_email', 'open@apexprotocol');
-
-  // Auto-redirect removed — landing page now shows goal lanes for everyone.
-  // Returning users use the "Go To My Daily Protocol" button to jump in.
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg:#080c10; --panel:#0d1318; --panel2:#121a22; --border:#1a2d3a;
   --accent:#00d4ff; --accent2:#00ff9d; --accent3:#ff6b35;
-  --text:#c8dde8; --muted:#4a6272; --white:#eaf4f8;
+  --text:#cbd5e1; --muted:#7a8d99; --white:#eaf4f8;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{min-height:100%;}
 body{
   background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;
-  font-size:14px;line-height:1.6;min-height:100vh;overflow-x:hidden;
+  font-size:15px;line-height:1.6;min-height:100vh;overflow-x:hidden;
   display:flex;flex-direction:column;
+  padding-top:env(safe-area-inset-top);
+  padding-bottom:env(safe-area-inset-bottom);
 }
 body::before{
   content:'';position:fixed;inset:0;
   background:
     radial-gradient(ellipse at 80% 0%, rgba(0,212,255,.08) 0%, transparent 55%),
-    radial-gradient(ellipse at 10% 90%, rgba(0,255,157,.06) 0%, transparent 50%),
-    radial-gradient(ellipse at 90% 100%, rgba(255,107,53,.04) 0%, transparent 45%);
+    radial-gradient(ellipse at 10% 90%, rgba(0,255,157,.06) 0%, transparent 50%);
   pointer-events:none;z-index:0;
 }
-.wrap{max-width:1160px;margin:0 auto;padding:0 24px;position:relative;z-index:1;width:100%;}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px;position:relative;z-index:1;width:100%;flex:1;display:flex;flex-direction:column;}
 
 /* HEADER */
-.top{display:flex;justify-content:space-between;align-items:center;padding:28px 0;}
+.top{display:flex;justify-content:space-between;align-items:center;padding:22px 0;}
 .brand{display:flex;align-items:center;gap:12px;text-decoration:none;}
 .brand-mark{
-  font-family:'Rajdhani',sans-serif;font-size:26px;font-weight:700;
-  color:var(--accent);letter-spacing:.16em;
+  font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;
+  color:var(--accent2);letter-spacing:.16em;
 }
 .brand-tag{
   font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.25em;
   color:var(--muted);text-transform:uppercase;border-left:1px solid var(--border);padding-left:12px;
 }
-.top-right{display:flex;align-items:center;gap:20px;}
-.top-link{
-  font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.2em;
-  color:var(--muted);text-decoration:none;text-transform:uppercase;transition:color .15s;
-}
-.top-link:hover{color:var(--accent);}
 
 /* HERO */
-.hero{text-align:center;padding:56px 0 36px;}
-.eyebrow{
-  font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.35em;
-  color:var(--accent);text-transform:uppercase;margin-bottom:22px;
-}
+.hero{text-align:center;padding:48px 0 28px;}
 .hero h1{
   font-family:'Rajdhani',sans-serif;font-weight:700;
-  font-size:clamp(40px,7vw,72px);line-height:1;letter-spacing:-1.5px;
-  color:var(--white);margin-bottom:18px;
+  font-size:clamp(34px,6.5vw,58px);line-height:1.05;letter-spacing:-1px;
+  color:var(--white);margin-bottom:14px;
 }
 .hero h1 .hl{color:var(--accent2);}
 .hero .sub{
-  font-size:clamp(15px,2.2vw,18px);color:var(--text);max-width:640px;margin:0 auto;line-height:1.55;
+  font-size:clamp(14px,2vw,16px);color:var(--text);max-width:520px;margin:0 auto;line-height:1.55;
 }
 
-/* LANES */
-.lanes{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;padding:32px 0 24px;}
-.goal-lanes{grid-template-columns:repeat(3,1fr);}
-@media (max-width:900px){.lanes,.goal-lanes{grid-template-columns:1fr 1fr;}}
-@media (max-width:560px){.lanes,.goal-lanes{grid-template-columns:1fr;}}
+/* TWO TILES */
+.tiles{
+  display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:24px 0 32px;
+}
+@media (max-width:680px){.tiles{grid-template-columns:1fr;gap:16px;}}
 
-/* RETURNING USER CTA */
-.returning-cta{
-  display:inline-flex;align-items:center;gap:14px;padding:18px 36px;
-  background:linear-gradient(135deg,#00ff9d,#10b981);color:#080c10;
-  border-radius:8px;text-decoration:none;
-  font-family:'Rajdhani',sans-serif;font-weight:800;font-size:16px;
-  letter-spacing:.12em;text-transform:uppercase;
-  box-shadow:0 6px 22px rgba(0,255,157,.35);
-  transition:transform .15s,box-shadow .15s;
+.tile{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:38px 30px;
+  text-decoration:none;color:inherit;
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+  cursor:pointer;
+  transition:transform .2s,border-color .2s,box-shadow .2s;
+  min-height:280px;
+  position:relative;overflow:hidden;
+  -webkit-tap-highlight-color:transparent;
 }
-.returning-cta:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,255,157,.5);}
-.rc-icon{font-size:20px;}
-.rc-arrow{font-family:'Share Tech Mono',monospace;font-size:18px;}
-.lane{
-  background:var(--panel);border:1px solid var(--border);border-top:3px solid transparent;
-  padding:32px 30px;text-decoration:none;color:inherit;display:flex;flex-direction:column;
-  transition:all .2s ease;cursor:pointer;position:relative;overflow:hidden;min-height:340px;
+.tile::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 0%,currentColor 0%,transparent 65%);
+  opacity:0;transition:opacity .25s;pointer-events:none;
 }
-.lane::after{
-  content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%, currentColor 0%, transparent 70%);
-  opacity:0;transition:opacity .2s;pointer-events:none;
+.tile:hover,.tile:active{transform:translateY(-3px);}
+.tile:hover::before,.tile:active::before{opacity:.06;}
+
+.tile.protocol{color:var(--accent2);border-color:rgba(0,255,157,.35);}
+.tile.protocol:hover{border-color:var(--accent2);box-shadow:0 12px 32px rgba(0,255,157,.18);}
+.tile.research{color:var(--accent);border-color:rgba(0,212,255,.35);}
+.tile.research:hover{border-color:var(--accent);box-shadow:0 12px 32px rgba(0,212,255,.18);}
+
+.tile-icon{
+  font-size:64px;line-height:1;margin-bottom:18px;
+  filter:drop-shadow(0 4px 12px rgba(0,0,0,.4));
 }
-.lane:hover{transform:translateY(-4px);border-color:var(--accent);}
-.lane:hover::after{opacity:.05;}
-.lane.primary{border-top-color:var(--accent2);color:var(--accent2);}
-.lane.secondary{border-top-color:var(--accent);color:var(--accent);}
-.lane.tertiary{border-top-color:var(--accent3);color:var(--accent3);}
-.lane-icon{font-size:44px;line-height:1;margin-bottom:18px;}
-.lane-label{
-  font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.28em;
-  color:currentColor;text-transform:uppercase;margin-bottom:14px;
+.tile-title{
+  font-family:'Rajdhani',sans-serif;font-weight:700;font-size:30px;
+  color:var(--white);letter-spacing:-.4px;margin-bottom:8px;line-height:1.05;
 }
-.lane-title{
-  font-family:'Rajdhani',sans-serif;font-weight:700;font-size:26px;color:var(--white);
-  line-height:1.05;margin-bottom:12px;letter-spacing:-.3px;
+.tile-sub{
+  font-size:13px;color:var(--text);line-height:1.5;max-width:240px;margin-bottom:24px;flex:1;
 }
-.lane-desc{font-size:14px;color:var(--text);line-height:1.55;flex:1;margin-bottom:20px;}
-.lane-cta{
+.tile-cta{
   display:inline-flex;align-items:center;gap:8px;
-  font-family:'Rajdhani',sans-serif;font-weight:600;font-size:14px;letter-spacing:.06em;
-  text-transform:uppercase;color:currentColor;border-top:1px solid rgba(255,255,255,.06);padding-top:18px;
+  font-family:'Share Tech Mono',monospace;font-size:11px;font-weight:700;
+  letter-spacing:.22em;text-transform:uppercase;color:currentColor;
+  padding-top:18px;border-top:1px solid rgba(255,255,255,.06);width:100%;justify-content:center;
 }
-.lane-cta .arrow{transition:transform .2s;}
-.lane:hover .lane-cta .arrow{transform:translateX(4px);}
-.lane-points{margin-bottom:18px;display:flex;flex-direction:column;gap:6px;}
-.lane-point{font-size:12px;color:var(--muted);line-height:1.5;padding-left:14px;position:relative;}
-.lane-point::before{content:'';position:absolute;left:0;top:7px;width:6px;height:1px;background:currentColor;opacity:.7;}
+.tile-cta .arrow{transition:transform .2s;}
+.tile:hover .tile-cta .arrow,.tile:active .tile-cta .arrow{transform:translateX(4px);}
 
 /* TRUST STRIP */
 .trust{
-  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
-  padding:22px 0;margin-top:36px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;
+  border-top:1px solid var(--border);
+  padding:22px 0 28px;margin-top:auto;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:16px;
 }
-@media (max-width:700px){.trust{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:560px){.trust{grid-template-columns:repeat(2,1fr);gap:18px 12px;padding:20px 0 24px;}}
 .trust-item{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;}
-.trust-v{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:26px;color:var(--accent2);line-height:1;}
+.trust-v{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:24px;color:var(--accent2);line-height:1;}
 .trust-l{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;}
-
-/* PEN PROMO BAND */
-.pen-band{
-  display:flex;justify-content:space-between;align-items:center;gap:20px;
-  margin-top:32px;padding:22px 28px;
-  background:linear-gradient(135deg,rgba(0,212,255,.12),rgba(0,255,157,.04));
-  border:1px solid rgba(0,212,255,.4);border-left:4px solid var(--accent);
-  text-decoration:none;transition:all .2s;
-}
-.pen-band:hover{background:linear-gradient(135deg,rgba(0,212,255,.18),rgba(0,255,157,.08));transform:translateY(-2px);}
-.pb-left{display:flex;gap:18px;align-items:center;flex:1;}
-.pb-icon{font-size:42px;line-height:1;}
-.pb-title{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--white);margin-bottom:4px;letter-spacing:-.2px;}
-.pb-desc{font-size:13px;color:var(--text);line-height:1.55;max-width:540px;}
-.pb-right{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;flex-shrink:0;}
-@media(max-width:640px){.pen-band{flex-direction:column;align-items:flex-start;padding:18px 20px;}.pb-right{font-size:13px;}}
 
 /* FOOT */
 .foot{
-  padding:28px 0 40px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;
-  font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.15em;
+  padding:18px 0 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;
+  font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.15em;
 }
 .foot a{color:var(--muted);text-decoration:none;transition:color .15s;}
-.foot a:hover{color:var(--accent);}
-
-/* RESPONSIVE TWEAKS */
-@media (max-width:640px){
-  .top{padding:22px 0;}
-  .hero{padding:28px 0 16px;}
-  .lanes{gap:14px;padding:20px 0 18px;}
-  .lane{padding:26px 22px;min-height:auto;}
-  .lane-icon{font-size:38px;margin-bottom:14px;}
-  .lane-title{font-size:22px;}
-  .brand-tag{display:none;}
-  .top-right{gap:14px;}
+.foot a:hover{color:var(--accent2);}
+@media (max-width:560px){
+  .foot{justify-content:center;text-align:center;font-size:8px;}
 }
+
+/* EXPERIENCE MODAL */
+#exp-overlay{
+  position:fixed;inset:0;background:rgba(8,12,16,.85);backdrop-filter:blur(6px);
+  z-index:200;display:none;align-items:center;justify-content:center;padding:20px;
+  animation:expFade .25s ease;
+}
+@keyframes expFade{from{opacity:0}to{opacity:1}}
+#exp-overlay.show{display:flex;}
+.exp-modal{
+  background:var(--panel);border:1px solid rgba(0,212,255,.4);border-radius:16px;
+  max-width:460px;width:100%;padding:32px 28px;
+  box-shadow:0 20px 60px rgba(0,0,0,.6);
+  animation:expSlideUp .3s cubic-bezier(.2,.8,.2,1);
+}
+@keyframes expSlideUp{from{transform:translateY(20px);opacity:.5}to{transform:translateY(0);opacity:1}}
+.exp-eyebrow{
+  font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.28em;
+  color:var(--accent);text-transform:uppercase;text-align:center;margin-bottom:8px;
+}
+.exp-title{
+  font-family:'Rajdhani',sans-serif;font-weight:700;font-size:26px;
+  color:var(--white);text-align:center;margin-bottom:8px;letter-spacing:-.3px;line-height:1.15;
+}
+.exp-desc{
+  font-size:13px;color:var(--text);text-align:center;margin-bottom:22px;line-height:1.5;
+}
+.exp-options{display:flex;flex-direction:column;gap:10px;}
+.exp-opt{
+  background:var(--panel2);border:1px solid var(--border);border-radius:10px;
+  padding:18px 20px;cursor:pointer;text-align:left;
+  display:flex;align-items:center;gap:14px;
+  transition:border-color .15s,transform .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.exp-opt:hover,.exp-opt:active{border-color:var(--accent);transform:translateY(-1px);}
+.exp-opt-icon{font-size:28px;line-height:1;flex-shrink:0;}
+.exp-opt-text{flex:1;}
+.exp-opt-name{
+  font-family:'Rajdhani',sans-serif;font-weight:700;font-size:17px;color:var(--white);
+  margin-bottom:2px;letter-spacing:-.1px;
+}
+.exp-opt-sub{font-size:12px;color:var(--muted);line-height:1.4;}
+.exp-skip{
+  display:block;text-align:center;margin-top:18px;
+  font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.22em;
+  color:var(--muted);text-decoration:none;text-transform:uppercase;
+  background:none;border:0;cursor:pointer;width:100%;padding:6px;
+}
+.exp-skip:hover{color:var(--accent);}
 </style>
 </head>
 <body>
@@ -197,257 +206,55 @@ body::before{
       <span class="brand-mark">APEX</span>
       <span class="brand-tag">Protocol</span>
     </a>
-    <div class="top-right">
-      <a href="browse.html" class="top-link">Encyclopedia</a>
-      <a href="protocol-tracker.html" class="top-link">Tracker</a>
-    </div>
   </div>
 
   <!-- HERO -->
   <div class="hero">
-    <div class="eyebrow">Peptide Protocol System · v4.0</div>
-    <h1>What are you <span class="hl">running?</span></h1>
-    <p class="sub">Pick your path. We'll show you the peptides that fit, you pick the ones you want, dial in your dose, and start tracking. Free. No accounts. No fluff.</p>
+    <h1>What do you want to <span class="hl">do?</span></h1>
+    <p class="sub">Track your peptide protocols. Or research the science and build a new one. Free. No fluff.</p>
   </div>
 
-  <!-- GOAL LANES -->
-  <div class="lanes goal-lanes">
+  <!-- TWO TILES -->
+  <div class="tiles">
 
-    <a href="protocol-tracker.html?goal=fatloss" class="lane primary" onclick="pickLane('fatloss')">
-      <div class="lane-icon">🔥</div>
-      <div class="lane-label">Lane 01</div>
-      <div class="lane-title">Fat Loss</div>
-      <div class="lane-desc">GLP-1s, GLP-3s, metabolic peptides. Cut weight, preserve muscle.</div>
-      <div class="lane-points">
-        <div class="lane-point">Semaglutide · Tirzepatide · Retatrutide</div>
-        <div class="lane-point">AOD-9604 · MOTS-c</div>
-      </div>
-      <div class="lane-cta">Start this lane <span class="arrow">→</span></div>
+    <!-- TILE 1: DAILY PROTOCOL -->
+    <a href="protocol-tracker.html" class="tile protocol">
+      <div class="tile-icon">📋</div>
+      <div class="tile-title">My Daily<br>Protocol</div>
+      <div class="tile-sub">Track today's doses. Log injections. See your full stack at a glance.</div>
+      <div class="tile-cta">Open my tracker <span class="arrow">→</span></div>
     </a>
 
-    <a href="protocol-tracker.html?goal=gh" class="lane secondary" onclick="pickLane('gh')">
-      <div class="lane-icon">💪</div>
-      <div class="lane-label">Lane 02</div>
-      <div class="lane-title">GH Axis</div>
-      <div class="lane-desc">Growth hormone secretagogues. Build muscle, recover faster, burn fat overnight.</div>
-      <div class="lane-points">
-        <div class="lane-point">Ipamorelin · CJC-1295</div>
-        <div class="lane-point">IGF-1 · GH stacks</div>
-      </div>
-      <div class="lane-cta">Start this lane <span class="arrow">→</span></div>
+    <!-- TILE 2: RESEARCH & ADD -->
+    <a href="research-hub.html" class="tile research">
+      <div class="tile-icon">🔬</div>
+      <div class="tile-title">Research<br>& Add</div>
+      <div class="tile-sub">Browse 44 peptides, dig into the studies, and add what fits to your stack.</div>
+      <div class="tile-cta">Start researching <span class="arrow">→</span></div>
     </a>
 
-    <a href="protocol-tracker.html?goal=recovery" class="lane tertiary" onclick="pickLane('recovery')">
-      <div class="lane-icon">🔧</div>
-      <div class="lane-label">Lane 03</div>
-      <div class="lane-title">Recovery & Healing</div>
-      <div class="lane-desc">Heal injuries, repair tissue, kill inflammation. The original "wolverine" stack.</div>
-      <div class="lane-points">
-        <div class="lane-point">BPC-157 · TB-500</div>
-        <div class="lane-point">KPV · GHK-Cu</div>
-      </div>
-      <div class="lane-cta">Start this lane <span class="arrow">→</span></div>
-    </a>
-
-    <a href="protocol-tracker.html?goal=trt" class="lane primary" onclick="pickLane('trt')">
-      <div class="lane-icon">⚡</div>
-      <div class="lane-label">Lane 04</div>
-      <div class="lane-title">TRT / Hormone</div>
-      <div class="lane-desc">Testosterone support, fertility preservation, post-cycle recovery.</div>
-      <div class="lane-points">
-        <div class="lane-point">HCG · Gonadorelin · Kisspeptin</div>
-        <div class="lane-point">Enclomiphene</div>
-      </div>
-      <div class="lane-cta">Start this lane <span class="arrow">→</span></div>
-    </a>
-
-    <a href="protocol-tracker.html?goal=cognitive" class="lane secondary" onclick="pickLane('cognitive')">
-      <div class="lane-icon">🧠</div>
-      <div class="lane-label">Lane 05</div>
-      <div class="lane-title">Cognitive & Mood</div>
-      <div class="lane-desc">Sharper focus, better mood, deeper sleep. Brain peptides + nootropic stacks.</div>
-      <div class="lane-points">
-        <div class="lane-point">Selank · Semax · DSIP</div>
-        <div class="lane-point">Cerebrolysin</div>
-      </div>
-      <div class="lane-cta">Start this lane <span class="arrow">→</span></div>
-    </a>
-
-    <a href="protocol-tracker.html?goal=longevity" class="lane tertiary" onclick="pickLane('longevity')">
-      <div class="lane-icon">✨</div>
-      <div class="lane-label">Lane 06</div>
-      <div class="lane-title">Longevity & Anti-Aging</div>
-      <div class="lane-desc">Mitochondrial repair, telomere support, the bioregulators stack.</div>
-      <div class="lane-points">
-        <div class="lane-point">Epithalon · SS-31 · Cartalax</div>
-        <div class="lane-point">Glutathione · NAD+</div>
-      </div>
-      <div class="lane-cta">Start this lane <span class="arrow">→</span></div>
-    </a>
-
-  </div>
-
-  <!-- RETURNING USER CTA -->
-  <div style="text-align:center;margin:32px 0 8px;">
-    <a href="protocol-tracker.html" class="returning-cta" onclick="pickLane('builder')">
-      <span class="rc-icon">📋</span>
-      <span class="rc-label">Go To My Daily Protocol</span>
-      <span class="rc-arrow">→</span>
-    </a>
-    <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.22em;color:var(--muted);text-transform:uppercase;margin-top:10px;">Already tracking? Jump straight in.</div>
-  </div>
-
-  <!-- ═════ PROOF-OF-INTELLIGENCE BAND — shows the engine working before commit ═════ -->
-  <div style="margin:32px 0 8px;padding:26px 28px;background:linear-gradient(135deg,rgba(0,212,255,.06),rgba(0,255,157,.03));border:1px solid rgba(0,212,255,.35);border-radius:6px;">
-    <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.28em;color:var(--accent);margin-bottom:8px;text-transform:uppercase;">🧠 What the engine does</div>
-    <div style="font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;color:var(--white);margin-bottom:4px;letter-spacing:-.3px;">Watch what happens when you stack Retatrutide + Ipamorelin.</div>
-    <div style="font-family:'Barlow',sans-serif;font-size:13px;color:var(--text);line-height:1.55;margin-bottom:18px;">No guessing. No spreadsheet. Live receptor logic, overlap detection, and timeline math — the second you add a compound.</div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
-      <div style="padding:14px 16px;background:rgba(8,12,16,.6);border-left:3px solid #10b981;border-radius:3px;">
-        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.2em;color:#10b981;margin-bottom:5px;">✓ SYNERGY DETECTED</div>
-        <div style="font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:#fff;line-height:1.25;">GH pulse preserves muscle during GLP-1-driven cut</div>
-      </div>
-      <div style="padding:14px 16px;background:rgba(8,12,16,.6);border-left:3px solid #fbbf24;border-radius:3px;">
-        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.2em;color:#fbbf24;margin-bottom:5px;">⚠ TIMING CONFLICT</div>
-        <div style="font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:#fff;line-height:1.25;">Ipamorelin needs fasted bedtime — Reta AM won't clash</div>
-      </div>
-      <div style="padding:14px 16px;background:rgba(8,12,16,.6);border-left:3px solid var(--accent);border-radius:3px;">
-        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.2em;color:var(--accent);margin-bottom:5px;">📅 TIMELINE</div>
-        <div style="font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:#fff;line-height:1.25;">Goal-hit date: Week 18 · Taper starts Week 22</div>
-      </div>
-      <div style="padding:14px 16px;background:rgba(8,12,16,.6);border-left:3px solid #60a5fa;border-radius:3px;">
-        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.2em;color:#60a5fa;margin-bottom:5px;">💉 SUPPLY MATH</div>
-        <div style="font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:#fff;line-height:1.25;">2 vials Reta · 1 vial Ipa · 5mL BAC → 6 weeks</div>
-      </div>
-    </div>
-    <div style="margin-top:18px;text-align:center;">
-      <a href="protocol-tracker.html?demo=1" style="display:inline-block;padding:13px 34px;background:linear-gradient(135deg,rgba(251,191,36,.15),rgba(245,158,11,.05));color:#fbbf24;font-family:'Share Tech Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;text-decoration:none;border:1px solid rgba(251,191,36,.55);border-radius:4px;">👀 See it live — load the demo stack</a>
-    </div>
   </div>
 
   <!-- TRUST STRIP -->
   <div class="trust">
-    <div class="trust-item"><div class="trust-v">41</div><div class="trust-l">Peptide Pages</div></div>
-    <div class="trust-item"><div class="trust-v">100+</div><div class="trust-l">Cited Studies</div></div>
+    <div class="trust-item"><div class="trust-v">44</div><div class="trust-l">Peptides</div></div>
+    <div class="trust-item"><div class="trust-v">100+</div><div class="trust-l">Studies Cited</div></div>
     <div class="trust-item"><div class="trust-v">$0</div><div class="trust-l">To Use</div></div>
-    <div class="trust-item"><div class="trust-v">0</div><div class="trust-l">Accounts Required</div></div>
+    <div class="trust-item"><div class="trust-v">0</div><div class="trust-l">Accounts</div></div>
   </div>
-
-  <!-- PRICING ANCHOR — hidden pre-launch, no checkout wired up yet -->
-  <div style="margin-top:40px;display:none;">
-    <div style="text-align:center;margin-bottom:8px;">
-      <div style="font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.28em;color:var(--accent);text-transform:uppercase;margin-bottom:6px;">⚙ THE HARDWARE</div>
-      <h2 style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:clamp(28px,4vw,40px);color:var(--white);letter-spacing:-.5px;line-height:1.1;margin-bottom:8px;">Stop fighting with syringes.<br><span style="color:var(--accent2);">Dial. Click. Done.</span></h2>
-      <p style="font-size:14px;color:var(--text);max-width:540px;margin:0 auto;line-height:1.55;">Insulin syringes run <strong style="color:#fbbf24;">$150+/year</strong>. Preloaded GLP-1 pens (Hims, Mochi) cost <strong style="color:#fbbf24;">$299–$499/month</strong>. The Apex V3 Pen is one-time, reusable, and ships with everything you need to start.</p>
-    </div>
-
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:28px;" class="pricing-tiers">
-      <!-- TIER 1 — Pen Only -->
-      <div style="padding:24px 22px;background:var(--panel);border:1px solid var(--border);border-radius:8px;display:flex;flex-direction:column;">
-        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;">JUST THE PEN</div>
-        <div style="font-family:'Rajdhani',sans-serif;font-size:36px;font-weight:700;color:var(--white);line-height:1;margin-bottom:14px;">$39</div>
-        <div style="font-size:13px;color:var(--text);line-height:1.5;margin-bottom:18px;flex:1;">
-          The pen. One 3mL cartridge. That's it. For users who already have BAC water and needles.
-        </div>
-        <ul style="list-style:none;padding:0;margin:0 0 22px;display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--text);">
-          <li>✓ Apex V3 Reusable Pen</li>
-          <li>✓ 1× 3mL cartridge</li>
-          <li>✓ Quick-start guide</li>
-        </ul>
-        <a href="https://apexdosing.com/buy-pen" target="_blank" rel="noopener" style="display:block;text-align:center;background:transparent;color:var(--white);border:1px solid var(--border);font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:.1em;padding:13px;text-decoration:none;text-transform:uppercase;border-radius:6px;transition:border-color .15s,color .15s;">Get the Pen →</a>
-      </div>
-
-      <!-- TIER 2 — Starter Kit (FEATURED) -->
-      <div style="padding:24px 22px;background:linear-gradient(135deg,rgba(0,255,157,.06),rgba(0,212,255,.02));border:1.5px solid var(--accent2);border-radius:8px;display:flex;flex-direction:column;position:relative;box-shadow:0 8px 28px rgba(0,255,157,.18);">
-        <div style="position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#00ff9d,#10b981);color:#080c10;padding:5px 14px;border-radius:14px;font-family:'Share Tech Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;white-space:nowrap;">⭐ MOST POPULAR</div>
-        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.18em;color:var(--accent2);text-transform:uppercase;margin-bottom:8px;">STARTER KIT</div>
-        <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:14px;">
-          <div style="font-family:'Rajdhani',sans-serif;font-size:36px;font-weight:700;color:var(--white);line-height:1;">$89</div>
-          <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);text-decoration:line-through;">$112 a la carte</div>
-        </div>
-        <div style="font-size:13px;color:var(--text);line-height:1.5;margin-bottom:18px;flex:1;">
-          Everything you need to run your first cycle, end to end. Most users land here.
-        </div>
-        <ul style="list-style:none;padding:0;margin:0 0 22px;display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--text);">
-          <li>✓ Apex V3 Reusable Pen</li>
-          <li>✓ 3× 3mL cartridges</li>
-          <li>✓ 100 pen needles (31g)</li>
-          <li>✓ 30mL bacteriostatic water</li>
-          <li>✓ 50 alcohol swabs</li>
-          <li style="color:var(--accent2);font-weight:700;">✓ SAVES $23 vs a la carte</li>
-        </ul>
-        <a href="https://apexdosing.com/buy-pen?tier=starter" target="_blank" rel="noopener" style="display:block;text-align:center;background:linear-gradient(135deg,#00ff9d,#10b981);color:#080c10;border:0;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:800;letter-spacing:.1em;padding:14px;text-decoration:none;text-transform:uppercase;border-radius:6px;box-shadow:0 4px 16px rgba(0,255,157,.4);">Get the Kit →</a>
-      </div>
-
-      <!-- TIER 3 — Complete Kit -->
-      <div style="padding:24px 22px;background:var(--panel);border:1px solid var(--border);border-radius:8px;display:flex;flex-direction:column;">
-        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;">COMPLETE KIT</div>
-        <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:14px;">
-          <div style="font-family:'Rajdhani',sans-serif;font-size:36px;font-weight:700;color:var(--white);line-height:1;">$149</div>
-          <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);text-decoration:line-through;">$190 a la carte</div>
-        </div>
-        <div style="font-size:13px;color:var(--text);line-height:1.5;margin-bottom:18px;flex:1;">
-          Stockpile. For serious cycles, second households, or sharing with a partner.
-        </div>
-        <ul style="list-style:none;padding:0;margin:0 0 22px;display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--text);">
-          <li>✓ Everything in Starter Kit</li>
-          <li>✓ +200 pen needles (300 total)</li>
-          <li>✓ +60mL BAC water (90mL total)</li>
-          <li>✓ Sharps disposal container</li>
-          <li>✓ Carry case</li>
-          <li style="color:var(--accent2);font-weight:700;">✓ SAVES $41 vs a la carte</li>
-        </ul>
-        <a href="https://apexdosing.com/buy-pen?tier=complete" target="_blank" rel="noopener" style="display:block;text-align:center;background:transparent;color:var(--white);border:1px solid var(--border);font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:.1em;padding:13px;text-decoration:none;text-transform:uppercase;border-radius:6px;">Get the Stockpile →</a>
-      </div>
-    </div>
-
-    <!-- COMPARISON ANCHOR -->
-    <div style="margin-top:28px;padding:18px 22px;background:rgba(15,20,28,.6);border:1px solid rgba(148,163,184,.15);border-radius:8px;text-align:center;">
-      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;">📊 ANNUAL COST COMPARISON</div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;">
-        <div><div style="font-family:'Rajdhani',sans-serif;font-size:22px;color:#fbbf24;font-weight:700;">$3,588+</div><div style="font-size:11px;color:var(--muted);margin-top:2px;">Hims-style preloaded pen subscription</div></div>
-        <div><div style="font-family:'Rajdhani',sans-serif;font-size:22px;color:#f59e0b;font-weight:700;">$180+</div><div style="font-size:11px;color:var(--muted);margin-top:2px;">Insulin syringes + supplies (yearly)</div></div>
-        <div><div style="font-family:'Rajdhani',sans-serif;font-size:22px;color:var(--accent2);font-weight:700;">$89</div><div style="font-size:11px;color:var(--muted);margin-top:2px;">Apex Starter Kit · one-time, reusable</div></div>
-      </div>
-    </div>
-
-    <!-- Affiliate program hidden until post-launch heatmap data validates pricing -->
-  </div>
-
-  <style>
-    @media(max-width:780px){.pricing-tiers{grid-template-columns:1fr !important;}}
-  </style>
 
   <!-- FOOT -->
   <div class="foot">
     <div>© Apex Protocol · Research use only · Not medical advice · 17+</div>
     <div>
-      <a href="basics.html">Basics</a> &nbsp;·&nbsp;
-      <a href="compare.html">Compare</a> &nbsp;·&nbsp;
       <a href="privacy.html">Privacy</a> &nbsp;·&nbsp;
-      <a href="terms.html">Terms</a> &nbsp;·&nbsp;
-      <a href="?pick=1">Change lane</a>
+      <a href="terms.html">Terms</a>
     </div>
   </div>
 
 </div>
 
-<script>
-function pickLane(lane) {
-  try { localStorage.setItem('apex_lane', lane); } catch(e) {}
-  // Link's default href takes the user there — we just record the choice.
-}
-</script>
-
-<script src="assets/apex-social-proof.js"></script>
-<script src="assets/apex-support.js"></script>
 <script src="assets/apex-tracking.js"></script>
-<link rel="stylesheet" href="assets/apex-mobile-polish.css">
 <link rel="stylesheet" href="assets/apex-color-system.css">
-<script src="assets/apex-input-polish.js" defer></script>
-<script src="assets/apex-a11y.js" defer></script>
-<script src="assets/apex-capacitor.js" defer></script>
-<!-- persona / quickadd / experience scripts removed from landing — they belong inside the tracker, not the front door -->
-<script src="assets/apex-mobile.js" defer></script>
 </body>
 </html>

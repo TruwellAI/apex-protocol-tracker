@@ -1,0 +1,218 @@
+/* ═════════════════════════════════════════════════════════════
+   APEX SELECTION PANEL CSS
+   Multi-select checkboxes + sticky top analysis bar
+   ═════════════════════════════════════════════════════════════ */
+
+/* Checkbox on each peptide-card */
+.peptide-card {
+  position: relative;
+}
+.apex-sel-check {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  background: rgba(8,12,16,.85);
+  border: 1.5px solid rgba(148,163,184,.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: transparent;
+  cursor: pointer;
+  z-index: 5;
+  transition: all .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.apex-sel-check:hover {
+  border-color: var(--accent2, #00ff9d);
+  background: rgba(0,255,157,.08);
+}
+.apex-sel-check.checked {
+  background: var(--accent2, #00ff9d);
+  border-color: var(--accent2, #00ff9d);
+  color: #080c10;
+}
+.peptide-card.apex-selected {
+  box-shadow: 0 0 0 2px var(--accent2, #00ff9d), 0 8px 24px rgba(0,255,157,.18);
+}
+
+/* In select mode, dim the arrow + show "tap to select" affordance */
+body.apex-select-mode .peptide-card .pc-arrow {
+  opacity: .25;
+}
+body.apex-select-mode .peptide-card {
+  cursor: pointer;
+}
+
+/* ═════ STICKY TOP BAR ═════ */
+#apex-sticky-sel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: linear-gradient(180deg, rgba(8,12,16,.97), rgba(8,12,16,.94));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0,255,157,.25);
+  padding: 10px 0 12px;
+  padding-top: max(10px, env(safe-area-inset-top));
+  transform: translateY(-100%);
+  transition: transform .3s cubic-bezier(.2,.8,.2,1);
+  box-shadow: 0 4px 20px rgba(0,0,0,.4);
+}
+#apex-sticky-sel.has-selection,
+body.apex-select-mode #apex-sticky-sel {
+  transform: translateY(0);
+}
+.ss-inner {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 14px;
+  align-items: center;
+}
+.ss-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.ss-count {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  color: #00ff9d;
+  line-height: 1;
+  letter-spacing: -.2px;
+}
+.ss-mode #ss-toggle {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .18em;
+  color: #cbd5e1;
+  background: rgba(0,255,157,.08);
+  border: 1px solid rgba(0,255,157,.4);
+  padding: 4px 10px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all .15s;
+}
+.ss-mode #ss-toggle:hover {
+  background: rgba(0,255,157,.18);
+  color: #00ff9d;
+}
+
+.ss-mid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.ss-hint {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .14em;
+  color: #7a8d99;
+  text-transform: uppercase;
+}
+.ss-callout {
+  font-size: 12px;
+  line-height: 1.4;
+  color: #cbd5e1;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 4px 0;
+}
+.ss-callout strong {
+  color: #fff;
+  font-weight: 700;
+}
+.ss-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+.ss-bad .ss-dot { background: #ef4444; box-shadow: 0 0 8px rgba(239,68,68,.6); }
+.ss-ok  .ss-dot { background: #00ff9d; box-shadow: 0 0 8px rgba(0,255,157,.5); }
+.ss-warn .ss-dot{ background: #fbbf24; box-shadow: 0 0 8px rgba(251,191,36,.5); }
+
+.ss-right {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.ss-btn-ghost,
+.ss-btn-primary {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 10px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 0;
+  transition: all .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.ss-btn-ghost {
+  background: transparent;
+  border: 1px solid #1a2d3a;
+  color: #7a8d99;
+}
+.ss-btn-ghost:hover {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+.ss-btn-primary {
+  background: linear-gradient(135deg, #00ff9d, #10b981);
+  color: #080c10;
+  box-shadow: 0 4px 14px rgba(0,255,157,.4);
+}
+.ss-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(0,255,157,.55);
+}
+
+/* Add top padding to body so content doesn't hide behind sticky bar */
+body.apex-select-mode,
+body:has(#apex-sticky-sel.has-selection) {
+  padding-top: 92px;
+}
+
+/* MOBILE — stack the bar vertically */
+@media (max-width: 720px) {
+  .ss-inner {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .ss-left {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .ss-right {
+    justify-content: flex-end;
+  }
+  .ss-callout {
+    font-size: 11px;
+  }
+  body.apex-select-mode,
+  body:has(#apex-sticky-sel.has-selection) {
+    padding-top: 140px;
+  }
+}
+
+/* Cross-tag clone styling */
+.peptide-card[data-cross-tagged] {
+  opacity: .94;
+}

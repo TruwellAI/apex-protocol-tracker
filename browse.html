@@ -238,6 +238,37 @@ body.cat-open .featured-protocols-wrap{display:none;}
 </head>
 <body>
 
+<style>
+/* When user arrives from Research flow (?level=new|expert|novice|any),
+   hide the marketing hero / paper-trail / stats so they land on category panel */
+body[data-research-flow="1"] .hero,
+body[data-research-flow="1"] .stats-bar,
+body[data-research-flow="1"] [class*="paper-trail"],
+body[data-research-flow="1"] .hero ~ div:not(.category-nav):not(.category-block):not(.section-label):not(.peptide-grid):not([id^="apex-"]):not(.footer):not(footer) {
+  /* let the targeted-known elements be hidden by their direct selector below */
+}
+body[data-research-flow="1"] .hero { display:none !important; }
+body[data-research-flow="1"] .stats-bar { display:none !important; }
+/* Hide the 3 inline marketing cards (paper trail / read this first / compare) */
+body[data-research-flow="1"] .hero + div,
+body[data-research-flow="1"] .hero + div + div { display:none !important; }
+</style>
+<script>
+(function(){
+  try {
+    var p = new URLSearchParams(location.search);
+    if (p.has('level') || p.get('from') === 'hub') {
+      document.body.setAttribute('data-research-flow', '1');
+      // Auto-scroll to category nav after a tick
+      setTimeout(function(){
+        var nav = document.querySelector('.category-nav, #category-nav, [class*="category-nav"]');
+        if (nav && nav.scrollIntoView) nav.scrollIntoView({behavior:'instant', block:'start'});
+      }, 50);
+    }
+  } catch(e){}
+})();
+</script>
+
 <!-- HERO -->
 <div class="hero">
   <div class="hero-eyebrow" id="hero-eyebrow">Apex Protocol — Free Research Tool</div>
@@ -963,5 +994,7 @@ if (!localStorage.getItem('apex_email_captured') && !sessionStorage.getItem('ape
 <script src="assets/apex-quickadd.js" defer></script>
 <script src="assets/apex-experience.js" defer></script>
 <script src="assets/apex-mobile.js" defer></script>
+<link rel="stylesheet" href="assets/apex-selection-panel.css">
+<script src="assets/apex-selection-panel.js" defer></script>
 </body>
 </html>
