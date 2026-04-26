@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover">
+<title>Your Protocol — Apex Protocol</title>
+<meta name="description" content="Your full protocol: cycle length, titration, dosing schedule.">
+<link rel="icon" href="assets/favicon.ico">
+<link rel="apple-touch-icon" href="assets/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#080c10; --panel:#0d1318; --panel2:#121a22; --border:#1a2d3a;
+  --accent:#00d4ff; --accent2:#00ff9d; --accent3:#ff6b35; --accent4:#a78bfa;
+  --text:#cbd5e1; --muted:#7a8d99; --white:#eaf4f8;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{min-height:100%;}
+body{
+  background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;
+  font-size:15px;line-height:1.6;min-height:100vh;overflow-x:hidden;
+  padding-top:env(safe-area-inset-top);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+body::before{
+  content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse at 80% 0%, rgba(0,212,255,.06) 0%, transparent 55%),radial-gradient(ellipse at 10% 90%, rgba(0,255,157,.04) 0%, transparent 50%);
+  pointer-events:none;z-index:0;
+}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px;position:relative;z-index:1;}
+
+.top{display:flex;justify-content:space-between;align-items:center;padding:14px 0;}
+.brand{display:flex;align-items:center;gap:8px;text-decoration:none;}
+.brand-mark{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--accent2);letter-spacing:.16em;}
+.brand-tag{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.25em;color:var(--muted);text-transform:uppercase;border-left:1px solid var(--border);padding-left:8px;}
+.back-btn{display:inline-flex;align-items:center;gap:6px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.22em;color:var(--muted);text-decoration:none;text-transform:uppercase;padding:8px 12px;border:1px solid var(--border);border-radius:6px;transition:all .15s;-webkit-tap-highlight-color:transparent;}
+.back-btn:hover,.back-btn:active{color:var(--accent2);border-color:var(--accent2);}
+
+.hero{padding:24px 0 12px;}
+.hero-eyebrow{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.25em;color:var(--accent);text-transform:uppercase;margin-bottom:6px;}
+.hero h1{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:clamp(26px,5vw,38px);line-height:1.05;letter-spacing:-.4px;color:var(--white);margin-bottom:8px;}
+.hero h1 .hl{color:var(--accent2);}
+.hero .sub{font-size:14px;color:var(--text);max-width:560px;line-height:1.5;}
+
+.stepper{display:flex;align-items:center;gap:8px;padding:8px 0 18px;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;overflow-x:auto;white-space:nowrap;scrollbar-width:none;}
+.stepper::-webkit-scrollbar{display:none;}
+.step{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border:1px solid var(--border);border-radius:20px;flex-shrink:0;}
+.step.done{color:var(--muted);}
+.step.active{color:var(--accent2);border-color:var(--accent2);background:rgba(0,255,157,.08);}
+.step .dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
+
+/* SUMMARY STATS BAR */
+.summary{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
+  background:var(--panel);border:1px solid var(--border);border-radius:12px;
+  padding:14px;margin-bottom:16px;
+}
+.sum-item{text-align:center;}
+.sum-v{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:22px;color:var(--accent2);line-height:1;}
+.sum-l{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin-top:4px;}
+
+/* PROTOCOL CARDS */
+.proto-list{display:flex;flex-direction:column;gap:12px;padding-bottom:18px;}
+.proto-card{
+  background:var(--panel);border:1px solid var(--border);border-radius:12px;
+  padding:18px;
+}
+.proto-card.titration{border-color:rgba(0,255,157,.3);}
+.proto-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px;}
+.proto-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;color:var(--white);letter-spacing:-.2px;line-height:1.1;}
+.proto-mech{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin-top:2px;}
+.proto-cycle-pill{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--accent);background:rgba(0,212,255,.12);padding:5px 10px;border-radius:4px;text-transform:uppercase;font-weight:700;flex-shrink:0;white-space:nowrap;}
+
+.proto-rows{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+@media (max-width:480px){.proto-rows{grid-template-columns:1fr;}}
+.proto-row{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;}
+.proto-r-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin-bottom:3px;}
+.proto-r-value{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;color:var(--white);line-height:1.1;}
+
+/* TITRATION TABLE */
+.tit-table{
+  background:rgba(0,255,157,.04);border:1px solid rgba(0,255,157,.25);border-radius:8px;
+  padding:10px;margin-top:10px;
+}
+.tit-title{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.2em;color:var(--accent2);text-transform:uppercase;margin-bottom:8px;font-weight:700;}
+.tit-rows{display:flex;flex-direction:column;gap:6px;}
+.tit-row{display:flex;justify-content:space-between;align-items:center;padding:6px 8px;background:var(--panel2);border-radius:5px;font-size:13px;}
+.tit-week{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.1em;font-weight:700;}
+.tit-dose{font-family:'Rajdhani',sans-serif;font-weight:700;color:var(--white);font-size:14px;}
+
+.continue-bar{position:sticky;bottom:0;background:var(--bg);padding:14px 0 max(14px, env(safe-area-inset-bottom));border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:10px;}
+.cb-summary{font-size:12px;color:var(--muted);}
+.cb-summary strong{color:var(--accent2);font-weight:700;font-size:14px;}
+.cb-btn{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;letter-spacing:.08em;text-transform:uppercase;padding:13px 22px;border-radius:8px;border:0;cursor:pointer;background:linear-gradient(135deg,#00ff9d,#10b981);color:#080c10;box-shadow:0 4px 14px rgba(0,255,157,.4);transition:transform .15s,box-shadow .15s;-webkit-tap-highlight-color:transparent;white-space:nowrap;}
+.cb-btn:hover,.cb-btn:active{transform:translateY(-1px);box-shadow:0 6px 18px rgba(0,255,157,.55);}
+
+.empty{text-align:center;padding:60px 20px;}
+.empty-icon{font-size:56px;margin-bottom:16px;opacity:.6;}
+.empty-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:22px;color:var(--white);margin-bottom:8px;}
+.empty-sub{font-size:13px;color:var(--text);margin-bottom:20px;}
+
+.foot{padding:18px 0;display:flex;justify-content:center;align-items:center;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.15em;text-align:center;border-top:1px solid var(--border);margin-top:18px;}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="top">
+    <a href="reconstitute.html" class="back-btn">← Back</a>
+    <a href="index.html" class="brand">
+      <span class="brand-mark">APEX</span>
+      <span class="brand-tag">Protocol</span>
+    </a>
+    <div style="width:60px;"></div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-eyebrow">Step 3 of 3 · Final Review</div>
+    <h1>Your <span class="hl">protocol</span></h1>
+    <p class="sub">Cycle length, titration, dosing — all in one place. Hit "Start Tracking" to send it to your daily tracker.</p>
+  </div>
+
+  <div class="stepper">
+    <div class="step done"><span class="dot"></span>Select</div>
+    <div class="step done"><span class="dot"></span>Reconstitute</div>
+    <div class="step active"><span class="dot"></span>Protocol</div>
+  </div>
+
+  <div id="summary" class="summary" style="display:none;">
+    <div class="sum-item"><div class="sum-v" id="sum-peptides">0</div><div class="sum-l">Peptides</div></div>
+    <div class="sum-item"><div class="sum-v" id="sum-weeks">0</div><div class="sum-l">Avg Cycle (wks)</div></div>
+    <div class="sum-item"><div class="sum-v" id="sum-titrate">0</div><div class="sum-l">Need Titration</div></div>
+  </div>
+
+  <div id="proto-list" class="proto-list"></div>
+
+  <div id="empty-state" class="empty" style="display:none;">
+    <div class="empty-icon">📋</div>
+    <div class="empty-title">No protocol yet</div>
+    <div class="empty-sub">Pick peptides first, then reconstitute, then come back.</div>
+    <a href="browse.html?from=hub" class="cb-btn" style="display:inline-block;text-decoration:none;">Start →</a>
+  </div>
+
+  <div class="continue-bar" id="continue-bar" style="display:none;">
+    <div class="cb-summary"><strong id="cb-count">0</strong> protocols ready to track</div>
+    <button class="cb-btn" id="continue-btn">Start Tracking →</button>
+  </div>
+
+  <div class="foot">⚠ RESEARCH USE ONLY · NOT MEDICAL ADVICE</div>
+
+</div>
+
+<script>
+(function(){
+  // PROTOCOL DATA: cycle length, dose default, frequency, titration schedule
+  const PROTO = {
+    'aod9604.html':      { name:'AOD-9604',       mech:'GH fragment lipolysis',     cycleWks:12, dose:'300 mcg', freq:'daily, fasted AM' },
+    '5amino1mq.html':    { name:'5-Amino-1MQ',    mech:'NNMT inhibitor',            cycleWks:12, dose:'50-150 mg', freq:'daily oral' },
+    'slu-pp-322.html':   { name:'SLU-PP-332',     mech:'ERRα agonist',              cycleWks:8,  dose:'experimental', freq:'preclinical only' },
+    'retatrutide.html':  { name:'Retatrutide',    mech:'Triple G agonist',          cycleWks:24, dose:'titrated', freq:'weekly',
+      titration:[{w:'Wk 1-4',d:'2 mg/wk'},{w:'Wk 5-8',d:'4 mg/wk'},{w:'Wk 9-12',d:'6 mg/wk'},{w:'Wk 13-16',d:'8 mg/wk'},{w:'Wk 17-20',d:'10 mg/wk'},{w:'Wk 21+',d:'12 mg/wk (max)'}] },
+    'semaglutide.html':  { name:'Semaglutide',    mech:'GLP-1 agonist',             cycleWks:24, dose:'titrated', freq:'weekly',
+      titration:[{w:'Wk 1-4',d:'0.25 mg/wk'},{w:'Wk 5-8',d:'0.5 mg/wk'},{w:'Wk 9-12',d:'1.0 mg/wk'},{w:'Wk 13-16',d:'1.7 mg/wk'},{w:'Wk 17+',d:'2.4 mg/wk (max)'}] },
+    'tirzepatide.html':  { name:'Tirzepatide',    mech:'GLP-1 + GIP',               cycleWks:24, dose:'titrated', freq:'weekly',
+      titration:[{w:'Wk 1-4',d:'2.5 mg/wk'},{w:'Wk 5-8',d:'5 mg/wk'},{w:'Wk 9-12',d:'7.5 mg/wk'},{w:'Wk 13-16',d:'10 mg/wk'},{w:'Wk 17-20',d:'12.5 mg/wk'},{w:'Wk 21+',d:'15 mg/wk (max)'}] },
+    'melanotan1.html':   { name:'Melanotan I',    mech:'MC1R agonist',              cycleWks:8,  dose:'500 mcg-1 mg', freq:'daily until tan, then 2x/wk' },
+    'melanotan2.html':   { name:'Melanotan II',   mech:'MC1-4R agonist',            cycleWks:8,  dose:'250-500 mcg', freq:'daily during loading, then 2x/wk' },
+    'pt141.html':        { name:'PT-141',         mech:'MC4R agonist',              cycleWks:'as needed', dose:'1.75 mg', freq:'30-60 min pre-event' },
+    'ipamorelin.html':   { name:'Ipamorelin',     mech:'Ghrelin / GHS-R',           cycleWks:12, dose:'200-300 mcg', freq:'2-3x daily, fasted' },
+    'cjc1295-dac.html':  { name:'CJC-1295 DAC',   mech:'GHRH analog (DAC)',         cycleWks:12, dose:'1-2 mg', freq:'2x weekly' },
+    'cjc-no-dac.html':   { name:'CJC-1295',       mech:'GHRH analog',               cycleWks:12, dose:'100 mcg', freq:'2-3x daily, fasted' },
+    'sermorelin.html':   { name:'Sermorelin',     mech:'GHRH analog',               cycleWks:12, dose:'100-300 mcg', freq:'nightly, fasted' },
+    'tesamorelin.html':  { name:'Tesamorelin',    mech:'GHRH (visceral fat)',       cycleWks:26, dose:'1-2 mg', freq:'daily SubQ' },
+    'cjc-ipa-blend.html':{ name:'CJC + Ipa Blend',mech:'GHRH + Ghrelin blend',      cycleWks:12, dose:'200-300 mcg ea.', freq:'2-3x daily, fasted' },
+    'igf1-lr3.html':     { name:'IGF-1 LR3',      mech:'IGF-1 analog',              cycleWks:4,  dose:'30-50 mcg', freq:'daily, post-workout' },
+    'bpc157.html':       { name:'BPC-157',        mech:'Body protective compound',  cycleWks:6,  dose:'250-500 mcg', freq:'daily, near injury site' },
+    'tb500.html':        { name:'TB-500',         mech:'Thymosin Beta-4',           cycleWks:6,  dose:'2-2.5 mg', freq:'2x weekly (loading 4-6 wks)' },
+    'ghkcu.html':        { name:'GHK-Cu',         mech:'Copper tripeptide',         cycleWks:8,  dose:'1-3 mg', freq:'daily SubQ or topical' },
+    'kpv.html':          { name:'KPV',            mech:'Anti-inflammatory tripep.', cycleWks:6,  dose:'250-500 mcg', freq:'daily' },
+    'll37.html':         { name:'LL-37',          mech:'Cathelicidin AMP',          cycleWks:4,  dose:'100-300 mcg', freq:'daily SubQ' },
+    'thymosin-alpha1.html':{ name:'Thymosin α1',  mech:'Immune modulator',          cycleWks:8,  dose:'1.6 mg', freq:'2x weekly' },
+    'ara290.html':       { name:'ARA-290',        mech:'EPO derivative',            cycleWks:4,  dose:'4 mg', freq:'daily' },
+    'epitalon.html':     { name:'Epitalon',       mech:'Telomerase activator',      cycleWks:'10 days pulsed', dose:'5-10 mg', freq:'daily x10 days, 2x/yr' },
+    'ss31.html':         { name:'SS-31',          mech:'Mitochondrial peptide',     cycleWks:8,  dose:'1-5 mg', freq:'daily SubQ' },
+    'motsc.html':        { name:'MOTS-c',         mech:'Mitokine / AMPK',           cycleWks:8,  dose:'5-10 mg', freq:'2-3x weekly' },
+    'cartalax.html':     { name:'Cartalax',       mech:'Bioregulator (cartilage)',  cycleWks:'20-day pulsed', dose:'200 mcg', freq:'daily x20 days, 2x/yr' },
+    'fox04-dri.html':    { name:'FOX04-DRI',      mech:'Senolytic',                 cycleWks:'5 days pulsed', dose:'experimental', freq:'5-day pulses' },
+    'glutathione.html':  { name:'Glutathione',    mech:'Master antioxidant',        cycleWks:12, dose:'200-600 mg', freq:'2-3x weekly' },
+    'nad-plus.html':     { name:'NAD+',           mech:'Mitochondrial cofactor',    cycleWks:12, dose:'titrated', freq:'loading then maintenance',
+      titration:[{w:'Days 1-5',d:'100 mg loading'},{w:'Days 6-10',d:'200 mg loading'},{w:'Wk 3+',d:'100 mg 2-3x/wk maintenance'}] },
+    'selank.html':       { name:'Selank',         mech:'Anxiolytic neuropeptide',   cycleWks:4,  dose:'250-500 mcg', freq:'daily intranasal' },
+    'semax.html':        { name:'Semax',          mech:'BDNF upregulator',          cycleWks:4,  dose:'250-500 mcg', freq:'daily intranasal' },
+    'dsip.html':         { name:'DSIP',           mech:'Delta sleep peptide',       cycleWks:4,  dose:'100-300 mcg', freq:'pre-bed' },
+    'dihexa.html':       { name:'Dihexa',         mech:'HGF mimetic',               cycleWks:4,  dose:'8-45 mg', freq:'daily oral' },
+    'pe2228.html':       { name:'PE-22-28',       mech:'TREK-1 modulator',          cycleWks:4,  dose:'experimental', freq:'preclinical' },
+    'l-carnitine.html':  { name:'L-Carnitine',    mech:'Fat oxidation cofactor',    cycleWks:8,  dose:'200-500 mg', freq:'pre-workout' },
+    'glutamine.html':    { name:'Glutamine',      mech:'Gut + immune amino',        cycleWks:8,  dose:'5 g', freq:'daily oral' },
+    'wolverine.html':    { name:'Wolverine Stack',mech:'BPC + TB-500 + GHK',        cycleWks:6,  dose:'see components', freq:'daily' },
+    'klow.html':         { name:'KLOW Stack',     mech:'KPV + TB + BPC + GHK',      cycleWks:6,  dose:'see components', freq:'daily' },
+    'glow.html':         { name:'GLOW Stack',     mech:'GHK + TB + BPC',            cycleWks:8,  dose:'see components', freq:'daily' },
+    'cardiac-stack.html':{ name:'Cardiac Stack',  mech:'Heart-focused stack',       cycleWks:12, dose:'see components', freq:'daily' },
+    'longevity-stack.html':{name:'Longevity Stack',mech:'Multi-peptide longevity',  cycleWks:16, dose:'see components', freq:'pulsed' },
+    'mito-reset.html':   { name:'Mito Reset',     mech:'Mitochondrial protocol',    cycleWks:12, dose:'see components', freq:'daily' }
+  };
+
+  let selection = [];
+  try { selection = JSON.parse(localStorage.getItem('apex_selection')) || []; } catch(e){}
+
+  const list = document.getElementById('proto-list');
+  const empty = document.getElementById('empty-state');
+  const summary = document.getElementById('summary');
+  const continueBar = document.getElementById('continue-bar');
+  const continueBtn = document.getElementById('continue-btn');
+
+  if (!selection.length) {
+    empty.style.display = 'block';
+    return;
+  }
+
+  let titrationCount = 0;
+  let totalWeeks = 0;
+  let weeksCount = 0;
+
+  selection.forEach(slug => {
+    const p = PROTO[slug];
+    if (!p) return;
+    if (p.titration) titrationCount++;
+    if (typeof p.cycleWks === 'number') { totalWeeks += p.cycleWks; weeksCount++; }
+    list.appendChild(renderCard(slug, p));
+  });
+
+  document.getElementById('sum-peptides').textContent = selection.length;
+  document.getElementById('sum-weeks').textContent = weeksCount > 0 ? Math.round(totalWeeks / weeksCount) : '—';
+  document.getElementById('sum-titrate').textContent = titrationCount;
+  summary.style.display = 'grid';
+
+  document.getElementById('cb-count').textContent = selection.length;
+  continueBar.style.display = 'flex';
+
+  function renderCard(slug, p){
+    const card = document.createElement('div');
+    card.className = 'proto-card' + (p.titration ? ' titration' : '');
+    const titHtml = p.titration ? `
+      <div class="tit-table">
+        <div class="tit-title">⚡ Titration Schedule</div>
+        <div class="tit-rows">
+          ${p.titration.map(t => `<div class="tit-row"><span class="tit-week">${t.w}</span><span class="tit-dose">${t.d}</span></div>`).join('')}
+        </div>
+      </div>` : '';
+    card.innerHTML = `
+      <div class="proto-head">
+        <div>
+          <div class="proto-name">${p.name}</div>
+          <div class="proto-mech">${p.mech}</div>
+        </div>
+        <div class="proto-cycle-pill">${typeof p.cycleWks === 'number' ? p.cycleWks + ' weeks' : p.cycleWks}</div>
+      </div>
+      <div class="proto-rows">
+        <div class="proto-row">
+          <div class="proto-r-label">Dose</div>
+          <div class="proto-r-value">${p.dose}</div>
+        </div>
+        <div class="proto-row">
+          <div class="proto-r-label">Frequency</div>
+          <div class="proto-r-value">${p.freq}</div>
+        </div>
+      </div>
+      ${titHtml}
+    `;
+    return card;
+  }
+
+  continueBtn.addEventListener('click', () => {
+    // Build protocol payload for tracker
+    const protocols = selection.map(slug => {
+      const p = PROTO[slug];
+      if (!p) return null;
+      return {
+        slug: slug,
+        name: p.name,
+        mech: p.mech,
+        cycleWks: p.cycleWks,
+        dose: p.dose,
+        freq: p.freq,
+        titration: p.titration || null,
+        startDate: new Date().toISOString().slice(0,10)
+      };
+    }).filter(Boolean);
+
+    try {
+      localStorage.setItem('apex_pending_protocols', JSON.stringify(protocols));
+      // Clear the funnel state — selection has been committed
+      localStorage.removeItem('apex_selection');
+    } catch(e){}
+    location.href = 'protocol-tracker.html?import=pending';
+  });
+})();
+</script>
+
+<link rel="stylesheet" href="assets/apex-color-system.css">
+</body>
+</html>

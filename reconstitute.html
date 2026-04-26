@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover">
+<title>Reconstitution — Apex Protocol</title>
+<meta name="description" content="How much bacteriostatic water to mix per peptide. Concentration math done for you.">
+<link rel="icon" href="assets/favicon.ico">
+<link rel="apple-touch-icon" href="assets/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#080c10; --panel:#0d1318; --panel2:#121a22; --border:#1a2d3a;
+  --accent:#00d4ff; --accent2:#00ff9d; --accent3:#ff6b35; --accent4:#a78bfa;
+  --text:#cbd5e1; --muted:#7a8d99; --white:#eaf4f8;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{min-height:100%;}
+body{
+  background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;
+  font-size:15px;line-height:1.6;min-height:100vh;overflow-x:hidden;
+  padding-top:env(safe-area-inset-top);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+body::before{
+  content:'';position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse at 80% 0%, rgba(0,212,255,.06) 0%, transparent 55%),
+    radial-gradient(ellipse at 10% 90%, rgba(0,255,157,.04) 0%, transparent 50%);
+  pointer-events:none;z-index:0;
+}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px;position:relative;z-index:1;}
+
+/* HEADER */
+.top{display:flex;justify-content:space-between;align-items:center;padding:14px 0;}
+.brand{display:flex;align-items:center;gap:8px;text-decoration:none;}
+.brand-mark{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--accent2);letter-spacing:.16em;}
+.brand-tag{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.25em;color:var(--muted);text-transform:uppercase;border-left:1px solid var(--border);padding-left:8px;}
+.back-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.22em;
+  color:var(--muted);text-decoration:none;text-transform:uppercase;
+  padding:8px 12px;border:1px solid var(--border);border-radius:6px;
+  transition:all .15s;-webkit-tap-highlight-color:transparent;
+}
+.back-btn:hover,.back-btn:active{color:var(--accent2);border-color:var(--accent2);}
+
+/* HERO */
+.hero{padding:24px 0 12px;}
+.hero-eyebrow{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.25em;color:var(--accent);text-transform:uppercase;margin-bottom:6px;}
+.hero h1{
+  font-family:'Rajdhani',sans-serif;font-weight:700;
+  font-size:clamp(26px,5vw,38px);line-height:1.05;letter-spacing:-.4px;
+  color:var(--white);margin-bottom:8px;
+}
+.hero h1 .hl{color:var(--accent2);}
+.hero .sub{font-size:14px;color:var(--text);max-width:560px;line-height:1.5;}
+
+/* STEPPER */
+.stepper{
+  display:flex;align-items:center;gap:8px;padding:8px 0 18px;
+  font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;
+  overflow-x:auto;white-space:nowrap;
+  scrollbar-width:none;
+}
+.stepper::-webkit-scrollbar{display:none;}
+.step{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border:1px solid var(--border);border-radius:20px;flex-shrink:0;}
+.step.done{color:var(--muted);}
+.step.active{color:var(--accent2);border-color:var(--accent2);background:rgba(0,255,157,.08);}
+.step .dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
+
+/* GLOBAL DEFAULTS BAR */
+.defaults{
+  background:linear-gradient(135deg,rgba(0,212,255,.08),rgba(0,255,157,.04));
+  border:1px solid rgba(0,212,255,.35);
+  border-radius:10px;
+  padding:14px 16px;margin-bottom:14px;
+  display:flex;align-items:center;gap:12px;
+}
+.defaults-icon{font-size:24px;line-height:1;flex-shrink:0;}
+.defaults-text{font-size:13px;line-height:1.45;color:var(--text);flex:1;}
+.defaults-text strong{color:var(--accent);font-weight:700;}
+
+/* PEPTIDE CARDS */
+.recon-list{display:flex;flex-direction:column;gap:12px;padding-bottom:18px;}
+.recon-card{
+  background:var(--panel);border:1px solid var(--border);border-radius:12px;
+  padding:18px 18px 14px;
+  transition:border-color .15s;
+}
+.recon-card.special{border-color:rgba(255,107,53,.4);background:linear-gradient(180deg,rgba(255,107,53,.05),var(--panel) 60%);}
+.rc-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;}
+.rc-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;color:var(--white);letter-spacing:-.2px;line-height:1.1;}
+.rc-mech{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin-top:2px;}
+.rc-special-badge{
+  font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:.18em;
+  color:var(--accent3);background:rgba(255,107,53,.12);
+  padding:4px 8px;border-radius:4px;text-transform:uppercase;font-weight:700;
+  flex-shrink:0;
+}
+
+.rc-rows{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+@media (max-width:480px){.rc-rows{grid-template-columns:1fr;}}
+.rc-row{
+  background:var(--panel2);border:1px solid var(--border);border-radius:8px;
+  padding:10px 12px;
+}
+.rc-row label{
+  display:block;font-family:'Share Tech Mono',monospace;font-size:9px;
+  letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin-bottom:5px;
+}
+.rc-row input{
+  width:100%;background:transparent;border:0;outline:0;
+  font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;color:var(--white);
+  padding:0;-webkit-appearance:none;
+}
+.rc-row .unit{font-size:13px;color:var(--muted);font-weight:500;margin-left:4px;}
+
+.rc-result{
+  background:rgba(0,255,157,.06);border:1px solid rgba(0,255,157,.3);
+  border-radius:8px;padding:12px 14px;
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
+}
+.rc-r-item{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.rc-r-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;}
+.rc-r-value{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;color:var(--accent2);line-height:1.1;}
+
+.rc-note{
+  margin-top:10px;font-size:12px;color:var(--text);line-height:1.4;
+  padding:8px 12px;background:rgba(255,107,53,.08);border-left:2px solid var(--accent3);border-radius:4px;
+}
+
+/* CONTINUE BAR */
+.continue-bar{
+  position:sticky;bottom:0;background:var(--bg);
+  padding:14px 0 max(14px, env(safe-area-inset-bottom));
+  border-top:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center;gap:10px;
+  margin-top:auto;
+}
+.cb-summary{font-size:12px;color:var(--muted);}
+.cb-summary strong{color:var(--accent2);font-weight:700;font-size:14px;}
+.cb-btn{
+  font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;letter-spacing:.08em;
+  text-transform:uppercase;padding:13px 22px;border-radius:8px;border:0;cursor:pointer;
+  background:linear-gradient(135deg,#00ff9d,#10b981);color:#080c10;
+  box-shadow:0 4px 14px rgba(0,255,157,.4);
+  transition:transform .15s,box-shadow .15s;
+  -webkit-tap-highlight-color:transparent;
+  white-space:nowrap;
+}
+.cb-btn:hover,.cb-btn:active{transform:translateY(-1px);box-shadow:0 6px 18px rgba(0,255,157,.55);}
+
+/* EMPTY STATE */
+.empty{
+  text-align:center;padding:60px 20px;
+}
+.empty-icon{font-size:56px;margin-bottom:16px;opacity:.6;}
+.empty-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:22px;color:var(--white);margin-bottom:8px;}
+.empty-sub{font-size:13px;color:var(--text);margin-bottom:20px;}
+
+/* FOOT */
+.foot{padding:18px 0;display:flex;justify-content:center;align-items:center;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.15em;text-align:center;border-top:1px solid var(--border);margin-top:18px;}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- HEADER with back button -->
+  <div class="top">
+    <a href="browse.html?from=hub" class="back-btn">← Back</a>
+    <a href="index.html" class="brand">
+      <span class="brand-mark">APEX</span>
+      <span class="brand-tag">Reconstitute</span>
+    </a>
+    <div style="width:60px;"></div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eyebrow">Step 2 of 3</div>
+    <h1>Mix your <span class="hl">peptides</span></h1>
+    <p class="sub">How much bacteriostatic water to add per vial. The math is done for you — adjust if needed.</p>
+  </div>
+
+  <!-- STEPPER -->
+  <div class="stepper">
+    <div class="step done"><span class="dot"></span>Select</div>
+    <div class="step active"><span class="dot"></span>Reconstitute</div>
+    <div class="step"><span class="dot"></span>Protocol</div>
+  </div>
+
+  <!-- DEFAULTS BAR -->
+  <div class="defaults">
+    <div class="defaults-icon">💧</div>
+    <div class="defaults-text">
+      <strong>Default: 3 mL of bacteriostatic water</strong> per peptide. Concentration math updates live as you adjust. AOD-9604 is the exception — it gets its own protocol.
+    </div>
+  </div>
+
+  <!-- LIST (rendered by JS) -->
+  <div id="recon-list" class="recon-list"></div>
+
+  <div id="empty-state" class="empty" style="display:none;">
+    <div class="empty-icon">💉</div>
+    <div class="empty-title">No peptides selected</div>
+    <div class="empty-sub">Go pick some from the encyclopedia first.</div>
+    <a href="browse.html?from=hub" class="cb-btn" style="display:inline-block;text-decoration:none;">Open Encyclopedia →</a>
+  </div>
+
+  <!-- CONTINUE BAR -->
+  <div class="continue-bar" id="continue-bar" style="display:none;">
+    <div class="cb-summary"><strong id="cb-count">0</strong> peptides ready</div>
+    <button class="cb-btn" id="continue-btn">Continue to Protocol →</button>
+  </div>
+
+  <!-- FOOT -->
+  <div class="foot">⚠ RESEARCH USE ONLY · NOT MEDICAL ADVICE</div>
+
+</div>
+
+<script>
+(function(){
+  // ── PEPTIDE METADATA: vial size + reconstitution rule + display name ──
+  const PEP = {
+    'aod9604.html':      { name:'AOD-9604',       mech:'GH fragment lipolysis',     vial:5,  bac:1, special:true,  acetic:1 },
+    '5amino1mq.html':    { name:'5-Amino-1MQ',    mech:'NNMT inhibitor',            vial:50, bac:3 },
+    'slu-pp-322.html':   { name:'SLU-PP-332',     mech:'ERRα agonist',              vial:10, bac:3 },
+    'retatrutide.html':  { name:'Retatrutide',    mech:'Triple G agonist',          vial:10, bac:3, titration:true },
+    'semaglutide.html':  { name:'Semaglutide',    mech:'GLP-1 agonist',             vial:10, bac:3, titration:true },
+    'tirzepatide.html':  { name:'Tirzepatide',    mech:'GLP-1 + GIP',               vial:10, bac:3, titration:true },
+    'melanotan1.html':   { name:'Melanotan I',    mech:'MC1R agonist',              vial:10, bac:3 },
+    'melanotan2.html':   { name:'Melanotan II',   mech:'MC1-4R agonist',            vial:10, bac:3 },
+    'pt141.html':        { name:'PT-141',         mech:'MC4R agonist',              vial:10, bac:3 },
+    'ipamorelin.html':   { name:'Ipamorelin',     mech:'Ghrelin / GHS-R',           vial:5,  bac:3 },
+    'cjc1295-dac.html':  { name:'CJC-1295 DAC',   mech:'GHRH analog (DAC)',         vial:2,  bac:3 },
+    'cjc-no-dac.html':   { name:'CJC-1295',       mech:'GHRH analog',               vial:2,  bac:3 },
+    'sermorelin.html':   { name:'Sermorelin',     mech:'GHRH analog',               vial:5,  bac:3 },
+    'tesamorelin.html':  { name:'Tesamorelin',    mech:'GHRH (visceral fat)',       vial:5,  bac:3 },
+    'cjc-ipa-blend.html':{ name:'CJC + Ipa Blend',mech:'GHRH + Ghrelin blend',      vial:5,  bac:3 },
+    'igf1-lr3.html':     { name:'IGF-1 LR3',      mech:'IGF-1 analog',              vial:1,  bac:1 },
+    'bpc157.html':       { name:'BPC-157',        mech:'Body protective compound',  vial:5,  bac:3 },
+    'tb500.html':        { name:'TB-500',         mech:'Thymosin Beta-4',           vial:5,  bac:3 },
+    'ghkcu.html':        { name:'GHK-Cu',         mech:'Copper tripeptide',         vial:50, bac:3 },
+    'kpv.html':          { name:'KPV',            mech:'Anti-inflammatory tripep.', vial:5,  bac:3 },
+    'll37.html':         { name:'LL-37',          mech:'Cathelicidin AMP',          vial:5,  bac:3 },
+    'thymosin-alpha1.html':{ name:'Thymosin α1',  mech:'Immune modulator',          vial:5,  bac:3 },
+    'ara290.html':       { name:'ARA-290',        mech:'EPO derivative',            vial:5,  bac:3 },
+    'epitalon.html':     { name:'Epitalon',       mech:'Telomerase activator',      vial:10, bac:3 },
+    'ss31.html':         { name:'SS-31',          mech:'Mitochondrial peptide',     vial:10, bac:3 },
+    'motsc.html':        { name:'MOTS-c',         mech:'Mitokine / AMPK',           vial:10, bac:3 },
+    'cartalax.html':     { name:'Cartalax',       mech:'Bioregulator (cartilage)',  vial:20, bac:3 },
+    'fox04-dri.html':    { name:'FOX04-DRI',      mech:'Senolytic',                 vial:5,  bac:3 },
+    'glutathione.html':  { name:'Glutathione',    mech:'Master antioxidant',        vial:200,bac:3 },
+    'nad-plus.html':     { name:'NAD+',           mech:'Mitochondrial cofactor',    vial:500,bac:3, titration:true },
+    'selank.html':       { name:'Selank',         mech:'Anxiolytic neuropeptide',   vial:10, bac:3 },
+    'semax.html':        { name:'Semax',          mech:'BDNF upregulator',          vial:10, bac:3 },
+    'dsip.html':         { name:'DSIP',           mech:'Delta sleep peptide',       vial:5,  bac:3 },
+    'dihexa.html':       { name:'Dihexa',         mech:'HGF mimetic',               vial:10, bac:3 },
+    'pe2228.html':       { name:'PE-22-28',       mech:'TREK-1 modulator',          vial:10, bac:3 },
+    'l-carnitine.html':  { name:'L-Carnitine',    mech:'Fat oxidation cofactor',    vial:200,bac:3 },
+    'glutamine.html':    { name:'Glutamine',      mech:'Gut + immune amino',        vial:1000,bac:3 },
+    'wolverine.html':    { name:'Wolverine Stack',mech:'BPC + TB-500 + GHK',        vial:10, bac:3 },
+    'klow.html':         { name:'KLOW Stack',     mech:'KPV + TB + BPC + GHK',      vial:10, bac:3 },
+    'glow.html':         { name:'GLOW Stack',     mech:'GHK + TB + BPC',            vial:10, bac:3 },
+    'cardiac-stack.html':{ name:'Cardiac Stack',  mech:'Heart-focused stack',       vial:10, bac:3 },
+    'longevity-stack.html':{name:'Longevity Stack',mech:'Multi-peptide longevity',  vial:10, bac:3 },
+    'mito-reset.html':   { name:'Mito Reset',     mech:'Mitochondrial protocol',    vial:10, bac:3 }
+  };
+
+  let selection = [];
+  try { selection = JSON.parse(localStorage.getItem('apex_selection')) || []; } catch(e){}
+
+  const list = document.getElementById('recon-list');
+  const empty = document.getElementById('empty-state');
+  const continueBar = document.getElementById('continue-bar');
+  const continueBtn = document.getElementById('continue-btn');
+  const cbCount = document.getElementById('cb-count');
+
+  if (!selection.length) {
+    empty.style.display = 'block';
+    continueBar.style.display = 'none';
+    return;
+  }
+
+  // Render reconstitution data per peptide
+  const reconState = {};
+  selection.forEach(slug => {
+    const p = PEP[slug];
+    if (!p) return;
+    reconState[slug] = { vial: p.vial, bac: p.bac, acetic: p.acetic || 0 };
+    list.appendChild(renderCard(slug, p));
+  });
+
+  cbCount.textContent = selection.length;
+  continueBar.style.display = 'flex';
+
+  function renderCard(slug, p){
+    const card = document.createElement('div');
+    card.className = 'recon-card' + (p.special ? ' special' : '');
+    card.dataset.slug = slug;
+
+    const concentration = (p.vial / (p.bac + (p.acetic||0))).toFixed(2);
+    const dosesPerVial = Math.floor(p.vial / 1); // assumes ~1mg per dose default — override in protocol step
+
+    card.innerHTML = `
+      <div class="rc-head">
+        <div>
+          <div class="rc-name">${p.name}</div>
+          <div class="rc-mech">${p.mech}</div>
+        </div>
+        ${p.special ? '<div class="rc-special-badge">⚠ Special</div>' : ''}
+      </div>
+      <div class="rc-rows">
+        <div class="rc-row">
+          <label>Vial size</label>
+          <input type="number" min="0.5" step="0.5" value="${p.vial}" data-field="vial" inputmode="decimal">
+          <span class="unit">mg</span>
+        </div>
+        <div class="rc-row">
+          <label>BAC water${p.special ? ' (with acetic)' : ''}</label>
+          <input type="number" min="0.5" step="0.5" value="${p.bac}" data-field="bac" inputmode="decimal">
+          <span class="unit">mL</span>
+        </div>
+        ${p.special ? `
+        <div class="rc-row" style="grid-column:1/-1;">
+          <label>+ Acetic acid (water)</label>
+          <input type="number" min="0" step="0.5" value="${p.acetic||1}" data-field="acetic" inputmode="decimal">
+          <span class="unit">mL</span>
+        </div>` : ''}
+      </div>
+      <div class="rc-result">
+        <div class="rc-r-item">
+          <div class="rc-r-label">Concentration</div>
+          <div class="rc-r-value" data-result="conc">${concentration} mg/mL</div>
+        </div>
+        <div class="rc-r-item">
+          <div class="rc-r-label">~ Doses per vial</div>
+          <div class="rc-r-value" data-result="doses">~${dosesPerVial}</div>
+        </div>
+      </div>
+      ${p.special ? '<div class="rc-note"><strong>AOD-9604 is hydrophobic.</strong> Mix 1 mL bacteriostatic water + 1 mL acetic acid water (or as labeled). Most other peptides use 3 mL BAC water alone.</div>' : ''}
+      ${p.titration ? '<div class="rc-note" style="border-left-color:var(--accent2);background:rgba(0,255,157,.08);"><strong>Titration required.</strong> Your protocol screen will set up the week-by-week dose ramp.</div>' : ''}
+    `;
+
+    // Live recalc on input change
+    card.querySelectorAll('input').forEach(input => {
+      input.addEventListener('input', () => {
+        const vial = parseFloat(card.querySelector('[data-field="vial"]').value) || 0;
+        const bac = parseFloat(card.querySelector('[data-field="bac"]').value) || 0;
+        const aceticEl = card.querySelector('[data-field="acetic"]');
+        const acetic = aceticEl ? (parseFloat(aceticEl.value) || 0) : 0;
+        const total = bac + acetic;
+        const conc = total > 0 ? (vial / total).toFixed(2) : '—';
+        const doses = vial > 0 ? Math.floor(vial / 1) : 0;
+        card.querySelector('[data-result="conc"]').textContent = conc + ' mg/mL';
+        card.querySelector('[data-result="doses"]').textContent = '~' + doses;
+        reconState[slug] = { vial, bac, acetic };
+      });
+    });
+
+    return card;
+  }
+
+  continueBtn.addEventListener('click', () => {
+    try { localStorage.setItem('apex_recon', JSON.stringify(reconState)); } catch(e){}
+    location.href = 'protocol-summary.html';
+  });
+})();
+</script>
+
+<link rel="stylesheet" href="assets/apex-color-system.css">
+</body>
+</html>
