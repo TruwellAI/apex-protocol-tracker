@@ -16176,5 +16176,182 @@ function openRockyManual() {
 <script src="assets/apex-quickadd.js" defer></script>
 <script src="assets/apex-experience.js" defer></script>
 <script src="assets/apex-mobile.js" defer></script>
+
+<!-- ═════ IMPORT-PENDING PATCH: consume apex_pending_protocols from the funnel ═════ -->
+<script>
+(function(){
+  // When user arrives with ?import=pending, read apex_pending_protocols
+  // (set by protocol-summary.html) and add them to state.protocols
+  function importPending(){
+    try {
+      const params = new URLSearchParams(location.search);
+      if (params.get('import') !== 'pending') return;
+      const raw = localStorage.getItem('apex_pending_protocols');
+      if (!raw) return;
+      const incoming = JSON.parse(raw);
+      if (!Array.isArray(incoming) || !incoming.length) return;
+
+      const stateRaw = localStorage.getItem('apex_state') || '{}';
+      const state = JSON.parse(stateRaw);
+      state.protocols = state.protocols || [];
+
+      const today = new Date().toISOString().slice(0,10);
+      incoming.forEach(p => {
+        // Skip if a non-demo active protocol with same slug already exists
+        const dup = state.protocols.find(x => x.slug === p.slug && (x.status||'active')==='active' && !x.isDemoSeed);
+        if (dup) return;
+
+        const cycleWeeks = typeof p.cycleWks === 'number' ? p.cycleWks : 8;
+        state.protocols.push({
+          id: 'p_' + Date.now() + '_' + Math.random().toString(36).slice(2,7),
+          slug: p.slug,
+          name: p.name,
+          mech: p.mech,
+          dose: p.dose,
+          freq: p.freq,
+          cycleWeeks: cycleWeeks,
+          titration: p.titration || null,
+          status: 'active',
+          startDate: p.startDate || today,
+          createdAt: new Date().toISOString(),
+          isDemoSeed: false,
+          dailyLog: []
+        });
+      });
+
+      localStorage.setItem('apex_state', JSON.stringify(state));
+      localStorage.removeItem('apex_pending_protocols');
+
+      // Strip the param so refresh doesn't re-import
+      const url = new URL(location.href);
+      url.searchParams.delete('import');
+      history.replaceState({}, '', url.toString());
+
+      // Toast feedback after page settles
+      setTimeout(function(){
+        try {
+          if (typeof showToast === 'function') {
+            showToast('success', 'Stack added!', incoming.length + ' protocol' + (incoming.length===1?'':'s') + ' on your tracker.');
+          }
+        } catch(_){}
+      }, 400);
+    } catch(e) { console.warn('Import pending failed:', e); }
+  }
+  // Run before the tracker's render passes
+  importPending();
+})();
+</script>
+
+<!-- ═════ EMPTY-STATE PATCH: big centered ADD button when no protocols rendered ═════ -->
+<style>
+#apex-empty-cta {
+  display:none;
+  position:relative;
+  z-index:5;
+  text-align:center;
+  padding:80px 24px 60px;
+  margin:20px 16px;
+  background:linear-gradient(180deg, rgba(0,255,157,.04), rgba(0,212,255,.02));
+  border:1px dashed rgba(0,255,157,.3);
+  border-radius:16px;
+  animation: apexFadeIn .4s ease;
+}
+@keyframes apexFadeIn { from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:translateY(0);} }
+#apex-empty-cta.show { display:block; }
+#apex-empty-cta .ec-icon { font-size:64px; line-height:1; margin-bottom:18px; filter:drop-shadow(0 4px 14px rgba(0,255,157,.3)); }
+#apex-empty-cta .ec-title {
+  font-family:'Rajdhani',sans-serif;font-weight:700;font-size:clamp(24px,4.5vw,34px);
+  color:#fff;margin-bottom:10px;letter-spacing:-.4px;line-height:1.1;
+}
+#apex-empty-cta .ec-sub {
+  font-family:'Barlow',sans-serif;font-size:14px;color:#cbd5e1;margin-bottom:32px;
+  max-width:420px;margin-left:auto;margin-right:auto;line-height:1.5;
+}
+#apex-empty-cta .ec-btn {
+  display:inline-flex;align-items:center;gap:12px;
+  padding:20px 44px;
+  background:linear-gradient(135deg,#00ff9d,#10b981);color:#080c10;
+  font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:800;letter-spacing:.1em;
+  text-transform:uppercase;text-decoration:none;border-radius:10px;
+  box-shadow:0 8px 28px rgba(0,255,157,.45);
+  transition:transform .15s, box-shadow .15s;
+  -webkit-tap-highlight-color:transparent;
+  animation: apexPulseBig 2.4s ease-in-out infinite;
+}
+@keyframes apexPulseBig {
+  0%,100% { box-shadow:0 8px 28px rgba(0,255,157,.45); transform:translateY(0); }
+  50%     { box-shadow:0 12px 36px rgba(0,255,157,.65); transform:translateY(-2px); }
+}
+#apex-empty-cta .ec-btn:hover { transform:translateY(-3px); box-shadow:0 14px 40px rgba(0,255,157,.6); }
+#apex-empty-cta .ec-secondary {
+  display:block;margin-top:18px;
+  font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.22em;
+  color:#7a8d99;text-decoration:none;text-transform:uppercase;
+}
+#apex-empty-cta .ec-secondary:hover { color:#00d4ff; }
+</style>
+<script>
+(function(){
+  // Big centered ADD CTA when tracker has no rendered protocols.
+  // Routes through the new flow: research hub → browse → reconstitute → protocol summary
+  function ensureEmptyCTA(){
+    if (document.getElementById('apex-empty-cta')) return;
+    const grid = document.getElementById('active-grid');
+    if (!grid) return;
+
+    const cta = document.createElement('div');
+    cta.id = 'apex-empty-cta';
+    cta.innerHTML = `
+      <div class="ec-icon">🧪</div>
+      <div class="ec-title">Build your first protocol</div>
+      <div class="ec-sub">Pick your peptides, mix them, set your titration — we'll walk you through it. Takes about 90 seconds.</div>
+      <a href="research-hub.html" class="ec-btn">＋ Add Protocol →</a>
+      <a href="#" class="ec-secondary" id="apex-demo-link">👀 See it in action (demo)</a>
+    `;
+    grid.parentNode.insertBefore(cta, grid.nextSibling);
+
+    cta.querySelector('#apex-demo-link').addEventListener('click', function(e){
+      e.preventDefault();
+      try { if (typeof loadDemoSeed === 'function') loadDemoSeed(); } catch(_){}
+      try { if (typeof startSiteTour === 'function') setTimeout(startSiteTour, 700); } catch(_){}
+    });
+  }
+
+  function isGridEmpty(){
+    const grid = document.getElementById('active-grid');
+    if (!grid) return false;
+    // A real cycle-card has class "cycle-card" — empty-state divs don't
+    return grid.querySelectorAll('.cycle-card').length === 0;
+  }
+
+  function tick(){
+    ensureEmptyCTA();
+    const cta = document.getElementById('apex-empty-cta');
+    const builtin = document.querySelector('#active-grid .empty-state');
+    if (!cta) return;
+    if (isGridEmpty()) {
+      cta.classList.add('show');
+      if (builtin) builtin.style.display = 'none'; // hide the smaller built-in empty state — ours is bigger
+    } else {
+      cta.classList.remove('show');
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', tick);
+  } else {
+    tick();
+  }
+  // Re-check after the tracker's own render passes
+  setTimeout(tick, 300);
+  setTimeout(tick, 1000);
+  // Watch for grid mutations
+  const obs = new MutationObserver(tick);
+  document.addEventListener('DOMContentLoaded', function(){
+    const grid = document.getElementById('active-grid');
+    if (grid) obs.observe(grid, { childList:true, subtree:true });
+  });
+})();
+</script>
 </body>
 </html>
