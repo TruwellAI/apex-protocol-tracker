@@ -208,6 +208,54 @@ html, body {
   overscroll-behavior: none;
 }
 
+/* PERSONA-AWARE DENSITY (apex-persona.js sets data-apex-level) */
+
+/* BEGINNER MODE — bigger fonts, more space, friendlier */
+html[data-apex-level="beginner"] body {
+  font-size: 15px !important;
+}
+html[data-apex-level="beginner"] .greeting,
+html[data-apex-level="beginner"] .step-title,
+html[data-apex-level="beginner"] .modal-title {
+  letter-spacing: -.2px !important;
+}
+html[data-apex-level="beginner"] .form-input,
+html[data-apex-level="beginner"] .form-select {
+  font-size: 16px !important;
+  padding: 13px 16px !important;
+  min-height: 50px !important;
+}
+html[data-apex-level="beginner"] .stat-row {
+  gap: 14px !important;
+}
+html[data-apex-level="beginner"] .stat-card {
+  padding: 18px !important;
+}
+html[data-apex-level="beginner"] #apex-quickadd-pill {
+  display: none !important;
+}
+
+/* ADVANCED MODE — tighter, denser, faster */
+html[data-apex-level="advanced"] body {
+  font-size: 13px !important;
+}
+html[data-apex-level="advanced"] .stat-card {
+  padding: 10px 12px !important;
+}
+html[data-apex-level="advanced"] .stat-row {
+  gap: 8px !important;
+}
+html[data-apex-level="advanced"] .form-input,
+html[data-apex-level="advanced"] .form-select {
+  padding: 8px 10px !important;
+}
+html[data-apex-level="advanced"] .greeting {
+  font-size: 22px !important;
+}
+html[data-apex-level="advanced"] #goals-entry-row {
+  padding: 10px 14px !important;
+}
+
 /* SWIPEABLE indicator for cycle cards (hint that cards have actions) */
 @media (max-width: 640px) {
   .cycle-card {
