@@ -145,6 +145,138 @@
         skip: 'You have more urgent issues to solve first (fat loss, injury, hormone imbalance) — fix those before layering longevity.',
         stackFit: '3-4 month annual cycle. Pair with quality sleep, training, and foundational supplements.'
       },
+      '5amino1mq': {
+        bestFor: 'NNMT inhibition for stubborn fat — works upstream of metabolic slowdown, oral capsule (no injection).',
+        consider: 'You\'re late-stage cut, hit a plateau, or you want a fat-loss adjunct without injections. Pairs well alongside a GLP-1.',
+        skip: 'You\'re early in your weight-loss journey — Reta or Tirz will outperform 5×. This is a finishing tool, not a foundation.',
+        stackFit: 'Adjunct only. Combines well with Retatrutide late-cycle or as a maintenance bridge between GLP-1 cycles.'
+      },
+      'tesamorelin': {
+        bestFor: 'Visceral fat reduction (the deep belly fat that\'s hardest to shed) and a moderate GH bump — clinically validated.',
+        consider: 'You\'re carrying central obesity, metabolic syndrome markers, or you want GHRH benefits without the longer half-life of CJC DAC.',
+        skip: 'You\'re already running CJC-1295 No DAC or a CJC + Ipa blend — same receptor class, redundant.',
+        stackFit: 'Solo on a cut, or paired with Ipamorelin. Avoid stacking with another GHRH analog.'
+      },
+      'sermorelin': {
+        bestFor: 'Entry-level GHRH for older users — gentler stimulation, well-tolerated, lots of clinical history.',
+        consider: 'You\'re 40+ and want to start on a GH peptide cautiously, or your provider prefers conservative protocols.',
+        skip: 'You\'re looking for fast or strong GH amplification — Ipamorelin + CJC No DAC is 3–4× more effective.',
+        stackFit: 'Pairs with Ipamorelin. For experienced users, CJC-1295 No DAC outperforms.'
+      },
+      'cjc1295-dac': {
+        bestFor: 'Convenience-first GH protocols — weekly dosing, sustained IGF-1 elevation. Trades pulsatility for ease.',
+        consider: 'You hate daily injections and want a once-a-week schedule, or you\'re running a long blast where convenience matters.',
+        skip: 'You want natural GH pulsatility (DAC creates a flat elevation, not pulses). Most physiologically-minded users prefer No DAC.',
+        stackFit: 'Solo or paired with Ipamorelin. Don\'t stack with CJC No DAC or Tesamorelin — same upstream receptor.'
+      },
+      'cjc-ipa-blend': {
+        bestFor: 'The single-injection gold-standard GH stack. Convenience of one shot, with both GHRH + ghrelin pathway hit.',
+        consider: 'You want to run the proven CJC + Ipa combo without measuring two separate vials. Saves time, reduces error.',
+        skip: 'You want to dial each component independently — separate vials give you that flexibility.',
+        stackFit: 'Replaces both Ipamorelin and CJC No DAC in your stack. Pre-bed dosing for max GH pulse during deep sleep.'
+      },
+      'igf1-lr3': {
+        bestFor: 'Direct IGF-1 elevation — bypasses the GH pulse entirely. Site-specific muscle hypertrophy when injected near the target tissue.',
+        consider: 'You\'re plateauing on GH peptides, you want growth without the GH cascade, or you\'re running a serious bulk.',
+        skip: 'Cancer family history (IGF-1 is a growth signal — benign and malignant alike). Diabetes (affects glucose control). Most users should run GH peptides first.',
+        stackFit: 'Advanced. Often run 4–6 weeks during a bulk. Avoid stacking with high-dose GH secretagogues.'
+      },
+      'cartalax': {
+        bestFor: 'Cartilage-specific bioregulator — supports joint health, particularly for older users and athletes with chronic joint stress.',
+        consider: 'You have nagging joint pain, you\'re 40+ with cartilage wear, or you\'re building a longevity protocol focused on joints.',
+        skip: 'You\'re looking for fast pain relief — Cartalax is slow + cumulative, not acute. Try BPC-157 + TB-500 for faster results.',
+        stackFit: 'Pairs with BPC-157 + TB-500 for joint protocols. Pulse-cycled like Epitalon (10–20 days on, long off).'
+      },
+      'ara290': {
+        bestFor: 'Neuropathic pain + nerve repair — EPO-derived peptide that targets the tissue-protective receptor without erythropoiesis.',
+        consider: 'You have peripheral neuropathy, post-injury nerve damage, or you\'re working on chronic inflammation that GLP-1s alone aren\'t fixing.',
+        skip: 'You don\'t have specific nerve / inflammation issues — this is a targeted tool, not a general anti-inflammatory.',
+        stackFit: 'Solo or alongside BPC-157. Niche but powerful for the right indication.'
+      },
+      'dihexa': {
+        bestFor: 'Aggressive neuroplasticity research — angiotensin IV analog, ~7 orders of magnitude more potent than BDNF for synaptogenesis.',
+        consider: 'You\'re recovering from concussion, doing neuroplasticity research, or you\'ve hit a ceiling with Semax + Selank.',
+        skip: 'Most users don\'t need this. Semax and Selank handle the cognitive load for 95% of cases. Dihexa is research-grade and underdocumented.',
+        stackFit: 'Niche. Pairs with Semax. Run short, careful cycles — long-term safety data is thin.'
+      },
+      'pe2228': {
+        bestFor: 'TREK-1 channel blocker — research peptide for mood, particularly depression resistant to SSRIs.',
+        consider: 'You\'ve struggled with mood that hasn\'t responded to standard tools, you\'re working with a provider, or you\'re researching alternatives.',
+        skip: 'Active mental health conditions need proper medical care. PE-22-28 is research-stage, not a substitute for treatment.',
+        stackFit: 'Solo. Often paired with Selank for an anxiolytic profile. Short cycles only.'
+      },
+      'fox04-dri': {
+        bestFor: 'Senolytic activity — selectively eliminates senescent ("zombie") cells that drive aging and chronic inflammation.',
+        consider: 'You\'re 50+, building a longevity stack, or you have chronic inflammatory conditions linked to senescence load.',
+        skip: 'Acute illness or active immune challenge — this isn\'t the time. Cancer history requires MD oversight.',
+        stackFit: 'Pulse-cycle 5 days every 3–6 months. Pair with Epitalon and quality antioxidants.'
+      },
+      'ss31': {
+        bestFor: 'Inner mitochondrial membrane targeting — protects cardiolipin, restores energy production in damaged mitochondria.',
+        consider: 'You\'re building a longevity protocol, you have mitochondrial dysfunction symptoms (chronic fatigue, exercise intolerance), or you\'re 50+.',
+        skip: 'You\'re running multiple mitochondrial peptides (MOTS-c, NAD+) — pick your layer. SS-31 is more niche/expensive.',
+        stackFit: 'Top tier of mitochondrial stack. Pairs with MOTS-c (different mechanism — they complement). 4–6 week cycles.'
+      },
+      'thymosin-a1': {
+        bestFor: 'T-cell modulation — the foundational immune peptide. Boosts adaptive immunity, well-studied, used clinically for chronic infections.',
+        consider: 'You\'re fighting recurring illness, post-COVID syndromes, autoimmune balance, or you\'re building a long-term immune protocol.',
+        skip: 'Active organ transplant / immunosuppression therapy — adding T-cell stimulation is contraindicated.',
+        stackFit: 'Foundation of any immune stack. Pairs with KPV (gut anti-inflammatory) and BPC-157 (gut barrier).'
+      },
+      'thymosin-alpha1': {
+        bestFor: 'T-cell modulation — the foundational immune peptide. Boosts adaptive immunity, well-studied, used clinically for chronic infections.',
+        consider: 'You\'re fighting recurring illness, post-COVID syndromes, autoimmune balance, or you\'re building a long-term immune protocol.',
+        skip: 'Active organ transplant / immunosuppression therapy — adding T-cell stimulation is contraindicated.',
+        stackFit: 'Foundation of any immune stack. Pairs with KPV (gut anti-inflammatory) and BPC-157 (gut barrier).'
+      },
+      'll37': {
+        bestFor: 'Antimicrobial cathelicidin — broad-spectrum activity against bacteria, viruses, and biofilms. Useful where antibiotics fail.',
+        consider: 'Chronic biofilm-driven infections, antibiotic-resistant skin issues, or chronic Lyme / co-infections (with provider oversight).',
+        skip: 'Acute infections respond to antibiotics. LL-37 is a niche tool, not a first-line antimicrobial.',
+        stackFit: 'Pairs with Thymosin Alpha-1 for stubborn immune challenges. Cycle conservatively — long-term safety data is limited.'
+      },
+      'glutathione': {
+        bestFor: 'Master antioxidant — direct cellular protection, liver detox support, foundational for any longevity or oxidative-stress protocol.',
+        consider: 'You\'re running 3+ peptides, doing aggressive cuts, environmental toxin exposure, or building a longevity stack.',
+        skip: 'You\'re already getting plenty via NAC + diet — Glutathione is helpful, not magic. Diminishing returns on a clean baseline.',
+        stackFit: 'Foundation layer. Pairs with NAD+ and MOTS-c for full mitochondrial support. Cycle 4–8 weeks at a time.'
+      },
+      'glutamine': {
+        bestFor: 'Gut barrier support + recovery — oral powder, foundational for anyone with gut issues or hard training load.',
+        consider: 'IBS / IBD symptoms, post-antibiotic recovery, hard training cuts (high catabolism), or as a foundational add to any peptide stack.',
+        skip: 'Healthy gut + clean diet — the marginal benefit is small. Save your money for higher-leverage compounds.',
+        stackFit: 'Pairs with BPC-157 + KPV for gut protocols. Daily, oral, no cycling needed.'
+      },
+      'l-carnitine': {
+        bestFor: 'Fatty acid transport into mitochondria for oxidation — cheap, well-researched, mild fat-loss adjunct.',
+        consider: 'You\'re on a serious cut, your fasted cardio isn\'t hitting hard enough, or you want a low-cost layer to a GLP-1 protocol.',
+        skip: 'Diet + training are dialed and you\'re losing fat fine — L-carnitine\'s effect is modest. Better leverage elsewhere.',
+        stackFit: 'Adjunct to any fat-loss stack. Especially good alongside Reta/Tirz to support metabolic energy.'
+      },
+      'mito-reset': {
+        bestFor: 'Comprehensive mitochondrial protocol — combines MOTS-c + NAD+ + SS-31 for full energy + longevity stacking.',
+        consider: 'Chronic fatigue, mitochondrial dysfunction, post-illness recovery, or annual longevity reset cycles.',
+        skip: 'You\'re running just one of the components already — adding more isn\'t additive past a point. Pick your layer.',
+        stackFit: 'Standalone 6–8 week intensive. Then maintain with one of the components solo.'
+      },
+      'melanotan1': {
+        bestFor: 'Pigmentation only — α-MSH analog, tanning without UV exposure. No libido or appetite effects.',
+        consider: 'You want a tan without sun damage, you have photosensitive skin issues, or you\'re prepping for events.',
+        skip: 'Atypical mole patterns or family history of melanoma — talk to a dermatologist first. Pigmentation peptides need monitoring.',
+        stackFit: 'Solo use. Loading phase + maintenance. Pairs with cumulative sun exposure (with sunscreen still recommended).'
+      },
+      'melanotan2': {
+        bestFor: 'Tan + libido boost — combined α-MSH + melanocortin agonism. More aggressive effect than Melanotan I.',
+        consider: 'You want both tanning + sexual function in one compound, you\'re experienced with Melanotan I and want next level.',
+        skip: 'PT-141 + Melanotan I is a cleaner split. Melanotan II has more side effects (nausea, flushing, weird darkening of moles).',
+        stackFit: 'Solo or with PT-141 (but watch for additive nausea). Loading phase + maintenance.'
+      },
+      'slu-pp-322': {
+        bestFor: 'Exercise mimetic research — ERR agonist, oral capsule. Targets fat-loss + endurance pathways without working out.',
+        consider: 'You can\'t train (injury, illness) but want to maintain metabolic health, or you\'re researching novel fat-loss compounds.',
+        skip: 'Most users have access to actual exercise. SLU-PP-332 is research-stage and doesn\'t replace training\'s full benefits.',
+        stackFit: 'Adjunct or bridge during injury recovery. Not a primary fat-loss tool — GLP-1s outperform for that purpose.'
+      },
     };
 
     var entry = ED[slug];

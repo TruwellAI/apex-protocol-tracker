@@ -389,11 +389,22 @@
       if (ptrIndicator && dy > 100) {
         haptic('medium');
         ptrIndicator.textContent = 'REFRESHING…';
+        // Spring overshoot — settle past target then bounce back
+        ptrIndicator.style.transition = 'transform .55s cubic-bezier(.34,1.56,.64,1)';
+        ptrIndicator.style.transform = 'translateX(-50%) translateY(20px)';
         try { if (typeof render === 'function') render(); } catch(e) {}
-        setTimeout(() => { if (ptrIndicator) { ptrIndicator.remove(); ptrIndicator = null; } }, 400);
+        setTimeout(() => {
+          if (ptrIndicator) {
+            ptrIndicator.style.transition = 'transform .35s cubic-bezier(.45,0,.55,1)';
+            ptrIndicator.style.transform = 'translateX(-50%) translateY(-50px)';
+          }
+        }, 700);
+        setTimeout(() => { if (ptrIndicator) { ptrIndicator.remove(); ptrIndicator = null; } }, 1100);
       } else if (ptrIndicator) {
-        ptrIndicator.remove();
-        ptrIndicator = null;
+        // Spring snap back when not triggered
+        ptrIndicator.style.transition = 'transform .32s cubic-bezier(.34,1.56,.64,1)';
+        ptrIndicator.style.transform = 'translateX(-50%) translateY(-50px)';
+        setTimeout(() => { if (ptrIndicator) { ptrIndicator.remove(); ptrIndicator = null; } }, 320);
       }
     });
   }
