@@ -562,28 +562,30 @@ if ('serviceWorker' in navigator) {
 }
 </script>
 
+<!-- Force html + body to be scrollable, win over any inline modal-locks -->
+<style>
+  html, body {
+    position: static !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    height: auto !important;
+    min-height: 100vh !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    width: auto !important;
+  }
+</style>
 <!-- ═══════════════════ EARLY DIAGNOSTIC + UNLOCK ═════════════════════ -->
-<!-- Runs immediately (not deferred) so we know JS executes -->
 <script>
 (function(){
-  // FORCE-UNLOCK BODY: apex-mobile.js's iOS modal-scroll-lock can leave the body in
-  // position:fixed if a modal didn't clean up. That collapses the page and hides all
-  // content below the viewport. Force the body back to normal flow on every load
-  // and again every 500ms in case a stale modal handler reapplies the lock.
+  // Defensive: clear any stale scroll-lock attributes
   function unlockBody(){
     if (!document.body) return;
-    document.body.style.position = '';
-    document.body.style.top = '';
-    document.body.style.left = '';
-    document.body.style.right = '';
-    document.body.style.width = '';
-    document.body.style.overflow = '';
     document.body.removeAttribute('data-locked');
   }
   unlockBody();
   document.addEventListener('DOMContentLoaded', unlockBody);
-  // Periodic re-unlock in case modal handlers re-apply
-  setInterval(unlockBody, 500);
 
   console.log('[apex-early] inline script running at', new Date().toISOString());
   try {
