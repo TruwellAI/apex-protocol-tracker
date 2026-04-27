@@ -195,6 +195,56 @@ body::before{
 .tile-meta-value.bad{color:var(--bad);}
 .tile-meta-value .vu{color:var(--muted);font-weight:500;font-size:11px;}
 
+.tile-edit-btn{
+  position:absolute;top:14px;right:88px;
+  width:30px;height:30px;border-radius:50%;
+  background:transparent;border:1px solid var(--border);
+  color:var(--muted);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;transition:all .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.tile-edit-btn:hover,.tile-edit-btn:active{border-color:var(--accent);color:var(--accent);}
+.tile{position:relative;}
+@media (max-width:560px){
+  .tile-edit-btn{right:auto;left:14px;top:14px;}
+}
+
+/* EDIT MODAL */
+.edit-overlay{
+  position:fixed;inset:0;background:rgba(8,12,16,.86);backdrop-filter:blur(6px);
+  z-index:200;display:none;align-items:center;justify-content:center;padding:20px;
+  animation:fadeIn .25s ease;
+}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.edit-overlay.show{display:flex;}
+.edit-modal{
+  background:var(--panel);border:1px solid rgba(0,255,157,.4);border-radius:16px;
+  max-width:480px;width:100%;max-height:90vh;overflow-y:auto;padding:24px 24px 20px;
+  box-shadow:0 20px 60px rgba(0,0,0,.6);
+  animation:slideUp .3s cubic-bezier(.2,.8,.2,1);
+}
+@keyframes slideUp{from{transform:translateY(20px);opacity:.5}to{transform:translateY(0);opacity:1}}
+.em-eyebrow{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.25em;color:var(--accent2);text-transform:uppercase;margin-bottom:6px;font-weight:700;}
+.em-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:24px;color:#fff;letter-spacing:-.3px;margin-bottom:18px;}
+.em-field{margin-bottom:14px;}
+.em-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin-bottom:6px;font-weight:700;}
+.em-input{
+  width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:8px;
+  padding:12px 14px;font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;color:#fff;
+  outline:none;transition:border-color .15s;
+}
+.em-input:focus{border-color:var(--accent2);}
+.em-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.em-actions{display:flex;gap:8px;margin-top:20px;}
+.em-btn{flex:1;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;padding:13px;border-radius:8px;border:0;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;}
+.em-btn-cancel{background:transparent;border:1px solid var(--border);color:var(--muted);}
+.em-btn-cancel:hover{border-color:var(--bad);color:var(--bad);}
+.em-btn-save{background:linear-gradient(135deg,#00ff9d,#10b981);color:#080c10;box-shadow:0 4px 14px rgba(0,255,157,.4);}
+.em-btn-save:hover{transform:translateY(-1px);}
+.em-reset{display:block;text-align:center;margin-top:14px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.2em;color:var(--muted);text-decoration:none;text-transform:uppercase;background:none;border:0;cursor:pointer;width:100%;padding:6px;}
+.em-reset:hover{color:var(--accent3);}
+
 .tile-actions{display:flex;gap:8px;flex-wrap:wrap;}
 .tile-btn{flex:1;min-width:120px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:10px 14px;border-radius:8px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text);transition:all .15s;-webkit-tap-highlight-color:transparent;}
 .tile-btn:hover,.tile-btn:active{border-color:var(--accent2);color:var(--accent2);}
@@ -329,6 +379,37 @@ body::before{
     <div><a href="privacy.html">Privacy</a> &nbsp;·&nbsp; <a href="terms.html">Terms</a> &nbsp;·&nbsp; <a href="protocol-tracker.html">Legacy tracker</a></div>
   </div>
 
+</div>
+
+<!-- EDIT MODAL -->
+<div class="edit-overlay" id="edit-overlay" role="dialog" aria-modal="true">
+  <div class="edit-modal">
+    <div class="em-eyebrow">⚙ Edit Protocol</div>
+    <div class="em-title" id="em-title">Peptide</div>
+    <div class="em-field">
+      <div class="em-label">Dose</div>
+      <input type="text" class="em-input" id="em-dose" placeholder="e.g. 500 mcg">
+    </div>
+    <div class="em-field">
+      <div class="em-label">Frequency</div>
+      <input type="text" class="em-input" id="em-freq" placeholder="e.g. daily, weekly, 2x/wk">
+    </div>
+    <div class="em-row">
+      <div class="em-field">
+        <div class="em-label">Cycle Length (weeks)</div>
+        <input type="number" min="1" max="52" class="em-input" id="em-cycle">
+      </div>
+      <div class="em-field">
+        <div class="em-label">Start Date</div>
+        <input type="date" class="em-input" id="em-start">
+      </div>
+    </div>
+    <div class="em-actions">
+      <button class="em-btn em-btn-cancel" id="em-cancel">Cancel</button>
+      <button class="em-btn em-btn-save" id="em-save">Save Changes</button>
+    </div>
+    <button class="em-reset" id="em-reset">↺ Reset to defaults</button>
+  </div>
 </div>
 
 <!-- MOBILE BOTTOM NAV -->
@@ -660,6 +741,7 @@ body::before{
     const tile = document.createElement('div');
     tile.className = 'tile';
     tile.innerHTML = `
+      <button class="tile-edit-btn" data-act="edit" aria-label="Edit ${p.name}" title="Edit ${p.name}">✎</button>
       <div class="tile-head">
         <div>
           <div class="tile-name">${p.name}</div>
@@ -718,6 +800,7 @@ body::before{
       }
       render();
     });
+    tile.querySelector('[data-act="edit"]').addEventListener('click', () => openEditModal(p));
 
     return tile;
   }
@@ -790,6 +873,57 @@ body::before{
       </div>
     `;
   }
+
+  // ── EDIT MODAL ────────────────────
+  let editingId = null;
+  let editingDefaults = null;
+  function openEditModal(p){
+    editingId = p.id;
+    editingDefaults = { dose: p.dose, freq: p.freq, cycleWeeks: p.cycleWeeks, cycleWks: p.cycleWks, startDate: p.startDate };
+    document.getElementById('em-title').textContent = p.name;
+    document.getElementById('em-dose').value = p.dose || '';
+    document.getElementById('em-freq').value = p.freq || '';
+    document.getElementById('em-cycle').value = (typeof p.cycleWeeks === 'number' ? p.cycleWeeks : 8);
+    document.getElementById('em-start').value = p.startDate || (new Date().toISOString().slice(0,10));
+    document.getElementById('edit-overlay').classList.add('show');
+  }
+  function closeEditModal(){
+    editingId = null;
+    document.getElementById('edit-overlay').classList.remove('show');
+  }
+  document.getElementById('em-cancel').addEventListener('click', closeEditModal);
+  document.getElementById('em-save').addEventListener('click', () => {
+    if (!editingId) return;
+    const state = getState();
+    const idx = (state.protocols || []).findIndex(x => x.id === editingId);
+    if (idx < 0) { closeEditModal(); return; }
+    state.protocols[idx].dose = document.getElementById('em-dose').value.trim() || state.protocols[idx].dose;
+    state.protocols[idx].freq = document.getElementById('em-freq').value.trim() || state.protocols[idx].freq;
+    const cw = parseInt(document.getElementById('em-cycle').value, 10);
+    if (!isNaN(cw) && cw > 0) {
+      state.protocols[idx].cycleWeeks = cw;
+      state.protocols[idx].cycleWks = cw;
+    }
+    const sd = document.getElementById('em-start').value;
+    if (sd) state.protocols[idx].startDate = sd;
+    state.protocols[idx].editedAt = new Date().toISOString();
+    setState(state);
+    closeEditModal();
+    render();
+  });
+  document.getElementById('em-reset').addEventListener('click', () => {
+    if (!editingDefaults) return;
+    document.getElementById('em-dose').value = editingDefaults.dose || '';
+    document.getElementById('em-freq').value = editingDefaults.freq || '';
+    document.getElementById('em-cycle').value = editingDefaults.cycleWeeks || 8;
+    document.getElementById('em-start').value = editingDefaults.startDate || '';
+  });
+  document.getElementById('edit-overlay').addEventListener('click', e => {
+    if (e.target.id === 'edit-overlay') closeEditModal();
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && document.getElementById('edit-overlay').classList.contains('show')) closeEditModal();
+  });
 
   // ── TAB SWITCHER ────────────────
   function switchTab(name){
