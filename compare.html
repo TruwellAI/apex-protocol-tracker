@@ -478,6 +478,136 @@ body::before{
     });
   }
 
+  // ── OVERALL STACK GRADE (across all goals) ──
+  const overallCard = document.getElementById('overall-card');
+  const ovPepCount = document.getElementById('ov-pep-count');
+  const ovMechCount = document.getElementById('ov-mech-count');
+  const ovConflictCount = document.getElementById('ov-conflict-count');
+  const ovCoveragePct = document.getElementById('ov-coverage-pct');
+  const ovTakeaway = document.getElementById('ov-takeaway');
+  const ovGoalBars = document.getElementById('ov-goal-bars');
+  const ovGrade = document.getElementById('ov-grade');
+  const ovGoalCountEl = document.getElementById('ov-goal-count');
+  const ovGoalPlural = document.getElementById('ov-goal-plural');
+
+  function renderOverall(){
+    if (selected.size === 0) {
+      overallCard.style.display = 'none';
+      return;
+    }
+    overallCard.style.display = 'block';
+
+    // Conflicts across the whole stack
+    const conflicts = {};
+    selected.forEach(key => {
+      const info = PEP_INFO[key];
+      if (!info || !info.conflict) return;
+      conflicts[info.conflict] = conflicts[info.conflict] || [];
+      conflicts[info.conflict].push(info.name);
+    });
+    const conflictPairs = Object.keys(conflicts).filter(c => conflicts[c].length > 1);
+    const totalConflicts = conflictPairs.length;
+
+    // Per-goal coverage analysis
+    const perGoal = {};
+    let totalMechsHit = 0;
+    let totalMechsAvailable = 0;
+    let goalsTouched = 0;
+
+    Object.keys(GOALS).forEach(gKey => {
+      const g = GOALS[gKey];
+      const hit = g.mechs.filter(m => m.by.some(p => selected.has(p)));
+      const touched = g.peptides.some(p => selected.has(p));
+      if (touched) {
+        goalsTouched++;
+        totalMechsHit += hit.length;
+        totalMechsAvailable += g.mechs.length;
+      }
+      perGoal[gKey] = {
+        label: g.label,
+        hit: hit.length,
+        total: g.mechs.length,
+        touched: touched,
+        pct: g.mechs.length > 0 ? Math.round(hit.length / g.mechs.length * 100) : 0
+      };
+    });
+
+    // Unique mechanisms across all selected peptides (count distinct mechanisms hit)
+    const uniqueMechs = new Set();
+    Object.values(GOALS).forEach(g => {
+      g.mechs.forEach(m => {
+        if (m.by.some(p => selected.has(p))) {
+          uniqueMechs.add(g.label + '·' + m.name);
+        }
+      });
+    });
+
+    const overallPct = totalMechsAvailable > 0 ? Math.round(totalMechsHit / totalMechsAvailable * 100) : 0;
+
+    // OVERALL GRADE
+    let grade = 'D';
+    if (totalConflicts === 0 && overallPct >= 70 && uniqueMechs.size >= 4) grade = 'A';
+    else if (totalConflicts === 0 && overallPct >= 50 && uniqueMechs.size >= 3) grade = 'B';
+    else if (totalConflicts <= 1 && overallPct >= 30) grade = 'C';
+
+    const gradeCopy = {
+      A:{ letter:'A', text:'Elite stack',  cls:'grade-A' },
+      B:{ letter:'B', text:'Solid stack',  cls:'grade-B' },
+      C:{ letter:'C', text:'Room to improve', cls:'grade-C' },
+      D:{ letter:'D', text:'Reconsider',   cls:'grade-D' }
+    };
+    const g = gradeCopy[grade];
+    ovGrade.innerHTML = `<div class="grade-badge ${g.cls}"><span class="g-letter">${g.letter}</span><span>${g.text}</span></div>`;
+
+    // STATS
+    ovPepCount.textContent = selected.size;
+    ovMechCount.textContent = uniqueMechs.size;
+    ovConflictCount.textContent = totalConflicts;
+    ovConflictCount.style.color = totalConflicts > 0 ? 'var(--bad)' : 'var(--accent4)';
+    ovCoveragePct.textContent = overallPct + '%';
+    ovGoalCountEl.textContent = goalsTouched;
+    ovGoalPlural.textContent = goalsTouched === 1 ? '' : 's';
+
+    // TAKEAWAY
+    let takeaway = '';
+    if (grade === 'A') {
+      takeaway = `<strong>Elite stack.</strong> ${uniqueMechs.size} mechanisms hit across ${goalsTouched} goal lane${goalsTouched===1?'':'s'}, zero conflicts. You're not wasting a single peptide.`;
+    } else if (grade === 'B') {
+      takeaway = `<strong>Solid stack.</strong> ${uniqueMechs.size} unique mechanisms, no doorbell-ringing-twice. ${100-overallPct}% of available pathways still unhit — see per-goal map above for what to add.`;
+    } else if (grade === 'C') {
+      if (totalConflicts > 0) takeaway = `<strong>Workable, but you're double-paying.</strong> ${totalConflicts} receptor conflict${totalConflicts===1?'':'s'} flagged. Cut the redundancy and your stack jumps to a B.`;
+      else takeaway = `<strong>Coverage is thin.</strong> Only ${uniqueMechs.size} mechanism${uniqueMechs.size===1?'':'s'} hit. Add 1-2 more peptides from missing pathways to unlock B-grade.`;
+    } else {
+      if (totalConflicts > 0) takeaway = `<strong>Reconsider.</strong> ${totalConflicts} conflict${totalConflicts===1?'':'s'} + low coverage. You're paying multiple times to hit the same receptor and missing most of the goal's mechanisms.`;
+      else takeaway = `<strong>Sparse stack.</strong> Only ${uniqueMechs.size} mechanism${uniqueMechs.size===1?'':'s'} covered. Most of what this goal needs isn't in your stack yet.`;
+    }
+    ovTakeaway.className = 'ov-takeaway';
+    ovTakeaway.innerHTML = takeaway;
+
+    // PER-GOAL BARS (only goals user has touched)
+    ovGoalBars.innerHTML = '';
+    Object.keys(perGoal).forEach(gKey => {
+      const pg = perGoal[gKey];
+      if (!pg.touched) return;
+      const barCls = pg.pct >= 70 ? '' : (pg.pct >= 40 ? 'bar-mid' : 'bar-low');
+      const row = document.createElement('div');
+      row.className = 'ov-bar-row';
+      row.innerHTML = `
+        <div class="ov-bar-name">${pg.label}</div>
+        <div class="ov-bar-track"><div class="ov-bar-fill ${barCls}" style="width:${pg.pct}%"></div></div>
+        <div class="ov-bar-pct">${pg.pct}%</div>
+      `;
+      ovGoalBars.appendChild(row);
+    });
+  }
+
+  // Hook overall render into all touchpoints
+  const _origRenderAnalysis = renderAnalysis;
+  renderAnalysis = function(){
+    _origRenderAnalysis();
+    renderOverall();
+  };
+
   addBtn.addEventListener('click', () => {
     if (selected.size === 0) return;
     persistSelection();
