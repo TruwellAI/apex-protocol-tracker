@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover">
+<title>Reta Split-Dose Math — Apex Protocol</title>
+<link rel="icon" href="assets/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#080c10; --panel:#0d1318; --panel2:#121a22; --border:#1a2d3a;
+  --accent:#00d4ff; --accent2:#00ff9d; --accent3:#ff6b35; --accent4:#a78bfa;
+  --good:#00ff9d; --warn:#fbbf24; --bad:#ef4444;
+  --text:#cbd5e1; --muted:#7a8d99; --white:#eaf4f8;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{min-height:100%;}
+body{
+  background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;
+  font-size:15px;line-height:1.6;
+  padding-top:env(safe-area-inset-top);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+body::before{
+  content:'';position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse at 80% 0%, rgba(0,212,255,.08) 0%, transparent 55%),
+    radial-gradient(ellipse at 10% 90%, rgba(0,255,157,.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 100%, rgba(167,139,250,.04) 0%, transparent 45%);
+  pointer-events:none;z-index:0;
+}
+.wrap{max-width:880px;margin:0 auto;padding:24px 18px 40px;position:relative;z-index:1;}
+
+/* HEADER */
+.brand-row{display:flex;align-items:center;gap:12px;margin-bottom:24px;}
+.brand-mark{font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;color:var(--accent2);letter-spacing:.16em;}
+.brand-tag{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.25em;color:var(--muted);text-transform:uppercase;border-left:1px solid var(--border);padding-left:12px;}
+
+/* HERO */
+.hero{margin-bottom:28px;}
+.eyebrow{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.28em;color:var(--accent3);text-transform:uppercase;font-weight:700;margin-bottom:10px;}
+.h1{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:clamp(32px,6vw,52px);line-height:.95;letter-spacing:-1px;color:var(--white);margin-bottom:12px;}
+.h1 .hl{color:var(--accent2);}
+.h1 .hl-cyan{color:var(--accent);}
+.sub{font-size:15px;color:var(--text);max-width:600px;line-height:1.5;}
+
+/* SECTION HEADER */
+.sec{margin-bottom:24px;}
+.sec-eyebrow{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.28em;color:var(--accent2);text-transform:uppercase;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.sec-eyebrow::before{content:'';width:6px;height:6px;background:var(--accent2);border-radius:50%;box-shadow:0 0 8px var(--accent2);}
+.sec-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:24px;color:var(--white);letter-spacing:-.4px;line-height:1.05;margin-bottom:14px;}
+
+/* SETUP CARD */
+.setup-card{
+  background:linear-gradient(180deg,rgba(0,212,255,.06),rgba(0,255,157,.02));
+  border:1px solid rgba(0,212,255,.35);border-radius:14px;
+  padding:20px 22px;margin-bottom:24px;
+}
+.setup-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(148,163,184,.08);}
+.setup-row:last-child{border-bottom:0;}
+.setup-row.highlight{padding:14px 0;border-top:1px solid rgba(0,255,157,.3);border-bottom:0;}
+.setup-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;}
+.setup-val{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;color:var(--white);letter-spacing:-.2px;}
+.setup-val.calc{color:var(--accent2);font-size:22px;}
+.setup-note{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);margin-top:10px;padding-top:10px;border-top:1px solid rgba(148,163,184,.08);letter-spacing:.04em;}
+.setup-note strong{color:var(--accent2);font-weight:700;}
+
+/* OPTIONS TABLE */
+.options-table{
+  background:var(--panel);border:1px solid var(--border);border-radius:14px;
+  padding:6px;margin-bottom:28px;overflow:hidden;
+}
+.opt-row{
+  display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;gap:1px;
+  background:var(--panel);
+}
+.opt-row.head{background:rgba(0,255,157,.06);}
+.opt-row.head .opt-cell{
+  font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.18em;
+  color:var(--accent2);text-transform:uppercase;font-weight:700;padding:14px 14px;
+}
+.opt-cell{padding:14px 14px;background:var(--panel);}
+.opt-row:not(.head) .opt-cell{
+  border-top:1px solid rgba(148,163,184,.08);
+}
+.opt-row:nth-child(2):not(.head) .opt-cell{background:rgba(255,107,53,.04);}
+.opt-row:nth-child(3):not(.head) .opt-cell{background:rgba(0,212,255,.04);}
+.opt-row:nth-child(4):not(.head) .opt-cell{background:rgba(167,139,250,.05);}
+.opt-label{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:var(--white);letter-spacing:-.1px;line-height:1.2;}
+.opt-label .opt-sub{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);font-weight:500;display:block;margin-top:3px;letter-spacing:.12em;text-transform:uppercase;}
+.opt-units{font-family:'Rajdhani',sans-serif;font-weight:800;font-size:22px;color:var(--accent2);letter-spacing:-.4px;line-height:1;}
+.opt-units.orange{color:var(--accent3);}
+.opt-units.cyan{color:var(--accent);}
+.opt-units.violet{color:var(--accent4);}
+.opt-mg{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:15px;color:var(--white);}
+.opt-ml{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.06em;}
+@media (max-width:560px){
+  .opt-row{grid-template-columns:1.4fr 1fr 1fr;}
+  .opt-cell:nth-child(4){display:none;}
+  .opt-units{font-size:18px;}
+}
+
+/* PK COMPARISON */
+.pk-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px;
+}
+@media (max-width:680px){.pk-grid{grid-template-columns:1fr;}}
+
+.pk-card{
+  background:var(--panel);border:1px solid var(--border);border-radius:12px;
+  padding:18px 18px 16px;
+  position:relative;overflow:hidden;
+}
+.pk-card.weekly{border-color:rgba(255,107,53,.4);background:linear-gradient(180deg,rgba(255,107,53,.06),var(--panel) 70%);}
+.pk-card.twice{border-color:rgba(0,212,255,.4);background:linear-gradient(180deg,rgba(0,212,255,.06),var(--panel) 70%);}
+.pk-card.thrice{border-color:rgba(167,139,250,.4);background:linear-gradient(180deg,rgba(167,139,250,.06),var(--panel) 70%);}
+.pk-head{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;margin-bottom:6px;}
+.pk-card.weekly .pk-head{color:var(--accent3);}
+.pk-card.twice .pk-head{color:var(--accent);}
+.pk-card.thrice .pk-head{color:var(--accent4);}
+.pk-units{font-family:'Rajdhani',sans-serif;font-weight:800;font-size:32px;color:var(--white);letter-spacing:-.6px;line-height:1;margin-bottom:14px;}
+.pk-stat{display:flex;justify-content:space-between;padding:7px 0;font-size:13px;border-bottom:1px solid rgba(148,163,184,.06);}
+.pk-stat:last-child{border-bottom:0;}
+.pk-stat-l{color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;}
+.pk-stat-v{color:var(--white);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;}
+.pk-stat-v.swing{color:var(--accent2);}
+
+/* CHANGE TABLE */
+.change-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px;
+}
+@media (max-width:680px){.change-grid{grid-template-columns:1fr;}}
+
+.change-card{
+  background:var(--panel);border:1px solid var(--border);border-radius:12px;
+  padding:18px 20px;
+}
+.change-card.yes{border-color:rgba(0,255,157,.35);}
+.change-card.no{border-color:rgba(239,68,68,.35);}
+.change-title{
+  font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;
+  margin-bottom:14px;display:flex;align-items:center;gap:8px;letter-spacing:-.1px;
+}
+.change-card.yes .change-title{color:var(--good);}
+.change-card.no .change-title{color:var(--bad);}
+.change-list{list-style:none;padding:0;margin:0;}
+.change-list li{
+  font-size:13px;line-height:1.5;color:var(--text);
+  padding:6px 0;padding-left:16px;position:relative;
+}
+.change-list li::before{
+  content:'';position:absolute;left:0;top:13px;
+  width:6px;height:1px;background:currentColor;opacity:.4;
+}
+.change-card.yes .change-list li::before{background:var(--good);}
+.change-card.no .change-list li::before{background:var(--bad);}
+.change-list strong{color:#fff;font-weight:700;}
+
+/* PRACTICAL TAKE */
+.take-card{
+  background:linear-gradient(180deg,rgba(0,255,157,.06),rgba(0,212,255,.02));
+  border:1px solid rgba(0,255,157,.4);border-radius:14px;
+  padding:22px 24px;margin-bottom:24px;
+}
+.take-eyebrow{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.25em;color:var(--accent2);text-transform:uppercase;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.take-eyebrow::before{content:'⚡';font-size:14px;}
+.take-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:24px;color:#fff;letter-spacing:-.4px;line-height:1.1;margin-bottom:8px;}
+.take-sub{font-size:14px;color:var(--text);margin-bottom:16px;line-height:1.5;}
+.take-sub strong{color:var(--accent2);font-weight:700;}
+.take-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;}
+.take-list li{
+  display:flex;align-items:flex-start;gap:12px;padding:10px 14px;
+  background:rgba(8,12,16,.6);border:1px solid var(--border);border-radius:8px;
+  font-size:13px;line-height:1.45;color:var(--text);
+}
+.take-list .ti{font-size:18px;flex-shrink:0;}
+.take-list strong{color:#fff;font-weight:700;}
+
+/* BOTTOM LINE */
+.bottom-line{
+  background:linear-gradient(135deg,rgba(0,212,255,.1),rgba(0,255,157,.04));
+  border:1px solid rgba(0,212,255,.4);border-radius:14px;
+  padding:24px;text-align:center;margin-bottom:24px;
+}
+.bl-eyebrow{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.28em;color:var(--accent);text-transform:uppercase;font-weight:700;margin-bottom:8px;}
+.bl-quote{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:clamp(22px,3.5vw,30px);line-height:1.15;color:var(--white);letter-spacing:-.5px;}
+.bl-quote .hl{color:var(--accent2);}
+.bl-quote .hl-cyan{color:var(--accent);}
+
+/* FOOT */
+.foot{
+  padding-top:24px;margin-top:24px;border-top:1px solid var(--border);
+  text-align:center;font-family:'Share Tech Mono',monospace;font-size:9px;
+  color:var(--muted);letter-spacing:.18em;line-height:1.8;
+}
+.foot a{color:var(--muted);text-decoration:none;}
+.foot a:hover{color:var(--accent2);}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="brand-row">
+    <span class="brand-mark">APEX</span>
+    <span class="brand-tag">Pharmacology</span>
+  </div>
+
+  <div class="hero">
+    <div class="eyebrow">⚠ Cutting Through the Bro Science · Reta Split-Dose Math</div>
+    <h1 class="h1">Splitting <span class="hl">Reta</span> doesn't change<br>your <span class="hl-cyan">weight loss.</span></h1>
+    <p class="sub">It only changes the size of your peaks. With a 6-day half-life, the drug <em>lives</em> in your system. The math doesn't lie.</p>
+  </div>
+
+  <!-- SETUP -->
+  <div class="sec">
+    <div class="sec-eyebrow">Step 1 · Your setup</div>
+    <div class="setup-card">
+      <div class="setup-row"><div class="setup-label">Vial size</div><div class="setup-val">30 mg Retatrutide</div></div>
+      <div class="setup-row"><div class="setup-label">BAC water added</div><div class="setup-val">3 mL</div></div>
+      <div class="setup-row highlight"><div class="setup-label">Concentration</div><div class="setup-val calc">10 mg/mL</div></div>
+      <div class="setup-note">On an insulin syringe: <strong>100 units = 1 mL.</strong> So 50 units = 0.5 mL × 10 mg/mL = <strong>5 mg per pin.</strong> Total weekly dose: <strong>5 mg.</strong></div>
+    </div>
+  </div>
+
+  <!-- OPTIONS -->
+  <div class="sec">
+    <div class="sec-eyebrow">Step 2 · Same 5 mg/week, different schedule</div>
+    <div class="options-table">
+      <div class="opt-row head">
+        <div class="opt-cell">Schedule</div>
+        <div class="opt-cell">Each pin</div>
+        <div class="opt-cell">mg / pin</div>
+        <div class="opt-cell">mL drawn</div>
+      </div>
+      <div class="opt-row">
+        <div class="opt-cell"><div class="opt-label">1×/week<span class="opt-sub">Current</span></div></div>
+        <div class="opt-cell"><div class="opt-units orange">50 units</div></div>
+        <div class="opt-cell"><div class="opt-mg">5.0 mg</div></div>
+        <div class="opt-cell"><div class="opt-ml">0.50 mL</div></div>
+      </div>
+      <div class="opt-row">
+        <div class="opt-cell"><div class="opt-label">2×/week<span class="opt-sub">Mon + Thu</span></div></div>
+        <div class="opt-cell"><div class="opt-units cyan">25 units</div></div>
+        <div class="opt-cell"><div class="opt-mg">2.5 mg</div></div>
+        <div class="opt-cell"><div class="opt-ml">0.25 mL</div></div>
+      </div>
+      <div class="opt-row">
+        <div class="opt-cell"><div class="opt-label">3×/week<span class="opt-sub">Mon · Wed · Fri</span></div></div>
+        <div class="opt-cell"><div class="opt-units violet">17 units</div></div>
+        <div class="opt-cell"><div class="opt-mg">1.67 mg</div></div>
+        <div class="opt-cell"><div class="opt-ml">0.17 mL</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PK STEADY STATE -->
+  <div class="sec">
+    <div class="sec-eyebrow">Step 3 · Steady-state blood level math</div>
+    <div class="sec-title">Half-life = 6 days. Decay = 0.5^(interval/6).</div>
+    <div class="pk-grid">
+
+      <div class="pk-card weekly">
+        <div class="pk-head">1× / Week · 50 Units</div>
+        <div class="pk-units">9.0 mg-eq</div>
+        <div class="pk-stat"><span class="pk-stat-l">Peak (just dosed)</span><span class="pk-stat-v">9.0</span></div>
+        <div class="pk-stat"><span class="pk-stat-l">Trough (day 7)</span><span class="pk-stat-v">4.0</span></div>
+        <div class="pk-stat"><span class="pk-stat-l">Average level</span><span class="pk-stat-v">6.5</span></div>
+        <div class="pk-stat"><span class="pk-stat-l">Peak/trough swing</span><span class="pk-stat-v swing">2.24×</span></div>
+      </div>
+
+      <div class="pk-card twice">
+        <div class="pk-head">2× / Week · 25 Units</div>
+        <div class="pk-units">7.5 mg-eq</div>
+        <div class="pk-stat"><span class="pk-stat-l">Peak (just dosed)</span><span class="pk-stat-v">7.5</span></div>
+        <div class="pk-stat"><span class="pk-stat-l">Trough (3.5d)</span><span class="pk-stat-v">5.0</span></div>
+        <div class="pk-stat"><span class="pk-stat-l">Average level</span><span class="pk-stat-v">6.25</span></div>
+        <div class="pk-stat"><span class="pk-stat-l">Peak/trough swing</span><span class="pk-stat-v swing">1.50×</span></div>
+      </div>
+
+      <div class="pk-card thrice">
+        <div class="pk-head">3× / Week · 17 Units</div>
+        <div class="pk-units">7.1 mg-eq</div>
+        <div class="pk-stat"><span class="pk-stat-l">Peak (just dosed)</span><span class="pk-stat-v">7.1</span></div>
+        <div class="pk-stat"><span class="pk-stat-l">Trough (2.3d)</span><span class="pk-stat-v">5.4</span></div>
+        <div class="pk-stat"><span class="pk-stat-l">Average level</span><span class="pk-stat-v">6.25</span></div>
+        <div class="pk-stat"><span class="pk-stat-l">Peak/trough swing</span><span class="pk-stat-v swing">1.31×</span></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CHANGE TABLE -->
+  <div class="sec">
+    <div class="sec-eyebrow">What actually changes</div>
+    <div class="change-grid">
+
+      <div class="change-card yes">
+        <div class="change-title">✓ Splitting changes:</div>
+        <ul class="change-list">
+          <li><strong>Peak drops 17%</strong> on 2×/wk (9.0 → 7.5)</li>
+          <li><strong>Peak drops 22%</strong> on 3×/wk (9.0 → 7.1)</li>
+          <li><strong>Trough rises 25–35%</strong> (4.0 → 5.0/5.4)</li>
+          <li>Curve is smoother — fewer wild swings</li>
+        </ul>
+      </div>
+
+      <div class="change-card no">
+        <div class="change-title">✗ Splitting does NOT change:</div>
+        <ul class="change-list">
+          <li><strong>Average drug level</strong> (6.25 vs 6.5 mg-eq — basically identical)</li>
+          <li><strong>AUC / total exposure</strong> — identical</li>
+          <li><strong>Weight loss efficacy</strong> — driven by AUC, not peaks</li>
+          <li><strong>Time to steady state</strong> — ~28 days regardless</li>
+          <li><strong>Total cost / mg used</strong> — same</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PRACTICAL TAKE -->
+  <div class="take-card">
+    <div class="take-eyebrow">The practical take for you</div>
+    <div class="take-title">Your 50-unit weekly = <span style="color:var(--accent3);">2.24× swing</span> between peak and trough.</div>
+    <div class="take-sub">If you're getting:</div>
+    <ul class="take-list">
+      <li><span class="ti">🤢</span><div><strong>Day 1–2 nausea spikes</strong> → splitting will help (lower Cmax)</div></li>
+      <li><span class="ti">😴</span><div><strong>Day 6–7 hunger creep back</strong> → splitting will help (higher trough)</div></li>
+      <li><span class="ti">😎</span><div><strong>Tolerating fine and losing weight</strong> → no reason to split. Same result.</div></li>
+    </ul>
+  </div>
+
+  <!-- BOTTOM LINE -->
+  <div class="bottom-line">
+    <div class="bl-eyebrow">⚖ Bottom Line</div>
+    <div class="bl-quote">Splitting Reta is a <span class="hl">side-effect strategy.</span><br>Not a <span class="hl-cyan">magic-bullet strategy.</span></div>
+  </div>
+
+  <!-- FOOT -->
+  <div class="foot">
+    APEX PROTOCOL · RESEARCH USE ONLY · NOT MEDICAL ADVICE<br>
+    Phase 2/3 trials used weekly dosing. No clinical trial validates split dosing for Reta.<br>
+    <a href="index.html">apex protocol home</a>
+  </div>
+
+</div>
+
+</body>
+</html>
