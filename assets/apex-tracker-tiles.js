@@ -97,6 +97,80 @@
   body[data-apex-tiles-active="1"] #active-grid,
   body[data-apex-tiles-active="1"] .sec-header,
   body[data-apex-tiles-active="1"] #apex-empty-cta { display: none !important; }
+
+  /* 52-WEEK TIMELINE */
+  .apex-timeline {
+    margin-top: 28px; padding: 22px 20px 24px;
+    background: linear-gradient(180deg, rgba(167,139,250,.06), rgba(0,212,255,.03));
+    border: 1px solid rgba(167,139,250,.3); border-radius: 14px;
+  }
+  .atl-head { margin-bottom: 18px; }
+  .atl-eyebrow { font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: .25em; color: #a78bfa; text-transform: uppercase; margin-bottom: 5px; font-weight: 700; }
+  .atl-title { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 22px; color: #fff; letter-spacing: -.3px; line-height: 1.1; margin-bottom: 4px; }
+  .atl-sub { font-size: 13px; color: #cbd5e1; line-height: 1.45; }
+
+  .atl-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .atl-grid { min-width: 760px; }
+  .atl-row { display: grid; grid-template-columns: 130px 1fr; align-items: center; gap: 12px; padding: 7px 0; border-bottom: 1px solid rgba(148,163,184,.08); }
+  .atl-row:last-child { border-bottom: 0; }
+  .atl-row.atl-month-row { padding: 4px 0 8px; border-bottom: 1px solid rgba(167,139,250,.25); }
+  .atl-name-cell { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 13px; color: #fff; line-height: 1.1; padding-right: 6px; }
+  .atl-bars { position: relative; height: 26px; background: rgba(8,12,16,.4); border-radius: 4px; overflow: hidden; }
+  .atl-month-row .atl-bars { background: transparent; height: 18px; }
+  .atl-month {
+    position: absolute; top: 0; transform: translateX(-50%);
+    font-family: 'Share Tech Mono', monospace; font-size: 9px; letter-spacing: .12em;
+    color: #7a8d99; text-transform: uppercase;
+  }
+
+  .atl-seg {
+    position: absolute; top: 3px; bottom: 3px;
+    background: linear-gradient(135deg, #00ff9d, #10b981);
+    border-radius: 3px;
+    display: flex; align-items: center; padding: 0 6px;
+    overflow: hidden; cursor: default;
+    transition: filter .15s;
+  }
+  .atl-seg:hover { filter: brightness(1.15); }
+  .atl-seg-label {
+    font-family: 'Share Tech Mono', monospace; font-size: 9px; letter-spacing: .08em;
+    color: #080c10; font-weight: 700; white-space: nowrap; text-transform: uppercase;
+  }
+
+  /* Titration phase colors — cycle through 6 shades */
+  .atl-seg.titration.phase-0 { background: linear-gradient(135deg, #00ff9d, #10b981); }
+  .atl-seg.titration.phase-1 { background: linear-gradient(135deg, #5eead4, #14b8a6); }
+  .atl-seg.titration.phase-2 { background: linear-gradient(135deg, #67e8f9, #06b6d4); }
+  .atl-seg.titration.phase-3 { background: linear-gradient(135deg, #93c5fd, #3b82f6); }
+  .atl-seg.titration.phase-4 { background: linear-gradient(135deg, #c4b5fd, #8b5cf6); }
+  .atl-seg.titration.phase-5 { background: linear-gradient(135deg, #f0abfc, #c026d3); }
+
+  .atl-seg.atl-off {
+    background: repeating-linear-gradient(45deg, rgba(148,163,184,.12), rgba(148,163,184,.12) 4px, rgba(148,163,184,.04) 4px, rgba(148,163,184,.04) 8px);
+    border: 1px solid rgba(148,163,184,.2);
+  }
+  .atl-seg.atl-off .atl-seg-label { color: #7a8d99; }
+
+  .atl-today {
+    position: absolute; top: -2px; bottom: -22px;
+    width: 2px; background: #fbbf24;
+    box-shadow: 0 0 8px rgba(251,191,36,.6);
+    z-index: 5;
+  }
+  .atl-today::before {
+    content: 'NOW'; position: absolute; top: -16px; left: 50%; transform: translateX(-50%);
+    font-family: 'Share Tech Mono', monospace; font-size: 8px; letter-spacing: .14em;
+    color: #fbbf24; font-weight: 700;
+  }
+
+  @media (max-width: 640px) {
+    .apex-timeline { margin-top: 20px; padding: 18px 14px 20px; }
+    .atl-title { font-size: 18px; }
+    .atl-row { grid-template-columns: 90px 1fr; gap: 8px; }
+    .atl-name-cell { font-size: 11px; }
+    .atl-grid { min-width: 600px; }
+    .atl-seg-label { font-size: 8px; }
+  }
   `;
 
   function injectCSS() {
@@ -240,26 +314,38 @@
 
   function ensureContainer() {
     let host = document.getElementById('apex-tile-overlay');
-    if (host) return host;
+    if (host && host.isConnected) return host;
+    // If host got detached by a re-render, recreate it
+    if (host) try { host.remove(); } catch(_){}
 
     host = document.createElement('div');
     host.id = 'apex-tile-overlay';
     host.innerHTML = '<div class="apex-tile-grid"></div>';
 
-    // Anchor priority: existing checklist > active-grid > .main > main > body
-    const anchorPriority = [
-      document.getElementById('apex-today-checklist'),
-      document.getElementById('active-grid'),
-      document.querySelector('.main'),
-      document.querySelector('main')
-    ].filter(Boolean);
-
-    if (anchorPriority.length && anchorPriority[0].parentNode) {
-      anchorPriority[0].parentNode.insertBefore(host, anchorPriority[0]);
-    } else {
-      // Last resort: prepend to body
-      document.body.insertBefore(host, document.body.firstChild);
+    // Try anchors in order of preference. If all fail → append to body directly.
+    const tryAnchors = [
+      () => document.getElementById('apex-today-checklist'),
+      () => document.getElementById('active-grid'),
+      () => document.querySelector('.main'),
+      () => document.querySelector('main'),
+      () => document.querySelector('.wrap'),
+      () => document.querySelector('body > div')
+    ];
+    for (let i = 0; i < tryAnchors.length; i++) {
+      const anchor = tryAnchors[i]();
+      if (anchor && anchor.parentNode) {
+        try {
+          anchor.parentNode.insertBefore(host, anchor);
+          console.log('[apex-tiles] inserted before', anchor.id || anchor.className || anchor.tagName);
+          return host;
+        } catch(e){ console.warn('[apex-tiles] insert failed at anchor', i, e); }
+      }
     }
+    // Last resort: append to body
+    try {
+      document.body.appendChild(host);
+      console.log('[apex-tiles] appended to body (fallback)');
+    } catch(e){ console.error('[apex-tiles] body append failed', e); }
     return host;
   }
 
@@ -356,11 +442,117 @@
     const recon = getRecon();
     protocols.forEach(p => grid.appendChild(renderTile(p, recon)));
 
+    // 52-WEEK TIMELINE
+    renderTimeline(host, protocols);
+
     // Update header counter to match reality
     const dailyLog = getDailyLog();
     const todayDoses = dailyLog[todayKey()] || {};
     const dueToday = protocols.filter(p => !todayDoses[p.id]).length;
     updateCounter(protocols.length, dueToday);
+  }
+
+  function renderTimeline(host, protocols){
+    let tl = host.querySelector('.apex-timeline');
+    if (tl) tl.remove();
+    if (!protocols.length) return;
+
+    tl = document.createElement('div');
+    tl.className = 'apex-timeline';
+
+    // Find earliest start so we can anchor week 1 to the earliest cycle
+    const today = new Date();
+    const allStarts = protocols.map(p => p.startDate ? new Date(p.startDate) : today);
+    const earliest = allStarts.reduce((a,b) => a < b ? a : b, today);
+    // Show 52 weeks from the earliest start
+    const totalWeeks = 52;
+
+    // Build header row of week labels
+    const monthsRow = [];
+    for (let w = 0; w < totalWeeks; w += 4) {
+      const d = new Date(earliest);
+      d.setDate(d.getDate() + w*7);
+      monthsRow.push({ week: w, label: d.toLocaleDateString(undefined, { month:'short' }) });
+    }
+
+    let html = `
+      <div class="atl-head">
+        <div class="atl-eyebrow">📅 52-Week View</div>
+        <div class="atl-title">Your stack across the next year</div>
+        <div class="atl-sub">Cycles, off-periods, and titration phases for every peptide.</div>
+      </div>
+      <div class="atl-scroll">
+        <div class="atl-grid">
+          <div class="atl-row atl-month-row">
+            <div class="atl-name-cell"></div>
+            <div class="atl-bars">
+              ${monthsRow.map(m => `<div class="atl-month" style="left:${(m.week/totalWeeks)*100}%">${m.label}</div>`).join('')}
+              <div class="atl-today" style="left:${Math.max(0, Math.min(100, (daysBetween(earliest, today)/(totalWeeks*7))*100))}%"></div>
+            </div>
+          </div>
+          ${protocols.map(p => renderTimelineRow(p, earliest, totalWeeks)).join('')}
+        </div>
+      </div>
+    `;
+    tl.innerHTML = html;
+    host.appendChild(tl);
+  }
+
+  function renderTimelineRow(p, anchor, totalWeeks){
+    const start = p.startDate ? new Date(p.startDate) : new Date();
+    const cycleWks = typeof p.cycleWeeks === 'number' ? p.cycleWeeks : (typeof p.cycleWks === 'number' ? p.cycleWks : 8);
+    const startWeek = daysBetween(anchor, start) / 7;
+    const endWeek = startWeek + cycleWks;
+
+    // Build segments. If titration exists, color-code phases.
+    let segments = [];
+    if (p.titration && Array.isArray(p.titration) && p.titration.length > 1) {
+      // Spread cycle evenly across titration phases
+      const phaseLen = cycleWks / p.titration.length;
+      p.titration.forEach((t, i) => {
+        const segStart = startWeek + (i * phaseLen);
+        const segEnd = segStart + phaseLen;
+        segments.push({
+          start: segStart,
+          end: segEnd,
+          label: t.d,
+          phase: i+1,
+          phaseTotal: p.titration.length
+        });
+      });
+    } else {
+      segments.push({ start: startWeek, end: endWeek, label: p.dose || 'active', phase: 1, phaseTotal: 1 });
+    }
+
+    // Off-period after the cycle ends (8 weeks) for visual continuity
+    const offEnd = Math.min(totalWeeks, endWeek + 8);
+    const showOff = endWeek < totalWeeks;
+
+    const segHtml = segments.map(s => {
+      const left = Math.max(0, (s.start / totalWeeks) * 100);
+      const width = Math.max(0.5, ((Math.min(s.end, totalWeeks) - Math.max(s.start, 0)) / totalWeeks) * 100);
+      if (s.start >= totalWeeks || s.end <= 0) return '';
+      const cls = s.phaseTotal > 1 ? 'atl-seg titration phase-' + ((s.phase-1) % 6) : 'atl-seg';
+      return `<div class="${cls}" style="left:${left}%;width:${width}%" title="${s.label}">
+        <span class="atl-seg-label">${s.label}</span>
+      </div>`;
+    }).join('');
+
+    const offHtml = showOff ? `
+      <div class="atl-seg atl-off" style="left:${(endWeek/totalWeeks)*100}%;width:${((offEnd-endWeek)/totalWeeks)*100}%">
+        <span class="atl-seg-label">off</span>
+      </div>
+    ` : '';
+
+    return `
+      <div class="atl-row">
+        <div class="atl-name-cell">${p.name || 'Peptide'}</div>
+        <div class="atl-bars">
+          ${segHtml}
+          ${offHtml}
+        </div>
+      </div>
+    `;
   }
 
   function updateCounter(active, due) {
@@ -374,12 +566,26 @@
   }
 
   function init() {
+    console.log('[apex-tiles] init at', new Date().toISOString());
     purgeDemoSeeds();
     processPendingImport();
+    let state = {};
+    try { state = JSON.parse(localStorage.getItem('apex_state') || '{}'); } catch(e){}
+    console.log('[apex-tiles] state.protocols:', (state.protocols||[]).length, 'entries');
+    console.log('[apex-tiles] active non-demo:', (state.protocols||[]).filter(p => (p.status||'active')==='active' && !p.isDemoSeed).length);
     render();
     // Aggressive re-render in case the tracker's existing JS clobbers our overlay
-    [50, 200, 600, 1500, 3000].forEach(d => setTimeout(render, d));
+    [50, 200, 600, 1500, 3000, 6000].forEach(d => setTimeout(render, d));
     window.addEventListener('storage', e => { if (e.key === 'apex_state' || e.key === 'apex_daily_log') render(); });
+
+    // Also re-render whenever the document body mutates significantly
+    try {
+      const bodyObs = new MutationObserver(() => {
+        const host = document.getElementById('apex-tile-overlay');
+        if (!host || !host.isConnected) render();
+      });
+      bodyObs.observe(document.body, { childList: true, subtree: false });
+    } catch(_){}
   }
 
   if (document.readyState === 'loading') {
