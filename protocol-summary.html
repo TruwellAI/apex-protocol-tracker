@@ -88,6 +88,38 @@ body::before{
 .tit-week{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.1em;font-weight:700;}
 .tit-dose{font-family:'Rajdhani',sans-serif;font-weight:700;color:var(--white);font-size:14px;}
 
+/* SPLIT DOSING TOGGLE */
+.split-toggle{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  margin-top:10px;padding:10px 12px;
+  background:var(--panel2);border:1px solid var(--border);border-radius:8px;
+  cursor:pointer;transition:border-color .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.split-toggle:hover{border-color:var(--accent4);}
+.split-toggle.on{border-color:var(--accent4);background:rgba(167,139,250,.08);}
+.split-info{flex:1;min-width:0;}
+.split-label{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:var(--white);letter-spacing:-.1px;display:flex;align-items:center;gap:6px;}
+.split-sub{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.3;}
+.split-switch{
+  width:42px;height:24px;border-radius:14px;
+  background:var(--border);position:relative;flex-shrink:0;
+  transition:background .15s;
+}
+.split-switch::after{
+  content:'';position:absolute;top:2px;left:2px;
+  width:20px;height:20px;border-radius:50%;background:#cbd5e1;
+  transition:transform .2s cubic-bezier(.2,.8,.2,1);
+}
+.split-toggle.on .split-switch{background:var(--accent4);}
+.split-toggle.on .split-switch::after{transform:translateX(18px);background:#fff;}
+.split-research-note{
+  margin-top:8px;padding:8px 10px;background:rgba(251,191,36,.08);
+  border-left:3px solid var(--warn);border-radius:5px;
+  font-size:11px;color:var(--text);line-height:1.4;
+}
+.split-research-note strong{color:#fff;}
+
 .continue-bar{position:sticky;bottom:0;background:var(--bg);padding:14px 0 max(14px, env(safe-area-inset-bottom));border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:10px;}
 .cb-summary{font-size:12px;color:var(--muted);}
 .cb-summary strong{color:var(--accent2);font-weight:700;font-size:14px;}
@@ -238,36 +270,106 @@ body::before{
   document.getElementById('cb-count').textContent = selection.length;
   continueBar.style.display = 'flex';
 
+  // Peptides eligible for split dosing — long-half-life GLP-1s benefit pharmacokinetically.
+  // Pharmacokinetic basis is real (~28-38% lower peaks); no clinical trial validates this.
+  const SPLIT_ELIGIBLE = {
+    'retatrutide.html':  { freqLabel:'2x weekly (Mon + Thu)', factor:2 },
+    'semaglutide.html':  { freqLabel:'2x weekly (Mon + Thu)', factor:2 },
+    'tirzepatide.html':  { freqLabel:'2x weekly (Mon + Thu)', factor:2 }
+  };
+
+  function splitDoseString(doseStr, factor){
+    // Parse "12 mg/wk" or "1 → 12 mg" — divide the numeric piece by factor.
+    if (!doseStr || typeof doseStr !== 'string') return doseStr;
+    return doseStr.replace(/(\d+(?:\.\d+)?)\s*(mg|mcg)/gi, function(_, n, unit){
+      const v = parseFloat(n) / factor;
+      const rounded = (v % 1 === 0) ? v : v.toFixed(2).replace(/\.?0+$/,'');
+      return rounded + ' ' + unit;
+    }).replace(/\/\s*wk\b/g, '/dose');
+  }
+
+  // Track split-dose toggle state per slug
+  const splitState = {};
+  try { Object.assign(splitState, JSON.parse(localStorage.getItem('apex_split_dose')||'{}')); } catch(e){}
+
+  function persistSplit(){
+    try { localStorage.setItem('apex_split_dose', JSON.stringify(splitState)); } catch(e){}
+  }
+
   function renderCard(slug, p){
     const card = document.createElement('div');
     card.className = 'proto-card' + (p.titration ? ' titration' : '');
-    const titHtml = p.titration ? `
-      <div class="tit-table">
-        <div class="tit-title">⚡ Titration Schedule</div>
-        <div class="tit-rows">
-          ${p.titration.map(t => `<div class="tit-row"><span class="tit-week">${t.w}</span><span class="tit-dose">${t.d}</span></div>`).join('')}
+    card.dataset.slug = slug;
+
+    const splitCfg = SPLIT_ELIGIBLE[slug];
+    const isSplit = !!splitState[slug];
+
+    function buildTitHtml(){
+      if (!p.titration) return '';
+      const rows = p.titration.map(t => {
+        const dose = (splitCfg && isSplit) ? splitDoseString(t.d, splitCfg.factor) : t.d;
+        return `<div class="tit-row"><span class="tit-week">${t.w}</span><span class="tit-dose">${dose}</span></div>`;
+      }).join('');
+      return `
+        <div class="tit-table">
+          <div class="tit-title">⚡ Titration Schedule${isSplit ? ' (Split)' : ''}</div>
+          <div class="tit-rows">${rows}</div>
+        </div>`;
+    }
+
+    function buildSplitToggle(){
+      if (!splitCfg) return '';
+      return `
+        <div class="split-toggle${isSplit?' on':''}" data-slug="${slug}" role="switch" aria-checked="${isSplit}" tabindex="0">
+          <div class="split-info">
+            <div class="split-label">💉 Split Dosing</div>
+            <div class="split-sub">${isSplit ? 'Active — ' + splitCfg.freqLabel : 'Tap to split your weekly dose into 2 smaller doses (Mon + Thu)'}</div>
+          </div>
+          <div class="split-switch"></div>
         </div>
-      </div>` : '';
-    card.innerHTML = `
-      <div class="proto-head">
-        <div>
-          <div class="proto-name">${p.name}</div>
-          <div class="proto-mech">${p.mech}</div>
+        ${isSplit ? `<div class="split-research-note"><strong>Heads up:</strong> Split dosing has a real pharmacokinetic argument (lower peaks, smoother coverage) but <strong>no published clinical trial</strong> validates it for ${p.name}. Phase 2/3 trials all used weekly dosing. Many users report fewer GI side effects on split dosing — anecdotal.</div>` : ''}
+      `;
+    }
+
+    const freqDisplay = (splitCfg && isSplit) ? splitCfg.freqLabel : p.freq;
+
+    function renderInner(){
+      card.innerHTML = `
+        <div class="proto-head">
+          <div>
+            <div class="proto-name">${p.name}</div>
+            <div class="proto-mech">${p.mech}</div>
+          </div>
+          <div class="proto-cycle-pill">${typeof p.cycleWks === 'number' ? p.cycleWks + ' weeks' : p.cycleWks}</div>
         </div>
-        <div class="proto-cycle-pill">${typeof p.cycleWks === 'number' ? p.cycleWks + ' weeks' : p.cycleWks}</div>
-      </div>
-      <div class="proto-rows">
-        <div class="proto-row">
-          <div class="proto-r-label">Dose</div>
-          <div class="proto-r-value">${p.dose}</div>
+        <div class="proto-rows">
+          <div class="proto-row">
+            <div class="proto-r-label">Dose</div>
+            <div class="proto-r-value">${p.dose}</div>
+          </div>
+          <div class="proto-row">
+            <div class="proto-r-label">Frequency</div>
+            <div class="proto-r-value">${(splitCfg && splitState[slug]) ? splitCfg.freqLabel : p.freq}</div>
+          </div>
         </div>
-        <div class="proto-row">
-          <div class="proto-r-label">Frequency</div>
-          <div class="proto-r-value">${p.freq}</div>
-        </div>
-      </div>
-      ${titHtml}
-    `;
+        ${buildTitHtml()}
+        ${buildSplitToggle()}
+      `;
+
+      // Wire toggle
+      const t = card.querySelector('.split-toggle');
+      if (t) {
+        t.addEventListener('click', () => {
+          splitState[slug] = !splitState[slug];
+          persistSplit();
+          renderInner();
+          // Light haptic
+          try { if (navigator.vibrate) navigator.vibrate(15); } catch(_){}
+        });
+      }
+    }
+
+    renderInner();
     return card;
   }
 
