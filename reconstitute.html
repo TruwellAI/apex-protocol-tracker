@@ -290,8 +290,8 @@ body::before{
     'fox04-dri.html':    { name:'FOX04-DRI',      mech:'Senolytic',                 vial:5,  bac:3 },
     'glutathione.html':  { name:'Glutathione',    mech:'Master antioxidant',        vial:200,bac:3 },
     'nad-plus.html':     { name:'NAD+',           mech:'Mitochondrial cofactor',    vial:500,bac:3, titration:true },
-    'selank.html':       { name:'Selank',         mech:'Anxiolytic neuropeptide',   vial:10, bac:3 },
-    'semax.html':        { name:'Semax',          mech:'BDNF upregulator',          vial:10, bac:3 },
+    'selank.html':       { name:'Selank',         mech:'Anxiolytic neuropeptide',   spray:true, vial:10, bac:6, doseLabel:'250-500 mcg · 1-2 sprays/nostril' },
+    'semax.html':        { name:'Semax',          mech:'BDNF upregulator',          spray:true, vial:10, bac:6, doseLabel:'250-500 mcg · 1-2 sprays/nostril' },
     'dsip.html':         { name:'DSIP',           mech:'Delta sleep peptide',       vial:5,  bac:3 },
     'dihexa.html':       { name:'Dihexa',         mech:'HGF mimetic',               oral:true, doseLabel:'8-45 mg/day · oral' },
     'pe2228.html':       { name:'PE-22-28',       mech:'TREK-1 modulator',          vial:10, bac:3 },
@@ -361,6 +361,70 @@ body::before{
           <strong>${p.name} is taken orally.</strong> No mixing, no needles, no reconstitution math. Take as directed in the protocol summary.
         </div>
       `;
+      return card;
+    }
+
+    // Nasal-spray peptides (Selank, Semax): reconstitute with 6 mL BAC, no needle
+    if (p.spray) {
+      // Spray bottles deliver ~100 mcL per spray
+      const SPRAY_VOL_ML = 0.1;
+      const concSpray = (p.vial / p.bac).toFixed(2);
+      const sprays = Math.floor(p.bac / SPRAY_VOL_ML);
+      const mcgPerSpray = Math.round((p.vial / sprays) * 1000); // mg→mcg
+      reconState[slug] = { vial: p.vial, bac: p.bac, acetic: 0, spray: true };
+      card.innerHTML = `
+        <div class="rc-head">
+          <div>
+            <div class="rc-name">${p.name}</div>
+            <div class="rc-mech">${p.mech}</div>
+          </div>
+          <div class="rc-special-badge" style="color:var(--accent);background:rgba(0,212,255,.12);border:1px solid rgba(0,212,255,.4);">🌬️ Nasal Spray</div>
+        </div>
+        <div class="rc-rows">
+          <div class="rc-row">
+            <label>Vial size</label>
+            <input type="number" min="0.5" step="0.5" value="${p.vial}" data-field="vial" inputmode="decimal">
+            <span class="unit">mg</span>
+          </div>
+          <div class="rc-row">
+            <label>BAC water (spray default 6 mL)</label>
+            <input type="number" min="1" step="0.5" value="${p.bac}" data-field="bac" inputmode="decimal">
+            <span class="unit">mL</span>
+          </div>
+        </div>
+        <div class="rc-result" style="background:rgba(0,212,255,.05);border-color:rgba(0,212,255,.3);">
+          <div class="rc-r-item">
+            <div class="rc-r-label">Concentration</div>
+            <div class="rc-r-value" data-result="conc" style="color:var(--accent);">${concSpray} mg/mL</div>
+          </div>
+          <div class="rc-r-item">
+            <div class="rc-r-label">~ Mcg per spray</div>
+            <div class="rc-r-value" data-result="per-spray" style="color:var(--accent);">~${mcgPerSpray} mcg</div>
+          </div>
+          <div class="rc-r-item">
+            <div class="rc-r-label">~ Sprays per vial</div>
+            <div class="rc-r-value" data-result="sprays" style="color:var(--accent);">~${sprays}</div>
+          </div>
+        </div>
+        <div class="rc-note" style="background:rgba(0,212,255,.08);border-left-color:var(--accent);">
+          <strong>Reconstitute with 6 mL BAC water.</strong> Draw into a nasal spray bottle / atomizer. ~100 mcL per spray. Most users do 1-2 sprays per nostril.
+        </div>
+      `;
+
+      // Live recalc on input change
+      card.querySelectorAll('input').forEach(input => {
+        input.addEventListener('input', () => {
+          const vial = parseFloat(card.querySelector('[data-field="vial"]').value) || 0;
+          const bac = parseFloat(card.querySelector('[data-field="bac"]').value) || 0;
+          const conc = bac > 0 ? (vial / bac).toFixed(2) : '—';
+          const sprays = bac > 0 ? Math.floor(bac / SPRAY_VOL_ML) : 0;
+          const mcgPerSpray = sprays > 0 ? Math.round((vial / sprays) * 1000) : 0;
+          card.querySelector('[data-result="conc"]').textContent = conc + ' mg/mL';
+          card.querySelector('[data-result="per-spray"]').textContent = '~' + mcgPerSpray + ' mcg';
+          card.querySelector('[data-result="sprays"]').textContent = '~' + sprays;
+          reconState[slug] = { vial, bac, acetic: 0, spray: true };
+        });
+      });
       return card;
     }
 
