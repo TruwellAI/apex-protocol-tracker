@@ -418,7 +418,7 @@ body::before{
           <div class="today-check">✓</div>
           <div class="today-info">
             <div class="today-name">${p.name}</div>
-            <div class="today-detail"><strong>${dose.current}</strong>${units ? ' · <strong>' + units.units + ' units</strong> on the pen' : ''} · ${sched.reason}</div>
+            <div class="today-detail">${units ? '<strong>' + units.units + ' units</strong> on the pen' : '<strong>' + dose.current + '</strong>'} · ${sched.reason}</div>
           </div>
         `;
         row.addEventListener('click', () => {
