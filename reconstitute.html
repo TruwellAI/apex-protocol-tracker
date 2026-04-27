@@ -130,6 +130,42 @@ body::before{
   padding:8px 12px;background:rgba(255,107,53,.08);border-left:2px solid var(--accent3);border-radius:4px;
 }
 
+/* ON-CYCLE QUESTION (for titrating peptides) */
+.rc-cycle-q{
+  margin-top:12px;padding:14px;
+  background:rgba(0,212,255,.05);border:1px solid rgba(0,212,255,.3);border-radius:10px;
+}
+.rc-cycle-q-title{
+  font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:#fff;
+  margin-bottom:10px;letter-spacing:-.1px;
+}
+.rc-cycle-toggle{
+  display:flex;gap:8px;margin-bottom:10px;
+}
+.rc-cycle-btn{
+  flex:1;padding:10px 12px;border-radius:8px;
+  font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;letter-spacing:.06em;
+  background:var(--panel2);border:1px solid var(--border);color:var(--text);
+  cursor:pointer;transition:all .15s;text-transform:uppercase;
+  -webkit-tap-highlight-color:transparent;
+}
+.rc-cycle-btn:hover{border-color:var(--accent);}
+.rc-cycle-btn.active{background:rgba(0,212,255,.12);border-color:var(--accent);color:var(--accent);}
+.rc-cycle-fields{display:none;grid-template-columns:1fr 1fr;gap:8px;}
+.rc-cycle-fields.show{display:grid;}
+.rc-cycle-field{
+  background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;
+}
+.rc-cycle-field label{
+  display:block;font-family:'Share Tech Mono',monospace;font-size:9px;
+  letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin-bottom:5px;
+}
+.rc-cycle-field input{
+  width:100%;background:transparent;border:0;outline:0;
+  font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;color:#fff;
+}
+.rc-cycle-field .hint{font-size:11px;color:var(--muted);margin-top:4px;}
+
 /* CONTINUE BAR */
 .continue-bar{
   position:sticky;bottom:0;background:var(--bg);
@@ -225,8 +261,8 @@ body::before{
   // ── PEPTIDE METADATA: vial size + reconstitution rule + display name ──
   const PEP = {
     'aod9604.html':      { name:'AOD-9604',       mech:'GH fragment lipolysis',     vial:5,  bac:1, special:true,  acetic:1 },
-    '5amino1mq.html':    { name:'5-Amino-1MQ',    mech:'NNMT inhibitor',            vial:50, bac:3 },
-    'slu-pp-322.html':   { name:'SLU-PP-332',     mech:'ERRα agonist',              vial:10, bac:3 },
+    '5amino1mq.html':    { name:'5-Amino-1MQ',    mech:'NNMT inhibitor',            oral:true, doseLabel:'50-150 mg/day' },
+    'slu-pp-322.html':   { name:'SLU-PP-332',     mech:'ERRα agonist',              oral:true, doseLabel:'experimental · oral' },
     'retatrutide.html':  { name:'Retatrutide',    mech:'Triple G agonist',          vial:10, bac:3, titration:true },
     'semaglutide.html':  { name:'Semaglutide',    mech:'GLP-1 agonist',             vial:10, bac:3, titration:true },
     'tirzepatide.html':  { name:'Tirzepatide',    mech:'GLP-1 + GIP',               vial:10, bac:3, titration:true },
@@ -257,10 +293,10 @@ body::before{
     'selank.html':       { name:'Selank',         mech:'Anxiolytic neuropeptide',   vial:10, bac:3 },
     'semax.html':        { name:'Semax',          mech:'BDNF upregulator',          vial:10, bac:3 },
     'dsip.html':         { name:'DSIP',           mech:'Delta sleep peptide',       vial:5,  bac:3 },
-    'dihexa.html':       { name:'Dihexa',         mech:'HGF mimetic',               vial:10, bac:3 },
+    'dihexa.html':       { name:'Dihexa',         mech:'HGF mimetic',               oral:true, doseLabel:'8-45 mg/day · oral' },
     'pe2228.html':       { name:'PE-22-28',       mech:'TREK-1 modulator',          vial:10, bac:3 },
-    'l-carnitine.html':  { name:'L-Carnitine',    mech:'Fat oxidation cofactor',    vial:200,bac:3 },
-    'glutamine.html':    { name:'Glutamine',      mech:'Gut + immune amino',        vial:1000,bac:3 },
+    'l-carnitine.html':  { name:'L-Carnitine',    mech:'Fat oxidation cofactor',    oral:true, doseLabel:'200-500 mg · pre-workout' },
+    'glutamine.html':    { name:'Glutamine',      mech:'Gut + immune amino',        oral:true, doseLabel:'5 g/day · oral powder' },
     'wolverine.html':    { name:'Wolverine Stack',mech:'BPC + TB-500 + GHK',        vial:10, bac:3 },
     'klow.html':         { name:'KLOW Stack',     mech:'KPV + TB + BPC + GHK',      vial:10, bac:3 },
     'glow.html':         { name:'GLOW Stack',     mech:'GHK + TB + BPC',            vial:10, bac:3 },
@@ -298,8 +334,35 @@ body::before{
 
   function renderCard(slug, p){
     const card = document.createElement('div');
-    card.className = 'recon-card' + (p.special ? ' special' : '');
+    card.className = 'recon-card' + (p.special ? ' special' : '') + (p.oral ? ' oral' : '');
     card.dataset.slug = slug;
+
+    // Oral peptides skip reconstitution entirely
+    if (p.oral) {
+      card.innerHTML = `
+        <div class="rc-head">
+          <div>
+            <div class="rc-name">${p.name}</div>
+            <div class="rc-mech">${p.mech}</div>
+          </div>
+          <div class="rc-special-badge" style="color:#fbbf24;background:rgba(251,191,36,.12);">💊 Oral</div>
+        </div>
+        <div class="rc-result" style="background:rgba(251,191,36,.05);border-color:rgba(251,191,36,.3);">
+          <div class="rc-r-item">
+            <div class="rc-r-label">Form</div>
+            <div class="rc-r-value" style="color:#fbbf24;">Pill / Capsule</div>
+          </div>
+          <div class="rc-r-item">
+            <div class="rc-r-label">Dose</div>
+            <div class="rc-r-value" style="color:#fbbf24;">${p.doseLabel || 'see protocol'}</div>
+          </div>
+        </div>
+        <div class="rc-note" style="background:rgba(251,191,36,.08);border-left-color:#fbbf24;">
+          <strong>${p.name} is taken orally.</strong> No mixing, no needles, no reconstitution math. Take as directed in the protocol summary.
+        </div>
+      `;
+      return card;
+    }
 
     const concentration = (p.vial / (p.bac + (p.acetic||0))).toFixed(2);
     const dosesPerVial = Math.floor(p.vial / 1); // assumes ~1mg per dose default — override in protocol step
