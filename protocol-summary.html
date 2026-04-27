@@ -8,6 +8,13 @@
 <link rel="icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" href="assets/favicon.ico">
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script>
+  // Nuke any service worker / cached HTML so the latest renderer runs
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(rs => rs.forEach(r => r.unregister()));
+    if (window.caches) caches.keys().then(ks => ks.forEach(k => caches.delete(k)));
+  }
+</script>
 <style>
 :root {
   --bg:#080c10; --panel:#0d1318; --panel2:#121a22; --border:#1a2d3a;
@@ -260,9 +267,15 @@ body::before{
   let totalWeeks = 0;
   let weeksCount = 0;
 
+  function slugToName(slug){
+    return slug.replace(/\.html$/, '').replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  }
   selection.forEach(slug => {
-    const p = PROTO[slug];
-    if (!p) return;
+    let p = PROTO[slug];
+    if (!p) {
+      console.warn('[protocol-summary] missing PROTO for', slug, '→ fallback render');
+      p = { name: slugToName(slug), mech: '(set in tracker)', cycleWks: 8, dose: 'set in tracker', freq: 'daily', titration: null };
+    }
     if (p.titration) titrationCount++;
     if (typeof p.cycleWks === 'number') { totalWeeks += p.cycleWks; weeksCount++; }
     list.appendChild(renderCard(slug, p));
@@ -380,25 +393,29 @@ body::before{
   }
 
   continueBtn.addEventListener('click', () => {
-    // Build protocol payload for tracker
+    // Build protocol payload for tracker — NEVER silently drop a slug.
+    // If PROTO is missing data, fall back to a minimal record so every
+    // peptide the user selected lands on the tracker.
+    function slugToName(slug){
+      return slug.replace(/\.html$/, '').replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    }
     const protocols = selection.map(slug => {
       const p = PROTO[slug];
-      if (!p) return null;
-      return {
-        slug: slug,
-        name: p.name,
-        mech: p.mech,
-        cycleWks: p.cycleWks,
-        dose: p.dose,
-        freq: p.freq,
-        titration: p.titration || null,
-        startDate: new Date().toISOString().slice(0,10)
-      };
-    }).filter(Boolean);
+      const today = new Date().toISOString().slice(0,10);
+      if (p) {
+        return { slug, name:p.name, mech:p.mech, cycleWks:p.cycleWks, dose:p.dose, freq:p.freq, titration:p.titration||null, startDate:today };
+      }
+      console.warn('[protocol-summary] missing PROTO for', slug, '→ fallback');
+      return { slug, name:slugToName(slug), mech:'', cycleWks:8, dose:'set in tracker', freq:'daily', titration:null, startDate:today };
+    });
+
+    if (protocols.length === 0) {
+      alert('No peptides selected. Go back and pick at least one.');
+      return;
+    }
 
     try {
       localStorage.setItem('apex_pending_protocols', JSON.stringify(protocols));
-      // Clear the funnel state — selection has been committed
       localStorage.removeItem('apex_selection');
     } catch(e){}
     location.href = 'tracker-v2.html?import=pending';

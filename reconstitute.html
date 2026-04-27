@@ -8,6 +8,13 @@
 <link rel="icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" href="assets/favicon.ico">
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script>
+  // Nuke any service worker / cached HTML so oral peptide rules apply
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(rs => rs.forEach(r => r.unregister()));
+    if (window.caches) caches.keys().then(ks => ks.forEach(k => caches.delete(k)));
+  }
+</script>
 <style>
 :root {
   --bg:#080c10; --panel:#0d1318; --panel2:#121a22; --border:#1a2d3a;
@@ -294,7 +301,7 @@ body::before{
     'cartalax.html':     { name:'Cartalax',       mech:'Bioregulator (cartilage)',  vial:20, bac:3 },
     'fox04-dri.html':    { name:'FOX04-DRI',      mech:'Senolytic',                 vial:5,  bac:3 },
     'glutathione.html':  { name:'Glutathione',    mech:'Master antioxidant',        vial:200,bac:3 },
-    'nad-plus.html':     { name:'NAD+',           mech:'Mitochondrial cofactor',    vial:500,bac:3, titration:true },
+    'nad-plus.html':     { name:'NAD+',           mech:'Mitochondrial cofactor',    vial:500,bac:5, titration:true, mgPerDose:100, doseLabel:'Load 100→200 mg/day · Maintenance 100 mg 2-3×/wk' },
     'selank.html':       { name:'Selank',         mech:'Anxiolytic neuropeptide',   spray:true, vial:10, bac:6, doseLabel:'250-500 mcg · 1-2 sprays/nostril' },
     'semax.html':        { name:'Semax',          mech:'BDNF upregulator',          spray:true, vial:10, bac:6, doseLabel:'250-500 mcg · 1-2 sprays/nostril' },
     'dsip.html':         { name:'DSIP',           mech:'Delta sleep peptide',       vial:5,  bac:3 },
