@@ -13,7 +13,31 @@
 
   const SHELF_LIFE_DAYS = 30; // Standard fridge shelf life after reconstitution
   const CSS = `
-  #apex-tile-overlay { padding: 18px 16px 30px; position: relative; z-index: 4; display: block !important; visibility: visible !important; max-width: 1160px; margin: 0 auto; }
+  #apex-tile-overlay {
+    padding: 100px 16px 100px !important;
+    position: relative !important;
+    z-index: 100 !important;
+    display: block !important;
+    visibility: visible !important;
+    max-width: 1160px;
+    margin: 0 auto !important;
+    background: rgba(8,12,16,.4);
+  }
+  #apex-tile-overlay::before {
+    content: '✅ TILES RENDERED · scroll to see';
+    display: block;
+    background: #10b981;
+    color: #080c10;
+    text-align: center;
+    padding: 8px;
+    font-family: monospace;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    font-size: 11px;
+    margin: 0 -16px 20px -16px;
+    border-radius: 6px;
+  }
   .apex-tile-grid { display: grid; gap: 14px; grid-template-columns: 1fr 1fr; }
   @media (max-width: 640px) { .apex-tile-grid { grid-template-columns: 1fr; gap: 12px; } }
   .apex-tile {
@@ -315,37 +339,17 @@
   function ensureContainer() {
     let host = document.getElementById('apex-tile-overlay');
     if (host && host.isConnected) return host;
-    // If host got detached by a re-render, recreate it
     if (host) try { host.remove(); } catch(_){}
 
     host = document.createElement('div');
     host.id = 'apex-tile-overlay';
     host.innerHTML = '<div class="apex-tile-grid"></div>';
 
-    // Try anchors in order of preference. If all fail → append to body directly.
-    const tryAnchors = [
-      () => document.getElementById('apex-today-checklist'),
-      () => document.getElementById('active-grid'),
-      () => document.querySelector('.main'),
-      () => document.querySelector('main'),
-      () => document.querySelector('.wrap'),
-      () => document.querySelector('body > div')
-    ];
-    for (let i = 0; i < tryAnchors.length; i++) {
-      const anchor = tryAnchors[i]();
-      if (anchor && anchor.parentNode) {
-        try {
-          anchor.parentNode.insertBefore(host, anchor);
-          console.log('[apex-tiles] inserted before', anchor.id || anchor.className || anchor.tagName);
-          return host;
-        } catch(e){ console.warn('[apex-tiles] insert failed at anchor', i, e); }
-      }
-    }
-    // Last resort: append to body
-    try {
-      document.body.appendChild(host);
-      console.log('[apex-tiles] appended to body (fallback)');
-    } catch(e){ console.error('[apex-tiles] body append failed', e); }
+    // ALWAYS append to body — nothing in the tracker DOM can hide us this way.
+    // Place it absolute-relative inside a clean wrapper so the rest of the page
+    // flows around it and we render between the disclaimer and the footer.
+    document.body.appendChild(host);
+    console.log('[apex-tiles] appended to body (always)');
     return host;
   }
 
