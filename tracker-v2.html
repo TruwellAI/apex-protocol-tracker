@@ -54,7 +54,54 @@ body::before{
 .greet-sub strong{color:var(--accent2);font-weight:700;}
 
 /* DISCLAIMER */
-.disclaim{margin:10px 0 22px;display:inline-flex;align-items:center;gap:8px;padding:6px 12px;background:rgba(255,107,53,.08);border:1px solid rgba(255,107,53,.3);border-radius:14px;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--accent3);text-transform:uppercase;}
+.disclaim{margin:10px 0 16px;display:inline-flex;align-items:center;gap:8px;padding:6px 12px;background:rgba(255,107,53,.08);border:1px solid rgba(255,107,53,.3);border-radius:14px;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--accent3);text-transform:uppercase;}
+
+/* TAB NAV */
+.tabs{
+  display:flex;gap:4px;margin-bottom:18px;
+  background:var(--panel);border:1px solid var(--border);border-radius:12px;
+  padding:4px;
+}
+.tab{
+  flex:1;text-align:center;padding:11px 14px;
+  font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:.06em;
+  color:var(--muted);background:transparent;border:0;border-radius:8px;
+  cursor:pointer;transition:all .15s;text-transform:uppercase;
+  -webkit-tap-highlight-color:transparent;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.tab .tab-badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:18px;height:18px;padding:0 5px;border-radius:9px;
+  background:rgba(0,255,157,.2);color:var(--accent2);
+  font-size:10px;font-weight:800;letter-spacing:0;
+}
+.tab:hover{color:#fff;}
+.tab.active{
+  background:linear-gradient(135deg,rgba(0,255,157,.18),rgba(0,212,255,.08));
+  color:var(--accent2);box-shadow:inset 0 0 0 1px rgba(0,255,157,.4);
+}
+
+/* MOBILE BOTTOM NAV — thumb-friendly tab switching on phones */
+.bottom-nav{
+  display:none;position:fixed;bottom:0;left:0;right:0;z-index:50;
+  background:rgba(8,12,16,.96);backdrop-filter:blur(12px);
+  border-top:1px solid var(--border);
+  padding:8px 8px max(8px, env(safe-area-inset-bottom));
+  gap:4px;justify-content:space-around;
+}
+.bottom-nav .tab{flex:1;font-size:11px;padding:10px 6px;flex-direction:column;gap:3px;}
+.bottom-nav .tab .nav-icon{font-size:18px;line-height:1;}
+
+@media (max-width:640px){
+  .bottom-nav{display:flex;}
+  .wrap{padding-bottom:80px;}
+  .tabs.top-tabs{display:none;}
+}
+
+/* TAB PANELS */
+.panel{display:none;}
+.panel.active{display:block;}
 
 /* TODAY BLOCK */
 .today-card{
@@ -226,22 +273,50 @@ body::before{
 
   <div class="disclaim">⚠ Research use only · Not medical advice · Talk to a licensed provider</div>
 
-  <!-- TODAY -->
-  <div class="today-card" id="today-card" style="display:none;">
-    <div class="today-head">
-      <div class="today-title">Today's Doses</div>
-      <div class="today-progress" id="today-progress">0 / 0</div>
+  <!-- TOP TABS -->
+  <div class="tabs top-tabs">
+    <button class="tab active" data-tab="today">Today <span class="tab-badge" id="tab-today-badge">0</span></button>
+    <button class="tab" data-tab="stack">Stack <span class="tab-badge" id="tab-stack-badge">0</span></button>
+    <button class="tab" data-tab="timeline">52-Week</button>
+  </div>
+
+  <!-- PANEL: TODAY -->
+  <div class="panel active" data-panel="today">
+    <div class="today-card" id="today-card" style="display:none;">
+      <div class="today-head">
+        <div class="today-title">Today's Doses</div>
+        <div class="today-progress" id="today-progress">0 / 0</div>
+      </div>
+      <div class="today-list" id="today-list"></div>
     </div>
-    <div class="today-list" id="today-list"></div>
+    <div id="today-empty" style="display:none;text-align:center;padding:40px 20px;color:var(--muted);font-size:14px;">
+      Nothing scheduled for today.<br><span style="font-size:12px;">Switch to <strong style="color:var(--accent2);">Stack</strong> to see your full protocol.</span>
+    </div>
   </div>
 
-  <!-- TILES -->
-  <div class="tiles-section" id="tiles-section" style="display:none;">
-    <div class="tiles-title">Your Stack <span class="count" id="tiles-count">— 0 active</span></div>
-    <div class="tiles-grid" id="tiles-grid"></div>
+  <!-- PANEL: STACK (favorite view) -->
+  <div class="panel" data-panel="stack">
+    <div class="tiles-section" id="tiles-section" style="display:none;">
+      <div class="tiles-title">Your Stack <span class="count" id="tiles-count">— 0 active</span></div>
+      <div class="tiles-grid" id="tiles-grid"></div>
+    </div>
   </div>
 
-  <!-- EMPTY -->
+  <!-- PANEL: TIMELINE -->
+  <div class="panel" data-panel="timeline">
+    <div class="timeline-section" id="timeline-section" style="display:none;">
+      <div class="timeline-head">
+        <div class="timeline-eyebrow">📅 52-Week View</div>
+        <div class="timeline-title">Your stack across the next year</div>
+        <div class="timeline-sub">Cycles, off-periods, titration phases. Yellow line = today.</div>
+      </div>
+      <div class="timeline-scroll">
+        <div class="timeline-grid" id="timeline-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EMPTY (shown across all panels when no protocols) -->
   <div class="empty-card" id="empty-card" style="display:none;">
     <div class="empty-icon">🧪</div>
     <div class="empty-title">No active protocols</div>
@@ -249,23 +324,18 @@ body::before{
     <a href="research-hub.html" class="empty-btn">＋ Add Protocol →</a>
   </div>
 
-  <!-- 52-WEEK TIMELINE -->
-  <div class="timeline-section" id="timeline-section" style="display:none;">
-    <div class="timeline-head">
-      <div class="timeline-eyebrow">📅 52-Week View</div>
-      <div class="timeline-title">Your stack across the next year</div>
-      <div class="timeline-sub">Cycles, off-periods, titration phases. Yellow line = today.</div>
-    </div>
-    <div class="timeline-scroll">
-      <div class="timeline-grid" id="timeline-grid"></div>
-    </div>
-  </div>
-
   <div class="foot">
     <div>© Apex Protocol · Research use only · Not medical advice · 17+</div>
     <div><a href="privacy.html">Privacy</a> &nbsp;·&nbsp; <a href="terms.html">Terms</a> &nbsp;·&nbsp; <a href="protocol-tracker.html">Legacy tracker</a></div>
   </div>
 
+</div>
+
+<!-- MOBILE BOTTOM NAV -->
+<div class="bottom-nav tabs">
+  <button class="tab active" data-tab="today"><span class="nav-icon">✓</span><span>Today</span></button>
+  <button class="tab" data-tab="stack"><span class="nav-icon">▦</span><span>Stack</span></button>
+  <button class="tab" data-tab="timeline"><span class="nav-icon">📅</span><span>52-Week</span></button>
 </div>
 
 <script>
@@ -428,6 +498,17 @@ body::before{
     const doneCount = todayList.filter(x => todayDoses[x.p.id]).length;
     document.getElementById('greet-sub').innerHTML =
       `<strong>${protocols.length}</strong> active · <strong>${todayList.length - doneCount}</strong> due today`;
+
+    // Update tab badges
+    document.querySelectorAll('#tab-today-badge, [data-tab="today"] .tab-badge').forEach(el => {
+      el.textContent = (todayList.length - doneCount);
+    });
+    document.querySelectorAll('#tab-stack-badge, [data-tab="stack"] .tab-badge').forEach(el => {
+      el.textContent = protocols.length;
+    });
+    // Show/hide today empty state
+    const todayEmpty = document.getElementById('today-empty');
+    if (todayEmpty) todayEmpty.style.display = (todayList.length === 0 && protocols.length > 0) ? 'block' : 'none';
 
     // TODAY CARD
     const todayCard = document.getElementById('today-card');
@@ -709,6 +790,24 @@ body::before{
       </div>
     `;
   }
+
+  // ── TAB SWITCHER ────────────────
+  function switchTab(name){
+    document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+    document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.dataset.panel === name));
+    try { localStorage.setItem('apex_active_tab', name); } catch(e){}
+    // Scroll to top of panel
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  document.addEventListener('click', e => {
+    const t = e.target.closest('.tab');
+    if (t && t.dataset.tab) switchTab(t.dataset.tab);
+  });
+  // Restore last viewed tab on load
+  try {
+    const saved = localStorage.getItem('apex_active_tab');
+    if (saved && ['today','stack','timeline'].includes(saved)) switchTab(saved);
+  } catch(e){}
 
   // ── INIT ───────────────────────────────
   if (document.readyState === 'loading') {
