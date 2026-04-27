@@ -554,6 +554,51 @@ button:not(.btn-primary):not(.btn-cancel):not(.goal-btn):not(.day-btn):not(.mb-t
 </head>
 <body>
 
+<!-- ═══════════════════ EARLY DIAGNOSTIC + RENDER ═════════════════════ -->
+<!-- Runs immediately (not deferred) so we know JS executes -->
+<script>
+(function(){
+  console.log('[apex-early] inline script running at', new Date().toISOString());
+  try {
+    const raw = localStorage.getItem('apex_state');
+    const s = raw ? JSON.parse(raw) : {};
+    const protocols = (s.protocols || []);
+    const active = protocols.filter(p => (p.status||'active')==='active' && !p.isDemoSeed);
+    console.log('[apex-early] state.protocols:', protocols.length, '| active non-demo:', active.length);
+
+    // Stash for the deferred renderer
+    window.__APEX_DIAG__ = { total: protocols.length, active: active.length, raw: protocols };
+
+    // Also handle the import-pending case immediately so state is ready before tile script runs
+    const params = new URLSearchParams(location.search);
+    if (params.get('import') === 'pending') {
+      const pending = JSON.parse(localStorage.getItem('apex_pending_protocols') || '[]');
+      if (pending.length) {
+        const today = new Date().toISOString().slice(0,10);
+        s.protocols = s.protocols || [];
+        pending.forEach(p => {
+          if (s.protocols.find(x => x.slug === p.slug && (x.status||'active')==='active' && !x.isDemoSeed)) return;
+          s.protocols.push({
+            id: 'p_' + Date.now() + '_' + Math.random().toString(36).slice(2,7),
+            slug: p.slug, name: p.name, mech: p.mech, dose: p.dose, freq: p.freq,
+            cycleWeeks: typeof p.cycleWks === 'number' ? p.cycleWks : 8,
+            cycleWks: p.cycleWks, titration: p.titration || null,
+            status: 'active', startDate: p.startDate || today,
+            createdAt: new Date().toISOString(), isDemoSeed: false, dailyLog: []
+          });
+        });
+        localStorage.setItem('apex_state', JSON.stringify(s));
+        localStorage.removeItem('apex_pending_protocols');
+        const url = new URL(location.href);
+        url.searchParams.delete('import');
+        history.replaceState({}, '', url.toString());
+        console.log('[apex-early] imported', pending.length, 'pending protocols');
+      }
+    }
+  } catch(e){ console.error('[apex-early] crashed:', e); }
+})();
+</script>
+
 <!-- ═══════════════════ MOBILE FAB + BOTTOM NAV ══════════ -->
 <button id="mobile-fab" onclick="try{openCategoryPicker()}catch(e){try{openModal()}catch(_){document.getElementById('modal-overlay').style.display='flex';document.body.style.overflow='hidden'}}" style="position:fixed;bottom:80px;right:16px;z-index:10001;background:var(--accent2);color:#080c10;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:.08em;border:none;cursor:pointer;box-shadow:0 4px 24px rgba(0,196,140,.5);padding:14px 20px;border-radius:32px;align-items:center;gap:8px;white-space:nowrap;-webkit-tap-highlight-color:transparent;touch-action:manipulation;">
   <span style="font-size:20px;line-height:1;">＋</span> ADD PROTOCOL
