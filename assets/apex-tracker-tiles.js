@@ -276,7 +276,7 @@
       </div>
 
       <div class="at-actions">
-        <button class="at-btn primary ${isLoggedToday ? 'done' : ''}" data-action="log">${isLoggedToday ? '✓ Logged Today' : 'Log Today\\'s Dose'}</button>
+        <button class="at-btn primary ${isLoggedToday ? 'done' : ''}" data-action="log">${isLoggedToday ? '✓ Logged Today' : "Log Today's Dose"}</button>
         <button class="at-btn" data-action="end">End Cycle</button>
       </div>
     `;
