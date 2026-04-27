@@ -554,13 +554,8 @@ button:not(.btn-primary):not(.btn-cancel):not(.goal-btn):not(.day-btn):not(.mb-t
 </head>
 <body>
 
-<!-- VISIBLE PROOF-OF-LIFE BANNER — if you see this red bar, JS ran -->
-<div id="apex-proof" style="position:fixed;top:0;left:0;right:0;height:30px;background:#ef4444;color:#fff;font-family:monospace;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:99999;letter-spacing:.1em;">⚡ TRACKER LOADED — vBUILD-7 — refresh worked</div>
 <script>
-// Auto-hide proof banner after 3 sec
-setTimeout(() => { const b = document.getElementById('apex-proof'); if (b) b.style.display = 'none'; }, 3000);
-
-// Nuke any service worker that might be caching stale HTML
+// Nuke any service worker caching stale HTML
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()));
   if (window.caches) caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
@@ -16253,7 +16248,7 @@ function openRockyManual() {
 <script src="assets/apex-quickadd.js" defer></script>
 <script src="assets/apex-experience.js" defer></script>
 <script src="assets/apex-mobile.js" defer></script>
-<script src="assets/apex-tracker-tiles.js?v=5" defer></script>
+<script src="assets/apex-tracker-tiles.js?v=6" defer></script>
 
 <!-- ═════ DEMO-SEED PURGE: remove phantom protocols on first launch ═════ -->
 <script>

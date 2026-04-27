@@ -14,29 +14,13 @@
   const SHELF_LIFE_DAYS = 30; // Standard fridge shelf life after reconstitution
   const CSS = `
   #apex-tile-overlay {
-    padding: 100px 16px 100px !important;
+    padding: 8px 16px 32px !important;
     position: relative !important;
-    z-index: 100 !important;
+    z-index: 4 !important;
     display: block !important;
     visibility: visible !important;
     max-width: 1160px;
     margin: 0 auto !important;
-    background: rgba(8,12,16,.4);
-  }
-  #apex-tile-overlay::before {
-    content: '✅ TILES RENDERED · scroll to see';
-    display: block;
-    background: #10b981;
-    color: #080c10;
-    text-align: center;
-    padding: 8px;
-    font-family: monospace;
-    font-weight: 700;
-    letter-spacing: .12em;
-    text-transform: uppercase;
-    font-size: 11px;
-    margin: 0 -16px 20px -16px;
-    border-radius: 6px;
   }
   .apex-tile-grid { display: grid; gap: 14px; grid-template-columns: 1fr 1fr; }
   @media (max-width: 640px) { .apex-tile-grid { grid-template-columns: 1fr; gap: 12px; } }
@@ -345,11 +329,19 @@
     host.id = 'apex-tile-overlay';
     host.innerHTML = '<div class="apex-tile-grid"></div>';
 
-    // ALWAYS append to body — nothing in the tracker DOM can hide us this way.
-    // Place it absolute-relative inside a clean wrapper so the rest of the page
-    // flows around it and we render between the disclaimer and the footer.
+    // Insert tiles in the natural content area, BEFORE the disclaimer banner
+    // so the disclaimer / footer remain at the bottom.
+    const disclaimer = document.getElementById('tour-disclaimer');
+    if (disclaimer && disclaimer.parentNode) {
+      disclaimer.parentNode.insertBefore(host, disclaimer.nextSibling);
+      console.log('[apex-tiles] inserted after #tour-disclaimer');
+      return host;
+    }
+    // Fallbacks
+    const main = document.querySelector('.main') || document.querySelector('main');
+    if (main) { main.appendChild(host); console.log('[apex-tiles] appended to .main'); return host; }
     document.body.appendChild(host);
-    console.log('[apex-tiles] appended to body (always)');
+    console.log('[apex-tiles] appended to body (last resort)');
     return host;
   }
 
