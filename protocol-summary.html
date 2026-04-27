@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover">
 <title>Your Protocol — Apex Protocol</title>
 <meta name="description" content="Your full protocol: cycle length, titration, dosing schedule.">
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <link rel="icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" href="assets/favicon.ico">
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -257,9 +260,19 @@ body::before{
   const continueBar = document.getElementById('continue-bar');
   const continueBtn = document.getElementById('continue-btn');
 
+  console.log('[protocol-summary] selection:', selection);
+
   if (!selection.length) {
-    // Don't dead-end the user — bounce them straight to the tracker
-    location.replace('tracker-v2.html');
+    // Don't dead-end the user — show a visible escape hatch
+    // (no auto-redirect — user lands here with bad cache + nothing happens)
+    document.querySelector('.wrap').insertAdjacentHTML('beforeend', `
+      <div style="margin:24px 0;padding:24px;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.4);border-radius:12px;text-align:center;">
+        <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:20px;color:#fbbf24;margin-bottom:8px;">No peptides in your selection</div>
+        <div style="font-size:13px;color:#cbd5e1;margin-bottom:18px;">Either start over or jump to your tracker if you've already saved a stack.</div>
+        <a href="research-hub.html" style="display:inline-block;margin:4px;padding:12px 22px;background:linear-gradient(135deg,#00ff9d,#10b981);color:#080c10;font-family:'Rajdhani',sans-serif;font-weight:800;font-size:13px;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;border-radius:8px;">＋ Build a Stack</a>
+        <a href="tracker-v2.html" style="display:inline-block;margin:4px;padding:12px 22px;background:transparent;color:#cbd5e1;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;border-radius:8px;border:1px solid #1a2d3a;">Open My Tracker →</a>
+      </div>
+    `);
     return;
   }
 

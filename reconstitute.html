@@ -444,7 +444,10 @@ body::before{
     }
 
     const concentration = (p.vial / (p.bac + (p.acetic||0))).toFixed(2);
-    const dosesPerVial = Math.floor(p.vial / 1); // assumes ~1mg per dose default — override in protocol step
+    // Doses per vial uses p.mgPerDose if defined (e.g. NAD+ = 100 mg/dose),
+    // else falls back to 1 mg per dose for typical micro-dosed peptides.
+    const mgPerDose = p.mgPerDose || 1;
+    const dosesPerVial = Math.max(1, Math.floor(p.vial / mgPerDose));
 
     card.innerHTML = `
       <div class="rc-head">
@@ -495,7 +498,7 @@ body::before{
         const acetic = aceticEl ? (parseFloat(aceticEl.value) || 0) : 0;
         const total = bac + acetic;
         const conc = total > 0 ? (vial / total).toFixed(2) : '—';
-        const doses = vial > 0 ? Math.floor(vial / 1) : 0;
+        const doses = vial > 0 ? Math.max(1, Math.floor(vial / mgPerDose)) : 0;
         card.querySelector('[data-result="conc"]').textContent = conc + ' mg/mL';
         card.querySelector('[data-result="doses"]').textContent = '~' + doses;
         reconState[slug] = { vial, bac, acetic };
