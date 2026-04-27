@@ -82,21 +82,27 @@ body::before{
 .today-detail{font-size:12px;color:var(--muted);margin-top:2px;}
 .today-detail strong{color:var(--accent2);font-weight:700;}
 .today-stats{
-  display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0;
-  font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.1em;
-  color:var(--muted);text-transform:uppercase;text-align:right;
-  min-width:96px;
+  display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;
+  text-align:right;min-width:130px;
 }
-.today-stats .ts-line{display:flex;align-items:center;gap:6px;justify-content:flex-end;line-height:1.2;}
-.today-stats .ts-icon{font-size:10px;opacity:.7;}
-.today-stats .ts-val{color:#fff;font-weight:700;font-size:10px;letter-spacing:.06em;}
+.today-stats .ts-row{display:flex;flex-direction:column;align-items:flex-end;gap:0;line-height:1.1;}
+.today-stats .ts-label{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;font-weight:700;}
+.today-stats .ts-val{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;color:#fff;letter-spacing:-.1px;line-height:1.1;margin-top:1px;}
 .today-stats .ts-val.warn{color:var(--warn);}
 .today-stats .ts-val.bad{color:var(--bad);}
 .today-stats .ts-val.next{color:var(--accent4);}
-@media (max-width:480px){
-  .today-stats{min-width:80px;}
-  .today-stats .ts-val{font-size:9px;}
+.today-stats .ts-val .ts-sub{color:var(--muted);font-weight:500;font-size:11px;}
+@media (max-width:540px){
+  .today-stats{display:none;}
+  .today-stats-mobile{display:block;}
 }
+.today-stats-mobile{
+  display:none;font-size:11px;color:var(--muted);margin-top:6px;line-height:1.5;
+}
+.today-stats-mobile strong{color:#fff;font-weight:700;}
+.today-stats-mobile .warn{color:var(--warn);}
+.today-stats-mobile .bad{color:var(--bad);}
+.today-stats-mobile .next{color:var(--accent4);}
 .today-celebrate{padding:14px;text-align:center;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;color:var(--accent2);letter-spacing:.04em;}
 
 /* TILES */
@@ -452,9 +458,22 @@ body::before{
             <div class="today-detail">${units ? '<strong>' + units.units + ' units</strong> on the pen' : '<strong>' + dose.current + '</strong>'} · ${sched.reason}</div>
           </div>
           <div class="today-stats">
-            <div class="ts-line">📊 <span class="ts-val">${dayNum}/${cycleDays}</span></div>
-            <div class="ts-line">🧪 <span class="ts-val ${vialCls}">${vialDaysLeft}d</span> bottle</div>
-            ${nextTitChip}
+            <div class="ts-row">
+              <div class="ts-label">Cycle Day</div>
+              <div class="ts-val">${dayNum} <span class="ts-sub">of ${cycleDays}</span></div>
+            </div>
+            <div class="ts-row">
+              <div class="ts-label">Bottle Expires</div>
+              <div class="ts-val ${vialCls}">${vialDaysLeft} <span class="ts-sub">days left</span></div>
+            </div>
+            ${dose.next ? `
+            <div class="ts-row">
+              <div class="ts-label">Next Dose Increase</div>
+              <div class="ts-val next">${dose.next.dose} <span class="ts-sub">in ${(function(){const nd=new Date(start);nd.setDate(nd.getDate()+dose.next.startDay-1);return Math.max(0,daysBetween(today,nd));})()} days</span></div>
+            </div>` : ''}
+          </div>
+          <div class="today-stats-mobile">
+            <strong>Day ${dayNum}/${cycleDays}</strong> · Bottle: <strong class="${vialCls}">${vialDaysLeft} days</strong>${dose.next ? ' · Next: <strong class="next">' + dose.next.dose + ' in ' + (function(){const nd=new Date(start);nd.setDate(nd.getDate()+dose.next.startDay-1);return Math.max(0,daysBetween(today,nd));})() + 'd</strong>' : ''}
           </div>
         `;
         row.addEventListener('click', () => {
