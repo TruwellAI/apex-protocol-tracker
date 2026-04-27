@@ -225,9 +225,12 @@ body::before{
     gh: {
       label:'GH Axis',
       mechs:[
-        { name:'GHRH stimulation', by:['cjc1295-dac','cjc-no-dac','sermorelin','tesamorelin'] },
-        { name:'Ghrelin / GHS-R (GH pulse)', by:['ipamorelin'] },
-        { name:'GHRH + Ghrelin synergy', by:['cjc-ipa-blend'] },
+        // Blend contains CJC-1295, so it credits for GHRH stimulation
+        { name:'GHRH stimulation', by:['cjc1295-dac','cjc-no-dac','sermorelin','tesamorelin','cjc-ipa-blend'] },
+        // Blend contains Ipamorelin, so it credits for Ghrelin / GHS-R
+        { name:'Ghrelin / GHS-R (GH pulse)', by:['ipamorelin','cjc-ipa-blend'] },
+        // Synergy = stacking GHRH + Ghrelin (either via blend OR by separately stacking the two)
+        { name:'GHRH + Ghrelin synergy', by:['cjc-ipa-blend'], synergyOf:[['cjc1295-dac','cjc-no-dac','sermorelin','tesamorelin'],['ipamorelin']] },
         { name:'Direct IGF-1 (post-workout)', by:['igf1-lr3'] }
       ],
       peptides:['cjc1295-dac','cjc-no-dac','sermorelin','ipamorelin','tesamorelin','cjc-ipa-blend','igf1-lr3']
@@ -235,11 +238,15 @@ body::before{
     repair: {
       label:'Healing & Recovery',
       mechs:[
-        { name:'Tissue repair / angiogenesis', by:['bpc157','tb500'] },
-        { name:'Anti-inflammatory cytokine modulation', by:['kpv','thymosin-alpha1'] },
-        { name:'Skin / collagen / wound healing', by:['ghkcu','ll37'] },
+        // Wolverine/KLOW/GLOW all contain BPC + TB-500
+        { name:'Tissue repair / angiogenesis', by:['bpc157','tb500','wolverine','klow','glow'] },
+        // KLOW contains KPV
+        { name:'Anti-inflammatory cytokine modulation', by:['kpv','thymosin-alpha1','klow'] },
+        // Wolverine/KLOW/GLOW all contain GHK-Cu
+        { name:'Skin / collagen / wound healing', by:['ghkcu','ll37','wolverine','klow','glow'] },
         { name:'Antimicrobial / immune', by:['ll37','thymosin-alpha1'] },
-        { name:'Neuropathy / nerve repair', by:['ara290','bpc157'] }
+        // BPC included in all stacks → nerve repair credit
+        { name:'Neuropathy / nerve repair', by:['ara290','bpc157','wolverine','klow','glow'] }
       ],
       peptides:['bpc157','tb500','ghkcu','kpv','ll37','thymosin-alpha1','ara290','wolverine','klow','glow']
     },
@@ -428,8 +435,19 @@ body::before{
     const dupes = Object.keys(conflicts).filter(c => conflicts[c].length > 1);
 
     const goal = GOALS[activeGoal];
-    const mechsHit = goal.mechs.filter(m => m.by.some(p => selected.has(p)));
-    const mechsMiss = goal.mechs.filter(m => !m.by.some(p => selected.has(p)));
+    // A mechanism is HIT if either:
+    //   1. Any peptide in m.by[] is selected, OR
+    //   2. It has m.synergyOf=[[groupA],[groupB]] AND ANY peptide from each group is selected
+    //      (e.g. CJC + Ipa separately also count as 'GHRH+Ghrelin synergy')
+    function mechHit(m){
+      if (m.by.some(p => selected.has(p))) return true;
+      if (m.synergyOf && Array.isArray(m.synergyOf)) {
+        return m.synergyOf.every(group => group.some(p => selected.has(p)));
+      }
+      return false;
+    }
+    const mechsHit = goal.mechs.filter(mechHit);
+    const mechsMiss = goal.mechs.filter(m => !mechHit(m));
     const coveragePct = (mechsHit.length / goal.mechs.length) * 100;
 
     let grade = 'D';
@@ -492,13 +510,18 @@ body::before{
     coverage.style.display = 'block';
     covGrid.innerHTML = '';
     goal.mechs.forEach(m => {
-      const hit = m.by.some(p => selected.has(p));
-      const matchedPeps = m.by.filter(p => selected.has(p)).map(p => PEP_INFO[p] && PEP_INFO[p].name).filter(Boolean);
+      const hit = mechHit(m);
+      // Build the "via X, Y" line — include direct hits AND synergy contributors
+      const directHits = m.by.filter(p => selected.has(p));
+      const synergyHits = (m.synergyOf || []).flat().filter(p => selected.has(p));
+      const hitPepKeys = [...new Set([...directHits, ...synergyHits])];
+      const matchedPeps = hitPepKeys.map(p => PEP_INFO[p] && PEP_INFO[p].name).filter(Boolean);
+
       const item = document.createElement('div');
       item.className = 'cov-item ' + (hit ? 'hit' : 'miss');
       let detail;
       if (hit) {
-        detail = 'via ' + matchedPeps.join(', ');
+        detail = 'via ' + matchedPeps.join(' + ');
       } else {
         const sugg = pickCleanSuggestion(m);
         if (sugg.conflicts) {
@@ -554,9 +577,16 @@ body::before{
     let totalMechsAvailable = 0;
     let goalsTouched = 0;
 
+    function mechHitForGoal(m){
+      if (m.by.some(p => selected.has(p))) return true;
+      if (m.synergyOf && Array.isArray(m.synergyOf)) {
+        return m.synergyOf.every(group => group.some(p => selected.has(p)));
+      }
+      return false;
+    }
     Object.keys(GOALS).forEach(gKey => {
       const g = GOALS[gKey];
-      const hit = g.mechs.filter(m => m.by.some(p => selected.has(p)));
+      const hit = g.mechs.filter(mechHitForGoal);
       const touched = g.peptides.some(p => selected.has(p));
       if (touched) {
         goalsTouched++;
@@ -573,10 +603,11 @@ body::before{
     });
 
     // Unique mechanisms across all selected peptides (count distinct mechanisms hit)
+    // Uses same mechHitForGoal helper so synergy mechanisms count too
     const uniqueMechs = new Set();
     Object.values(GOALS).forEach(g => {
       g.mechs.forEach(m => {
-        if (m.by.some(p => selected.has(p))) {
+        if (mechHitForGoal(m)) {
           uniqueMechs.add(g.label + '·' + m.name);
         }
       });
