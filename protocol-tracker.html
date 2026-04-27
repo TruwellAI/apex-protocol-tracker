@@ -16177,6 +16177,27 @@ function openRockyManual() {
 <script src="assets/apex-experience.js" defer></script>
 <script src="assets/apex-mobile.js" defer></script>
 
+<!-- ═════ DEMO-SEED PURGE: remove phantom protocols on first launch ═════ -->
+<script>
+(function(){
+  // Wipe any leftover isDemoSeed entries unless user explicitly asked for the demo
+  // (?demo=1 in URL, set by the "See it in action" button).
+  try {
+    const params = new URLSearchParams(location.search);
+    if (params.get('demo') === '1') return;
+    const raw = localStorage.getItem('apex_state');
+    if (!raw) return;
+    const state = JSON.parse(raw);
+    if (!state.protocols) return;
+    const real = state.protocols.filter(p => !p.isDemoSeed);
+    if (real.length !== state.protocols.length) {
+      state.protocols = real;
+      localStorage.setItem('apex_state', JSON.stringify(state));
+    }
+  } catch(e){}
+})();
+</script>
+
 <!-- ═════ IMPORT-PENDING PATCH: consume apex_pending_protocols from the funnel ═════ -->
 <script>
 (function(){
@@ -16239,6 +16260,216 @@ function openRockyManual() {
   }
   // Run before the tracker's render passes
   importPending();
+})();
+</script>
+
+<!-- ═════ DAILY CHECKLIST: big tap-to-log buttons for today's doses ═════ -->
+<style>
+#apex-today-checklist{
+  display:none;
+  margin:20px 16px 24px;
+  background:linear-gradient(180deg, rgba(0,255,157,.05), rgba(0,212,255,.02));
+  border:1px solid rgba(0,255,157,.3);
+  border-radius:14px;
+  padding:18px 18px 14px;
+  position:relative;z-index:5;
+}
+#apex-today-checklist.show{display:block;animation:tcFadeIn .35s ease;}
+@keyframes tcFadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.tc-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+.tc-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:20px;color:#fff;letter-spacing:-.3px;line-height:1.1;}
+.tc-date{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.22em;color:#7a8d99;text-transform:uppercase;}
+.tc-progress{
+  display:flex;align-items:center;gap:8px;
+  font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.18em;
+  color:#00ff9d;text-transform:uppercase;font-weight:700;
+}
+.tc-bar{flex:1;height:6px;background:rgba(148,163,184,.18);border-radius:3px;overflow:hidden;min-width:120px;}
+.tc-bar-fill{height:100%;background:linear-gradient(90deg,#00ff9d,#10b981);border-radius:3px;transition:width .4s cubic-bezier(.2,.8,.2,1);width:0%;}
+.tc-list{display:flex;flex-direction:column;gap:8px;}
+.tc-item{
+  display:flex;align-items:center;gap:14px;
+  background:#0d1318;border:1px solid #1a2d3a;border-radius:10px;
+  padding:14px 16px;
+  cursor:pointer;transition:all .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.tc-item:hover,.tc-item:active{border-color:rgba(0,255,157,.4);}
+.tc-item.done{background:rgba(0,255,157,.06);border-color:rgba(0,255,157,.35);}
+.tc-check{
+  width:30px;height:30px;border-radius:50%;flex-shrink:0;
+  border:2px solid rgba(148,163,184,.4);
+  display:flex;align-items:center;justify-content:center;
+  color:transparent;transition:all .15s;
+}
+.tc-item.done .tc-check{background:#00ff9d;border-color:#00ff9d;color:#080c10;}
+.tc-info{flex:1;min-width:0;}
+.tc-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;color:#fff;letter-spacing:-.2px;line-height:1.15;}
+.tc-item.done .tc-name{text-decoration:line-through;opacity:.7;}
+.tc-meta{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:#7a8d99;text-transform:uppercase;margin-top:3px;}
+.tc-dose{
+  font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:#00ff9d;
+  flex-shrink:0;text-align:right;
+}
+.tc-empty-line{
+  text-align:center;padding:24px 12px;
+  font-size:13px;color:#7a8d99;font-style:italic;
+}
+.tc-celebrate{
+  background:linear-gradient(135deg,rgba(0,255,157,.15),rgba(16,185,129,.08));
+  border:1px solid rgba(0,255,157,.5);
+  border-radius:10px;padding:14px 16px;text-align:center;
+  font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;color:#00ff9d;
+  letter-spacing:.04em;
+}
+@media (max-width:480px){
+  #apex-today-checklist{margin:12px 12px 18px;padding:16px 14px 12px;}
+  .tc-title{font-size:18px;}
+  .tc-item{padding:12px 14px;gap:12px;}
+  .tc-name{font-size:15px;}
+  .tc-check{width:28px;height:28px;}
+}
+</style>
+<script>
+(function(){
+  // Today's date key, e.g. "2026-04-27"
+  function todayKey(){
+    const d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  }
+  function todayLabel(){
+    return new Date().toLocaleDateString(undefined, { weekday:'short', month:'short', day:'numeric' });
+  }
+  function isWeekly(freq){
+    if (!freq) return false;
+    return /weekly/i.test(freq);
+  }
+  function isAsNeeded(freq){
+    if (!freq) return false;
+    return /as needed|pre-event|pre-bed only|when needed/i.test(freq);
+  }
+  function shouldShowToday(p, today){
+    if (!p || (p.status||'active') !== 'active') return false;
+    if (p.isDemoSeed) return false;
+    if (isAsNeeded(p.freq)) return false;
+    if (isWeekly(p.freq)) {
+      // Show on the same weekday as the start date
+      const start = p.startDate ? new Date(p.startDate) : new Date();
+      const tod = new Date();
+      return start.getDay() === tod.getDay();
+    }
+    // Daily by default
+    return true;
+  }
+
+  function getDailyLog(){
+    try { return JSON.parse(localStorage.getItem('apex_daily_log')) || {}; } catch(e){ return {}; }
+  }
+  function setDailyLog(log){
+    try { localStorage.setItem('apex_daily_log', JSON.stringify(log)); } catch(e){}
+  }
+
+  function ensureWidget(){
+    if (document.getElementById('apex-today-checklist')) return;
+    const grid = document.getElementById('active-grid');
+    if (!grid) return;
+    const w = document.createElement('div');
+    w.id = 'apex-today-checklist';
+    grid.parentNode.insertBefore(w, grid);
+  }
+
+  function render(){
+    ensureWidget();
+    const w = document.getElementById('apex-today-checklist');
+    if (!w) return;
+
+    let state = {};
+    try { state = JSON.parse(localStorage.getItem('apex_state') || '{}'); } catch(e){}
+    const protocols = (state.protocols || []).filter(p => shouldShowToday(p, todayKey()));
+
+    if (!protocols.length) {
+      w.classList.remove('show');
+      return;
+    }
+
+    const log = getDailyLog();
+    const today = todayKey();
+    const todayLog = log[today] || {};
+    const total = protocols.length;
+    const done = protocols.filter(p => todayLog[p.id]).length;
+    const pct = total > 0 ? Math.round(done/total*100) : 0;
+
+    let html = `
+      <div class="tc-head">
+        <div>
+          <div class="tc-title">Today's protocol</div>
+          <div class="tc-date">${todayLabel()}</div>
+        </div>
+        <div class="tc-progress">
+          <span>${done}/${total}</span>
+          <div class="tc-bar"><div class="tc-bar-fill" style="width:${pct}%"></div></div>
+        </div>
+      </div>
+    `;
+
+    if (done === total && total > 0) {
+      html += `<div class="tc-celebrate">🎯 All doses logged. Crushed today.</div>`;
+    } else {
+      html += '<div class="tc-list">';
+      protocols.forEach(p => {
+        const isDone = !!todayLog[p.id];
+        const dose = p.dose || (p.titration && p.titration.length ? p.titration[0].d : '—');
+        const freq = p.freq || 'daily';
+        html += `
+          <div class="tc-item${isDone?' done':''}" data-id="${p.id}" role="button" tabindex="0" aria-pressed="${isDone}">
+            <div class="tc-check">✓</div>
+            <div class="tc-info">
+              <div class="tc-name">${p.name || 'Peptide'}</div>
+              <div class="tc-meta">${freq}</div>
+            </div>
+            <div class="tc-dose">${dose}</div>
+          </div>
+        `;
+      });
+      html += '</div>';
+    }
+
+    w.innerHTML = html;
+    w.classList.add('show');
+
+    // Wire taps
+    w.querySelectorAll('.tc-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const id = item.dataset.id;
+        const log = getDailyLog();
+        const today = todayKey();
+        log[today] = log[today] || {};
+        if (log[today][id]) {
+          delete log[today][id];
+        } else {
+          log[today][id] = new Date().toISOString();
+          // Light haptic if available
+          try { if (navigator.vibrate) navigator.vibrate(20); } catch(_){}
+        }
+        setDailyLog(log);
+        render();
+      });
+    });
+  }
+
+  function init(){
+    render();
+    // Re-render after tracker's own renders settle, and watch for protocol changes
+    setTimeout(render, 300);
+    setTimeout(render, 1200);
+    window.addEventListener('storage', e => { if (e.key === 'apex_state' || e.key === 'apex_daily_log') render(); });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 })();
 </script>
 
