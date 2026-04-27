@@ -459,6 +459,31 @@ body::before{
       anCallouts.innerHTML += `<div class="callout callout-warn"><span class="callout-icon">📉</span><div><strong>Coverage is thin.</strong> Only ${mechsHit.length} of ${goal.mechs.length} mechanisms hit. See below for what you're missing.</div></div>`;
     }
 
+    // Build the set of conflict groups already occupied by the current selection
+    const occupiedConflicts = new Set();
+    selected.forEach(key => {
+      const info = PEP_INFO[key];
+      if (info && info.conflict) occupiedConflicts.add(info.conflict);
+    });
+
+    function pickCleanSuggestion(mech){
+      // Prefer a peptide that doesn't create a doorbell-twice with current stack
+      const clean = mech.by.find(p => {
+        const info = PEP_INFO[p];
+        if (!info) return false;
+        if (selected.has(p)) return false; // already in stack — would double-add same peptide
+        if (info.conflict && occupiedConflicts.has(info.conflict)) return false;
+        return true;
+      });
+      if (clean && PEP_INFO[clean]) return { name: PEP_INFO[clean].name, conflicts: false };
+      // No clean option — fall back to the first listed and flag the conflict
+      const fallback = mech.by[0];
+      if (fallback && PEP_INFO[fallback]) {
+        return { name: PEP_INFO[fallback].name, conflicts: true };
+      }
+      return { name: '?', conflicts: false };
+    }
+
     coverage.style.display = 'block';
     covGrid.innerHTML = '';
     goal.mechs.forEach(m => {
@@ -466,12 +491,22 @@ body::before{
       const matchedPeps = m.by.filter(p => selected.has(p)).map(p => PEP_INFO[p] && PEP_INFO[p].name).filter(Boolean);
       const item = document.createElement('div');
       item.className = 'cov-item ' + (hit ? 'hit' : 'miss');
-      const suggestion = m.by[0] && PEP_INFO[m.by[0]] ? PEP_INFO[m.by[0]].name : '?';
+      let detail;
+      if (hit) {
+        detail = 'via ' + matchedPeps.join(', ');
+      } else {
+        const sugg = pickCleanSuggestion(m);
+        if (sugg.conflicts) {
+          detail = `<span style="color:var(--warn);">⚠ no clean option — every peptide here conflicts with your stack</span>`;
+        } else {
+          detail = 'try ' + sugg.name;
+        }
+      }
       item.innerHTML = `
         <div class="cov-status">${hit ? '✅' : '⬜'}</div>
         <div class="cov-text">
           <div class="cov-name">${m.name}</div>
-          <div class="cov-by">${hit ? 'via ' + matchedPeps.join(', ') : 'try ' + suggestion}</div>
+          <div class="cov-by">${detail}</div>
         </div>
       `;
       covGrid.appendChild(item);
