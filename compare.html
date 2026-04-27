@@ -347,14 +347,26 @@ body::before{
     igf:'IGF-1 receptor'
   };
 
-  // CHEMISTRY CONFLICTS: peptide pairs that can't share a vial / get degraded together
-  // The free copper in GHK-Cu catalyzes oxidation of methionine residues in BPC-157
-  // and TB-500, breaking them down in the vial AND in the body.
+  // CHEMISTRY CONFLICTS: pre-mixed vials where one peptide degrades the others
+  // ONLY fires when the user picks a pre-mixed stack (KLOW/GLOW/Wolverine) —
+  // separate vials of GHK-Cu + BPC + TB are fine because copper isn't sharing
+  // the same vial. Once injected, plasma dilution makes the degradation
+  // negligible. The real issue is in-vial copper-methionine oxidation.
   const CHEM_CONFLICTS = [
     {
-      trigger: 'ghkcu',
-      degrades: ['bpc157','tb500'],
-      reason: 'Copper in GHK-Cu catalyzes oxidation of methionine residues — BPC-157 + TB-500 break down in the vial AND in your bloodstream. Inject from separate vials only, ideally on different days. Never mix in the same syringe.'
+      slug: 'klow',
+      label: 'KLOW Stack',
+      reason: 'KLOW pre-mixes GHK-Cu (copper) with BPC-157 + TB-500. The free copper catalyzes oxidation of methionine residues in the vial — your peptides break down before you inject them. Consider buying separate vials and dosing individually for stability.'
+    },
+    {
+      slug: 'glow',
+      label: 'GLOW Stack',
+      reason: 'GLOW pre-mixes GHK-Cu (copper) with BPC-157 + TB-500. Copper degrades the methionine in those peptides while sitting in the vial. Separate vials = stable peptides.'
+    },
+    {
+      slug: 'wolverine',
+      label: 'Wolverine Stack',
+      reason: 'Wolverine pre-mixes BPC-157 + TB-500 + GHK-Cu in one vial. The copper from GHK-Cu oxidizes the methionine in BPC + TB. For full stability, buy separate vials and inject individually.'
     }
   ];
 
@@ -459,18 +471,12 @@ body::before{
     });
     const dupes = Object.keys(conflicts).filter(c => conflicts[c].length > 1);
 
-    // CHEMISTRY CONFLICTS — copper degradation, etc.
+    // CHEMISTRY CONFLICTS — only fires for pre-mixed stacks (one vial = degradation).
+    // Separate vials of the same peptides → no warning, plasma dilution handles it.
     const chemConflicts = [];
     CHEM_CONFLICTS.forEach(rule => {
-      if (selected.has(rule.trigger)) {
-        const hits = rule.degrades.filter(p => selected.has(p));
-        if (hits.length > 0) {
-          chemConflicts.push({
-            triggerName: PEP_INFO[rule.trigger] && PEP_INFO[rule.trigger].name,
-            victimNames: hits.map(p => PEP_INFO[p] && PEP_INFO[p].name).filter(Boolean),
-            reason: rule.reason
-          });
-        }
+      if (selected.has(rule.slug)) {
+        chemConflicts.push({ label: rule.label, reason: rule.reason });
       }
     });
 
@@ -526,7 +532,7 @@ body::before{
         anCallouts.innerHTML += `
           <div class="callout callout-bad">
             <span class="callout-icon">🧪</span>
-            <div><strong>${c.triggerName} degrades ${c.victimNames.join(' + ')}.</strong> ${c.reason}</div>
+            <div><strong>${c.label} — pre-mixed copper conflict.</strong> ${c.reason}</div>
           </div>`;
       });
     }
@@ -625,14 +631,8 @@ body::before{
       conflicts[info.conflict].push(info.name);
     });
     const conflictPairs = Object.keys(conflicts).filter(c => conflicts[c].length > 1);
-    // Whole-stack chem conflicts (copper degradation etc.)
-    const chemConflictsAll = [];
-    CHEM_CONFLICTS.forEach(rule => {
-      if (selected.has(rule.trigger)) {
-        const hits = rule.degrades.filter(p => selected.has(p));
-        if (hits.length > 0) chemConflictsAll.push({ rule, hits });
-      }
-    });
+    // Whole-stack chem conflicts — only pre-mixed stacks (KLOW/GLOW/Wolverine)
+    const chemConflictsAll = CHEM_CONFLICTS.filter(rule => selected.has(rule.slug));
     const totalConflicts = conflictPairs.length + chemConflictsAll.length;
 
     // Per-goal coverage analysis
