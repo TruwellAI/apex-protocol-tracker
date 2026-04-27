@@ -1,0 +1,201 @@
+/* ═════════════════════════════════════════════════════════════
+   APEX iOS POLISH — iPhone-specific Safari tweaks
+   Load on every page. Targets:
+   - iOS Safari viewport quirks (100vh ≠ visible height)
+   - Notch / Dynamic Island safe areas
+   - Prevent input-zoom on focus (16px+ font rule)
+   - Tap delay / tap highlight removal
+   - Smooth scroll on iOS
+   - PWA standalone polish
+   ═════════════════════════════════════════════════════════════ */
+
+/* ── Use dynamic viewport units (100dvh) so the layout doesn't jump
+   when the Safari URL bar shows/hides. Falls back to 100vh on browsers
+   that don't support dvh. ── */
+html, body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  /* Smooth fonts on iOS retina */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* ── Safe area handling: respect notch + Dynamic Island + home indicator.
+   Already applied per-page but this guarantees it on EVERY container. ── */
+.wrap, .top, .greet, body > div {
+  padding-left: max(var(--app-px, 16px), env(safe-area-inset-left));
+  padding-right: max(var(--app-px, 16px), env(safe-area-inset-right));
+}
+
+/* ── Prevent iOS Safari from zooming when focusing form inputs.
+   Inputs MUST be 16px or larger or iOS auto-zooms in.
+   Override anything smaller. ── */
+input,
+textarea,
+select,
+button {
+  font-size: 16px !important;
+  /* Prevent iOS form-styling overrides */
+  -webkit-appearance: none;
+  appearance: none;
+  /* No tap delay */
+  touch-action: manipulation;
+}
+/* Allow tiny labels and stat values to stay small (they're not interactive) */
+.tile-meta-label,
+.ts-label,
+.opt-sub,
+.brand-tag,
+.tile-mech,
+.tile-status,
+.peptide-card .pc-tag,
+.peptide-card .pc-mech {
+  font-size: inherit !important;
+}
+/* Some inputs we DO want smaller display — but the actual input still needs 16px */
+.em-input,
+.rc-row input {
+  font-size: 16px !important;
+}
+
+/* ── No tap-highlight gray box on iOS ── */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── Smooth momentum scrolling on iOS ── */
+.atl-scroll,
+.timeline-scroll,
+.stepper,
+.goals-list,
+.tabs,
+[style*="overflow-x:auto"],
+[style*="overflow-x: auto"] {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── Long-press context menu OK on photos, never on UI buttons/cards ── */
+button,
+.tile,
+.pep-card,
+.opt-row,
+.today-row,
+.tab,
+.lane,
+.goal-chip,
+.exp-opt,
+.cb-btn,
+.tile-btn,
+.em-btn {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* ── PWA standalone (when added to Home Screen) — feel native ── */
+@media all and (display-mode: standalone) {
+  body {
+    /* Remove web-only browser chrome compensation */
+    overscroll-behavior: none;
+  }
+  /* Hide install banners if any */
+  [data-pwa-install] {
+    display: none !important;
+  }
+}
+
+/* ── Disable iOS bounce-rubber-band on horizontal scroll containers ── */
+.atl-scroll,
+.timeline-scroll {
+  overscroll-behavior-x: contain;
+}
+
+/* ── iPhone-specific tightening (375px–430px) ── */
+@media (max-width: 430px) {
+  /* Slightly tighter grid gaps */
+  .tiles-grid { gap: 10px !important; }
+  .pk-grid { gap: 8px !important; }
+  /* Make headers slightly smaller for one-line readability */
+  .h1 { font-size: clamp(28px, 8vw, 38px) !important; }
+  .greet-h { font-size: 24px !important; }
+}
+
+/* ── iPhone SE / mini (≤375px) — denser layout ── */
+@media (max-width: 375px) {
+  .wrap { padding-left: 12px !important; padding-right: 12px !important; }
+  .tile { padding: 14px !important; }
+  .tile-name { font-size: 17px !important; }
+  .ti-value { font-size: 16px !important; }
+  /* Stack 2-col grids to single col */
+  .em-row,
+  .tile-meta { grid-template-columns: 1fr !important; }
+}
+
+/* ── Pull-to-refresh feels native on iOS only when body owns the scroll ── */
+html {
+  height: -webkit-fill-available;
+}
+
+/* ── Floating buttons — clear from home indicator (the bar at the bottom) ── */
+.bottom-nav,
+.continue-bar,
+#mobile-fab,
+#mobile-bottom-nav {
+  padding-bottom: max(8px, env(safe-area-inset-bottom)) !important;
+}
+
+/* ── Sticky elements compensate for the iOS Dynamic Island / notch ── */
+.top,
+#apex-back,
+#apex-sticky-sel {
+  top: max(8px, env(safe-area-inset-top));
+}
+
+/* ── Native-feeling button press: scale down slightly on tap ── */
+.tile-btn:active,
+.cb-btn:active,
+.em-btn:active,
+.add-btn:active,
+.empty-btn:active,
+.tab:active,
+.tile:active,
+.pep-card:active,
+.lane:active,
+.goal-chip:active,
+.today-row:active,
+.exp-opt:active {
+  transform: scale(0.97);
+  transition: transform 0.08s ease-out;
+}
+
+/* ── Disable double-tap-to-zoom on key UI ── */
+.tile-btn,
+.cb-btn,
+.tab,
+.add-btn,
+.back-btn,
+.tile-edit-btn {
+  touch-action: manipulation;
+}
+
+/* ── Clean number/date input styling on iOS ── */
+input[type="number"],
+input[type="date"],
+input[type="text"] {
+  border-radius: 8px;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* iOS date picker is forced — let it look like our other inputs */
+input[type="date"]::-webkit-date-and-time-value {
+  text-align: left;
+  font-family: 'Rajdhani', sans-serif;
+}
+
+/* ── Improve scroll snap inside horizontal scrollers ── */
+.timeline-scroll,
+.atl-scroll {
+  scroll-snap-type: x proximity;
+}
