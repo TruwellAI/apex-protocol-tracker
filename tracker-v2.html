@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover">
+<title>My Daily Protocol — Apex</title>
+<meta name="description" content="Your peptide protocol tracker. Injecting today? How much? When's next? When does the bottle expire? All in one place.">
+<link rel="icon" href="assets/favicon.ico">
+<link rel="apple-touch-icon" href="assets/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script>
+  // Nuke any service worker / cached HTML
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(rs => rs.forEach(r => r.unregister()));
+    if (window.caches) caches.keys().then(ks => ks.forEach(k => caches.delete(k)));
+  }
+</script>
+<style>
+:root {
+  --bg:#080c10; --panel:#0d1318; --panel2:#121a22; --border:#1a2d3a;
+  --accent:#00d4ff; --accent2:#00ff9d; --accent3:#ff6b35; --accent4:#a78bfa;
+  --good:#00ff9d; --warn:#fbbf24; --bad:#ef4444;
+  --text:#cbd5e1; --muted:#7a8d99; --white:#eaf4f8;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{min-height:100%;height:auto;overflow-y:auto;overflow-x:hidden;position:static;}
+body{
+  background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;
+  font-size:15px;line-height:1.55;
+  padding-top:env(safe-area-inset-top);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+body::before{
+  content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse at 80% 0%, rgba(0,212,255,.06) 0%, transparent 55%),radial-gradient(ellipse at 10% 90%, rgba(0,255,157,.04) 0%, transparent 50%);
+  pointer-events:none;z-index:0;
+}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px;position:relative;z-index:1;}
+
+/* HEADER */
+.top{display:flex;justify-content:space-between;align-items:center;padding:14px 0;}
+.brand{display:flex;align-items:center;gap:8px;text-decoration:none;}
+.brand-mark{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--accent2);letter-spacing:.16em;}
+.brand-tag{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.25em;color:var(--muted);text-transform:uppercase;border-left:1px solid var(--border);padding-left:8px;}
+.back-btn{display:inline-flex;align-items:center;gap:6px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.22em;color:var(--muted);text-decoration:none;text-transform:uppercase;padding:8px 12px;border:1px solid var(--border);border-radius:6px;transition:all .15s;-webkit-tap-highlight-color:transparent;}
+.back-btn:hover{color:var(--accent2);border-color:var(--accent2);}
+.add-btn{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:10px 16px;border-radius:8px;background:linear-gradient(135deg,#00ff9d,#10b981);color:#080c10;border:0;text-decoration:none;display:inline-flex;align-items:center;gap:6px;box-shadow:0 4px 14px rgba(0,255,157,.3);transition:transform .15s;}
+.add-btn:hover{transform:translateY(-1px);}
+
+/* GREETING */
+.greet{padding:20px 0 6px;}
+.greet-h{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:clamp(24px,4.5vw,32px);line-height:1.05;letter-spacing:-.4px;color:var(--white);margin-bottom:6px;}
+.greet-sub{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.22em;color:var(--muted);text-transform:uppercase;}
+.greet-sub strong{color:var(--accent2);font-weight:700;}
+
+/* DISCLAIMER */
+.disclaim{margin:10px 0 22px;display:inline-flex;align-items:center;gap:8px;padding:6px 12px;background:rgba(255,107,53,.08);border:1px solid rgba(255,107,53,.3);border-radius:14px;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--accent3);text-transform:uppercase;}
+
+/* TODAY BLOCK */
+.today-card{
+  background:linear-gradient(180deg,rgba(0,255,157,.06),rgba(0,212,255,.02));
+  border:1px solid rgba(0,255,157,.3);border-radius:14px;
+  padding:18px 20px 16px;margin-bottom:24px;
+}
+.today-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+.today-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:22px;color:#fff;letter-spacing:-.3px;}
+.today-progress{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent2);letter-spacing:.18em;font-weight:700;}
+.today-list{display:flex;flex-direction:column;gap:8px;}
+.today-row{
+  display:flex;align-items:center;gap:14px;
+  background:#0d1318;border:1px solid var(--border);border-radius:10px;
+  padding:14px 16px;cursor:pointer;transition:all .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.today-row:hover,.today-row:active{border-color:rgba(0,255,157,.4);}
+.today-row.done{background:rgba(0,255,157,.06);border-color:rgba(0,255,157,.35);}
+.today-check{width:28px;height:28px;border-radius:50%;flex-shrink:0;border:2px solid rgba(148,163,184,.4);display:flex;align-items:center;justify-content:center;color:transparent;transition:all .15s;}
+.today-row.done .today-check{background:#00ff9d;border-color:#00ff9d;color:#080c10;}
+.today-info{flex:1;min-width:0;}
+.today-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;color:#fff;letter-spacing:-.2px;line-height:1.15;}
+.today-row.done .today-name{text-decoration:line-through;opacity:.7;}
+.today-detail{font-size:12px;color:var(--muted);margin-top:2px;}
+.today-detail strong{color:var(--accent2);font-weight:700;}
+.today-celebrate{padding:14px;text-align:center;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;color:var(--accent2);letter-spacing:.04em;}
+
+/* TILES */
+.tiles-section{margin-bottom:28px;}
+.tiles-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:20px;color:var(--white);margin-bottom:12px;letter-spacing:-.2px;display:flex;align-items:center;gap:10px;}
+.tiles-title .count{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.2em;font-weight:700;}
+.tiles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;}
+@media (max-width:560px){.tiles-grid{grid-template-columns:1fr;}}
+
+.tile{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px;transition:border-color .15s;}
+.tile:hover{border-color:rgba(0,255,157,.3);}
+.tile-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:14px;}
+.tile-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:20px;color:#fff;line-height:1.05;letter-spacing:-.3px;}
+.tile-mech{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin-top:3px;}
+.tile-status{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.18em;font-weight:700;padding:4px 10px;border-radius:4px;text-transform:uppercase;flex-shrink:0;}
+.tile-status.today{background:rgba(0,255,157,.15);color:var(--good);border:1px solid var(--good);}
+.tile-status.next{background:rgba(0,212,255,.12);color:var(--accent);border:1px solid rgba(0,212,255,.4);}
+.tile-status.done{background:rgba(167,139,250,.12);color:var(--accent4);border:1px solid rgba(167,139,250,.4);}
+
+.tile-injection{
+  background:rgba(8,12,16,.6);border:1px solid var(--border);border-radius:10px;
+  padding:12px 14px;margin-bottom:12px;
+  display:flex;align-items:center;gap:14px;
+}
+.ti-icon{font-size:32px;line-height:1;flex-shrink:0;}
+.ti-text{flex:1;min-width:0;}
+.ti-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin-bottom:2px;}
+.ti-value{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;color:#fff;line-height:1.1;letter-spacing:-.2px;}
+.ti-value .units{color:var(--accent2);}
+.ti-value .when{color:var(--accent);font-size:14px;display:block;margin-top:2px;font-weight:600;}
+
+.tile-progress{margin-bottom:12px;}
+.tp-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;font-size:12px;color:var(--muted);}
+.tp-row strong{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:#fff;}
+.tp-bar{height:6px;background:rgba(148,163,184,.15);border-radius:3px;overflow:hidden;}
+.tp-fill{height:100%;background:linear-gradient(90deg,#00ff9d,#00d4ff);border-radius:3px;transition:width .4s;}
+
+.tile-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.tile-meta-row{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;}
+.tile-meta-label{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin-bottom:3px;}
+.tile-meta-value{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;color:#fff;line-height:1.15;}
+.tile-meta-value.warn{color:var(--warn);}
+.tile-meta-value.bad{color:var(--bad);}
+.tile-meta-value .vu{color:var(--muted);font-weight:500;font-size:11px;}
+
+.tile-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.tile-btn{flex:1;min-width:120px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:10px 14px;border-radius:8px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text);transition:all .15s;-webkit-tap-highlight-color:transparent;}
+.tile-btn:hover,.tile-btn:active{border-color:var(--accent2);color:var(--accent2);}
+.tile-btn.primary{background:linear-gradient(135deg,#00ff9d,#10b981);color:#080c10;border:0;box-shadow:0 4px 14px rgba(0,255,157,.3);}
+.tile-btn.primary.done{background:rgba(0,255,157,.15);color:var(--accent2);box-shadow:none;border:1px solid rgba(0,255,157,.5);}
+
+/* EMPTY STATE */
+.empty-card{
+  text-align:center;padding:60px 24px;
+  background:linear-gradient(180deg,rgba(0,255,157,.04),rgba(0,212,255,.02));
+  border:1px dashed rgba(0,255,157,.3);border-radius:16px;margin:20px 0;
+}
+.empty-icon{font-size:64px;margin-bottom:16px;}
+.empty-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:26px;color:#fff;margin-bottom:10px;letter-spacing:-.3px;}
+.empty-sub{font-size:14px;color:var(--text);margin-bottom:24px;max-width:400px;margin-left:auto;margin-right:auto;line-height:1.5;}
+.empty-btn{display:inline-flex;align-items:center;gap:12px;padding:18px 38px;background:linear-gradient(135deg,#00ff9d,#10b981);color:#080c10;font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;border-radius:10px;box-shadow:0 8px 28px rgba(0,255,157,.4);animation:pulse 2.4s ease-in-out infinite;}
+@keyframes pulse{0%,100%{transform:translateY(0);box-shadow:0 8px 28px rgba(0,255,157,.4);}50%{transform:translateY(-2px);box-shadow:0 12px 36px rgba(0,255,157,.6);}}
+
+/* TIMELINE */
+.timeline-section{margin-top:32px;padding:22px 20px 24px;background:linear-gradient(180deg,rgba(167,139,250,.06),rgba(0,212,255,.03));border:1px solid rgba(167,139,250,.3);border-radius:14px;}
+.timeline-head{margin-bottom:16px;}
+.timeline-eyebrow{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.25em;color:var(--accent4);text-transform:uppercase;margin-bottom:5px;font-weight:700;}
+.timeline-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:20px;color:#fff;letter-spacing:-.3px;}
+.timeline-sub{font-size:12px;color:var(--muted);margin-top:3px;}
+.timeline-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.timeline-grid{min-width:740px;}
+.tg-row{display:grid;grid-template-columns:120px 1fr;align-items:center;gap:12px;padding:6px 0;border-bottom:1px solid rgba(148,163,184,.08);}
+.tg-row:last-child{border-bottom:0;}
+.tg-row.tg-month-row{padding:4px 0 8px;border-bottom:1px solid rgba(167,139,250,.25);}
+.tg-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;color:#fff;line-height:1.1;}
+.tg-bars{position:relative;height:24px;background:rgba(8,12,16,.4);border-radius:4px;overflow:hidden;}
+.tg-month-row .tg-bars{background:transparent;height:18px;}
+.tg-month{position:absolute;top:0;transform:translateX(-50%);font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;}
+.tg-seg{position:absolute;top:3px;bottom:3px;border-radius:3px;display:flex;align-items:center;padding:0 6px;overflow:hidden;}
+.tg-seg-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.06em;color:#080c10;font-weight:700;white-space:nowrap;text-transform:uppercase;}
+.tg-seg.phase-0{background:linear-gradient(135deg,#00ff9d,#10b981);}
+.tg-seg.phase-1{background:linear-gradient(135deg,#5eead4,#14b8a6);}
+.tg-seg.phase-2{background:linear-gradient(135deg,#67e8f9,#06b6d4);}
+.tg-seg.phase-3{background:linear-gradient(135deg,#93c5fd,#3b82f6);}
+.tg-seg.phase-4{background:linear-gradient(135deg,#c4b5fd,#8b5cf6);}
+.tg-seg.phase-5{background:linear-gradient(135deg,#f0abfc,#c026d3);}
+.tg-seg.tg-off{background:repeating-linear-gradient(45deg,rgba(148,163,184,.12),rgba(148,163,184,.12) 4px,rgba(148,163,184,.04) 4px,rgba(148,163,184,.04) 8px);border:1px solid rgba(148,163,184,.2);}
+.tg-seg.tg-off .tg-seg-label{color:var(--muted);}
+.tg-today{position:absolute;top:-2px;bottom:-22px;width:2px;background:#fbbf24;box-shadow:0 0 8px rgba(251,191,36,.6);z-index:5;}
+.tg-today::before{content:'NOW';position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:.14em;color:#fbbf24;font-weight:700;}
+
+@media (max-width:640px){
+  .tg-row{grid-template-columns:84px 1fr;gap:8px;}
+  .tg-name{font-size:11px;}
+  .timeline-grid{min-width:580px;}
+}
+
+/* FOOT */
+.foot{padding:20px 0 24px;display:flex;flex-direction:column;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.15em;text-align:center;border-top:1px solid var(--border);margin-top:28px;}
+.foot a{color:var(--muted);text-decoration:none;}
+.foot a:hover{color:var(--accent2);}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="top">
+    <a href="index.html" class="back-btn">← Home</a>
+    <a href="index.html" class="brand">
+      <span class="brand-mark">APEX</span>
+      <span class="brand-tag">Tracker</span>
+    </a>
+    <a href="research-hub.html" class="add-btn">＋ Add</a>
+  </div>
+
+  <div class="greet">
+    <div class="greet-h" id="greet-h">Hello.</div>
+    <div class="greet-sub" id="greet-sub"><strong>0 active</strong> · loading…</div>
+  </div>
+
+  <div class="disclaim">⚠ Research use only · Not medical advice · Talk to a licensed provider</div>
+
+  <!-- TODAY -->
+  <div class="today-card" id="today-card" style="display:none;">
+    <div class="today-head">
+      <div class="today-title">Today's Doses</div>
+      <div class="today-progress" id="today-progress">0 / 0</div>
+    </div>
+    <div class="today-list" id="today-list"></div>
+  </div>
+
+  <!-- TILES -->
+  <div class="tiles-section" id="tiles-section" style="display:none;">
+    <div class="tiles-title">Your Stack <span class="count" id="tiles-count">— 0 active</span></div>
+    <div class="tiles-grid" id="tiles-grid"></div>
+  </div>
+
+  <!-- EMPTY -->
+  <div class="empty-card" id="empty-card" style="display:none;">
+    <div class="empty-icon">🧪</div>
+    <div class="empty-title">No active protocols</div>
+    <div class="empty-sub">Build your first protocol — pick peptides, mix them, set your titration. We'll handle the math. 90 seconds.</div>
+    <a href="research-hub.html" class="empty-btn">＋ Add Protocol →</a>
+  </div>
+
+  <!-- 52-WEEK TIMELINE -->
+  <div class="timeline-section" id="timeline-section" style="display:none;">
+    <div class="timeline-head">
+      <div class="timeline-eyebrow">📅 52-Week View</div>
+      <div class="timeline-title">Your stack across the next year</div>
+      <div class="timeline-sub">Cycles, off-periods, titration phases. Yellow line = today.</div>
+    </div>
+    <div class="timeline-scroll">
+      <div class="timeline-grid" id="timeline-grid"></div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div>© Apex Protocol · Research use only · Not medical advice · 17+</div>
+    <div><a href="privacy.html">Privacy</a> &nbsp;·&nbsp; <a href="terms.html">Terms</a> &nbsp;·&nbsp; <a href="protocol-tracker.html">Legacy tracker</a></div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  const SHELF_LIFE_DAYS = 30;
+
+  // ── HELPERS ───────────────────────────
+  function todayKey(){
+    const d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  }
+  function daysBetween(a, b){
+    const aMid = new Date(a.getFullYear(), a.getMonth(), a.getDate());
+    const bMid = new Date(b.getFullYear(), b.getMonth(), b.getDate());
+    return Math.round((bMid - aMid) / 86400000);
+  }
+  function fmtDate(d){
+    return d.toLocaleDateString(undefined, { month:'short', day:'numeric' });
+  }
+  function fmtDow(d){
+    return d.toLocaleDateString(undefined, { weekday:'long' });
+  }
+  function getState(){
+    try { return JSON.parse(localStorage.getItem('apex_state') || '{}'); } catch(e){ return {}; }
+  }
+  function setState(s){
+    try { localStorage.setItem('apex_state', JSON.stringify(s)); } catch(e){}
+  }
+  function getRecon(){
+    try { return JSON.parse(localStorage.getItem('apex_recon') || '{}'); } catch(e){ return {}; }
+  }
+  function getDailyLog(){
+    try { return JSON.parse(localStorage.getItem('apex_daily_log') || '{}'); } catch(e){ return {}; }
+  }
+  function setDailyLog(log){
+    try { localStorage.setItem('apex_daily_log', JSON.stringify(log)); } catch(e){}
+  }
+  function isWeekly(freq){ return freq && /weekly/i.test(freq); }
+  function isAsNeeded(freq){ return freq && /(as needed|pre-event|when needed)/i.test(freq); }
+
+  // ── IMPORT PENDING (from protocol-summary) ─────────
+  function importPending(){
+    const params = new URLSearchParams(location.search);
+    if (params.get('import') !== 'pending') return false;
+    let pending = [];
+    try { pending = JSON.parse(localStorage.getItem('apex_pending_protocols') || '[]'); } catch(e){}
+    if (!pending.length) return false;
+
+    const state = getState();
+    state.protocols = state.protocols || [];
+    const today = todayKey();
+    let added = 0;
+    pending.forEach(p => {
+      if (state.protocols.find(x => x.slug === p.slug && (x.status||'active')==='active' && !x.isDemoSeed)) return;
+      state.protocols.push({
+        id: 'p_' + Date.now() + '_' + Math.random().toString(36).slice(2,7),
+        slug: p.slug, name: p.name, mech: p.mech,
+        dose: p.dose, freq: p.freq,
+        cycleWeeks: typeof p.cycleWks === 'number' ? p.cycleWks : 8,
+        cycleWks: p.cycleWks,
+        titration: p.titration || null,
+        status: 'active', startDate: p.startDate || today,
+        createdAt: new Date().toISOString(),
+        isDemoSeed: false, dailyLog: []
+      });
+      added++;
+    });
+    if (added > 0) setState(state);
+    localStorage.removeItem('apex_pending_protocols');
+    const url = new URL(location.href);
+    url.searchParams.delete('import');
+    history.replaceState({}, '', url.toString());
+    return added > 0;
+  }
+
+  // ── TITRATION RESOLUTION ──
+  function resolveDose(p, dayNum, cycleDays){
+    let currentDose = p.dose || 'as scheduled';
+    let nextPhase = null;
+    if (p.titration && Array.isArray(p.titration) && p.titration.length > 1) {
+      const phaseLen = cycleDays / p.titration.length;
+      const phaseIdx = Math.min(p.titration.length - 1, Math.floor((dayNum - 1) / phaseLen));
+      currentDose = p.titration[phaseIdx].d;
+      if (phaseIdx < p.titration.length - 1) {
+        const next = p.titration[phaseIdx + 1];
+        const nextStartDay = Math.ceil((phaseIdx + 1) * phaseLen) + 1;
+        nextPhase = { dose: next.d, startDay: nextStartDay, label: next.w };
+      }
+    }
+    return { current: currentDose, next: nextPhase };
+  }
+
+  function doseToUnits(doseStr, concentrationMgPerMl){
+    if (!doseStr || !concentrationMgPerMl) return null;
+    const m = String(doseStr).match(/(\d+(?:\.\d+)?)\s*(mg|mcg)/i);
+    if (!m) return null;
+    const amount = parseFloat(m[1]);
+    const unit = m[2].toLowerCase();
+    const amountMg = unit === 'mcg' ? amount/1000 : amount;
+    const vol = amountMg / parseFloat(concentrationMgPerMl);
+    if (!vol || !isFinite(vol)) return null;
+    return { mL: vol.toFixed(2), units: Math.round(vol * 100) };
+  }
+
+  function shouldDoToday(p, today){
+    if (!p) return { go: false, reason: '' };
+    if (isAsNeeded(p.freq)) return { go: false, reason: 'as needed' };
+    if (isWeekly(p.freq)) {
+      const start = p.startDate ? new Date(p.startDate) : today;
+      // Match same weekday as start
+      if (start.getDay() === today.getDay()) return { go: true, reason: 'weekly · today' };
+      // Find next weekday
+      const daysToNext = (start.getDay() - today.getDay() + 7) % 7 || 7;
+      const next = new Date(today);
+      next.setDate(today.getDate() + daysToNext);
+      return { go: false, reason: 'next ' + fmtDow(next) };
+    }
+    return { go: true, reason: 'daily' };
+  }
+
+  // ── RENDER ─────────────────────────────
+  function render(){
+    importPending();
+
+    const state = getState();
+    const protocols = (state.protocols || []).filter(p => (p.status||'active') === 'active' && !p.isDemoSeed);
+    const recon = getRecon();
+    const today = new Date();
+    const log = getDailyLog();
+    const todayDoses = log[todayKey()] || {};
+
+    // GREETING
+    const hour = today.getHours();
+    const salutation = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+    document.getElementById('greet-h').textContent = salutation + '.';
+
+    // Build today's list — only peptides scheduled for TODAY
+    const todayList = [];
+    protocols.forEach(p => {
+      const sched = shouldDoToday(p, today);
+      if (sched.go) todayList.push({ p, sched });
+    });
+    const doneCount = todayList.filter(x => todayDoses[x.p.id]).length;
+    document.getElementById('greet-sub').innerHTML =
+      `<strong>${protocols.length}</strong> active · <strong>${todayList.length - doneCount}</strong> due today`;
+
+    // TODAY CARD
+    const todayCard = document.getElementById('today-card');
+    const todayListEl = document.getElementById('today-list');
+    const todayProgress = document.getElementById('today-progress');
+    if (todayList.length > 0) {
+      todayCard.style.display = 'block';
+      todayProgress.textContent = doneCount + ' / ' + todayList.length;
+      todayListEl.innerHTML = '';
+      todayList.forEach(({ p, sched }) => {
+        const isDone = !!todayDoses[p.id];
+        const start = p.startDate ? new Date(p.startDate) : today;
+        const cycleWks = typeof p.cycleWeeks === 'number' ? p.cycleWeeks : 8;
+        const cycleDays = cycleWks * 7;
+        const dayNum = Math.max(1, Math.min(cycleDays, daysBetween(start, today) + 1));
+        const dose = resolveDose(p, dayNum, cycleDays);
+        const reconKey = p.slug || '';
+        const reconInfo = recon[reconKey] || {};
+        const conc = reconInfo.vial && (reconInfo.bac || reconInfo.acetic) ? reconInfo.vial / ((reconInfo.bac||0) + (reconInfo.acetic||0)) : null;
+        const units = doseToUnits(dose.current, conc);
+
+        const row = document.createElement('div');
+        row.className = 'today-row' + (isDone ? ' done' : '');
+        row.innerHTML = `
+          <div class="today-check">✓</div>
+          <div class="today-info">
+            <div class="today-name">${p.name}</div>
+            <div class="today-detail"><strong>${dose.current}</strong>${units ? ' · <strong>' + units.units + ' units</strong> on the pen' : ''} · ${sched.reason}</div>
+          </div>
+        `;
+        row.addEventListener('click', () => {
+          const log = getDailyLog();
+          const k = todayKey();
+          log[k] = log[k] || {};
+          if (log[k][p.id]) delete log[k][p.id];
+          else { log[k][p.id] = new Date().toISOString(); try { if (navigator.vibrate) navigator.vibrate(20); } catch(_){} }
+          setDailyLog(log);
+          render();
+        });
+        todayListEl.appendChild(row);
+      });
+
+      if (doneCount === todayList.length && todayList.length > 0) {
+        todayListEl.innerHTML += '<div class="today-celebrate">🎯 All doses logged. Crushed today.</div>';
+      }
+    } else {
+      todayCard.style.display = 'none';
+    }
+
+    // TILES
+    const tilesSection = document.getElementById('tiles-section');
+    const tilesGrid = document.getElementById('tiles-grid');
+    const tilesCount = document.getElementById('tiles-count');
+    const emptyCard = document.getElementById('empty-card');
+    const timelineSection = document.getElementById('timeline-section');
+
+    if (protocols.length === 0) {
+      tilesSection.style.display = 'none';
+      timelineSection.style.display = 'none';
+      emptyCard.style.display = 'block';
+      return;
+    }
+
+    emptyCard.style.display = 'none';
+    tilesSection.style.display = 'block';
+    tilesCount.textContent = '— ' + protocols.length + ' active';
+
+    tilesGrid.innerHTML = '';
+    protocols.forEach(p => tilesGrid.appendChild(renderTile(p, recon, today, todayDoses)));
+
+    // TIMELINE
+    timelineSection.style.display = 'block';
+    renderTimeline(protocols, today);
+  }
+
+  function renderTile(p, recon, today, todayDoses){
+    const start = p.startDate ? new Date(p.startDate) : today;
+    const cycleWks = typeof p.cycleWeeks === 'number' ? p.cycleWeeks : 8;
+    const cycleDays = cycleWks * 7;
+    const dayNum = Math.max(1, Math.min(cycleDays, daysBetween(start, today) + 1));
+    const daysLeft = Math.max(0, cycleDays - dayNum);
+    const pct = Math.round((dayNum / cycleDays) * 100);
+
+    const dose = resolveDose(p, dayNum, cycleDays);
+    const reconInfo = recon[p.slug] || {};
+    const totalVol = (reconInfo.bac || 0) + (reconInfo.acetic || 0);
+    const conc = reconInfo.vial && totalVol > 0 ? reconInfo.vial / totalVol : null;
+    const units = doseToUnits(dose.current, conc);
+
+    const sched = shouldDoToday(p, today);
+    const isDone = !!todayDoses[p.id];
+    const daysSinceMix = daysBetween(start, today);
+    const vialDaysLeft = Math.max(0, SHELF_LIFE_DAYS - daysSinceMix);
+    const nextMixDate = new Date(start);
+    nextMixDate.setDate(nextMixDate.getDate() + SHELF_LIFE_DAYS);
+    let vialClass = '';
+    if (vialDaysLeft <= 3) vialClass = 'bad';
+    else if (vialDaysLeft <= 7) vialClass = 'warn';
+
+    const cycleEnd = new Date(start);
+    cycleEnd.setDate(cycleEnd.getDate() + cycleDays);
+
+    let nextTitText = null;
+    if (dose.next) {
+      const nextDate = new Date(start);
+      nextDate.setDate(nextDate.getDate() + dose.next.startDay - 1);
+      const daysAway = Math.max(0, daysBetween(today, nextDate));
+      nextTitText = dose.next.dose + ' · in ' + daysAway + 'd · ' + fmtDate(nextDate);
+    }
+
+    let statusBadge;
+    if (isDone) statusBadge = '<div class="tile-status done">✓ Done Today</div>';
+    else if (sched.go) statusBadge = '<div class="tile-status today">● Inject Today</div>';
+    else statusBadge = '<div class="tile-status next">' + sched.reason + '</div>';
+
+    const tile = document.createElement('div');
+    tile.className = 'tile';
+    tile.innerHTML = `
+      <div class="tile-head">
+        <div>
+          <div class="tile-name">${p.name}</div>
+          <div class="tile-mech">${p.mech || ''}</div>
+        </div>
+        ${statusBadge}
+      </div>
+
+      <div class="tile-injection">
+        <div class="ti-icon">💉</div>
+        <div class="ti-text">
+          <div class="ti-label">${sched.go ? "Inject today" : "Next injection"}</div>
+          <div class="ti-value">${dose.current}${units ? ' <span class="units">· ' + units.units + ' units</span>' : ''}<span class="when">${sched.go ? 'today' : sched.reason}</span></div>
+        </div>
+      </div>
+
+      <div class="tile-progress">
+        <div class="tp-row"><span><strong>Day ${dayNum}</strong> of ${cycleDays}</span><span><strong>${daysLeft}</strong> days left · ends ${fmtDate(cycleEnd)}</span></div>
+        <div class="tp-bar"><div class="tp-fill" style="width:${pct}%"></div></div>
+      </div>
+
+      <div class="tile-meta">
+        <div class="tile-meta-row">
+          <div class="tile-meta-label">Bottle expires</div>
+          <div class="tile-meta-value ${vialClass}">${vialDaysLeft} <span class="vu">days · ${fmtDate(nextMixDate)}</span></div>
+        </div>
+        <div class="tile-meta-row">
+          <div class="tile-meta-label">${nextTitText ? 'Next titration' : (conc ? 'Concentration' : 'Frequency')}</div>
+          <div class="tile-meta-value">${nextTitText ? nextTitText : (conc ? conc.toFixed(2) + ' <span class="vu">mg/mL</span>' : (p.freq || 'daily'))}</div>
+        </div>
+      </div>
+
+      <div class="tile-actions">
+        <button class="tile-btn primary ${isDone ? 'done' : ''}" data-act="log">${isDone ? '✓ Logged Today' : (sched.go ? "Log Today's Dose" : 'Log Anyway')}</button>
+        <button class="tile-btn" data-act="end">End Cycle</button>
+      </div>
+    `;
+
+    tile.querySelector('[data-act="log"]').addEventListener('click', () => {
+      const log = getDailyLog();
+      const k = todayKey();
+      log[k] = log[k] || {};
+      if (log[k][p.id]) delete log[k][p.id];
+      else { log[k][p.id] = new Date().toISOString(); try { if (navigator.vibrate) navigator.vibrate(20); } catch(_){} }
+      setDailyLog(log);
+      render();
+    });
+    tile.querySelector('[data-act="end"]').addEventListener('click', () => {
+      if (!confirm('End cycle for ' + p.name + '?')) return;
+      const state = getState();
+      const idx = (state.protocols || []).findIndex(x => x.id === p.id);
+      if (idx >= 0) {
+        state.protocols[idx].status = 'completed';
+        state.protocols[idx].endedAt = new Date().toISOString();
+        setState(state);
+      }
+      render();
+    });
+
+    return tile;
+  }
+
+  // ── 52-WEEK TIMELINE ──
+  function renderTimeline(protocols, today){
+    const grid = document.getElementById('timeline-grid');
+    const totalWeeks = 52;
+    const allStarts = protocols.map(p => p.startDate ? new Date(p.startDate) : today);
+    const earliest = allStarts.reduce((a,b) => a < b ? a : b, today);
+
+    const monthsRow = [];
+    for (let w = 0; w < totalWeeks; w += 4) {
+      const d = new Date(earliest);
+      d.setDate(d.getDate() + w*7);
+      monthsRow.push({ week: w, label: d.toLocaleDateString(undefined, { month:'short' }) });
+    }
+    const todayPctOfYear = Math.max(0, Math.min(100, (daysBetween(earliest, today) / (totalWeeks*7)) * 100));
+
+    let html = `
+      <div class="tg-row tg-month-row">
+        <div class="tg-name"></div>
+        <div class="tg-bars">
+          ${monthsRow.map(m => `<div class="tg-month" style="left:${(m.week/totalWeeks)*100}%">${m.label}</div>`).join('')}
+          <div class="tg-today" style="left:${todayPctOfYear}%"></div>
+        </div>
+      </div>
+    `;
+
+    protocols.forEach(p => { html += renderTimelineRow(p, earliest, totalWeeks); });
+    grid.innerHTML = html;
+  }
+
+  function renderTimelineRow(p, anchor, totalWeeks){
+    const start = p.startDate ? new Date(p.startDate) : new Date();
+    const cycleWks = typeof p.cycleWeeks === 'number' ? p.cycleWeeks : 8;
+    const startWeek = daysBetween(anchor, start) / 7;
+    const endWeek = startWeek + cycleWks;
+
+    let segments = [];
+    if (p.titration && Array.isArray(p.titration) && p.titration.length > 1) {
+      const phaseLen = cycleWks / p.titration.length;
+      p.titration.forEach((t, i) => {
+        segments.push({
+          start: startWeek + (i*phaseLen),
+          end: startWeek + (i*phaseLen) + phaseLen,
+          label: t.d, phase: i % 6
+        });
+      });
+    } else {
+      segments.push({ start: startWeek, end: endWeek, label: p.dose || 'on', phase: 0 });
+    }
+
+    const showOff = endWeek < totalWeeks;
+    const offEnd = Math.min(totalWeeks, endWeek + 8);
+
+    const segHtml = segments.map(s => {
+      if (s.start >= totalWeeks || s.end <= 0) return '';
+      const left = Math.max(0, (s.start / totalWeeks) * 100);
+      const width = Math.max(0.5, ((Math.min(s.end, totalWeeks) - Math.max(s.start, 0)) / totalWeeks) * 100);
+      return `<div class="tg-seg phase-${s.phase}" style="left:${left}%;width:${width}%" title="${s.label}"><span class="tg-seg-label">${s.label}</span></div>`;
+    }).join('');
+
+    const offHtml = showOff ? `<div class="tg-seg tg-off" style="left:${(endWeek/totalWeeks)*100}%;width:${((offEnd-endWeek)/totalWeeks)*100}%"><span class="tg-seg-label">off</span></div>` : '';
+
+    return `
+      <div class="tg-row">
+        <div class="tg-name">${p.name}</div>
+        <div class="tg-bars">${segHtml}${offHtml}</div>
+      </div>
+    `;
+  }
+
+  // ── INIT ───────────────────────────────
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', render);
+  } else {
+    render();
+  }
+  window.addEventListener('storage', e => { if (/apex/.test(e.key||'')) render(); });
+})();
+</script>
+
+</body>
+</html>
