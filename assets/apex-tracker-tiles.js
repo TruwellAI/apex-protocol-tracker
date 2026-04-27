@@ -218,7 +218,7 @@
     const daysLeft = Math.max(0, cycleDays - dayNum);
     const pct = Math.round((dayNum / cycleDays) * 100);
 
-    // Vial freshness — assume reconstitution happened on cycle start unless tracked separately
+    // Vial freshness — countdown from cycle start
     const reconDate = start;
     const daysSinceMix = daysBetween(reconDate, today);
     const vialDaysLeft = Math.max(0, SHELF_LIFE_DAYS - daysSinceMix);
@@ -226,14 +226,50 @@
     nextMixDate.setDate(nextMixDate.getDate() + SHELF_LIFE_DAYS);
 
     let vialClass = '';
-    let vialStatus = 'fresh';
-    if (vialDaysLeft <= 3) { vialClass = 'bad'; vialStatus = 'bad'; }
-    else if (vialDaysLeft <= 7) { vialClass = 'warn'; vialStatus = 'warn'; }
+    if (vialDaysLeft <= 3) vialClass = 'bad';
+    else if (vialDaysLeft <= 7) vialClass = 'warn';
 
     const reconKey = (p.slug || '').replace(/^\.\//, '');
     const reconInfo = recon[reconKey] || {};
     const total = (reconInfo.bac || 3) + (reconInfo.acetic || 0);
     const concentration = (reconInfo.vial && total > 0) ? (reconInfo.vial / total).toFixed(2) : null;
+
+    // ─── TITRATION RESOLUTION ───
+    // If peptide has titration, figure out which phase we're in based on dayNum
+    let currentPhaseDose = p.dose || 'as scheduled';
+    let nextPhaseInfo = null; // { dose, startDate, daysAway }
+    if (p.titration && Array.isArray(p.titration) && p.titration.length > 1) {
+      const phaseLen = cycleDays / p.titration.length; // days per titration phase
+      const phaseIdx = Math.min(p.titration.length - 1, Math.floor((dayNum - 1) / phaseLen));
+      const cur = p.titration[phaseIdx];
+      currentPhaseDose = cur.d;
+      // Next phase
+      if (phaseIdx < p.titration.length - 1) {
+        const next = p.titration[phaseIdx + 1];
+        const nextStartDay = Math.ceil((phaseIdx + 1) * phaseLen) + 1;
+        const nextStart = new Date(start);
+        nextStart.setDate(nextStart.getDate() + nextStartDay - 1);
+        const daysAway = Math.max(0, daysBetween(today, nextStart));
+        nextPhaseInfo = { dose: next.d, startDate: nextStart, daysAway: daysAway };
+      }
+    }
+
+    // Compute injection volume in mL if we know dose + concentration
+    let injectionVolume = null;
+    if (concentration) {
+      const m = String(currentPhaseDose).match(/(\d+(?:\.\d+)?)\s*(mg|mcg)/i);
+      if (m) {
+        const amount = parseFloat(m[1]);
+        const unit = m[2].toLowerCase();
+        const amountMg = unit === 'mcg' ? amount / 1000 : amount;
+        const vol = amountMg / parseFloat(concentration);
+        if (vol > 0 && isFinite(vol)) {
+          // Convert mL to insulin units (1 mL = 100 units)
+          const units = Math.round(vol * 100);
+          injectionVolume = { mL: vol.toFixed(2), units: units };
+        }
+      }
+    }
 
     // Today's log status
     const dailyLog = getDailyLog();
@@ -266,20 +302,20 @@
 
       <div class="at-grid">
         <div class="at-stat">
-          <div class="at-stat-label">Vial good for</div>
-          <div class="at-stat-value ${vialClass}">${vialDaysLeft} <span class="vu">days</span></div>
+          <div class="at-stat-label">Next dose</div>
+          <div class="at-stat-value">${currentPhaseDose}${injectionVolume ? ' <span class="vu">·</span> <span style="color:var(--accent2);">' + injectionVolume.units + ' units</span>' : ''}</div>
         </div>
         <div class="at-stat">
-          <div class="at-stat-label">Next mix</div>
-          <div class="at-stat-value ${vialClass}">${fmtDate(nextMixDate)}</div>
+          <div class="at-stat-label">Frequency</div>
+          <div class="at-stat-value">${p.freq || 'daily'}</div>
         </div>
         <div class="at-stat">
-          <div class="at-stat-label">Dose</div>
-          <div class="at-stat-value">${p.dose || '—'}</div>
+          <div class="at-stat-label">Bottle expires in</div>
+          <div class="at-stat-value ${vialClass}">${vialDaysLeft} <span class="vu">days</span> <span class="vu">· ${fmtDate(nextMixDate)}</span></div>
         </div>
         <div class="at-stat">
-          <div class="at-stat-label">${concentration ? 'Concentration' : 'Frequency'}</div>
-          <div class="at-stat-value">${concentration ? concentration + ' <span class="vu">mg/mL</span>' : (p.freq || 'daily')}</div>
+          <div class="at-stat-label">${nextPhaseInfo ? 'Next titration' : 'Concentration'}</div>
+          <div class="at-stat-value">${nextPhaseInfo ? '<span style="color:var(--accent4);">' + nextPhaseInfo.dose + '</span> <span class="vu">in ' + nextPhaseInfo.daysAway + 'd · ' + fmtDate(nextPhaseInfo.startDate) + '</span>' : (concentration ? concentration + ' <span class="vu">mg/mL</span>' : '—')}</div>
         </div>
       </div>
 
