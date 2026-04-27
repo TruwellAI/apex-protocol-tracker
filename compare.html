@@ -333,6 +333,17 @@ body::before{
     igf:'IGF-1 receptor'
   };
 
+  // CHEMISTRY CONFLICTS: peptide pairs that can't share a vial / get degraded together
+  // The free copper in GHK-Cu catalyzes oxidation of methionine residues in BPC-157
+  // and TB-500, breaking them down in the vial AND in the body.
+  const CHEM_CONFLICTS = [
+    {
+      trigger: 'ghkcu',
+      degrades: ['bpc157','tb500'],
+      reason: 'Copper in GHK-Cu catalyzes oxidation of methionine residues — BPC-157 + TB-500 break down in the vial AND in your bloodstream. Inject from separate vials only, ideally on different days. Never mix in the same syringe.'
+    }
+  ];
+
   let activeGoal = 'fatloss';
   let selected = new Set();
 
@@ -434,6 +445,21 @@ body::before{
     });
     const dupes = Object.keys(conflicts).filter(c => conflicts[c].length > 1);
 
+    // CHEMISTRY CONFLICTS — copper degradation, etc.
+    const chemConflicts = [];
+    CHEM_CONFLICTS.forEach(rule => {
+      if (selected.has(rule.trigger)) {
+        const hits = rule.degrades.filter(p => selected.has(p));
+        if (hits.length > 0) {
+          chemConflicts.push({
+            triggerName: PEP_INFO[rule.trigger] && PEP_INFO[rule.trigger].name,
+            victimNames: hits.map(p => PEP_INFO[p] && PEP_INFO[p].name).filter(Boolean),
+            reason: rule.reason
+          });
+        }
+      }
+    });
+
     const goal = GOALS[activeGoal];
     // A mechanism is HIT if either:
     //   1. Any peptide in m.by[] is selected, OR
@@ -455,6 +481,13 @@ body::before{
     else if (dupes.length === 0 && coveragePct >= 50) grade = 'B';
     else if (dupes.length <= 1 && coveragePct >= 30) grade = 'C';
 
+    // Chem conflicts drop the grade by one letter (cap at D)
+    if (chemConflicts.length > 0) {
+      const order = ['A','B','C','D'];
+      const idx = order.indexOf(grade);
+      grade = order[Math.min(order.length - 1, idx + 1)];
+    }
+
     const gradeCopy = {
       A:{ letter:'A', text:'Excellent stack', cls:'grade-A' },
       B:{ letter:'B', text:'Solid stack',     cls:'grade-B' },
@@ -471,6 +504,15 @@ body::before{
           <div class="callout callout-bad">
             <span class="callout-icon">🔔</span>
             <div><strong>You're ringing the doorbell twice.</strong> ${conflicts[c].join(' + ')} both hit the ${CONFLICT_LABELS[c] || c}. Pick one — the second is just spending money to hit the same receptor.</div>
+          </div>`;
+      });
+    }
+    if (chemConflicts.length > 0) {
+      chemConflicts.forEach(c => {
+        anCallouts.innerHTML += `
+          <div class="callout callout-bad">
+            <span class="callout-icon">🧪</span>
+            <div><strong>${c.triggerName} degrades ${c.victimNames.join(' + ')}.</strong> ${c.reason}</div>
           </div>`;
       });
     }
@@ -569,7 +611,15 @@ body::before{
       conflicts[info.conflict].push(info.name);
     });
     const conflictPairs = Object.keys(conflicts).filter(c => conflicts[c].length > 1);
-    const totalConflicts = conflictPairs.length;
+    // Whole-stack chem conflicts (copper degradation etc.)
+    const chemConflictsAll = [];
+    CHEM_CONFLICTS.forEach(rule => {
+      if (selected.has(rule.trigger)) {
+        const hits = rule.degrades.filter(p => selected.has(p));
+        if (hits.length > 0) chemConflictsAll.push({ rule, hits });
+      }
+    });
+    const totalConflicts = conflictPairs.length + chemConflictsAll.length;
 
     // Per-goal coverage analysis
     const perGoal = {};
