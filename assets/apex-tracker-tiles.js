@@ -13,7 +13,7 @@
 
   const SHELF_LIFE_DAYS = 30; // Standard fridge shelf life after reconstitution
   const CSS = `
-  #apex-tile-overlay { padding: 18px 16px 30px; position: relative; z-index: 4; }
+  #apex-tile-overlay { padding: 18px 16px 30px; position: relative; z-index: 4; display: block !important; visibility: visible !important; max-width: 1160px; margin: 0 auto; }
   .apex-tile-grid { display: grid; gap: 14px; grid-template-columns: 1fr 1fr; }
   @media (max-width: 640px) { .apex-tile-grid { grid-template-columns: 1fr; gap: 12px; } }
   .apex-tile {
@@ -246,17 +246,86 @@
     host.id = 'apex-tile-overlay';
     host.innerHTML = '<div class="apex-tile-grid"></div>';
 
-    const grid = document.getElementById('active-grid');
-    const checklist = document.getElementById('apex-today-checklist');
-    // Tiles go ABOVE the daily checklist if it exists, else above the grid
-    const anchor = checklist || grid;
-    if (anchor && anchor.parentNode) {
-      anchor.parentNode.insertBefore(host, anchor);
+    // Anchor priority: existing checklist > active-grid > .main > main > body
+    const anchorPriority = [
+      document.getElementById('apex-today-checklist'),
+      document.getElementById('active-grid'),
+      document.querySelector('.main'),
+      document.querySelector('main')
+    ].filter(Boolean);
+
+    if (anchorPriority.length && anchorPriority[0].parentNode) {
+      anchorPriority[0].parentNode.insertBefore(host, anchorPriority[0]);
     } else {
-      const main = document.querySelector('main, .main, body');
-      (main || document.body).appendChild(host);
+      // Last resort: prepend to body
+      document.body.insertBefore(host, document.body.firstChild);
     }
     return host;
+  }
+
+  function processPendingImport(){
+    // Defensive: if user landed via ?import=pending and the inline tracker
+    // import script didn't fire (cache, race, whatever), do it ourselves.
+    try {
+      const params = new URLSearchParams(location.search);
+      if (params.get('import') !== 'pending') return;
+      const raw = localStorage.getItem('apex_pending_protocols');
+      if (!raw) return;
+      const incoming = JSON.parse(raw);
+      if (!Array.isArray(incoming) || !incoming.length) return;
+
+      const stateRaw = localStorage.getItem('apex_state') || '{}';
+      const state = JSON.parse(stateRaw);
+      state.protocols = state.protocols || [];
+
+      const today = new Date().toISOString().slice(0,10);
+      let added = 0;
+      incoming.forEach(p => {
+        const dup = state.protocols.find(x => x.slug === p.slug && (x.status||'active')==='active' && !x.isDemoSeed);
+        if (dup) return;
+        state.protocols.push({
+          id: 'p_' + Date.now() + '_' + Math.random().toString(36).slice(2,7),
+          slug: p.slug,
+          name: p.name,
+          mech: p.mech,
+          dose: p.dose,
+          freq: p.freq,
+          cycleWeeks: typeof p.cycleWks === 'number' ? p.cycleWks : 8,
+          cycleWks: p.cycleWks,
+          titration: p.titration || null,
+          status: 'active',
+          startDate: p.startDate || today,
+          createdAt: new Date().toISOString(),
+          isDemoSeed: false,
+          dailyLog: []
+        });
+        added++;
+      });
+
+      if (added > 0) {
+        localStorage.setItem('apex_state', JSON.stringify(state));
+      }
+      localStorage.removeItem('apex_pending_protocols');
+      const url = new URL(location.href);
+      url.searchParams.delete('import');
+      history.replaceState({}, '', url.toString());
+    } catch(e){ console.warn('[apex-tiles] import fallback failed:', e); }
+  }
+
+  function purgeDemoSeeds(){
+    try {
+      const params = new URLSearchParams(location.search);
+      if (params.get('demo') === '1') return;
+      const raw = localStorage.getItem('apex_state');
+      if (!raw) return;
+      const state = JSON.parse(raw);
+      if (!state.protocols) return;
+      const real = state.protocols.filter(p => !p.isDemoSeed);
+      if (real.length !== state.protocols.length) {
+        state.protocols = real;
+        localStorage.setItem('apex_state', JSON.stringify(state));
+      }
+    } catch(e){}
   }
 
   function render() {
@@ -305,9 +374,11 @@
   }
 
   function init() {
+    purgeDemoSeeds();
+    processPendingImport();
     render();
-    setTimeout(render, 300);
-    setTimeout(render, 1200);
+    // Aggressive re-render in case the tracker's existing JS clobbers our overlay
+    [50, 200, 600, 1500, 3000].forEach(d => setTimeout(render, d));
     window.addEventListener('storage', e => { if (e.key === 'apex_state' || e.key === 'apex_daily_log') render(); });
   }
 
