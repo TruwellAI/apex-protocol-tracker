@@ -99,6 +99,20 @@ body::before{
   padding:18px 18px 14px;margin-bottom:16px;
   position:relative;
 }
+.ov-stat.clickable{cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;}
+.ov-stat.clickable:hover{border-color:var(--bad);background:rgba(239,68,68,.08);transform:translateY(-1px);}
+.ov-stat.clickable .ov-stat-v{color:var(--bad);}
+.ov-stat.clickable .ov-stat-l::after{content:' →';color:var(--bad);}
+
+/* CALLOUT FLASH ANIMATION when scrolled to from the stat click */
+@keyframes calloutFlash {
+  0%,100% { transform: scale(1); box-shadow: 0 0 0 rgba(239,68,68,0); }
+  20% { transform: scale(1.02); box-shadow: 0 0 0 4px rgba(239,68,68,.5); }
+  60% { transform: scale(1.01); box-shadow: 0 0 0 8px rgba(239,68,68,.15); }
+}
+.callout.callout-bad.flash {
+  animation: calloutFlash 1.6s cubic-bezier(.2,.8,.2,1) 1;
+}
 .overall-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
 .overall-eyebrow{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.22em;color:var(--accent4);text-transform:uppercase;display:block;width:100%;margin-bottom:4px;font-weight:700;}
 .overall-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;color:var(--white);letter-spacing:-.2px;flex:1;min-width:0;}
@@ -685,6 +699,25 @@ body::before{
     ovMechCount.textContent = uniqueMechs.size;
     ovConflictCount.textContent = totalConflicts;
     ovConflictCount.style.color = totalConflicts > 0 ? 'var(--bad)' : 'var(--accent4)';
+    // Make the conflict stat clickable to scroll/flash the callouts
+    const conflictStat = ovConflictCount.closest('.ov-stat');
+    if (conflictStat) {
+      conflictStat.classList.toggle('clickable', totalConflicts > 0);
+      conflictStat.onclick = totalConflicts > 0 ? function(){
+        // Scroll the per-goal analysis card into view (where the callouts live)
+        const analysisEl = document.getElementById('analysis');
+        if (!analysisEl) return;
+        analysisEl.scrollIntoView({ behavior:'smooth', block:'start' });
+        // Flash the bad callouts after the scroll settles
+        setTimeout(function(){
+          document.querySelectorAll('.callout.callout-bad').forEach(el => {
+            el.classList.remove('flash');
+            void el.offsetWidth; // restart animation
+            el.classList.add('flash');
+          });
+        }, 400);
+      } : null;
+    }
     ovCoveragePct.textContent = overallPct + '%';
     ovGoalCountEl.textContent = goalsTouched;
     ovGoalPlural.textContent = goalsTouched === 1 ? '' : 's';
