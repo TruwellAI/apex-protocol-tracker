@@ -374,6 +374,12 @@ body::before{
     <a href="research-hub.html" class="empty-btn">＋ Add Protocol →</a>
   </div>
 
+  <!-- DANGER ZONE -->
+  <div style="margin-top:30px;text-align:center;">
+    <button id="reset-all-btn" type="button" style="background:transparent;border:1px solid rgba(239,68,68,.4);color:#ef4444;font-family:'Share Tech Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;padding:10px 22px;border-radius:8px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .15s;">↺ Erase & Start Over</button>
+    <div style="font-size:11px;color:var(--muted);margin-top:8px;">Wipes all protocols, dose logs, and selections. Cannot be undone.</div>
+  </div>
+
   <div class="foot">
     <div>© Apex Protocol · Research use only · Not medical advice · 17+</div>
     <div><a href="privacy.html">Privacy</a> &nbsp;·&nbsp; <a href="terms.html">Terms</a> &nbsp;·&nbsp; <a href="protocol-tracker.html">Legacy tracker</a></div>
@@ -872,6 +878,38 @@ body::before{
         <div class="tg-bars">${segHtml}${offHtml}</div>
       </div>
     `;
+  }
+
+  // ── ERASE & START OVER ───────────
+  const resetBtn = document.getElementById('reset-all-btn');
+  if (resetBtn) {
+    resetBtn.addEventListener('mouseover', () => {
+      resetBtn.style.background = 'rgba(239,68,68,.12)';
+      resetBtn.style.borderColor = '#ef4444';
+    });
+    resetBtn.addEventListener('mouseout', () => {
+      resetBtn.style.background = 'transparent';
+      resetBtn.style.borderColor = 'rgba(239,68,68,.4)';
+    });
+    resetBtn.addEventListener('click', () => {
+      const confirmTxt = prompt('This will permanently erase ALL protocols, dose logs, and selections. Type ERASE to confirm:');
+      if (!confirmTxt || confirmTxt.trim().toUpperCase() !== 'ERASE') return;
+      // Wipe everything app-related from localStorage
+      const KEYS_TO_WIPE = [
+        'apex_state',
+        'apex_daily_log',
+        'apex_pending_protocols',
+        'apex_selection',
+        'apex_recon',
+        'apex_split_dose',
+        'apex_active_goal',
+        'apex_active_tab'
+      ];
+      KEYS_TO_WIPE.forEach(k => { try { localStorage.removeItem(k); } catch(_){} });
+      try { if (navigator.vibrate) navigator.vibrate([20,40,20]); } catch(_){}
+      // Hard reload back to landing
+      location.href = 'index.html';
+    });
   }
 
   // ── EDIT MODAL ────────────────────
