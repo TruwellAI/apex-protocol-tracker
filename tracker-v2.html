@@ -510,13 +510,35 @@ body::before{
     let currentDose = p.dose || 'as scheduled';
     let nextPhase = null;
     if (p.titration && Array.isArray(p.titration) && p.titration.length > 1) {
-      const phaseLen = cycleDays / p.titration.length;
-      const phaseIdx = Math.min(p.titration.length - 1, Math.floor((dayNum - 1) / phaseLen));
-      currentDose = p.titration[phaseIdx].d;
-      if (phaseIdx < p.titration.length - 1) {
-        const next = p.titration[phaseIdx + 1];
-        const nextStartDay = Math.ceil((phaseIdx + 1) * phaseLen) + 1;
-        nextPhase = { dose: next.d, startDay: nextStartDay, label: next.w };
+      // PREFER explicit daySpan if any phase has it (e.g. NAD+: 5d/5d/74d)
+      const hasDaySpans = p.titration.some(t => Array.isArray(t.daySpan) && t.daySpan.length === 2);
+
+      if (hasDaySpans) {
+        // Find the phase whose daySpan covers dayNum.
+        // Phases without daySpan are skipped from matching (treated as fallback).
+        let curIdx = -1;
+        for (let i = 0; i < p.titration.length; i++) {
+          const span = p.titration[i].daySpan;
+          if (span && dayNum >= span[0] && dayNum <= span[1]) { curIdx = i; break; }
+        }
+        // If not in any explicit span (e.g. past last span end), default to last phase
+        if (curIdx === -1) curIdx = p.titration.length - 1;
+        currentDose = p.titration[curIdx].d;
+        if (curIdx < p.titration.length - 1) {
+          const next = p.titration[curIdx + 1];
+          const nextStartDay = (next.daySpan && next.daySpan[0]) ? next.daySpan[0] : (curIdx + 1) + 1;
+          nextPhase = { dose: next.d, startDay: nextStartDay, label: next.w };
+        }
+      } else {
+        // Even-split fallback for week-uniform titrations (Reta/Sema/Tirz)
+        const phaseLen = cycleDays / p.titration.length;
+        const phaseIdx = Math.min(p.titration.length - 1, Math.floor((dayNum - 1) / phaseLen));
+        currentDose = p.titration[phaseIdx].d;
+        if (phaseIdx < p.titration.length - 1) {
+          const next = p.titration[phaseIdx + 1];
+          const nextStartDay = Math.ceil((phaseIdx + 1) * phaseLen) + 1;
+          nextPhase = { dose: next.d, startDay: nextStartDay, label: next.w };
+        }
       }
     }
     return { current: currentDose, next: nextPhase };

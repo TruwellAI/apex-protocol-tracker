@@ -336,7 +336,13 @@ body::before{
     'semax':{ name:'Semax',                 mech:'BDNF upregulator',          conflict:null },
     'dsip':{ name:'DSIP',                   mech:'Delta sleep peptide',       conflict:null },
     'dihexa':{ name:'Dihexa',               mech:'HGF mimetic',               conflict:null },
-    'pe2228':{ name:'PE-22-28',             mech:'TREK-1 modulator',          conflict:null }
+    'pe2228':{ name:'PE-22-28',             mech:'TREK-1 modulator',          conflict:null },
+    // Backfilled — these were in selection-panel META + reconstitute PEP + protocol-summary PROTO
+    // but missing from compare's PEP_INFO, causing silent drops during stack import.
+    'glutamine':{ name:'Glutamine',         mech:'Gut + immune amino',        conflict:null },
+    'cardiac-stack':{ name:'Cardiac Stack', mech:'Heart-focused stack',       conflict:null },
+    'longevity-stack':{ name:'Longevity Stack', mech:'Multi-peptide longevity', conflict:null },
+    'mito-reset':{ name:'Mito Reset',       mech:'Mitochondrial protocol',    conflict:null }
   };
 
   const CONFLICT_LABELS = {

@@ -235,7 +235,8 @@ body::before{
     'fox04-dri.html':    { name:'FOX04-DRI',      mech:'Senolytic',                 cycleWks:'5 days pulsed', dose:'experimental', freq:'5-day pulses' },
     'glutathione.html':  { name:'Glutathione',    mech:'Master antioxidant',        cycleWks:12, dose:'200-600 mg', freq:'2-3x weekly' },
     'nad-plus.html':     { name:'NAD+',           mech:'Mitochondrial cofactor',    cycleWks:12, dose:'titrated', freq:'loading then maintenance',
-      titration:[{w:'Days 1-5',d:'100 mg loading'},{w:'Days 6-10',d:'200 mg loading'},{w:'Wk 3+',d:'100 mg 2-3x/wk maintenance'}] },
+      // daySpans gives explicit [startDay, endDay] for non-uniform phase lengths
+      titration:[{w:'Days 1-5',d:'100 mg loading',daySpan:[1,5]},{w:'Days 6-10',d:'200 mg loading',daySpan:[6,10]},{w:'Wk 3+',d:'100 mg 2-3x/wk maintenance',daySpan:[11,84]}] },
     'selank.html':       { name:'Selank',         mech:'Anxiolytic neuropeptide',   cycleWks:4,  dose:'250-500 mcg', freq:'daily intranasal' },
     'semax.html':        { name:'Semax',          mech:'BDNF upregulator',          cycleWks:4,  dose:'250-500 mcg', freq:'daily intranasal' },
     'dsip.html':         { name:'DSIP',           mech:'Delta sleep peptide',       cycleWks:4,  dose:'100-300 mcg', freq:'pre-bed' },
