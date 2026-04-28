@@ -658,9 +658,48 @@ body::before{
     return { go: false, reason: 'next ' + fmtDow(next) };
   }
 
+  // ── RESUME BANNER — show if user has unfinished selection but never finalized
+  function ensureResumeBanner(){
+    let pending = [];
+    try { pending = JSON.parse(localStorage.getItem('apex_selection') || '[]'); } catch(e){}
+    const banner = document.getElementById('apex-resume-banner');
+    if (!pending.length) {
+      if (banner) banner.remove();
+      return;
+    }
+    if (banner) return; // already shown
+
+    const div = document.createElement('div');
+    div.id = 'apex-resume-banner';
+    div.style.cssText = 'margin:14px 16px;padding:16px 18px;background:linear-gradient(135deg,rgba(251,191,36,.12),rgba(255,107,53,.06));border:1px solid rgba(251,191,36,.45);border-left:4px solid #fbbf24;border-radius:10px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;';
+    div.innerHTML = `
+      <div style="font-size:30px;line-height:1;flex-shrink:0;">⏳</div>
+      <div style="flex:1;min-width:200px;">
+        <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;color:#fff;letter-spacing:-.2px;">You have ${pending.length} peptide${pending.length===1?'':'s'} in flight</div>
+        <div style="font-size:12px;color:#cbd5e1;margin-top:3px;">Started a stack but didn't finish setup. Pick up where you left off.</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <a href="reconstitute.html" style="padding:10px 16px;background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#080c10;font-family:'Rajdhani',sans-serif;font-weight:800;font-size:12px;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;border-radius:6px;">Continue Setup →</a>
+        <button id="apex-resume-discard" style="padding:10px 14px;background:transparent;border:1px solid #1a2d3a;color:#7a8d99;font-family:'Share Tech Mono',monospace;font-weight:700;font-size:10px;letter-spacing:.18em;text-transform:uppercase;border-radius:6px;cursor:pointer;-webkit-tap-highlight-color:transparent;">Discard</button>
+      </div>
+    `;
+
+    const wrap = document.querySelector('.wrap');
+    const greet = wrap ? wrap.querySelector('.greet') : null;
+    if (greet) greet.parentNode.insertBefore(div, greet.nextSibling);
+    else if (wrap) wrap.insertBefore(div, wrap.firstChild);
+
+    div.querySelector('#apex-resume-discard').addEventListener('click', () => {
+      if (!confirm('Discard your unfinished selection?')) return;
+      try { localStorage.removeItem('apex_selection'); } catch(_){}
+      div.remove();
+    });
+  }
+
   // ── RENDER ─────────────────────────────
   function render(){
     importPending();
+    ensureResumeBanner();
 
     const state = getState();
     const protocols = (state.protocols || []).filter(p => (p.status||'active') === 'active' && !p.isDemoSeed);
