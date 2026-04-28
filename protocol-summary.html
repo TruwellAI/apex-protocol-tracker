@@ -420,21 +420,29 @@ body::before{
       if (!p.titration || !Array.isArray(p.titration) || p.titration.length < 2) return '';
       const cs = cycleState[slug] || { mode: 'new' };
       const isMid = cs.mode === 'mid';
+      const isSplitEligible = !!splitCfg; // GLP-1s only
+      const isMidSplit = isMid && cs.midSplit === true;
       const totalWeeks = (typeof p.cycleWks === 'number') ? p.cycleWks : 24;
 
-      // Default vial sizes pulled from reconstitute defaults — user can override
       const VIAL_DEFAULTS = {
         'retatrutide.html': 30, 'semaglutide.html': 10, 'tirzepatide.html': 10, 'nad-plus.html': 500
       };
       const vialMg  = (cs.vialMg && cs.vialMg > 0) ? cs.vialMg : (VIAL_DEFAULTS[slug] || 10);
       const bacMl   = (cs.bacMl  && cs.bacMl  > 0) ? cs.bacMl  : (slug === 'nad-plus.html' ? 5 : 3);
-      const lastUnits = (typeof cs.lastUnits === 'number' && cs.lastUnits > 0) ? cs.lastUnits : '';
 
-      // Live math: concentration = vial mg / bac mL  ·  dose mg = units × concentration / 100
+      // Single-dose mode: lastUnits = total weekly units
+      // Split mode:       lastUnits = per-pin units, pinsPerWeek = 2 or 3
+      const lastUnits   = (typeof cs.lastUnits === 'number' && cs.lastUnits > 0) ? cs.lastUnits : '';
+      const pinsPerWeek = (typeof cs.pinsPerWeek === 'number' && cs.pinsPerWeek > 0) ? cs.pinsPerWeek : 2;
+
       const concMgPerMl = bacMl > 0 ? (vialMg / bacMl) : 0;
-      const lastDoseMg  = (typeof cs.lastUnits === 'number' && cs.lastUnits > 0)
-        ? (cs.lastUnits * concMgPerMl / 100) : 0;
-      const lastDoseMgRounded = lastDoseMg > 0 ? (lastDoseMg < 1 ? lastDoseMg.toFixed(2) : lastDoseMg.toFixed(1)) : '0';
+      // Effective weekly mg
+      let weeklyDoseMg = 0;
+      if (typeof cs.lastUnits === 'number' && cs.lastUnits > 0) {
+        const perPinMg = cs.lastUnits * concMgPerMl / 100;
+        weeklyDoseMg = isMidSplit ? (perPinMg * pinsPerWeek) : perPinMg;
+      }
+      const fmt = v => v < 1 ? v.toFixed(2) : v.toFixed(1);
 
       // Build week dropdown
       let weekOpts = '';
@@ -442,7 +450,12 @@ body::before{
         weekOpts += `<option value="${w}"${cs.currentWeek === w ? ' selected' : ''}>Week ${w}</option>`;
       }
 
-      // Live summary if mid-cycle data is filled
+      // Build pins-per-week dropdown (2 or 3)
+      const pinsOpts = [2, 3].map(n =>
+        `<option value="${n}"${pinsPerWeek === n ? ' selected' : ''}>${n}× / week (${n === 2 ? 'Mon + Thu' : 'Mon · Wed · Fri'})</option>`
+      ).join('');
+
+      // Live summary
       let summary = '';
       if (isMid && cs.currentWeek) {
         const cycleDays = totalWeeks * 7;
@@ -450,13 +463,70 @@ body::before{
         const phaseLen = cycleDays / p.titration.length;
         const phaseIdx = Math.min(p.titration.length - 1, Math.floor((dayApprox - 1) / phaseLen));
         const phase = p.titration[phaseIdx];
-        const doseLine = (lastDoseMg > 0)
-          ? ` Your <strong>${lastUnits} units</strong> ≈ <strong>${lastDoseMgRounded} mg</strong> at ${concMgPerMl.toFixed(2)} mg/mL.`
-          : '';
+
+        let doseLine = '';
+        if (weeklyDoseMg > 0) {
+          if (isMidSplit) {
+            const perPinMg = cs.lastUnits * concMgPerMl / 100;
+            doseLine = ` <strong>${cs.lastUnits} units × ${pinsPerWeek}/week</strong> = <strong>${fmt(weeklyDoseMg)} mg/wk</strong> total (${fmt(perPinMg)} mg per pin) at ${concMgPerMl.toFixed(2)} mg/mL.`;
+          } else {
+            doseLine = ` Your <strong>${cs.lastUnits} units</strong> ≈ <strong>${fmt(weeklyDoseMg)} mg/wk</strong> at ${concMgPerMl.toFixed(2)} mg/mL.`;
+          }
+        }
         summary = `<div class="cycle-ask-summary">
           <strong>Picking up at Week ${cs.currentWeek}.</strong> Tracker drops you in phase: <strong>${phase.w} → ${phase.d}</strong>.${doseLine}
         </div>`;
       }
+
+      // Split sub-toggle (only renders if splitCfg + isMid)
+      const splitSubToggle = (isSplitEligible && isMid) ? `
+        <div class="split-toggle${isMidSplit ? ' on' : ''}" data-mid-split data-slug="${slug}" role="switch" aria-checked="${isMidSplit}" tabindex="0" style="margin-top:8px;">
+          <div class="split-info">
+            <div class="split-label">💉 Split Protocol</div>
+            <div class="split-sub">${isMidSplit ? `Active — ${pinsPerWeek}× / week (${pinsPerWeek === 2 ? 'Mon + Thu' : 'Mon · Wed · Fri'})` : 'Are you splitting your weekly dose into multiple pins?'}</div>
+          </div>
+          <div class="split-switch"></div>
+        </div>
+      ` : '';
+
+      // The dose row depends on split state
+      const doseRow = isMidSplit ? `
+        <div class="cycle-ask-field-row">
+          <div class="cycle-ask-field">
+            <label>Pins per week</label>
+            <select data-cycle-pins data-slug="${slug}">${pinsOpts}</select>
+          </div>
+          <div class="cycle-ask-field">
+            <label>Per-pin dose (units)</label>
+            <input type="number" min="1" max="120" step="1" value="${lastUnits}" placeholder="e.g. 25" data-cycle-units data-slug="${slug}" inputmode="numeric">
+          </div>
+        </div>
+      ` : `
+        <div class="cycle-ask-field-row">
+          <div class="cycle-ask-field">
+            <label>Current week</label>
+            <select data-cycle-week data-slug="${slug}">${weekOpts}</select>
+          </div>
+          <div class="cycle-ask-field">
+            <label>Last dose (units)</label>
+            <input type="number" min="1" max="120" step="1" value="${lastUnits}" placeholder="e.g. 50" data-cycle-units data-slug="${slug}" inputmode="numeric">
+          </div>
+        </div>
+      `;
+
+      // Always show "Current week" — but if splitting, show as standalone row
+      const weekRow = isMidSplit ? `
+        <div class="cycle-ask-field-row">
+          <div class="cycle-ask-field">
+            <label>Current week</label>
+            <select data-cycle-week data-slug="${slug}">${weekOpts}</select>
+          </div>
+          <div class="cycle-ask-field" style="background:rgba(0,255,157,.04);border-color:rgba(0,255,157,.25);">
+            <label style="color:var(--accent2);">Effective weekly dose</label>
+            <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:var(--accent2);">${weeklyDoseMg > 0 ? fmt(weeklyDoseMg) + ' mg/wk' : '—'}</div>
+          </div>
+        </div>
+      ` : '';
 
       return `
         <div class="cycle-ask">
@@ -476,16 +546,9 @@ body::before{
                 <input type="number" min="0.5" step="0.5" value="${bacMl}" data-cycle-bac data-slug="${slug}" inputmode="decimal"> mL
               </div>
             </div>
-            <div class="cycle-ask-field-row">
-              <div class="cycle-ask-field">
-                <label>Current week</label>
-                <select data-cycle-week data-slug="${slug}">${weekOpts}</select>
-              </div>
-              <div class="cycle-ask-field">
-                <label>Last dose (units)</label>
-                <input type="number" min="1" max="120" step="1" value="${lastUnits}" placeholder="e.g. 50" data-cycle-units data-slug="${slug}" inputmode="numeric">
-              </div>
-            </div>
+            ${splitSubToggle}
+            ${doseRow}
+            ${weekRow}
             ${summary}
           </div>
         </div>
@@ -556,11 +619,28 @@ body::before{
         if (unitIn) cycleState[slug].lastUnits= parseInt(unitIn.value,10) || 0;
         persistCyclePosition();
       }
-      // Update on input (live), re-render on blur (refresh summary line)
       [vialIn, bacIn, unitIn].forEach(el => {
         if (!el) return;
         el.addEventListener('input', flushNumeric);
         el.addEventListener('blur',  () => { flushNumeric(); renderInner(); });
+      });
+      // Split sub-toggle inside cycle-ask
+      const midSplit = card.querySelector('[data-mid-split]');
+      if (midSplit) midSplit.addEventListener('click', () => {
+        cycleState[slug] = cycleState[slug] || { mode: 'mid' };
+        cycleState[slug].midSplit = !cycleState[slug].midSplit;
+        // Sensible default when first toggled on
+        if (cycleState[slug].midSplit && !cycleState[slug].pinsPerWeek) cycleState[slug].pinsPerWeek = 2;
+        persistCyclePosition();
+        renderInner();
+        try { if (navigator.vibrate) navigator.vibrate(15); } catch(_){}
+      });
+      const pinsSel = card.querySelector('[data-cycle-pins]');
+      if (pinsSel) pinsSel.addEventListener('change', () => {
+        cycleState[slug] = cycleState[slug] || { mode: 'mid' };
+        cycleState[slug].pinsPerWeek = parseInt(pinsSel.value, 10) || 2;
+        persistCyclePosition();
+        renderInner();
       });
     }
 
@@ -607,6 +687,8 @@ body::before{
     // so the tracker tile uses the user's actual concentration, not defaults.
     let recon = {};
     try { recon = JSON.parse(localStorage.getItem('apex_recon') || '{}'); } catch(e){}
+    let split = {};
+    try { split = JSON.parse(localStorage.getItem('apex_split_dose') || '{}'); } catch(e){}
     Object.keys(cycleState).forEach(slug => {
       const cs = cycleState[slug];
       if (!cs || cs.mode !== 'mid') return;
@@ -616,10 +698,16 @@ body::before{
         recon[slug].bac    = cs.bacMl;
         recon[slug].acetic = recon[slug].acetic || 0;
       }
+      // If user said they're splitting, propagate to apex_split_dose
+      if (cs.midSplit) {
+        split[slug] = true;
+        if (cs.pinsPerWeek) split[slug + '_pins'] = cs.pinsPerWeek;
+      }
     });
 
     try {
       localStorage.setItem('apex_recon', JSON.stringify(recon));
+      localStorage.setItem('apex_split_dose', JSON.stringify(split));
       localStorage.setItem('apex_pending_protocols', JSON.stringify(protocols));
       localStorage.removeItem('apex_selection');
     } catch(e){}
