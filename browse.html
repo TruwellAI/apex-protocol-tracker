@@ -64,7 +64,7 @@
       style.textContent = `
         .apex-tracker-cta, .apex-tracker-banner, .apex-paper-trail-banner,
         #hero-paper-trail, #live-count, #mobile-bottom-nav,
-        a[href="protocol-tracker.html"], a[href^="protocol-tracker.html"],
+        a[href="tracker-v2.html"], a[href^="tracker-v2.html"],
         a[href="nutrition.html"], a[href^="nutrition.html"] { display:none !important; }
         .apex-wiki-ribbon { position:sticky; top:0; z-index:9999; background:linear-gradient(90deg,#14b8a6,#0d9488); color:#fff; text-align:center; padding:10px 16px; font-family:'Share Tech Mono',monospace; font-size:11px; letter-spacing:.18em; text-transform:uppercase; box-shadow:0 2px 12px rgba(20,184,166,.35); }
       `;
@@ -280,7 +280,7 @@ body[data-research-flow="1"] .hero + div + div { display:none !important; }
   <h1 id="hero-title">Your Free<br>Protocol <span>Encyclopedia</span><br>&amp; Tracker</h1>
   <p class="hero-sub" id="hero-sub">Every peptide. Every dose. Every cycle — tracked and organized. The complete research reference + protocol manager built for serious stacks.</p>
   <div class="hero-cta" id="hero-cta" style="flex-wrap:wrap;">
-    <a href="protocol-tracker.html" class="btn-hero apex-tracker-cta">Open Free Tracker →</a>
+    <a href="tracker-v2.html" class="btn-hero apex-tracker-cta">Open Free Tracker →</a>
     <a href="#library" class="btn-secondary">Browse Encyclopedia</a>
   </div>
 
@@ -353,7 +353,7 @@ body[data-research-flow="1"] .hero + div + div { display:none !important; }
   <div style="margin:0 0 22px;padding:22px 24px;background:linear-gradient(135deg,rgba(20,184,166,.08),rgba(20,184,166,.02));border:1px solid rgba(20,184,166,.28);border-radius:6px;">
     <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.22em;color:#14b8a6;margin-bottom:14px;text-transform:uppercase;">🧭 Don't know where to start?</div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;">
-      <a href="protocol-tracker.html#goals" style="display:block;padding:16px 18px;background:rgba(15,20,28,.65);border:1px solid rgba(20,184,166,.35);border-radius:4px;text-decoration:none;transition:transform .15s,border-color .15s;" onmouseover="this.style.transform='translateY(-2px)';this.style.borderColor='#14b8a6'" onmouseout="this.style.transform='';this.style.borderColor='rgba(20,184,166,.35)'">
+      <a href="compare.html" style="display:block;padding:16px 18px;background:rgba(15,20,28,.65);border:1px solid rgba(20,184,166,.35);border-radius:4px;text-decoration:none;transition:transform .15s,border-color .15s;" onmouseover="this.style.transform='translateY(-2px)';this.style.borderColor='#14b8a6'" onmouseout="this.style.transform='';this.style.borderColor='rgba(20,184,166,.35)'">
         <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.18em;color:#14b8a6;margin-bottom:6px;">🎯 START BY GOAL</div>
         <div style="font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;color:#fff;margin-bottom:4px;">Fat loss · Recovery · Beauty · Cardiac</div>
         <div style="font-family:'Barlow',sans-serif;font-size:12px;color:#94a3b8;line-height:1.45;">Pre-built stacks with receptor logic → auto-builds your tracker.</div>
@@ -389,7 +389,7 @@ body[data-research-flow="1"] .hero + div + div { display:none !important; }
         <div class="tb-feature">Annual planner</div>
       </div>
     </div>
-    <a href="protocol-tracker.html" class="btn-hero apex-tracker-cta" style="white-space:nowrap;">Launch Tracker →</a>
+    <a href="tracker-v2.html" class="btn-hero apex-tracker-cta" style="white-space:nowrap;">Launch Tracker →</a>
   </div>
 
   <!-- MOBILE CATEGORY NAV -->
@@ -944,7 +944,7 @@ if (!localStorage.getItem('apex_email_captured') && !sessionStorage.getItem('ape
   <div>
     <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.2em;color:var(--muted);margin-bottom:12px;text-transform:uppercase;">Resources</div>
     <div style="display:flex;flex-direction:column;gap:8px;">
-      <a href="protocol-tracker.html" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);text-decoration:none;letter-spacing:.1em;">Protocol Tracker</a>
+      <a href="tracker-v2.html" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);text-decoration:none;letter-spacing:.1em;">Protocol Tracker</a>
       <a href="index.html" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);text-decoration:none;letter-spacing:.1em;">Peptide Encyclopedia</a>
       <a href="mito-reset.html" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);text-decoration:none;letter-spacing:.1em;">Mitochondrial Reset</a>
       <a href="longevity-stack.html" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);text-decoration:none;letter-spacing:.1em;">Longevity Stack</a>
@@ -970,10 +970,10 @@ if (!localStorage.getItem('apex_email_captured') && !sessionStorage.getItem('ape
 }
 </style>
 <div id="wiki-bottom-nav" style="position:fixed;bottom:0;left:0;right:0;z-index:10000;background:#0a0e14;border-top:1px solid rgba(0,196,140,.3);padding:6px 0 env(safe-area-inset-bottom);grid-template-columns:repeat(3,1fr);">
-  <a href="protocol-tracker.html" style="background:none;border:none;color:#8899aa;font-family:'Rajdhani',sans-serif;font-size:9px;font-weight:700;letter-spacing:.06em;cursor:pointer;padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:3px;text-transform:uppercase;text-decoration:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation;min-height:44px;">
+  <a href="tracker-v2.html" style="background:none;border:none;color:#8899aa;font-family:'Rajdhani',sans-serif;font-size:9px;font-weight:700;letter-spacing:.06em;cursor:pointer;padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:3px;text-transform:uppercase;text-decoration:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation;min-height:44px;">
     <span style="font-size:22px;">⚗️</span>TRACKER
   </a>
-  <a href="protocol-tracker.html#macro-wrap" style="background:none;border:none;color:#8899aa;font-family:'Rajdhani',sans-serif;font-size:9px;font-weight:700;letter-spacing:.06em;cursor:pointer;padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:3px;text-transform:uppercase;text-decoration:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation;min-height:44px;">
+  <a href="tracker-v2.html" style="background:none;border:none;color:#8899aa;font-family:'Rajdhani',sans-serif;font-size:9px;font-weight:700;letter-spacing:.06em;cursor:pointer;padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:3px;text-transform:uppercase;text-decoration:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation;min-height:44px;">
     <span style="font-size:22px;">🥗</span>MACROS
   </a>
   <a href="index.html" style="background:none;border:none;color:#00c48c;font-family:'Rajdhani',sans-serif;font-size:9px;font-weight:700;letter-spacing:.06em;cursor:pointer;padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:3px;text-transform:uppercase;text-decoration:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation;min-height:44px;">
@@ -982,7 +982,7 @@ if (!localStorage.getItem('apex_email_captured') && !sessionStorage.getItem('ape
 </div>
 
 <!-- PERSISTENT WIZARD TRIGGER -->
-<a href="wizard.html" id="apex-fab" style="position:fixed;bottom:20px;right:20px;background:#00ff9d;color:#080c10;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;padding:12px 18px;text-decoration:none;z-index:9999;box-shadow:0 6px 24px rgba(0,255,157,.35);display:flex;align-items:center;gap:8px;border-radius:2px;">🧪 Walk me through</a>
+<a href="research-hub.html" id="apex-fab" style="position:fixed;bottom:20px;right:20px;background:#00ff9d;color:#080c10;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;padding:12px 18px;text-decoration:none;z-index:9999;box-shadow:0 6px 24px rgba(0,255,157,.35);display:flex;align-items:center;gap:8px;border-radius:2px;">🧪 Walk me through</a>
 <style>@media(max-width:640px){#apex-fab{bottom:90px!important;right:16px!important;font-size:11px!important;padding:10px 14px!important;}}</style>
 
 <script src="assets/apex-nav-pill.js"></script>
