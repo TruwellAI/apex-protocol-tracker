@@ -420,6 +420,18 @@ body::before{
       <input type="date" class="em-input" id="em-mix">
       <div style="font-size:11px;color:var(--muted);margin-top:5px;">When you reconstituted the current vial. 30-day countdown starts here.</div>
     </div>
+    <div class="em-row">
+      <div class="em-field">
+        <div class="em-label">Vial size</div>
+        <input type="number" min="0.5" step="0.5" class="em-input" id="em-vial" inputmode="decimal" placeholder="e.g. 30">
+        <div style="font-size:11px;color:var(--muted);margin-top:5px;">mg</div>
+      </div>
+      <div class="em-field">
+        <div class="em-label">BAC water</div>
+        <input type="number" min="0.5" step="0.5" class="em-input" id="em-bac" inputmode="decimal" placeholder="e.g. 3">
+        <div style="font-size:11px;color:var(--muted);margin-top:5px;">mL · units math recalculates</div>
+      </div>
+    </div>
     <div class="em-actions">
       <button class="em-btn em-btn-cancel" id="em-cancel">Cancel</button>
       <button class="em-btn em-btn-save" id="em-save">Save Changes</button>
@@ -1084,13 +1096,16 @@ body::before{
   let editingDefaults = null;
   function openEditModal(p){
     editingId = p.id;
-    editingDefaults = { dose: p.dose, freq: p.freq, cycleWeeks: p.cycleWeeks, cycleWks: p.cycleWks, startDate: p.startDate, mixDate: p.mixDate };
+    const reconNow = (function(){ try { return JSON.parse(localStorage.getItem('apex_recon')||'{}')[p.slug] || {}; } catch(e){ return {}; } })();
+    editingDefaults = { dose: p.dose, freq: p.freq, cycleWeeks: p.cycleWeeks, cycleWks: p.cycleWks, startDate: p.startDate, mixDate: p.mixDate, vial: reconNow.vial, bac: reconNow.bac };
     document.getElementById('em-title').textContent = p.name;
     document.getElementById('em-dose').value = p.dose || '';
     document.getElementById('em-freq').value = p.freq || '';
     document.getElementById('em-cycle').value = (typeof p.cycleWeeks === 'number' ? p.cycleWeeks : 8);
     document.getElementById('em-start').value = p.startDate || (new Date().toISOString().slice(0,10));
     document.getElementById('em-mix').value = p.mixDate || p.startDate || (new Date().toISOString().slice(0,10));
+    document.getElementById('em-vial').value = reconNow.vial || '';
+    document.getElementById('em-bac').value = reconNow.bac || '';
     document.getElementById('edit-overlay').classList.add('show');
   }
   function closeEditModal(){
@@ -1114,6 +1129,18 @@ body::before{
     if (sd) state.protocols[idx].startDate = sd;
     const md = document.getElementById('em-mix').value;
     if (md) state.protocols[idx].mixDate = md;
+    // Vial size + BAC water → write to apex_recon[slug] so concentration / units recalc on the tile
+    const vialVal = parseFloat(document.getElementById('em-vial').value);
+    const bacVal  = parseFloat(document.getElementById('em-bac').value);
+    if ((vialVal && vialVal > 0) || (bacVal && bacVal > 0)) {
+      let recon = {};
+      try { recon = JSON.parse(localStorage.getItem('apex_recon') || '{}'); } catch(_){}
+      recon[state.protocols[idx].slug] = recon[state.protocols[idx].slug] || {};
+      if (vialVal && vialVal > 0) recon[state.protocols[idx].slug].vial = vialVal;
+      if (bacVal  && bacVal  > 0) recon[state.protocols[idx].slug].bac  = bacVal;
+      recon[state.protocols[idx].slug].acetic = recon[state.protocols[idx].slug].acetic || 0;
+      try { localStorage.setItem('apex_recon', JSON.stringify(recon)); } catch(_){}
+    }
     state.protocols[idx].editedAt = new Date().toISOString();
     setState(state);
     closeEditModal();
@@ -1126,6 +1153,8 @@ body::before{
     document.getElementById('em-cycle').value = editingDefaults.cycleWeeks || 8;
     document.getElementById('em-start').value = editingDefaults.startDate || '';
     document.getElementById('em-mix').value = editingDefaults.mixDate || editingDefaults.startDate || '';
+    document.getElementById('em-vial').value = editingDefaults.vial || '';
+    document.getElementById('em-bac').value = editingDefaults.bac || '';
   });
   document.getElementById('edit-overlay').addEventListener('click', e => {
     if (e.target.id === 'edit-overlay') closeEditModal();
