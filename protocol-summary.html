@@ -131,6 +131,48 @@ body::before{
 }
 .split-research-note strong{color:#fff;}
 
+/* CYCLE-POSITION ASK (for titrating peptides) */
+.cycle-ask{
+  margin-top:10px;padding:12px;
+  background:linear-gradient(135deg,rgba(0,212,255,.06),rgba(0,255,157,.02));
+  border:1px solid rgba(0,212,255,.3);border-radius:8px;
+}
+.cycle-ask-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:#fff;letter-spacing:-.1px;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.cycle-ask-title::before{content:'⚡';}
+.cycle-ask-buttons{display:flex;gap:6px;margin-bottom:0;}
+.cycle-ask-btn{
+  flex:1;padding:9px 10px;border-radius:6px;
+  font-family:'Rajdhani',sans-serif;font-weight:700;font-size:11px;letter-spacing:.06em;
+  background:var(--panel2);border:1px solid var(--border);color:var(--text);
+  cursor:pointer;transition:all .15s;text-transform:uppercase;
+  -webkit-tap-highlight-color:transparent;
+}
+.cycle-ask-btn:hover{border-color:var(--accent);}
+.cycle-ask-btn.on{background:rgba(0,212,255,.15);border-color:var(--accent);color:var(--accent);}
+.cycle-ask-fields{display:none;flex-direction:column;gap:8px;margin-top:10px;}
+.cycle-ask-fields.show{display:flex;}
+.cycle-ask-field-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+@media (max-width:480px){.cycle-ask-field-row{grid-template-columns:1fr;}}
+.cycle-ask-field{
+  background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:8px 10px;
+}
+.cycle-ask-field label{
+  display:block;font-family:'Share Tech Mono',monospace;font-size:9px;
+  letter-spacing:.16em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;
+}
+.cycle-ask-field select,.cycle-ask-field input{
+  width:100%;background:transparent;border:0;outline:0;
+  font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:#fff;
+  appearance:none;-webkit-appearance:none;
+}
+.cycle-ask-field select{cursor:pointer;}
+.cycle-ask-summary{
+  margin-top:8px;padding:8px 10px;background:rgba(0,255,157,.06);
+  border-left:3px solid var(--accent2);border-radius:5px;
+  font-size:11px;color:var(--text);line-height:1.4;
+}
+.cycle-ask-summary strong{color:#fff;}
+
 .continue-bar{position:sticky;bottom:0;background:var(--bg);padding:14px 0 max(14px, env(safe-area-inset-bottom));border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:10px;}
 .cb-summary{font-size:12px;color:var(--muted);}
 .cb-summary strong{color:var(--accent2);font-weight:700;font-size:14px;}
@@ -306,6 +348,13 @@ body::before{
     try { localStorage.setItem('apex_split_dose', JSON.stringify(splitState)); } catch(e){}
   }
 
+  // Cycle-position state per slug: { mode: 'new' | 'mid', currentWeek?: number, lastDose?: string }
+  const cycleState = {};
+  try { Object.assign(cycleState, JSON.parse(localStorage.getItem('apex_cycle_position')||'{}')); } catch(e){}
+  function persistCyclePosition(){
+    try { localStorage.setItem('apex_cycle_position', JSON.stringify(cycleState)); } catch(e){}
+  }
+
   let titrationCount = 0;
   let totalWeeks = 0;
   let weeksCount = 0;
@@ -367,6 +416,60 @@ body::before{
       `;
     }
 
+    function buildCycleAsk(){
+      if (!p.titration || !Array.isArray(p.titration) || p.titration.length < 2) return '';
+      const cs = cycleState[slug] || { mode: 'new' };
+      const isMid = cs.mode === 'mid';
+      const totalWeeks = (typeof p.cycleWks === 'number') ? p.cycleWks : 24;
+
+      // Build week dropdown options (1 .. totalWeeks)
+      let weekOpts = '';
+      for (let w = 1; w <= totalWeeks; w++) {
+        weekOpts += `<option value="${w}"${cs.currentWeek === w ? ' selected' : ''}>Week ${w}</option>`;
+      }
+      // Build dose dropdown — use the titration phase doses
+      let doseOpts = '';
+      p.titration.forEach((t, i) => {
+        doseOpts += `<option value="${i}"${cs.lastDoseIdx === i ? ' selected' : ''}>${t.d}</option>`;
+      });
+
+      // Calculate current titration phase from week (for summary)
+      let summary = '';
+      if (isMid && cs.currentWeek) {
+        const cycleDays = totalWeeks * 7;
+        const dayApprox = (cs.currentWeek - 1) * 7 + 1;
+        const phaseLen = cycleDays / p.titration.length;
+        const phaseIdx = Math.min(p.titration.length - 1, Math.floor((dayApprox - 1) / phaseLen));
+        const phase = p.titration[phaseIdx];
+        summary = `<div class="cycle-ask-summary">
+          <strong>Picking up at Week ${cs.currentWeek}.</strong> Tracker will start you in phase: <strong>${phase.w} → ${phase.d}</strong>. We'll keep titrating from here, not week 1.
+        </div>`;
+      }
+
+      return `
+        <div class="cycle-ask">
+          <div class="cycle-ask-title">Where are you in your cycle?</div>
+          <div class="cycle-ask-buttons">
+            <button class="cycle-ask-btn${cs.mode === 'new' || !cs.mode ? ' on' : ''}" data-cycle-mode="new" data-slug="${slug}">Brand new — start week 1</button>
+            <button class="cycle-ask-btn${isMid ? ' on' : ''}" data-cycle-mode="mid" data-slug="${slug}">Already on cycle</button>
+          </div>
+          <div class="cycle-ask-fields${isMid ? ' show' : ''}">
+            <div class="cycle-ask-field-row">
+              <div class="cycle-ask-field">
+                <label>Current week</label>
+                <select data-cycle-week data-slug="${slug}">${weekOpts}</select>
+              </div>
+              <div class="cycle-ask-field">
+                <label>Last dose taken</label>
+                <select data-cycle-dose data-slug="${slug}">${doseOpts}</select>
+              </div>
+            </div>
+            ${summary}
+          </div>
+        </div>
+      `;
+    }
+
     function renderInner(){
       card.innerHTML = `
         <div class="proto-head">
@@ -387,20 +490,46 @@ body::before{
           </div>
         </div>
         ${buildTitHtml()}
+        ${buildCycleAsk()}
         ${buildSplitToggle()}
       `;
 
-      // Wire toggle
+      // Wire split toggle
       const t = card.querySelector('.split-toggle');
       if (t) {
         t.addEventListener('click', () => {
           splitState[slug] = !splitState[slug];
           persistSplit();
           renderInner();
-          // Light haptic
           try { if (navigator.vibrate) navigator.vibrate(15); } catch(_){}
         });
       }
+      // Wire cycle-ask buttons + dropdowns
+      card.querySelectorAll('[data-cycle-mode]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const mode = btn.getAttribute('data-cycle-mode');
+          cycleState[slug] = cycleState[slug] || {};
+          cycleState[slug].mode = mode;
+          if (mode === 'mid' && !cycleState[slug].currentWeek) cycleState[slug].currentWeek = 1;
+          persistCyclePosition();
+          renderInner();
+          try { if (navigator.vibrate) navigator.vibrate(10); } catch(_){}
+        });
+      });
+      const weekSel = card.querySelector('[data-cycle-week]');
+      if (weekSel) weekSel.addEventListener('change', () => {
+        cycleState[slug] = cycleState[slug] || { mode: 'mid' };
+        cycleState[slug].currentWeek = parseInt(weekSel.value, 10) || 1;
+        persistCyclePosition();
+        renderInner();
+      });
+      const doseSel = card.querySelector('[data-cycle-dose]');
+      if (doseSel) doseSel.addEventListener('change', () => {
+        cycleState[slug] = cycleState[slug] || { mode: 'mid' };
+        cycleState[slug].lastDoseIdx = parseInt(doseSel.value, 10);
+        persistCyclePosition();
+        renderInner();
+      });
     }
 
     renderInner();
@@ -414,14 +543,27 @@ body::before{
     function slugToName(slug){
       return slug.replace(/\.html$/, '').replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
     }
+    // Compute startDate per peptide. If user said "Already on cycle" + picked
+    // a current week, shift startDate BACK by (week-1)*7 days so the tracker
+    // immediately shows them at that week's titration phase.
+    function computeStartDate(slug, p){
+      const todayISO = new Date().toISOString().slice(0,10);
+      const cs = cycleState[slug];
+      if (!cs || cs.mode !== 'mid' || !cs.currentWeek || cs.currentWeek <= 1) return todayISO;
+      const d = new Date();
+      d.setDate(d.getDate() - (cs.currentWeek - 1) * 7);
+      return d.toISOString().slice(0,10);
+    }
     const protocols = selection.map(slug => {
       const p = PROTO[slug];
-      const today = new Date().toISOString().slice(0,10);
+      const startDate = computeStartDate(slug, p);
+      // mixDate stays today regardless — fresh vial, even if cycle is mid-flight
+      const mixDate = new Date().toISOString().slice(0,10);
       if (p) {
-        return { slug, name:p.name, mech:p.mech, cycleWks:p.cycleWks, dose:p.dose, freq:p.freq, titration:p.titration||null, startDate:today };
+        return { slug, name:p.name, mech:p.mech, cycleWks:p.cycleWks, dose:p.dose, freq:p.freq, titration:p.titration||null, startDate, mixDate };
       }
       console.warn('[protocol-summary] missing PROTO for', slug, '→ fallback');
-      return { slug, name:slugToName(slug), mech:'', cycleWks:8, dose:'set in tracker', freq:'daily', titration:null, startDate:today };
+      return { slug, name:slugToName(slug), mech:'', cycleWks:8, dose:'set in tracker', freq:'daily', titration:null, startDate, mixDate };
     });
 
     if (protocols.length === 0) {
