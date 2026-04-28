@@ -422,18 +422,27 @@ body::before{
       const isMid = cs.mode === 'mid';
       const totalWeeks = (typeof p.cycleWks === 'number') ? p.cycleWks : 24;
 
-      // Build week dropdown options (1 .. totalWeeks)
+      // Default vial sizes pulled from reconstitute defaults — user can override
+      const VIAL_DEFAULTS = {
+        'retatrutide.html': 30, 'semaglutide.html': 10, 'tirzepatide.html': 10, 'nad-plus.html': 500
+      };
+      const vialMg  = (cs.vialMg && cs.vialMg > 0) ? cs.vialMg : (VIAL_DEFAULTS[slug] || 10);
+      const bacMl   = (cs.bacMl  && cs.bacMl  > 0) ? cs.bacMl  : (slug === 'nad-plus.html' ? 5 : 3);
+      const lastUnits = (typeof cs.lastUnits === 'number' && cs.lastUnits > 0) ? cs.lastUnits : '';
+
+      // Live math: concentration = vial mg / bac mL  ·  dose mg = units × concentration / 100
+      const concMgPerMl = bacMl > 0 ? (vialMg / bacMl) : 0;
+      const lastDoseMg  = (typeof cs.lastUnits === 'number' && cs.lastUnits > 0)
+        ? (cs.lastUnits * concMgPerMl / 100) : 0;
+      const lastDoseMgRounded = lastDoseMg > 0 ? (lastDoseMg < 1 ? lastDoseMg.toFixed(2) : lastDoseMg.toFixed(1)) : '0';
+
+      // Build week dropdown
       let weekOpts = '';
       for (let w = 1; w <= totalWeeks; w++) {
         weekOpts += `<option value="${w}"${cs.currentWeek === w ? ' selected' : ''}>Week ${w}</option>`;
       }
-      // Build dose dropdown — use the titration phase doses
-      let doseOpts = '';
-      p.titration.forEach((t, i) => {
-        doseOpts += `<option value="${i}"${cs.lastDoseIdx === i ? ' selected' : ''}>${t.d}</option>`;
-      });
 
-      // Calculate current titration phase from week (for summary)
+      // Live summary if mid-cycle data is filled
       let summary = '';
       if (isMid && cs.currentWeek) {
         const cycleDays = totalWeeks * 7;
@@ -441,8 +450,11 @@ body::before{
         const phaseLen = cycleDays / p.titration.length;
         const phaseIdx = Math.min(p.titration.length - 1, Math.floor((dayApprox - 1) / phaseLen));
         const phase = p.titration[phaseIdx];
+        const doseLine = (lastDoseMg > 0)
+          ? ` Your <strong>${lastUnits} units</strong> ≈ <strong>${lastDoseMgRounded} mg</strong> at ${concMgPerMl.toFixed(2)} mg/mL.`
+          : '';
         summary = `<div class="cycle-ask-summary">
-          <strong>Picking up at Week ${cs.currentWeek}.</strong> Tracker will start you in phase: <strong>${phase.w} → ${phase.d}</strong>. We'll keep titrating from here, not week 1.
+          <strong>Picking up at Week ${cs.currentWeek}.</strong> Tracker drops you in phase: <strong>${phase.w} → ${phase.d}</strong>.${doseLine}
         </div>`;
       }
 
@@ -456,12 +468,22 @@ body::before{
           <div class="cycle-ask-fields${isMid ? ' show' : ''}">
             <div class="cycle-ask-field-row">
               <div class="cycle-ask-field">
+                <label>How big was your vial?</label>
+                <input type="number" min="1" step="1" value="${vialMg}" data-cycle-vial data-slug="${slug}" inputmode="numeric"> mg
+              </div>
+              <div class="cycle-ask-field">
+                <label>How many cc of BAC?</label>
+                <input type="number" min="0.5" step="0.5" value="${bacMl}" data-cycle-bac data-slug="${slug}" inputmode="decimal"> mL
+              </div>
+            </div>
+            <div class="cycle-ask-field-row">
+              <div class="cycle-ask-field">
                 <label>Current week</label>
                 <select data-cycle-week data-slug="${slug}">${weekOpts}</select>
               </div>
               <div class="cycle-ask-field">
-                <label>Last dose taken</label>
-                <select data-cycle-dose data-slug="${slug}">${doseOpts}</select>
+                <label>Last dose (units)</label>
+                <input type="number" min="1" max="120" step="1" value="${lastUnits}" placeholder="e.g. 50" data-cycle-units data-slug="${slug}" inputmode="numeric">
               </div>
             </div>
             ${summary}
@@ -523,12 +545,22 @@ body::before{
         persistCyclePosition();
         renderInner();
       });
-      const doseSel = card.querySelector('[data-cycle-dose]');
-      if (doseSel) doseSel.addEventListener('change', () => {
+      // Vial size + BAC water + last units — feed concentration math
+      const vialIn = card.querySelector('[data-cycle-vial]');
+      const bacIn  = card.querySelector('[data-cycle-bac]');
+      const unitIn = card.querySelector('[data-cycle-units]');
+      function flushNumeric(){
         cycleState[slug] = cycleState[slug] || { mode: 'mid' };
-        cycleState[slug].lastDoseIdx = parseInt(doseSel.value, 10);
+        if (vialIn) cycleState[slug].vialMg   = parseFloat(vialIn.value) || 0;
+        if (bacIn)  cycleState[slug].bacMl    = parseFloat(bacIn.value)  || 0;
+        if (unitIn) cycleState[slug].lastUnits= parseInt(unitIn.value,10) || 0;
         persistCyclePosition();
-        renderInner();
+      }
+      // Update on input (live), re-render on blur (refresh summary line)
+      [vialIn, bacIn, unitIn].forEach(el => {
+        if (!el) return;
+        el.addEventListener('input', flushNumeric);
+        el.addEventListener('blur',  () => { flushNumeric(); renderInner(); });
       });
     }
 
@@ -571,7 +603,23 @@ body::before{
       return;
     }
 
+    // Merge any user-supplied vial/bac from the cycle-ask into apex_recon
+    // so the tracker tile uses the user's actual concentration, not defaults.
+    let recon = {};
+    try { recon = JSON.parse(localStorage.getItem('apex_recon') || '{}'); } catch(e){}
+    Object.keys(cycleState).forEach(slug => {
+      const cs = cycleState[slug];
+      if (!cs || cs.mode !== 'mid') return;
+      if (cs.vialMg > 0 && cs.bacMl > 0) {
+        recon[slug] = recon[slug] || {};
+        recon[slug].vial   = cs.vialMg;
+        recon[slug].bac    = cs.bacMl;
+        recon[slug].acetic = recon[slug].acetic || 0;
+      }
+    });
+
     try {
+      localStorage.setItem('apex_recon', JSON.stringify(recon));
       localStorage.setItem('apex_pending_protocols', JSON.stringify(protocols));
       localStorage.removeItem('apex_selection');
     } catch(e){}
