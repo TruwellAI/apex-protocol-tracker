@@ -203,7 +203,7 @@ body::before{
   // PROTOCOL DATA: cycle length, dose default, frequency, titration schedule
   const PROTO = {
     'aod9604.html':      { name:'AOD-9604',       mech:'GH fragment lipolysis',     cycleWks:12, dose:'300 mcg', freq:'daily, fasted AM' },
-    '5amino1mq.html':    { name:'5-Amino-1MQ',    mech:'NNMT inhibitor',            cycleWks:12, dose:'50-150 mg', freq:'daily oral' },
+    '5amino1mq.html':    { name:'5-Amino-1MQ',    mech:'NNMT inhibitor',            cycleWks:12, dose:'50-150 mg', freq:'daily SubQ' },
     'slu-pp-322.html':   { name:'SLU-PP-332',     mech:'ERRα agonist',              cycleWks:8,  dose:'experimental', freq:'preclinical only' },
     'retatrutide.html':  { name:'Retatrutide',    mech:'Triple G agonist',          cycleWks:24, dose:'titrated', freq:'weekly',
       titration:[{w:'Wk 1-4',d:'2 mg/wk'},{w:'Wk 5-8',d:'4 mg/wk'},{w:'Wk 9-12',d:'6 mg/wk'},{w:'Wk 13-16',d:'8 mg/wk'},{w:'Wk 17-20',d:'10 mg/wk'},{w:'Wk 21+',d:'12 mg/wk (max)'}] },
@@ -281,6 +281,30 @@ body::before{
     return;
   }
 
+  // Peptides eligible for split dosing — DECLARED BEFORE renderCard runs.
+  // (Was declared after forEach, causing ReferenceError on first render.)
+  const SPLIT_ELIGIBLE = {
+    'retatrutide.html':  { freqLabel:'2x weekly (Mon + Thu)', factor:2 },
+    'semaglutide.html':  { freqLabel:'2x weekly (Mon + Thu)', factor:2 },
+    'tirzepatide.html':  { freqLabel:'2x weekly (Mon + Thu)', factor:2 }
+  };
+
+  function splitDoseString(doseStr, factor){
+    if (!doseStr || typeof doseStr !== 'string') return doseStr;
+    return doseStr.replace(/(\d+(?:\.\d+)?)\s*(mg|mcg)/gi, function(_, n, unit){
+      const v = parseFloat(n) / factor;
+      const rounded = (v % 1 === 0) ? v : v.toFixed(2).replace(/\.?0+$/,'');
+      return rounded + ' ' + unit;
+    }).replace(/\/\s*wk\b/g, '/dose');
+  }
+
+  const splitState = {};
+  try { Object.assign(splitState, JSON.parse(localStorage.getItem('apex_split_dose')||'{}')); } catch(e){}
+
+  function persistSplit(){
+    try { localStorage.setItem('apex_split_dose', JSON.stringify(splitState)); } catch(e){}
+  }
+
   let titrationCount = 0;
   let totalWeeks = 0;
   let weeksCount = 0;
@@ -306,32 +330,6 @@ body::before{
 
   document.getElementById('cb-count').textContent = selection.length;
   continueBar.style.display = 'flex';
-
-  // Peptides eligible for split dosing — long-half-life GLP-1s benefit pharmacokinetically.
-  // Pharmacokinetic basis is real (~28-38% lower peaks); no clinical trial validates this.
-  const SPLIT_ELIGIBLE = {
-    'retatrutide.html':  { freqLabel:'2x weekly (Mon + Thu)', factor:2 },
-    'semaglutide.html':  { freqLabel:'2x weekly (Mon + Thu)', factor:2 },
-    'tirzepatide.html':  { freqLabel:'2x weekly (Mon + Thu)', factor:2 }
-  };
-
-  function splitDoseString(doseStr, factor){
-    // Parse "12 mg/wk" or "1 → 12 mg" — divide the numeric piece by factor.
-    if (!doseStr || typeof doseStr !== 'string') return doseStr;
-    return doseStr.replace(/(\d+(?:\.\d+)?)\s*(mg|mcg)/gi, function(_, n, unit){
-      const v = parseFloat(n) / factor;
-      const rounded = (v % 1 === 0) ? v : v.toFixed(2).replace(/\.?0+$/,'');
-      return rounded + ' ' + unit;
-    }).replace(/\/\s*wk\b/g, '/dose');
-  }
-
-  // Track split-dose toggle state per slug
-  const splitState = {};
-  try { Object.assign(splitState, JSON.parse(localStorage.getItem('apex_split_dose')||'{}')); } catch(e){}
-
-  function persistSplit(){
-    try { localStorage.setItem('apex_split_dose', JSON.stringify(splitState)); } catch(e){}
-  }
 
   function renderCard(slug, p){
     const card = document.createElement('div');

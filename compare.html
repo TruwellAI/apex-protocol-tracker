@@ -252,14 +252,14 @@ body::before{
     repair: {
       label:'Healing & Recovery',
       mechs:[
-        // Wolverine/KLOW/GLOW all contain BPC + TB-500
+        // Wolverine = BPC-157 + TB-500. KLOW & GLOW also contain BPC + TB.
         { name:'Tissue repair / angiogenesis', by:['bpc157','tb500','wolverine','klow','glow'] },
-        // KLOW contains KPV
+        // Only KLOW contains KPV (anti-inflammatory)
         { name:'Anti-inflammatory cytokine modulation', by:['kpv','thymosin-alpha1','klow'] },
-        // Wolverine/KLOW/GLOW all contain GHK-Cu
-        { name:'Skin / collagen / wound healing', by:['ghkcu','ll37','wolverine','klow','glow'] },
+        // GHK-Cu only — KLOW & GLOW have it. Wolverine does NOT.
+        { name:'Skin / collagen / wound healing', by:['ghkcu','ll37','klow','glow'] },
         { name:'Antimicrobial / immune', by:['ll37','thymosin-alpha1'] },
-        // BPC included in all stacks → nerve repair credit
+        // BPC-157 in all three stacks → nerve repair credit
         { name:'Neuropathy / nerve repair', by:['ara290','bpc157','wolverine','klow','glow'] }
       ],
       peptides:['bpc157','tb500','ghkcu','kpv','ll37','thymosin-alpha1','ara290','wolverine','klow','glow']
@@ -322,7 +322,7 @@ body::before{
     'll37':{ name:'LL-37',                  mech:'Cathelicidin AMP',          conflict:null },
     'thymosin-alpha1':{ name:'Thymosin α1', mech:'Immune modulator',          conflict:null },
     'ara290':{ name:'ARA-290',              mech:'EPO derivative',            conflict:null },
-    'wolverine':{ name:'Wolverine Stack',   mech:'BPC + TB-500 + GHK',        conflict:null },
+    'wolverine':{ name:'Wolverine Stack',   mech:'BPC-157 + TB-500',          conflict:null },
     'klow':{ name:'KLOW Stack',             mech:'KPV + TB + BPC + GHK',      conflict:null },
     'glow':{ name:'GLOW Stack',             mech:'GHK + TB + BPC',            conflict:null },
     'epitalon':{ name:'Epitalon',           mech:'Telomerase activator',      conflict:null },
