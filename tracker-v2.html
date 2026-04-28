@@ -1019,37 +1019,66 @@ body::before{
     grid.innerHTML = html;
   }
 
+  // Standard OFF-cycle length (weeks) per peptide class. Titrating peptides
+  // also get a mirrored taper-down phase before the OFF period.
+  function getOffWeeks(p){
+    if (p.titration && Array.isArray(p.titration) && p.titration.length > 1) return 4; // GLP-1s / NAD+ break before next round
+    return 4; // standard 4-week off for non-titrating cycles (BPC, TB-500, GHK, etc.)
+  }
+
   function renderTimelineRow(p, anchor, totalWeeks){
     const start = p.startDate ? new Date(p.startDate) : new Date();
     const cycleWks = typeof p.cycleWeeks === 'number' ? p.cycleWeeks : 8;
     const startWeek = daysBetween(anchor, start) / 7;
-    const endWeek = startWeek + cycleWks;
 
     let segments = [];
+    let cycleEndWeek;
+
     if (p.titration && Array.isArray(p.titration) && p.titration.length > 1) {
+      // RAMP UP: each titration phase, evenly distributed
       const phaseLen = cycleWks / p.titration.length;
       p.titration.forEach((t, i) => {
         segments.push({
           start: startWeek + (i*phaseLen),
           end: startWeek + (i*phaseLen) + phaseLen,
-          label: t.d, phase: i % 6
+          label: t.d, phase: i % 6, kind: 'up'
         });
       });
+      // TAPER DOWN: mirror the ramp using same colors. Skip the max phase
+      // (you don't taper FROM max — you taper BACK from peak through earlier phases)
+      const taperPhases = p.titration.slice(0, -1).reverse(); // exclude top, reverse remaining
+      taperPhases.forEach((t, i) => {
+        const segIdx = p.titration.length + i;
+        // Color: mirror — same as ramp phase (length-2-i) since we excluded last phase
+        const colorPhase = (p.titration.length - 2 - i) % 6;
+        segments.push({
+          start: startWeek + (segIdx * phaseLen),
+          end: startWeek + (segIdx * phaseLen) + phaseLen,
+          label: t.d, phase: colorPhase, kind: 'down'
+        });
+      });
+      cycleEndWeek = startWeek + cycleWks + (taperPhases.length * phaseLen);
     } else {
-      segments.push({ start: startWeek, end: endWeek, label: p.dose || 'on', phase: 0 });
+      // Non-titrating: solid ON segment for cycleWks
+      segments.push({ start: startWeek, end: startWeek + cycleWks, label: 'ON · ' + cycleWks + ' wks', phase: 0, kind: 'flat' });
+      cycleEndWeek = startWeek + cycleWks;
     }
 
-    const showOff = endWeek < totalWeeks;
-    const offEnd = Math.min(totalWeeks, endWeek + 8);
+    // OFF period after the full cycle (ramp + taper or solid)
+    const offWeeks = getOffWeeks(p);
+    const showOff = cycleEndWeek < totalWeeks;
+    const offEnd = Math.min(totalWeeks, cycleEndWeek + offWeeks);
 
     const segHtml = segments.map(s => {
       if (s.start >= totalWeeks || s.end <= 0) return '';
       const left = Math.max(0, (s.start / totalWeeks) * 100);
       const width = Math.max(0.5, ((Math.min(s.end, totalWeeks) - Math.max(s.start, 0)) / totalWeeks) * 100);
-      return `<div class="tg-seg phase-${s.phase}" style="left:${left}%;width:${width}%" title="${s.label}"><span class="tg-seg-label">${s.label}</span></div>`;
+      const arrow = s.kind === 'down' ? '↓' : (s.kind === 'up' ? '↑' : '');
+      return `<div class="tg-seg phase-${s.phase}" style="left:${left}%;width:${width}%" title="${s.kind === 'down' ? 'Taper: ' + s.label : s.label}"><span class="tg-seg-label">${arrow} ${s.label}</span></div>`;
     }).join('');
 
-    const offHtml = showOff ? `<div class="tg-seg tg-off" style="left:${(endWeek/totalWeeks)*100}%;width:${((offEnd-endWeek)/totalWeeks)*100}%"><span class="tg-seg-label">off</span></div>` : '';
+    const offWidth = showOff ? ((offEnd - cycleEndWeek) / totalWeeks) * 100 : 0;
+    const offHtml = showOff ? `<div class="tg-seg tg-off" style="left:${(cycleEndWeek/totalWeeks)*100}%;width:${offWidth}%" title="Off cycle (${offWeeks} weeks)"><span class="tg-seg-label">OFF · ${offWeeks}wk</span></div>` : '';
 
     return `
       <div class="tg-row">
