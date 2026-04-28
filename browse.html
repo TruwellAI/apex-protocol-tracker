@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover">
 <title>Apex — Free Peptide Protocol Encyclopedia & Tracker</title>
 <!-- apex-seo-injected -->
 <meta name="description" content="Apex Peptide Encyclopedia — 40+ research peptides, protocols, dosing, stack builder. Free research reference. Not medical advice.">
@@ -810,8 +810,8 @@ body[data-research-flow="1"] .hero + div + div { display:none !important; }
     <div style="font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--white);margin-bottom:8px;line-height:1.1;">Get Your Protocols<br>Delivered.</div>
     <div style="font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:24px;">Drop your email and we'll send you a curated protocol guide + weekly research updates. No spam — just what works.</div>
     <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;">
-      <input type="text" id="ec-name" placeholder="First name" style="background:#080c10;border:1px solid var(--border);color:var(--white);padding:12px 16px;font-family:'Barlow',sans-serif;font-size:14px;width:100%;outline:none;transition:border-color .2s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
-      <input type="email" id="ec-email" placeholder="Email address" style="background:#080c10;border:1px solid var(--border);color:var(--white);padding:12px 16px;font-family:'Barlow',sans-serif;font-size:14px;width:100%;outline:none;transition:border-color .2s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+      <input type="text" id="ec-name" autocomplete="given-name" placeholder="First name" style="background:#080c10;border:1px solid var(--border);color:var(--white);padding:12px 16px;font-family:'Barlow',sans-serif;font-size:16px;width:100%;outline:none;transition:border-color .2s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+      <input type="email" id="ec-email" inputmode="email" autocomplete="email" autocapitalize="none" autocorrect="off" placeholder="Email address" style="background:#080c10;border:1px solid var(--border);color:var(--white);padding:12px 16px;font-family:'Barlow',sans-serif;font-size:16px;width:100%;outline:none;transition:border-color .2s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
     </div>
     <button onclick="submitEmailCapture()" style="width:100%;background:var(--accent);color:#080c10;font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;letter-spacing:.1em;padding:14px;border:none;cursor:pointer;">GET MY PROTOCOLS →</button>
     <div id="ec-status" style="font-family:'Share Tech Mono',monospace;font-size:11px;margin-top:10px;text-align:center;min-height:16px;"></div>
