@@ -22,6 +22,7 @@
 :root {
   --bg:#080c10; --panel:#0d1318; --panel2:#121a22; --border:#1a2d3a;
   --accent:#00d4ff; --accent2:#00ff9d; --accent3:#ff6b35; --accent4:#a78bfa;
+  --warn:#fbbf24; --bad:#ef4444;
   --text:#cbd5e1; --muted:#7a8d99; --white:#eaf4f8;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -365,8 +366,6 @@ body::before{
         ${isSplit ? `<div class="split-research-note"><strong>Heads up:</strong> Split dosing has a real pharmacokinetic argument (lower peaks, smoother coverage) but <strong>no published clinical trial</strong> validates it for ${p.name}. Phase 2/3 trials all used weekly dosing. Many users report fewer GI side effects on split dosing — anecdotal.</div>` : ''}
       `;
     }
-
-    const freqDisplay = (splitCfg && isSplit) ? splitCfg.freqLabel : p.freq;
 
     function renderInner(){
       card.innerHTML = `
