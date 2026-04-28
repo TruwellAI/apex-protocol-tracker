@@ -500,7 +500,8 @@ body::before{
     }
     const mechsHit = goal.mechs.filter(mechHit);
     const mechsMiss = goal.mechs.filter(m => !mechHit(m));
-    const coveragePct = (mechsHit.length / goal.mechs.length) * 100;
+    // Round once at the source — display value AND threshold checks now agree.
+    const coveragePct = Math.round((mechsHit.length / goal.mechs.length) * 100);
 
     let grade = 'D';
     if (dupes.length === 0 && coveragePct >= 75) grade = 'A';

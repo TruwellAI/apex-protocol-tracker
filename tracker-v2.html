@@ -415,6 +415,11 @@ body::before{
         <input type="date" class="em-input" id="em-start">
       </div>
     </div>
+    <div class="em-field">
+      <div class="em-label">Last Mixed (vial)</div>
+      <input type="date" class="em-input" id="em-mix">
+      <div style="font-size:11px;color:var(--muted);margin-top:5px;">When you reconstituted the current vial. 30-day countdown starts here.</div>
+    </div>
     <div class="em-actions">
       <button class="em-btn em-btn-cancel" id="em-cancel">Cancel</button>
       <button class="em-btn em-btn-save" id="em-save">Save Changes</button>
@@ -470,6 +475,48 @@ body::before{
   function isWeekly(freq){ return freq && /weekly/i.test(freq); }
   function isAsNeeded(freq){ return freq && /(as needed|pre-event|when needed)/i.test(freq); }
 
+  // ── FREQUENCY PARSER — handles 1x/2x/3x weekly + day-tagged variants
+  // Returns: { type: 'daily' | 'weekly' | 'multi-weekly' | 'as-needed', daysOfWeek: [int, ...] }
+  // Days: 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  function parseFrequency(freq, startDate){
+    const f = (freq || '').toLowerCase();
+    if (isAsNeeded(f)) return { type:'as-needed', daysOfWeek:[] };
+    // 3x weekly / three times weekly / Mon Wed Fri default
+    if (/3x\s*weekly|three\s*times\s*(per\s*)?week|m\/w\/f|mon\s*\/\s*wed\s*\/\s*fri/.test(f)) {
+      return { type:'multi-weekly', daysOfWeek:[1,3,5] }; // Mon, Wed, Fri
+    }
+    // 2x weekly / twice weekly / Mon+Thu default
+    if (/2x\s*weekly|twice\s*(per\s*)?week|two\s*times\s*(per\s*)?week|m\+th|mon\s*\+\s*thu/.test(f)) {
+      return { type:'multi-weekly', daysOfWeek:[1,4] }; // Mon, Thu
+    }
+    if (/weekly|once\s*(per\s*)?week|every\s*sunday|every\s*monday/.test(f)) {
+      // Use start weekday as the weekly anchor
+      const start = startDate ? new Date(startDate) : new Date();
+      return { type:'weekly', daysOfWeek:[start.getDay()] };
+    }
+    return { type:'daily', daysOfWeek:[0,1,2,3,4,5,6] };
+  }
+
+  // ── CYCLE LENGTH PARSER — handles strings like "10 days pulsed", "as needed"
+  // Returns: { days, label, isAsNeeded }
+  function parseCycleLength(cycleVal){
+    if (typeof cycleVal === 'number' && cycleVal > 0) {
+      return { days: cycleVal * 7, label: cycleVal + ' weeks', isAsNeeded: false };
+    }
+    const s = String(cycleVal || '').toLowerCase();
+    // Match "X days pulsed" or "X-day pulsed"
+    const dayMatch = s.match(/(\d+)[\s-]*day/);
+    if (dayMatch) {
+      const days = parseInt(dayMatch[1], 10);
+      return { days, label: cycleVal, isAsNeeded: false };
+    }
+    if (/as\s*needed|pre-event|when\s*needed/.test(s)) {
+      return { days: 0, label: 'as needed', isAsNeeded: true };
+    }
+    // Last fallback — treat as 8 weeks but flag
+    return { days: 56, label: '8 weeks (default)', isAsNeeded: false };
+  }
+
   // ── IMPORT PENDING (from protocol-summary) ─────────
   function importPending(){
     const params = new URLSearchParams(location.search);
@@ -491,7 +538,10 @@ body::before{
         cycleWeeks: typeof p.cycleWks === 'number' ? p.cycleWks : 8,
         cycleWks: p.cycleWks,
         titration: p.titration || null,
-        status: 'active', startDate: p.startDate || today,
+        status: 'active',
+        startDate: p.startDate || today,
+        // mixDate defaults to startDate; user can refresh via "I refilled" button on tile
+        mixDate: p.mixDate || p.startDate || today,
         createdAt: new Date().toISOString(),
         isDemoSeed: false, dailyLog: []
       });
@@ -554,8 +604,26 @@ body::before{
   }
   function doseToUnits(doseStr, concentrationMgPerMl, p){
     if (!doseStr || !concentrationMgPerMl) return null;
-    if (p && isOral(p)) return null;          // oral / nasal / etc. — no pen
-    if (isExperimental(doseStr)) return null;  // can't compute for "experimental"
+    if (p && isOral(p)) return null;
+    if (isExperimental(doseStr)) return null;
+
+    // Detect ranged doses: "250-500 mcg" / "1-3 mg" / "1.5-2.5 mg"
+    const range = String(doseStr).match(/(\d+(?:\.\d+)?)\s*[-–—]\s*(\d+(?:\.\d+)?)\s*(mg|mcg)/i);
+    if (range) {
+      const lo = parseFloat(range[1]);
+      const hi = parseFloat(range[2]);
+      const unit = range[3].toLowerCase();
+      const loMg = unit === 'mcg' ? lo/1000 : lo;
+      const hiMg = unit === 'mcg' ? hi/1000 : hi;
+      const loVol = loMg / parseFloat(concentrationMgPerMl);
+      const hiVol = hiMg / parseFloat(concentrationMgPerMl);
+      const loU = Math.round(loVol * 100);
+      const hiU = Math.round(hiVol * 100);
+      if (loU < 1 || hiU > 120 || !isFinite(loU) || !isFinite(hiU)) return null;
+      return { mL: loVol.toFixed(2) + '–' + hiVol.toFixed(2), minUnits: loU, maxUnits: hiU, units: hiU, range: true };
+    }
+
+    // Single-value dose
     const m = String(doseStr).match(/(\d+(?:\.\d+)?)\s*(mg|mcg)/i);
     if (!m) return null;
     const amount = parseFloat(m[1]);
@@ -564,8 +632,6 @@ body::before{
     const vol = amountMg / parseFloat(concentrationMgPerMl);
     if (!vol || !isFinite(vol)) return null;
     const units = Math.round(vol * 100);
-    // Sanity check — pen needles top out around 100 units typically.
-    // Anything >120 is almost certainly a misinterpreted oral dose or wrong concentration.
     if (units > 120) return null;
     if (units < 1) return null;
     return { mL: vol.toFixed(2), units: units };
@@ -573,18 +639,23 @@ body::before{
 
   function shouldDoToday(p, today){
     if (!p) return { go: false, reason: '' };
-    if (isAsNeeded(p.freq)) return { go: false, reason: 'as needed' };
-    if (isWeekly(p.freq)) {
-      const start = p.startDate ? new Date(p.startDate) : today;
-      // Match same weekday as start
-      if (start.getDay() === today.getDay()) return { go: true, reason: 'weekly · today' };
-      // Find next weekday
-      const daysToNext = (start.getDay() - today.getDay() + 7) % 7 || 7;
-      const next = new Date(today);
-      next.setDate(today.getDate() + daysToNext);
-      return { go: false, reason: 'next ' + fmtDow(next) };
+    const sched = parseFrequency(p.freq, p.startDate);
+    if (sched.type === 'as-needed') return { go: false, reason: 'as needed' };
+
+    const todayDow = today.getDay();
+    if (sched.daysOfWeek.includes(todayDow)) {
+      const labels = { 'multi-weekly': '2-3×/wk · today', 'weekly': 'weekly · today', 'daily': 'daily' };
+      return { go: true, reason: labels[sched.type] || 'today' };
     }
-    return { go: true, reason: 'daily' };
+    // Find next scheduled day (lowest delta to a daysOfWeek entry)
+    let bestDelta = 7;
+    sched.daysOfWeek.forEach(dow => {
+      const delta = (dow - todayDow + 7) % 7 || 7;
+      if (delta < bestDelta) bestDelta = delta;
+    });
+    const next = new Date(today);
+    next.setDate(today.getDate() + bestDelta);
+    return { go: false, reason: 'next ' + fmtDow(next) };
   }
 
   // ── RENDER ─────────────────────────────
@@ -635,17 +706,18 @@ body::before{
       todayList.forEach(({ p, sched }) => {
         const isDone = !!todayDoses[p.id];
         const start = p.startDate ? new Date(p.startDate) : today;
-        const cycleWks = typeof p.cycleWeeks === 'number' ? p.cycleWeeks : 8;
-        const cycleDays = cycleWks * 7;
-        const dayNum = Math.max(1, Math.min(cycleDays, daysBetween(start, today) + 1));
-        const dose = resolveDose(p, dayNum, cycleDays);
+        const cycleSpec = parseCycleLength(typeof p.cycleWeeks === 'number' ? p.cycleWeeks : p.cycleWks);
+        const cycleDays = cycleSpec.days || 56;
+        const dayNum = cycleSpec.isAsNeeded ? 0 : Math.max(1, Math.min(cycleDays, daysBetween(start, today) + 1));
+        const dose = resolveDose(p, dayNum || 1, cycleDays);
         const reconKey = p.slug || '';
         const reconInfo = recon[reconKey] || {};
         const conc = reconInfo.vial && (reconInfo.bac || reconInfo.acetic) ? reconInfo.vial / ((reconInfo.bac||0) + (reconInfo.acetic||0)) : null;
         const units = doseToUnits(dose.current, conc, p);
 
-        // Stats: bottle countdown, cycle progress, next titration
-        const daysSinceMix = daysBetween(start, today);
+        // Stats: bottle countdown (use mixDate, NOT cycle start), cycle progress, next titration
+        const mixDateRow = p.mixDate ? new Date(p.mixDate) : start;
+        const daysSinceMix = daysBetween(mixDateRow, today);
         const vialDaysLeft = Math.max(0, SHELF_LIFE_DAYS - daysSinceMix);
         let vialCls = '';
         if (vialDaysLeft <= 3) vialCls = 'bad';
@@ -665,7 +737,7 @@ body::before{
           <div class="today-check">✓</div>
           <div class="today-info">
             <div class="today-name">${p.name}</div>
-            <div class="today-detail">${units ? '<strong>' + units.units + ' units</strong> on the pen' : '<strong>' + dose.current + '</strong>' + (isOral(p) ? ' <span style="color:var(--accent3);">· oral</span>' : '')} · ${sched.reason}</div>
+            <div class="today-detail">${units ? '<strong>' + (units.range ? units.minUnits + '–' + units.maxUnits : units.units) + ' units</strong> on the pen' : '<strong>' + dose.current + '</strong>' + (isOral(p) ? ' <span style="color:var(--accent3);">· oral</span>' : '')} · ${sched.reason}</div>
           </div>
           <div class="today-stats">
             <div class="ts-row">
@@ -733,13 +805,16 @@ body::before{
 
   function renderTile(p, recon, today, todayDoses){
     const start = p.startDate ? new Date(p.startDate) : today;
-    const cycleWks = typeof p.cycleWeeks === 'number' ? p.cycleWeeks : 8;
-    const cycleDays = cycleWks * 7;
-    const dayNum = Math.max(1, Math.min(cycleDays, daysBetween(start, today) + 1));
-    const daysLeft = Math.max(0, cycleDays - dayNum);
-    const pct = Math.round((dayNum / cycleDays) * 100);
+    // Use cycleWks (the original — could be number or string like "10 days pulsed")
+    // and parseCycleLength to handle both, plus "as needed" gracefully.
+    const cycleSpec = parseCycleLength(typeof p.cycleWeeks === 'number' ? p.cycleWeeks : p.cycleWks);
+    const cycleDays = cycleSpec.days;
+    const isAsNeededCycle = cycleSpec.isAsNeeded;
+    const dayNum = isAsNeededCycle ? 0 : Math.max(1, Math.min(cycleDays, daysBetween(start, today) + 1));
+    const daysLeft = isAsNeededCycle ? 0 : Math.max(0, cycleDays - dayNum);
+    const pct = isAsNeededCycle ? 0 : Math.round((dayNum / cycleDays) * 100);
 
-    const dose = resolveDose(p, dayNum, cycleDays);
+    const dose = resolveDose(p, dayNum || 1, cycleDays || 56);
     const reconInfo = recon[p.slug] || {};
     const totalVol = (reconInfo.bac || 0) + (reconInfo.acetic || 0);
     const conc = reconInfo.vial && totalVol > 0 ? reconInfo.vial / totalVol : null;
@@ -747,9 +822,13 @@ body::before{
 
     const sched = shouldDoToday(p, today);
     const isDone = !!todayDoses[p.id];
-    const daysSinceMix = daysBetween(start, today);
+
+    // Vial expiry uses mixDate (defaults to startDate) — separate from cycle start
+    // so a refill mid-cycle resets the bottle countdown without changing cycle progress.
+    const mixDate = p.mixDate ? new Date(p.mixDate) : start;
+    const daysSinceMix = daysBetween(mixDate, today);
     const vialDaysLeft = Math.max(0, SHELF_LIFE_DAYS - daysSinceMix);
-    const nextMixDate = new Date(start);
+    const nextMixDate = new Date(mixDate);
     nextMixDate.setDate(nextMixDate.getDate() + SHELF_LIFE_DAYS);
     let vialClass = '';
     if (vialDaysLeft <= 3) vialClass = 'bad';
@@ -786,15 +865,21 @@ body::before{
       <div class="tile-injection">
         <div class="ti-icon">💉</div>
         <div class="ti-text">
-          <div class="ti-label">${sched.go ? "Inject today" : "Next injection"}</div>
-          <div class="ti-value">${dose.current}${units ? ' <span class="units">· ' + units.units + ' units</span>' : ''}<span class="when">${sched.go ? 'today' : sched.reason}</span></div>
+          <div class="ti-label">${sched.go ? "Inject today" : (isAsNeededCycle ? 'Use as needed' : 'Next injection')}</div>
+          <div class="ti-value">${dose.current}${units ? ' <span class="units">· ' + (units.range ? units.minUnits + '–' + units.maxUnits : units.units) + ' units</span>' : ''}<span class="when">${sched.go ? 'today' : sched.reason}</span></div>
         </div>
       </div>
 
+      ${isAsNeededCycle ? `
+      <div class="tile-progress">
+        <div class="tp-row" style="justify-content:center;color:var(--accent3);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;">As Needed · No Cycle Countdown</div>
+      </div>
+      ` : `
       <div class="tile-progress">
         <div class="tp-row"><span><strong>Day ${dayNum}</strong> of ${cycleDays}</span><span><strong>${daysLeft}</strong> days left · ends ${fmtDate(cycleEnd)}</span></div>
         <div class="tp-bar"><div class="tp-fill" style="width:${pct}%"></div></div>
       </div>
+      `}
 
       <div class="tile-meta">
         <div class="tile-meta-row">
@@ -808,8 +893,9 @@ body::before{
       </div>
 
       <div class="tile-actions">
-        <button class="tile-btn primary ${isDone ? 'done' : ''}" data-act="log">${isDone ? '✓ Logged Today' : (sched.go ? "Log Today's Dose" : 'Log Anyway')}</button>
-        <button class="tile-btn" data-act="end">End Cycle</button>
+        <button class="tile-btn primary ${isDone ? 'done' : ''}" data-act="log">${isDone ? '✓ Logged Today' : (sched.go ? "Log Today's Dose" : (isAsNeededCycle ? 'Log a Dose' : 'Log Anyway'))}</button>
+        <button class="tile-btn" data-act="refill" title="Reset bottle countdown after mixing a fresh vial">🧪 Refilled</button>
+        <button class="tile-btn" data-act="end">End</button>
       </div>
     `;
 
@@ -822,6 +908,21 @@ body::before{
       setDailyLog(log);
       render();
     });
+    const refillBtn = tile.querySelector('[data-act="refill"]');
+    if (refillBtn) {
+      refillBtn.addEventListener('click', () => {
+        if (!confirm('Mark a fresh vial mixed today? This resets the 30-day bottle countdown for ' + p.name + '.')) return;
+        const state = getState();
+        const idx = (state.protocols || []).findIndex(x => x.id === p.id);
+        if (idx >= 0) {
+          state.protocols[idx].mixDate = todayKey();
+          state.protocols[idx].refilledAt = new Date().toISOString();
+          setState(state);
+          try { if (navigator.vibrate) navigator.vibrate([20,40,20]); } catch(_){}
+        }
+        render();
+      });
+    }
     tile.querySelector('[data-act="end"]').addEventListener('click', () => {
       if (!confirm('End cycle for ' + p.name + '?')) return;
       const state = getState();
@@ -944,12 +1045,13 @@ body::before{
   let editingDefaults = null;
   function openEditModal(p){
     editingId = p.id;
-    editingDefaults = { dose: p.dose, freq: p.freq, cycleWeeks: p.cycleWeeks, cycleWks: p.cycleWks, startDate: p.startDate };
+    editingDefaults = { dose: p.dose, freq: p.freq, cycleWeeks: p.cycleWeeks, cycleWks: p.cycleWks, startDate: p.startDate, mixDate: p.mixDate };
     document.getElementById('em-title').textContent = p.name;
     document.getElementById('em-dose').value = p.dose || '';
     document.getElementById('em-freq').value = p.freq || '';
     document.getElementById('em-cycle').value = (typeof p.cycleWeeks === 'number' ? p.cycleWeeks : 8);
     document.getElementById('em-start').value = p.startDate || (new Date().toISOString().slice(0,10));
+    document.getElementById('em-mix').value = p.mixDate || p.startDate || (new Date().toISOString().slice(0,10));
     document.getElementById('edit-overlay').classList.add('show');
   }
   function closeEditModal(){
@@ -971,6 +1073,8 @@ body::before{
     }
     const sd = document.getElementById('em-start').value;
     if (sd) state.protocols[idx].startDate = sd;
+    const md = document.getElementById('em-mix').value;
+    if (md) state.protocols[idx].mixDate = md;
     state.protocols[idx].editedAt = new Date().toISOString();
     setState(state);
     closeEditModal();
@@ -982,6 +1086,7 @@ body::before{
     document.getElementById('em-freq').value = editingDefaults.freq || '';
     document.getElementById('em-cycle').value = editingDefaults.cycleWeeks || 8;
     document.getElementById('em-start').value = editingDefaults.startDate || '';
+    document.getElementById('em-mix').value = editingDefaults.mixDate || editingDefaults.startDate || '';
   });
   document.getElementById('edit-overlay').addEventListener('click', e => {
     if (e.target.id === 'edit-overlay') closeEditModal();
