@@ -584,6 +584,45 @@ body::before{
         for (let w = 1; w <= totalWeeks; w++) {
           weekOpts += `<option value="${w}"${cs.currentWeek === w ? ' selected' : ''}>Week ${w}</option>`;
         }
+
+        // ── PREMIXED (testosterone): show weekly mL dial + split + auto-calc'd units
+        if (p.premixed) {
+          const concPremixed = p.name.includes('Propionate') ? 100 : 200; // mg/mL
+          const weeklyMl   = (typeof cs.weeklyMl === 'number' && cs.weeklyMl > 0) ? cs.weeklyMl : 0.5;
+          const pinsPerWk  = (typeof cs.pinsPerWeek === 'number' && cs.pinsPerWeek > 0) ? cs.pinsPerWeek : 2;
+          const totalWeeklyUnits = Math.round(weeklyMl * 100);
+          const totalWeeklyMg    = Math.round(weeklyMl * concPremixed);
+          const perPinUnits      = pinsPerWk > 0 ? Math.round(totalWeeklyUnits / pinsPerWk) : 0;
+          const pinOptsT = [2,3,7].map(n => `<option value="${n}"${pinsPerWk === n ? ' selected' : ''}>${n}× / wk (${({2:'Mon + Thu',3:'M/W/F',7:'daily'})[n]})</option>`).join('');
+          return `
+            <div class="cycle-ask">
+              <div class="cycle-ask-title">Your testosterone protocol</div>
+              <div class="cycle-ask-fields show">
+                <div class="cycle-ask-field-row">
+                  <div class="cycle-ask-field">
+                    <label>Weekly dose (mL / cc)</label>
+                    <input type="number" min="0" max="3" step="0.1" value="${weeklyMl}" data-cycle-weekly-ml data-slug="${slug}" inputmode="decimal" placeholder="0.5">
+                  </div>
+                  <div class="cycle-ask-field">
+                    <label>Split into</label>
+                    <select data-cycle-pins data-slug="${slug}">${pinOptsT}</select>
+                  </div>
+                </div>
+                <div class="cycle-ask-field-row">
+                  <div class="cycle-ask-field" style="background:rgba(0,255,157,.06);border-color:rgba(0,255,157,.3);">
+                    <label style="color:var(--accent2);">Per pin</label>
+                    <div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:18px;color:var(--accent2);">${perPinUnits} <span style="font-size:11px;color:var(--muted);font-weight:600;">units</span></div>
+                  </div>
+                  <div class="cycle-ask-field" style="background:rgba(0,212,255,.04);border-color:rgba(0,212,255,.25);">
+                    <label style="color:var(--accent);">Weekly total</label>
+                    <div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:18px;color:var(--accent);">${totalWeeklyUnits} <span style="font-size:11px;color:var(--muted);font-weight:600;">u (${totalWeeklyMg} mg)</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+
         const summary = (isMid && cs.currentWeek)
           ? `<div class="cycle-ask-summary"><strong>Picking up at Week ${cs.currentWeek}.</strong> Tracker will set your start date back so you land on the right cycle day.</div>`
           : '';
@@ -833,14 +872,26 @@ body::before{
       const vialIn = card.querySelector('[data-cycle-vial]');
       const bacIn  = card.querySelector('[data-cycle-bac]');
       const unitIn = card.querySelector('[data-cycle-units]');
+      const weeklyMlIn = card.querySelector('[data-cycle-weekly-ml]');
       function flushNumeric(){
         cycleState[slug] = cycleState[slug] || { mode: 'mid' };
         if (vialIn) cycleState[slug].vialMg   = parseFloat(vialIn.value) || 0;
         if (bacIn)  cycleState[slug].bacMl    = parseFloat(bacIn.value)  || 0;
         if (unitIn) cycleState[slug].lastUnits= parseInt(unitIn.value,10) || 0;
+        if (weeklyMlIn) {
+          // Premixed (testosterone): user enters weekly mL → app stores midSplit=true
+          // and computes lastUnits as per-pin units. Always 'mid' mode for testosterone.
+          const ml = parseFloat(weeklyMlIn.value) || 0;
+          cycleState[slug].weeklyMl  = ml;
+          cycleState[slug].mode      = 'mid';
+          cycleState[slug].midSplit  = true;
+          if (!cycleState[slug].pinsPerWeek) cycleState[slug].pinsPerWeek = 2;
+          const pins = cycleState[slug].pinsPerWeek;
+          cycleState[slug].lastUnits = pins > 0 ? Math.round((ml * 100) / pins) : 0;
+        }
         persistCyclePosition();
       }
-      [vialIn, bacIn, unitIn].forEach(el => {
+      [vialIn, bacIn, unitIn, weeklyMlIn].forEach(el => {
         if (!el) return;
         el.addEventListener('input', flushNumeric);
         el.addEventListener('blur',  () => { flushNumeric(); renderInner(); });
@@ -860,6 +911,14 @@ body::before{
       if (pinsSel) pinsSel.addEventListener('change', () => {
         cycleState[slug] = cycleState[slug] || { mode: 'mid' };
         cycleState[slug].pinsPerWeek = parseInt(pinsSel.value, 10) || 2;
+        // Premixed: re-derive per-pin units from weekly mL when split changes
+        if (p.premixed && typeof cycleState[slug].weeklyMl === 'number') {
+          const ml = cycleState[slug].weeklyMl;
+          const pins = cycleState[slug].pinsPerWeek;
+          cycleState[slug].mode = 'mid';
+          cycleState[slug].midSplit = true;
+          cycleState[slug].lastUnits = pins > 0 ? Math.round((ml * 100) / pins) : 0;
+        }
         persistCyclePosition();
         renderInner();
       });
