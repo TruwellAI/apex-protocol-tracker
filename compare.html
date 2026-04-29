@@ -294,6 +294,14 @@ body::before{
         { name:'TREK-1 modulation (depression)', by:['pe2228'] }
       ],
       peptides:['selank','semax','dsip','dihexa','pe2228']
+    },
+    trt: {
+      label:'TRT / Hormone (⚠ Rx)',
+      mechs:[
+        { name:'Long-ester androgen (weekly/2x weekly)', by:['testosterone-cyp','testosterone-enth'] },
+        { name:'Short-ester androgen (every-other-day)', by:['testosterone-prop'] }
+      ],
+      peptides:['testosterone-cyp','testosterone-enth','testosterone-prop']
     }
   };
 
@@ -342,7 +350,10 @@ body::before{
     'glutamine':{ name:'Glutamine',         mech:'Gut + immune amino',        conflict:null },
     'cardiac-stack':{ name:'Cardiac Stack', mech:'Heart-focused stack',       conflict:null },
     'longevity-stack':{ name:'Longevity Stack', mech:'Multi-peptide longevity', conflict:null },
-    'mito-reset':{ name:'Mito Reset',       mech:'Mitochondrial protocol',    conflict:null }
+    'mito-reset':{ name:'Mito Reset',       mech:'Mitochondrial protocol',    conflict:null },
+    'testosterone-cyp':{ name:'Testosterone Cypionate',  mech:'Long ester · Rx',  conflict:'testosterone', rx:true },
+    'testosterone-enth':{ name:'Testosterone Enanthate', mech:'Long ester · Rx',  conflict:'testosterone', rx:true },
+    'testosterone-prop':{ name:'Testosterone Propionate',mech:'Short ester · Rx', conflict:'testosterone', rx:true }
   };
 
   const CONFLICT_LABELS = {

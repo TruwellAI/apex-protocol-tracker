@@ -527,8 +527,14 @@ body::before{
     'glutamine.html':     { vial:1000,bac:3 },
     'wolverine.html':     { vial:10,  bac:3 },
     'klow.html':          { vial:10,  bac:3 },
-    'glow.html':          { vial:10,  bac:3 }
+    'glow.html':          { vial:10,  bac:3 },
+    // Testosterone pre-mixed: 200 mg/mL (Cyp/Enth) or 100 mg/mL (Prop)
+    'testosterone-cyp.html':  { vial:2000, bac:10 },
+    'testosterone-enth.html': { vial:2000, bac:10 },
+    'testosterone-prop.html': { vial:1000, bac:10 }
   };
+  // Slugs flagged as Rx-only — render warning badge on tracker tile
+  const RX_SLUGS = new Set(['testosterone-cyp.html','testosterone-enth.html','testosterone-prop.html']);
   // SLU-PP-332 is the only pill. Selank + Semax are intranasal. Everything else = injection.
   const ORAL_SLUGS  = new Set(['slu-pp-322.html']);
   const SPRAY_SLUGS = new Set(['selank.html','semax.html']);
@@ -1043,7 +1049,7 @@ body::before{
       <button class="tile-edit-btn" data-act="edit" aria-label="Edit ${p.name}" title="Edit ${p.name}">✎</button>
       <div class="tile-head">
         <div>
-          <div class="tile-name">${p.name}</div>
+          <div class="tile-name">${p.name}${RX_SLUGS.has(p.slug) ? ' <span style="display:inline-block;padding:2px 7px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.5);color:#ef4444;font-family:\'Share Tech Mono\',monospace;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;border-radius:4px;vertical-align:middle;margin-left:6px;">⚠ Rx</span>' : ''}</div>
           <div class="tile-mech">${p.mech || ''}</div>
         </div>
         ${statusBadge}

@@ -317,7 +317,11 @@ body::before{
     'glow.html':         { name:'GLOW Stack',     mech:'GHK + TB + BPC',            vial:10, bac:3 },
     'cardiac-stack.html':{ name:'Cardiac Stack',  mech:'Heart-focused stack',       vial:10, bac:3 },
     'longevity-stack.html':{name:'Longevity Stack',mech:'Multi-peptide longevity',  vial:10, bac:3 },
-    'mito-reset.html':   { name:'Mito Reset',     mech:'Mitochondrial protocol',    vial:10, bac:3 }
+    'mito-reset.html':   { name:'Mito Reset',     mech:'Mitochondrial protocol',    vial:10, bac:3 },
+    // ── TESTOSTERONE (pre-mixed in oil · Rx-only · no reconstitution) ──
+    'testosterone-cyp.html':  { name:'Testosterone Cypionate',  mech:'Androgen · long ester',  vial:2000, bac:10, premixed:true, rx:true, doseLabel:'200 mg/mL pre-mixed · IM or subQ · 100-200 mg weekly (split 2x or daily)' },
+    'testosterone-enth.html': { name:'Testosterone Enanthate',  mech:'Androgen · long ester',  vial:2000, bac:10, premixed:true, rx:true, doseLabel:'200 mg/mL pre-mixed · IM or subQ · 100-200 mg weekly (split 2x or daily)' },
+    'testosterone-prop.html': { name:'Testosterone Propionate', mech:'Androgen · short ester', vial:1000, bac:10, premixed:true, rx:true, doseLabel:'100 mg/mL pre-mixed · IM or subQ · 50-100 mg every other day (M/W/F or daily)' }
   };
 
   let selection = [];
@@ -352,6 +356,35 @@ body::before{
     card.className = 'recon-card' + (p.special ? ' special' : '') + (p.oral ? ' oral' : '');
     card.dataset.slug = slug;
 
+    // Pre-mixed (testosterone in oil): no reconstitution, just show concentration + units
+    if (p.premixed) {
+      const concPremixed = p.vial / p.bac; // mg/mL — fixed by manufacturer
+      const typMgPre = (p.name.includes('Propionate')) ? 75 : 150; // mg per week typical
+      const unitsPerDosePre = Math.round((typMgPre / concPremixed) * 100);
+      card.innerHTML = `
+        <div class="rc-head">
+          <div>
+            <div class="rc-name">${p.name} ${p.rx ? '<span style="display:inline-block;padding:2px 8px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.5);color:#ef4444;font-family:Share Tech Mono,monospace;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;border-radius:4px;vertical-align:middle;margin-left:6px;">⚠ Rx</span>' : ''}</div>
+            <div class="rc-mech">${p.mech}</div>
+          </div>
+          <div class="rc-special-badge" style="color:#a78bfa;background:rgba(167,139,250,.12);">🧪 Pre-mixed</div>
+        </div>
+        <div class="rc-result" style="background:rgba(0,255,157,.06);border-color:rgba(0,255,157,.3);">
+          <div class="rc-r-item" style="grid-column:1/-1;">
+            <div class="rc-r-label" style="color:var(--accent2);">⚡ Units per dose (recommended)</div>
+            <div class="rc-r-value" style="color:var(--accent2);font-size:28px;">${unitsPerDosePre} <span style="font-size:13px;color:var(--muted);font-weight:600;">units on the pen</span></div>
+            <div style="font-size:11px;color:var(--muted);margin-top:4px;">${p.doseLabel || ''}</div>
+          </div>
+        </div>
+        <div class="rc-note" style="background:rgba(239,68,68,.08);border-left-color:#ef4444;">
+          <strong style="color:#ef4444;">⚠ Rx-only · Schedule III controlled substance.</strong> Testosterone requires a licensed prescription. Apex tracks your prescribed dose — does not source or endorse acquisition outside legitimate medical channels. Do not use without a valid prescription.
+        </div>
+        <div class="rc-note" style="background:rgba(167,139,250,.08);border-left-color:#a78bfa;">
+          <strong>Pre-mixed in oil — no reconstitution.</strong> Draw and inject IM (deep gluteal/quad) or subQ. Standard concentration ${concPremixed} mg/mL. No BAC water, no mixing, no shelf-life clock.
+        </div>
+      `;
+      return card;
+    }
     // Oral peptides skip reconstitution entirely
     if (p.oral) {
       card.innerHTML = `
@@ -448,7 +481,9 @@ body::before{
       'tb500.html':2.5,'ghkcu.html':2,'kpv.html':0.5,'ll37.html':0.1,'thymosin-alpha1.html':1.6,
       'ara290.html':4,'epitalon.html':7.5,'ss31.html':5,'motsc.html':5,'cartalax.html':0.2,
       'fox04-dri.html':7.5,'glutathione.html':400,'nad-plus.html':100,'dsip.html':0.2,
-      'dihexa.html':25,'pe2228.html':0.375,'l-carnitine.html':350,'glutamine.html':350
+      'dihexa.html':25,'pe2228.html':0.375,'l-carnitine.html':350,'glutamine.html':350,
+      // Testosterone typical recommended dose per week (split per pin in tracker)
+      'testosterone-cyp.html':150,'testosterone-enth.html':150,'testosterone-prop.html':75
     };
     const typMg = TYPICAL_DOSE_MG[slug] || p.mgPerDose || 1;
     const totalVol = p.bac + (p.acetic||0);

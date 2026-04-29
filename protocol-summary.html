@@ -293,7 +293,11 @@ body::before{
     'glow.html':         { name:'GLOW Stack',     mech:'GHK + TB + BPC',            cycleWks:8,  dose:'see components', freq:'daily' },
     'cardiac-stack.html':{ name:'Cardiac Stack',  mech:'Heart-focused stack',       cycleWks:12, dose:'see components', freq:'daily' },
     'longevity-stack.html':{name:'Longevity Stack',mech:'Multi-peptide longevity',  cycleWks:16, dose:'see components', freq:'pulsed' },
-    'mito-reset.html':   { name:'Mito Reset',     mech:'Mitochondrial protocol',    cycleWks:12, dose:'see components', freq:'daily' }
+    'mito-reset.html':   { name:'Mito Reset',     mech:'Mitochondrial protocol',    cycleWks:12, dose:'see components', freq:'daily' },
+    // ── TESTOSTERONE (Rx-only · Schedule III · pre-mixed in oil, no recon) ──
+    'testosterone-cyp.html':  { name:'Testosterone Cypionate',  mech:'Androgen · long ester (8-day half-life)',  cycleWks:52, dose:'100-200 mg', freq:'2x weekly (Mon + Thu)', rx:true, premixed:true },
+    'testosterone-enth.html': { name:'Testosterone Enanthate',  mech:'Androgen · long ester (7-day half-life)',  cycleWks:52, dose:'100-200 mg', freq:'2x weekly (Mon + Thu)', rx:true, premixed:true },
+    'testosterone-prop.html': { name:'Testosterone Propionate', mech:'Androgen · short ester (1-day half-life)', cycleWks:52, dose:'50-100 mg', freq:'3x weekly (Mon · Wed · Fri)', rx:true, premixed:true }
   };
 
   let selection = [];
@@ -326,9 +330,13 @@ body::before{
   // Peptides eligible for split dosing — DECLARED BEFORE renderCard runs.
   // (Was declared after forEach, causing ReferenceError on first render.)
   const SPLIT_ELIGIBLE = {
-    'retatrutide.html':  { freqLabel:'2x weekly (Mon + Thu)', factor:2 },
-    'semaglutide.html':  { freqLabel:'2x weekly (Mon + Thu)', factor:2 },
-    'tirzepatide.html':  { freqLabel:'2x weekly (Mon + Thu)', factor:2 }
+    'retatrutide.html':       { freqLabel:'2x weekly (Mon + Thu)', factor:2 },
+    'semaglutide.html':       { freqLabel:'2x weekly (Mon + Thu)', factor:2 },
+    'tirzepatide.html':       { freqLabel:'2x weekly (Mon + Thu)', factor:2 },
+    // Testosterone esters: weekly dose can be split 2x, 3x, or daily (7x)
+    'testosterone-cyp.html':  { freqLabel:'2x weekly (Mon + Thu)', factor:2, allowDaily:true },
+    'testosterone-enth.html': { freqLabel:'2x weekly (Mon + Thu)', factor:2, allowDaily:true },
+    'testosterone-prop.html': { freqLabel:'3x weekly (Mon · Wed · Fri)', factor:3, allowDaily:true }
   };
 
   function splitDoseString(doseStr, factor){
@@ -389,7 +397,13 @@ body::before{
     'glutamine.html':     { vial:1000,bac:3 },
     'wolverine.html':     { vial:10,  bac:3 },
     'klow.html':          { vial:10,  bac:3 },
-    'glow.html':          { vial:10,  bac:3 }
+    'glow.html':          { vial:10,  bac:3 },
+    // Testosterone: pre-mixed in oil. We use vial:bac math to keep one code path,
+    // even though there's no actual reconstitution. T-Cyp/Enth = 200 mg/mL,
+    // T-Prop = 100 mg/mL. Vial size is the bottle's total mg (10 mL bottle).
+    'testosterone-cyp.html':  { vial:2000, bac:10 },
+    'testosterone-enth.html': { vial:2000, bac:10 },
+    'testosterone-prop.html': { vial:1000, bac:10 }
   };
   // Only SLU-PP-332 is pill form. Selank + Semax are nasal spray. Everything else is injection (units).
   const ORAL_SLUGS  = new Set(['slu-pp-322.html']);
@@ -625,8 +639,12 @@ body::before{
       }
 
       // Build pins-per-week dropdown (2 or 3)
-      const pinsOpts = [2, 3].map(n =>
-        `<option value="${n}"${pinsPerWeek === n ? ' selected' : ''}>${n}× / week (${n === 2 ? 'Mon + Thu' : 'Mon · Wed · Fri'})</option>`
+      // Build pin options. Testosterone allows 7× (daily microdose).
+      const allowDaily = !!(splitCfg && splitCfg.allowDaily);
+      const pinChoices = allowDaily ? [2, 3, 7] : [2, 3];
+      const pinLabels = { 2:'Mon + Thu', 3:'Mon · Wed · Fri', 7:'daily' };
+      const pinsOpts = pinChoices.map(n =>
+        `<option value="${n}"${pinsPerWeek === n ? ' selected' : ''}>${n}× / week (${pinLabels[n]})</option>`
       ).join('');
 
       // Live summary
@@ -657,7 +675,7 @@ body::before{
         <div class="split-toggle${isMidSplit ? ' on' : ''}" data-mid-split data-slug="${slug}" role="switch" aria-checked="${isMidSplit}" tabindex="0" style="margin-top:8px;">
           <div class="split-info">
             <div class="split-label">💉 Split Protocol</div>
-            <div class="split-sub">${isMidSplit ? `Active — ${pinsPerWeek}× / week (${pinsPerWeek === 2 ? 'Mon + Thu' : 'Mon · Wed · Fri'})` : 'Are you splitting your weekly dose into multiple pins?'}</div>
+            <div class="split-sub">${isMidSplit ? `Active — ${pinsPerWeek}× / week (${pinLabels[pinsPerWeek] || ''})` : 'Are you splitting your weekly dose into multiple pins?'}</div>
           </div>
           <div class="split-switch"></div>
         </div>
@@ -751,14 +769,22 @@ body::before{
         </div>`;
     }
     function renderInner(){
+      // Rx-only compliance banner for testosterone / scheduled substances
+      const rxBanner = p.rx ? `
+        <div style="margin:10px 0 14px;padding:12px 14px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.4);border-left:3px solid #ef4444;border-radius:8px;">
+          <div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:12px;color:#ef4444;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px;">⚠ Rx-only · Schedule III</div>
+          <div style="font-size:11px;color:#cbd5e1;line-height:1.5;">Testosterone is a controlled substance. Requires a licensed prescription. Apex tracks your prescribed dose — does not source or endorse acquisition outside legitimate medical channels.</div>
+        </div>
+      ` : '';
       card.innerHTML = `
         <div class="proto-head">
           <div>
-            <div class="proto-name">${p.name}</div>
+            <div class="proto-name">${p.name}${p.rx ? ' <span style="display:inline-block;padding:2px 8px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.5);color:#ef4444;font-family:Share Tech Mono,monospace;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;border-radius:4px;vertical-align:middle;margin-left:8px;">⚠ Rx</span>' : ''}</div>
             <div class="proto-mech">${p.mech}</div>
           </div>
           <div class="proto-cycle-pill">${typeof p.cycleWks === 'number' ? p.cycleWks + ' weeks' : p.cycleWks}</div>
         </div>
+        ${rxBanner}
         <div class="proto-rows">
           <div class="proto-row">
             <div class="proto-r-label">Dose</div>
@@ -873,7 +899,9 @@ body::before{
       let freqOverride = null;
       if (cs.midSplit) {
         const pins = (typeof cs.pinsPerWeek === 'number' && cs.pinsPerWeek > 0) ? cs.pinsPerWeek : 2;
-        freqOverride = pins === 3 ? '3x weekly (Mon · Wed · Fri)' : '2x weekly (Mon + Thu)';
+        freqOverride = pins === 7 ? 'daily' :
+                       pins === 3 ? '3x weekly (Mon · Wed · Fri)' :
+                                    '2x weekly (Mon + Thu)';
       }
       if (p) {
         return { slug, name:p.name, mech:p.mech, cycleWks:p.cycleWks, dose:p.dose, freq:freqOverride || p.freq, titration:p.titration||null, startDate, mixDate };
