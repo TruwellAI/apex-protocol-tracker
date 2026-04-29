@@ -276,42 +276,42 @@ body::before{
   // ── PEPTIDE METADATA: vial size + reconstitution rule + display name ──
   const PEP = {
     'aod9604.html':      { name:'AOD-9604',       mech:'GH fragment lipolysis',     vial:10, bac:2, special:true,  acetic:1 },
-    '5amino1mq.html':    { name:'5-Amino-1MQ',    mech:'NNMT inhibitor',            vial:50, bac:3 },
+    '5amino1mq.html':    { name:'5-Amino-1MQ',    mech:'NNMT inhibitor',            vial:10, bac:3 },
     'slu-pp-322.html':   { name:'SLU-PP-332',     mech:'ERRα agonist',              oral:true, doseLabel:'experimental · oral' },
     'retatrutide.html':  { name:'Retatrutide',    mech:'Triple G agonist',          vial:30, bac:3, titration:true },
     'semaglutide.html':  { name:'Semaglutide',    mech:'GLP-1 agonist',             vial:10, bac:3, titration:true },
-    'tirzepatide.html':  { name:'Tirzepatide',    mech:'GLP-1 + GIP',               vial:10, bac:3, titration:true },
+    'tirzepatide.html':  { name:'Tirzepatide',    mech:'GLP-1 + GIP',               vial:30, bac:1.5, titration:true },
     'melanotan1.html':   { name:'Melanotan I',    mech:'MC1R agonist',              vial:10, bac:3 },
     'melanotan2.html':   { name:'Melanotan II',   mech:'MC1-4R agonist',            vial:10, bac:3 },
     'pt141.html':        { name:'PT-141',         mech:'MC4R agonist',              vial:10, bac:3 },
     'ipamorelin.html':   { name:'Ipamorelin',     mech:'Ghrelin / GHS-R',           vial:5,  bac:3 },
-    'cjc1295-dac.html':  { name:'CJC-1295 DAC',   mech:'GHRH analog (DAC)',         vial:2,  bac:3 },
-    'cjc-no-dac.html':   { name:'CJC-1295',       mech:'GHRH analog',               vial:2,  bac:3 },
-    'sermorelin.html':   { name:'Sermorelin',     mech:'GHRH analog',               vial:5,  bac:3 },
-    'tesamorelin.html':  { name:'Tesamorelin',    mech:'GHRH (visceral fat)',       vial:5,  bac:3 },
-    'cjc-ipa-blend.html':{ name:'CJC + Ipa Blend',mech:'GHRH + Ghrelin blend',      vial:10, bac:3 },
-    'igf1-lr3.html':     { name:'IGF-1 LR3',      mech:'IGF-1 analog',              vial:10, bac:3 },
+    'cjc1295-dac.html':  { name:'CJC-1295 DAC',   mech:'GHRH analog (DAC)',         vial:5,  bac:2 },
+    'cjc-no-dac.html':   { name:'CJC-1295',       mech:'GHRH analog',               vial:5,  bac:2 },
+    'sermorelin.html':   { name:'Sermorelin',     mech:'GHRH analog',               vial:5,  bac:2 },
+    'tesamorelin.html':  { name:'Tesamorelin',    mech:'GHRH (visceral fat)',       vial:10, bac:2 },
+    'cjc-ipa-blend.html':{ name:'CJC + Ipa Blend',mech:'GHRH + Ghrelin blend',      vial:10, bac:2 },
+    'igf1-lr3.html':     { name:'IGF-1 LR3',      mech:'IGF-1 analog',              vial:1,  bac:3 },
     'bpc157.html':       { name:'BPC-157',        mech:'Body protective compound',  vial:5,  bac:3 },
-    'tb500.html':        { name:'TB-500',         mech:'Thymosin Beta-4',           vial:5,  bac:3 },
+    'tb500.html':        { name:'TB-500',         mech:'Thymosin Beta-4',           vial:10, bac:2 },
     'ghkcu.html':        { name:'GHK-Cu',         mech:'Copper tripeptide',         vial:50, bac:3 },
     'kpv.html':          { name:'KPV',            mech:'Anti-inflammatory tripep.', vial:5,  bac:3 },
     'll37.html':         { name:'LL-37',          mech:'Cathelicidin AMP',          vial:5,  bac:3 },
-    'thymosin-alpha1.html':{ name:'Thymosin α1',  mech:'Immune modulator',          vial:5,  bac:3 },
-    'ara290.html':       { name:'ARA-290',        mech:'EPO derivative',            vial:5,  bac:3 },
-    'epitalon.html':     { name:'Epitalon',       mech:'Telomerase activator',      vial:10, bac:3 },
+    'thymosin-alpha1.html':{ name:'Thymosin α1',  mech:'Immune modulator',          vial:5,  bac:2 },
+    'ara290.html':       { name:'ARA-290',        mech:'EPO derivative',            vial:10, bac:1 },
+    'epitalon.html':     { name:'Epitalon',       mech:'Telomerase activator',      vial:50, bac:3 },
     'ss31.html':         { name:'SS-31',          mech:'Mitochondrial peptide',     vial:10, bac:3 },
-    'motsc.html':        { name:'MOTS-c',         mech:'Mitokine / AMPK',           vial:10, bac:3 },
-    'cartalax.html':     { name:'Cartalax',       mech:'Bioregulator (cartilage)',  vial:20, bac:3 },
-    'fox04-dri.html':    { name:'FOX04-DRI',      mech:'Senolytic',                 vial:5,  bac:3 },
-    'glutathione.html':  { name:'Glutathione',    mech:'Master antioxidant',        vial:200,bac:3 },
-    'nad-plus.html':     { name:'NAD+',           mech:'Mitochondrial cofactor',    vial:500,bac:5, titration:true, mgPerDose:100, doseLabel:'Load 100→200 mg/day · Maintenance 100 mg 2-3×/wk' },
+    'motsc.html':        { name:'MOTS-c',         mech:'Mitokine / AMPK',           vial:10, bac:1 },
+    'cartalax.html':     { name:'Cartalax',       mech:'Bioregulator (cartilage)',  vial:5,  bac:3 },
+    'fox04-dri.html':    { name:'FOX04-DRI',      mech:'Senolytic',                 vial:10, bac:2 },
+    'glutathione.html':  { name:'Glutathione',    mech:'Master antioxidant',        vial:1000,bac:3 },
+    'nad-plus.html':     { name:'NAD+',           mech:'Mitochondrial cofactor',    vial:500,bac:5, titration:true, mgPerDose:100, doseLabel:'Wk1 25mg → Wk2 50mg → Wk3-4 100mg/day → Wk5+ 100mg 2-3×/wk (subQ stings, go slow)' },
     'selank.html':       { name:'Selank',         mech:'Anxiolytic neuropeptide',   spray:true, vial:10, bac:6, doseLabel:'250-500 mcg · 1-2 sprays/nostril' },
     'semax.html':        { name:'Semax',          mech:'BDNF upregulator',          spray:true, vial:10, bac:6, doseLabel:'250-500 mcg · 1-2 sprays/nostril' },
     'dsip.html':         { name:'DSIP',           mech:'Delta sleep peptide',       vial:5,  bac:3 },
-    'dihexa.html':       { name:'Dihexa',         mech:'HGF mimetic',               vial:10, bac:3 },
+    'dihexa.html':       { name:'Dihexa',         mech:'HGF mimetic',               vial:50, bac:1 },
     'pe2228.html':       { name:'PE-22-28',       mech:'TREK-1 modulator',          vial:10, bac:3 },
-    'l-carnitine.html':  { name:'L-Carnitine',    mech:'Fat oxidation cofactor',    vial:200, bac:3 },
-    'glutamine.html':    { name:'Glutamine',      mech:'Gut + immune amino',        vial:200, bac:3 },
+    'l-carnitine.html':  { name:'L-Carnitine',    mech:'Fat oxidation cofactor',    vial:1000,bac:3 },
+    'glutamine.html':    { name:'Glutamine',      mech:'Gut + immune amino',        vial:1000,bac:3 },
     'wolverine.html':    { name:'Wolverine Stack',mech:'BPC + TB-500 + GHK',        vial:10, bac:3 },
     'klow.html':         { name:'KLOW Stack',     mech:'KPV + TB + BPC + GHK',      vial:10, bac:3 },
     'glow.html':         { name:'GLOW Stack',     mech:'GHK + TB + BPC',            vial:10, bac:3 },
@@ -409,12 +409,8 @@ body::before{
         </div>
         <div class="rc-result" style="background:rgba(0,212,255,.05);border-color:rgba(0,212,255,.3);">
           <div class="rc-r-item">
-            <div class="rc-r-label">Concentration</div>
-            <div class="rc-r-value" data-result="conc" style="color:var(--accent);">${concSpray} mg/mL</div>
-          </div>
-          <div class="rc-r-item">
-            <div class="rc-r-label">~ Mcg per spray</div>
-            <div class="rc-r-value" data-result="per-spray" style="color:var(--accent);">~${mcgPerSpray} mcg</div>
+            <div class="rc-r-label">Sprays per dose</div>
+            <div class="rc-r-value" style="color:var(--accent);">1–2 per nostril</div>
           </div>
           <div class="rc-r-item">
             <div class="rc-r-label">~ Sprays per vial</div>
@@ -434,8 +430,6 @@ body::before{
           const conc = bac > 0 ? (vial / bac).toFixed(2) : '—';
           const sprays = bac > 0 ? Math.floor(bac / SPRAY_VOL_ML) : 0;
           const mcgPerSpray = sprays > 0 ? Math.round((vial / sprays) * 1000) : 0;
-          card.querySelector('[data-result="conc"]').textContent = conc + ' mg/mL';
-          card.querySelector('[data-result="per-spray"]').textContent = '~' + mcgPerSpray + ' mcg';
           card.querySelector('[data-result="sprays"]').textContent = '~' + sprays;
           reconState[slug] = { vial, bac, acetic: 0, spray: true };
         });
@@ -476,13 +470,10 @@ body::before{
         </div>` : ''}
       </div>
       <div class="rc-result">
-        <div class="rc-r-item">
-          <div class="rc-r-label">Concentration</div>
-          <div class="rc-r-value" data-result="conc">${concentration} mg/mL</div>
-        </div>
-        <div class="rc-r-item">
+        <div class="rc-r-item" style="grid-column:1/-1;">
           <div class="rc-r-label">~ Doses per vial</div>
           <div class="rc-r-value" data-result="doses">~${dosesPerVial}</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:6px;">Your exact units-on-the-pen will appear on the next screen.</div>
         </div>
       </div>
       ${p.special ? '<div class="rc-note"><strong>AOD-9604 is hydrophobic.</strong> Mix 1 mL bacteriostatic water + 1 mL acetic acid water (or as labeled). Most other peptides use 3 mL BAC water alone.</div>' : ''}
@@ -497,9 +488,7 @@ body::before{
         const aceticEl = card.querySelector('[data-field="acetic"]');
         const acetic = aceticEl ? (parseFloat(aceticEl.value) || 0) : 0;
         const total = bac + acetic;
-        const conc = total > 0 ? (vial / total).toFixed(2) : '—';
         const doses = vial > 0 ? Math.max(1, Math.floor(vial / mgPerDose)) : 0;
-        card.querySelector('[data-result="conc"]').textContent = conc + ' mg/mL';
         card.querySelector('[data-result="doses"]').textContent = '~' + doses;
         reconState[slug] = { vial, bac, acetic };
       });

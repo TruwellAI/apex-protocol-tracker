@@ -246,7 +246,7 @@ body::before{
   // PROTOCOL DATA: cycle length, dose default, frequency, titration schedule
   const PROTO = {
     'aod9604.html':      { name:'AOD-9604',       mech:'GH fragment lipolysis',     cycleWks:12, dose:'300 mcg', freq:'daily, fasted AM' },
-    '5amino1mq.html':    { name:'5-Amino-1MQ',    mech:'NNMT inhibitor',            cycleWks:12, dose:'50-150 mg', freq:'daily SubQ' },
+    '5amino1mq.html':    { name:'5-Amino-1MQ',    mech:'NNMT inhibitor',            cycleWks:12, dose:'3-6 mg', freq:'daily SubQ' },
     'slu-pp-322.html':   { name:'SLU-PP-332',     mech:'ERRα agonist',              cycleWks:8,  dose:'experimental', freq:'preclinical only' },
     'retatrutide.html':  { name:'Retatrutide',    mech:'Triple G agonist',          cycleWks:24, dose:'titrated', freq:'weekly',
       titration:[{w:'Wk 1-4',d:'2 mg/wk'},{w:'Wk 5-8',d:'4 mg/wk'},{w:'Wk 9-12',d:'6 mg/wk'},{w:'Wk 13-16',d:'8 mg/wk'},{w:'Wk 17-20',d:'10 mg/wk'},{w:'Wk 21+',d:'12 mg/wk (max)'}] },
@@ -275,16 +275,16 @@ body::before{
     'ss31.html':         { name:'SS-31',          mech:'Mitochondrial peptide',     cycleWks:8,  dose:'1-5 mg', freq:'daily SubQ' },
     'motsc.html':        { name:'MOTS-c',         mech:'Mitokine / AMPK',           cycleWks:8,  dose:'5-10 mg', freq:'2-3x weekly' },
     'cartalax.html':     { name:'Cartalax',       mech:'Bioregulator (cartilage)',  cycleWks:'20-day pulsed', dose:'200 mcg', freq:'daily x20 days, 2x/yr' },
-    'fox04-dri.html':    { name:'FOX04-DRI',      mech:'Senolytic',                 cycleWks:'5 days pulsed', dose:'experimental', freq:'5-day pulses' },
+    'fox04-dri.html':    { name:'FOX04-DRI',      mech:'Senolytic',                 cycleWks:'5 days pulsed', dose:'5-10 mg', freq:'5-day pulses' },
     'glutathione.html':  { name:'Glutathione',    mech:'Master antioxidant',        cycleWks:12, dose:'200-600 mg', freq:'2-3x weekly' },
-    'nad-plus.html':     { name:'NAD+',           mech:'Mitochondrial cofactor',    cycleWks:12, dose:'titrated', freq:'loading then maintenance',
-      // daySpans gives explicit [startDay, endDay] for non-uniform phase lengths
-      titration:[{w:'Days 1-5',d:'100 mg loading',daySpan:[1,5]},{w:'Days 6-10',d:'200 mg loading',daySpan:[6,10]},{w:'Wk 3+',d:'100 mg 2-3x/wk maintenance',daySpan:[11,84]}] },
+    'nad-plus.html':     { name:'NAD+',           mech:'Mitochondrial cofactor',    cycleWks:12, dose:'titrated', freq:'titrate up then maintenance',
+      // NAD+ subQ stings — start LOW, build tolerance. daySpans = explicit [startDay, endDay].
+      titration:[{w:'Wk 1 (Days 1-7)',d:'25 mg/day (tolerance build)',daySpan:[1,7]},{w:'Wk 2 (Days 8-14)',d:'50 mg/day',daySpan:[8,14]},{w:'Wk 3-4',d:'100 mg/day',daySpan:[15,28]},{w:'Wk 5-12 maintenance',d:'100 mg 2-3x/wk',daySpan:[29,84]}] },
     'selank.html':       { name:'Selank',         mech:'Anxiolytic neuropeptide',   cycleWks:4,  dose:'250-500 mcg', freq:'daily intranasal' },
     'semax.html':        { name:'Semax',          mech:'BDNF upregulator',          cycleWks:4,  dose:'250-500 mcg', freq:'daily intranasal' },
     'dsip.html':         { name:'DSIP',           mech:'Delta sleep peptide',       cycleWks:4,  dose:'100-300 mcg', freq:'pre-bed' },
     'dihexa.html':       { name:'Dihexa',         mech:'HGF mimetic',               cycleWks:4,  dose:'8-45 mg', freq:'daily SubQ' },
-    'pe2228.html':       { name:'PE-22-28',       mech:'TREK-1 modulator',          cycleWks:4,  dose:'experimental', freq:'preclinical' },
+    'pe2228.html':       { name:'PE-22-28',       mech:'TREK-1 modulator',          cycleWks:4,  dose:'250-500 mcg', freq:'daily SubQ' },
     'l-carnitine.html':  { name:'L-Carnitine',    mech:'Fat oxidation cofactor',    cycleWks:8,  dose:'200-500 mg', freq:'pre-workout SubQ' },
     'glutamine.html':    { name:'Glutamine',      mech:'Gut + immune amino',        cycleWks:8,  dose:'500-1000 mg', freq:'daily SubQ' },
     'wolverine.html':    { name:'Wolverine Stack',mech:'BPC + TB-500 + GHK',        cycleWks:6,  dose:'see components', freq:'daily' },
@@ -303,8 +303,6 @@ body::before{
   const summary = document.getElementById('summary');
   const continueBar = document.getElementById('continue-bar');
   const continueBtn = document.getElementById('continue-btn');
-
-  console.log('[protocol-summary] selection:', selection);
 
   if (!selection.length) {
     // Render escape hatch RIGHT BELOW the hero (visible above the fold)
@@ -352,48 +350,88 @@ body::before{
   // Mirrors reconstitute.html PEP defaults. Used to convert mg/mcg → units everywhere.
   const RECON_DEFAULTS = {
     'aod9604.html':       { vial:10,  bac:2, acetic:1 },
-    '5amino1mq.html':     { vial:50,  bac:3 },
+    '5amino1mq.html':     { vial:10,  bac:3 },
     'slu-pp-322.html':    { vial:10,  bac:3 },
     'retatrutide.html':   { vial:30,  bac:3 },
     'semaglutide.html':   { vial:10,  bac:3 },
-    'tirzepatide.html':   { vial:10,  bac:3 },
+    'tirzepatide.html':   { vial:30,  bac:1.5 },
     'melanotan1.html':    { vial:10,  bac:3 },
     'melanotan2.html':    { vial:10,  bac:3 },
     'pt141.html':         { vial:10,  bac:3 },
     'ipamorelin.html':    { vial:5,   bac:3 },
-    'cjc1295-dac.html':   { vial:2,   bac:3 },
-    'cjc-no-dac.html':    { vial:2,   bac:3 },
-    'sermorelin.html':    { vial:5,   bac:3 },
-    'tesamorelin.html':   { vial:5,   bac:3 },
-    'cjc-ipa-blend.html': { vial:10,  bac:3 },
-    'igf1-lr3.html':      { vial:10,  bac:3 },
+    'cjc1295-dac.html':   { vial:5,   bac:2 },
+    'cjc-no-dac.html':    { vial:5,   bac:2 },
+    'sermorelin.html':    { vial:5,   bac:2 },
+    'tesamorelin.html':   { vial:10,  bac:2 },
+    'cjc-ipa-blend.html': { vial:10,  bac:2 },
+    'igf1-lr3.html':      { vial:1,   bac:3 },
     'bpc157.html':        { vial:5,   bac:3 },
-    'tb500.html':         { vial:5,   bac:3 },
+    'tb500.html':         { vial:10,  bac:2 },
     'ghkcu.html':         { vial:50,  bac:3 },
     'kpv.html':           { vial:5,   bac:3 },
     'll37.html':          { vial:5,   bac:3 },
-    'thymosin-alpha1.html':{ vial:5,  bac:3 },
-    'ara290.html':        { vial:5,   bac:3 },
-    'epitalon.html':      { vial:10,  bac:3 },
+    'thymosin-alpha1.html':{ vial:5,  bac:2 },
+    'ara290.html':        { vial:10,  bac:1 },
+    'epitalon.html':      { vial:50,  bac:3 },
     'ss31.html':          { vial:10,  bac:3 },
-    'motsc.html':         { vial:10,  bac:3 },
-    'cartalax.html':      { vial:20,  bac:3 },
-    'fox04-dri.html':     { vial:5,   bac:3 },
-    'glutathione.html':   { vial:200, bac:3 },
+    'motsc.html':         { vial:10,  bac:1 },
+    'cartalax.html':      { vial:5,   bac:3 },
+    'fox04-dri.html':     { vial:10,  bac:2 },
+    'glutathione.html':   { vial:1000,bac:3 },
     'nad-plus.html':      { vial:500, bac:5 },
     'selank.html':        { vial:10,  bac:6 }, // spray
     'semax.html':         { vial:10,  bac:6 }, // spray
     'dsip.html':          { vial:5,   bac:3 },
-    'dihexa.html':        { vial:10,  bac:3 },
+    'dihexa.html':        { vial:50,  bac:1 },
     'pe2228.html':        { vial:10,  bac:3 },
-    'l-carnitine.html':   { vial:200, bac:3 },
-    'glutamine.html':     { vial:200, bac:3 }
+    'l-carnitine.html':   { vial:1000,bac:3 },
+    'glutamine.html':     { vial:1000,bac:3 },
+    'wolverine.html':     { vial:10,  bac:3 },
+    'klow.html':          { vial:10,  bac:3 },
+    'glow.html':          { vial:10,  bac:3 }
   };
   // Only SLU-PP-332 is pill form. Selank + Semax are nasal spray. Everything else is injection (units).
   const ORAL_SLUGS  = new Set(['slu-pp-322.html']);
   const SPRAY_SLUGS = new Set(['selank.html','semax.html']);
   // Stacks have no single numeric dose — keep "see components" label.
   const COMPONENT_RX = /see components/i;
+  // Component breakdown for each stack — used to render dose-per-peptide rows
+  const STACK_COMPONENTS = {
+    'wolverine.html': [
+      { slug:'bpc157.html',  name:'BPC-157',  dose:'250 mcg',    freq:'daily' },
+      { slug:'tb500.html',   name:'TB-500',   dose:'2.5 mg',     freq:'2x weekly' },
+      { slug:'ghkcu.html',   name:'GHK-Cu',   dose:'1-3 mg',     freq:'daily' }
+    ],
+    'klow.html': [
+      { slug:'kpv.html',     name:'KPV',      dose:'500 mcg',    freq:'daily' },
+      { slug:'tb500.html',   name:'TB-500',   dose:'2.5 mg',     freq:'2x weekly' },
+      { slug:'bpc157.html',  name:'BPC-157',  dose:'250 mcg',    freq:'daily' },
+      { slug:'ghkcu.html',   name:'GHK-Cu',   dose:'1-3 mg',     freq:'daily' }
+    ],
+    'glow.html': [
+      { slug:'ghkcu.html',   name:'GHK-Cu',   dose:'1-3 mg',     freq:'daily' },
+      { slug:'tb500.html',   name:'TB-500',   dose:'2.5 mg',     freq:'2x weekly' },
+      { slug:'bpc157.html',  name:'BPC-157',  dose:'250 mcg',    freq:'daily' }
+    ],
+    'cardiac-stack.html': [
+      { slug:'tb500.html',   name:'TB-500',   dose:'2.5 mg',     freq:'2x weekly' },
+      { slug:'bpc157.html',  name:'BPC-157',  dose:'250 mcg',    freq:'daily' },
+      { slug:'motsc.html',   name:'MOTS-c',   dose:'5 mg',       freq:'2-3x weekly' },
+      { slug:'ss31.html',    name:'SS-31',    dose:'5 mg',       freq:'daily' }
+    ],
+    'longevity-stack.html': [
+      { slug:'ghkcu.html',   name:'GHK-Cu',   dose:'1-3 mg',     freq:'daily' },
+      { slug:'epitalon.html',name:'Epitalon', dose:'5-10 mg',    freq:'10-day pulse, 2x/yr' },
+      { slug:'ss31.html',    name:'SS-31',    dose:'5 mg',       freq:'daily' },
+      { slug:'nad-plus.html',name:'NAD+',     dose:'100 mg',     freq:'2-3x weekly maint.' }
+    ],
+    'mito-reset.html': [
+      { slug:'motsc.html',     name:'MOTS-c',     dose:'5 mg',       freq:'2-3x weekly' },
+      { slug:'ss31.html',      name:'SS-31',      dose:'5 mg',       freq:'daily' },
+      { slug:'nad-plus.html',  name:'NAD+',       dose:'100 mg',     freq:'2-3x weekly maint.' },
+      { slug:'glutathione.html',name:'Glutathione',dose:'200-600 mg', freq:'2-3x weekly' }
+    ]
+  };
 
   // Convert "300 mcg" / "5-10 mg" / "1 mg" → big-green units number.
   // Returns the original label only for: SLU-PP (pill), Selank/Semax (spray), stacks (see components).
@@ -401,11 +439,28 @@ body::before{
   function doseToUnitsLabel(doseStr, slug, opts){
     if (!doseStr) return '—';
     const s = String(doseStr);
-    if (ORAL_SLUGS.has(slug))  return s + ' <span style="color:var(--accent3);font-weight:700;">· pill</span>';
-    if (SPRAY_SLUGS.has(slug)) return s + ' <span style="color:var(--accent);font-weight:700;">· intranasal</span>';
-    if (COMPONENT_RX.test(s))  return s;
+    const intensity = (opts && opts.intensity) || 'recommended';
+    // Collapse range to single value based on intensity tier
+    function collapseRange(str){
+      const r = str.match(/(\d+(?:\.\d+)?)\s*[-–—]\s*(\d+(?:\.\d+)?)\s*(mg|mcg)/i);
+      if (!r) return str;
+      const lo=parseFloat(r[1]), hi=parseFloat(r[2]), unit=r[3];
+      let val = intensity==='mild' ? lo : intensity==='aggressive' ? hi : (lo+hi)/2;
+      val = unit.toLowerCase()==='mcg' ? Math.round(val/5)*5 : Math.round(val*10)/10;
+      return str.replace(r[0], val + ' ' + unit);
+    }
+    const collapsed = collapseRange(s);
+    if (ORAL_SLUGS.has(slug))  return '<span style="color:var(--accent3);font-weight:800;">1</span> <span style="color:var(--muted);">capsule</span>';
+    if (SPRAY_SLUGS.has(slug)) {
+      const m = collapsed.match(/(\d+(?:\.\d+)?)\s*mcg/i);
+      const sprays = m ? Math.max(1, Math.round(parseFloat(m[1])/100)) : null;
+      return sprays
+        ? '<span style="color:var(--accent);font-weight:800;">'+sprays+'</span> <span style="color:var(--muted);">spray'+(sprays>1?'s':'')+' · intranasal</span>'
+        : '<span style="color:var(--accent);font-weight:800;">intranasal</span>';
+    }
+    if (COMPONENT_RX.test(s))  return '<span style="color:var(--muted);font-style:italic;">see components below</span>';
     const recon = (opts && opts.userRecon) || RECON_DEFAULTS[slug];
-    if (!recon || !recon.vial || !recon.bac) return s;
+    if (!recon || !recon.vial || !recon.bac) return '<a href="reconstitute.html" style="color:#fbbf24;font-weight:700;text-decoration:none;">⚠ Set vial size</a>';
     const concMgPerMl = recon.vial / (recon.bac + (recon.acetic||0));
     function mgToUnits(mg){ return Math.round(mg / concMgPerMl * 100); }
 
@@ -417,27 +472,14 @@ body::before{
       return `<span style="color:var(--accent2);font-weight:800;font-size:1.05em;">${lo}–${hi}</span> <span style="color:var(--muted);font-weight:600;font-size:.92em;">units${suffix ? ' / ' + suffix : ''}</span>`;
     }
 
-    // Range: "250-500 mcg"  /  "1-3 mg"  /  "5-10 mg"
-    const range = s.match(/(\d+(?:\.\d+)?)\s*[-–—]\s*(\d+(?:\.\d+)?)\s*(mg|mcg)/i);
-    if (range) {
-      const lo = parseFloat(range[1]);
-      const hi = parseFloat(range[2]);
-      const unit = range[3].toLowerCase();
-      const loMg = unit === 'mcg' ? lo/1000 : lo;
-      const hiMg = unit === 'mcg' ? hi/1000 : hi;
-      const loU = mgToUnits(loMg);
-      const hiU = mgToUnits(hiMg);
-      if (loU < 1 || hiU > 200) return s;
-      const suffix = s.match(/\/\s*(wk|week|day|d)\b/i);
-      return fmtRangeUnits(loU, hiU, suffix ? suffix[1] : '');
-    }
-    const m = s.match(/(\d+(?:\.\d+)?)\s*(mg|mcg)/i);
-    if (!m) return s;
+    // After collapse, dose is single value. Convert to units.
+    const m = collapsed.match(/(\d+(?:\.\d+)?)\s*(mg|mcg)/i);
+    if (!m) return '<span style="color:var(--muted);">—</span>';
     const amount = parseFloat(m[1]);
     const unit = m[2].toLowerCase();
     const amountMg = unit === 'mcg' ? amount/1000 : amount;
     const u = mgToUnits(amountMg);
-    if (u < 1 || u > 200) return s;
+    if (u < 1 || u > 200) return '<a href="reconstitute.html" style="color:#fbbf24;font-weight:700;text-decoration:none;">⚠ Adjust vial size</a>';
     const suffix = s.match(/\/\s*(wk|week|day|d)\b/i);
     return fmtUnits(u, suffix ? suffix[1] : '');
   }
@@ -523,7 +565,7 @@ body::before{
       const totalWeeks = (typeof p.cycleWks === 'number') ? p.cycleWks : 24;
 
       const VIAL_DEFAULTS = {
-        'retatrutide.html': 30, 'semaglutide.html': 10, 'tirzepatide.html': 10, 'nad-plus.html': 500
+        'retatrutide.html': 30, 'semaglutide.html': 10, 'tirzepatide.html': 30, 'nad-plus.html': 500
       };
       const vialMg  = (cs.vialMg && cs.vialMg > 0) ? cs.vialMg : (VIAL_DEFAULTS[slug] || 10);
       const bacMl   = (cs.bacMl  && cs.bacMl  > 0) ? cs.bacMl  : (slug === 'nad-plus.html' ? 5 : 3);
@@ -563,12 +605,12 @@ body::before{
         const phase = p.titration[phaseIdx];
 
         let doseLine = '';
-        if (weeklyDoseMg > 0) {
+        if (cs.lastUnits > 0) {
           if (isMidSplit) {
-            const perPinMg = cs.lastUnits * concMgPerMl / 100;
-            doseLine = ` <strong>${cs.lastUnits} units × ${pinsPerWeek}/week</strong> = <strong>${fmt(weeklyDoseMg)} mg/wk</strong> total (${fmt(perPinMg)} mg per pin) at ${concMgPerMl.toFixed(2)} mg/mL.`;
+            const totalUnitsWk = cs.lastUnits * pinsPerWeek;
+            doseLine = ` <strong>${cs.lastUnits} units × ${pinsPerWeek}/week</strong> = <strong>${totalUnitsWk} units/wk total</strong>.`;
           } else {
-            doseLine = ` Your <strong>${cs.lastUnits} units</strong> ≈ <strong>${fmt(weeklyDoseMg)} mg/wk</strong> at ${concMgPerMl.toFixed(2)} mg/mL.`;
+            doseLine = ` Your <strong>${cs.lastUnits} units</strong>/week.`;
           }
         }
         summary = `<div class="cycle-ask-summary">
@@ -653,6 +695,27 @@ body::before{
       `;
     }
 
+    function buildStackComponents(){
+      const comps = STACK_COMPONENTS[slug];
+      if (!comps) return '';
+      const rows = comps.map(c => {
+        const compRecon = RECON_DEFAULTS[c.slug];
+        const unitsLbl = doseToUnitsLabel(c.dose, c.slug, { userRecon: compRecon });
+        return `
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;background:rgba(0,212,255,.04);border:1px solid rgba(0,212,255,.15);border-radius:8px;margin-top:6px;">
+            <div style="display:flex;flex-direction:column;gap:2px;min-width:0;">
+              <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:#fff;letter-spacing:-.2px;">${c.name}</div>
+              <div style="font-size:11px;color:var(--muted);">${c.freq}</div>
+            </div>
+            <div style="text-align:right;font-size:13px;font-weight:700;flex-shrink:0;">${unitsLbl}</div>
+          </div>`;
+      }).join('');
+      return `
+        <div style="margin-top:14px;padding:12px;background:rgba(11,15,20,.4);border:1px solid var(--border);border-radius:10px;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">⊞ Stack Components</div>
+          ${rows}
+        </div>`;
+    }
     function renderInner(){
       card.innerHTML = `
         <div class="proto-head">
@@ -672,6 +735,7 @@ body::before{
             <div class="proto-r-value">${(splitCfg && splitState[slug]) ? splitCfg.freqLabel : p.freq}</div>
           </div>
         </div>
+        ${buildStackComponents()}
         ${buildTitHtml()}
         ${buildCycleAsk()}
         ${buildSplitToggle()}

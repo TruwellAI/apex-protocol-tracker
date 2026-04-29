@@ -387,7 +387,7 @@ body::before{
 
   <div class="foot">
     <div>© Apex Protocol · Research use only · Not medical advice · 17+</div>
-    <div><a href="privacy.html">Privacy</a> &nbsp;·&nbsp; <a href="terms.html">Terms</a> &nbsp;·&nbsp; <a href="protocol-tracker.html">Legacy tracker</a></div>
+    <div><a href="privacy.html">Privacy</a> &nbsp;·&nbsp; <a href="terms.html">Terms</a></div>
   </div>
 
 </div>
@@ -400,6 +400,15 @@ body::before{
     <div class="em-field">
       <div class="em-label">Dose</div>
       <input type="text" class="em-input" id="em-dose" placeholder="e.g. 500 mcg" inputmode="decimal" autocapitalize="off" autocorrect="off">
+    </div>
+    <div class="em-field" id="em-intensity-wrap" style="display:none;">
+      <div class="em-label">Intensity (collapses range to one dose)</div>
+      <div id="em-intensity" style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button type="button" class="em-int-btn" data-int="mild"        style="flex:1;min-width:90px;padding:10px 8px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase;border-radius:6px;cursor:pointer;-webkit-tap-highlight-color:transparent;">⬇ Mild</button>
+        <button type="button" class="em-int-btn" data-int="recommended" style="flex:1;min-width:90px;padding:10px 8px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase;border-radius:6px;cursor:pointer;-webkit-tap-highlight-color:transparent;">★ Recommended</button>
+        <button type="button" class="em-int-btn" data-int="aggressive"  style="flex:1;min-width:90px;padding:10px 8px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase;border-radius:6px;cursor:pointer;-webkit-tap-highlight-color:transparent;">⬆ Aggressive</button>
+      </div>
+      <div id="em-intensity-preview" style="font-size:11px;color:var(--muted);margin-top:6px;"></div>
     </div>
     <div class="em-field">
       <div class="em-label">Frequency</div>
@@ -480,42 +489,45 @@ body::before{
   // the recon flow. User-supplied values in apex_recon override these.
   const RECON_DEFAULTS = {
     'aod9604.html':       { vial:10,  bac:2, acetic:1 },
-    '5amino1mq.html':     { vial:50,  bac:3 },
+    '5amino1mq.html':     { vial:10,  bac:3 },
     'slu-pp-322.html':    { vial:10,  bac:3 },
     'retatrutide.html':   { vial:30,  bac:3 },
     'semaglutide.html':   { vial:10,  bac:3 },
-    'tirzepatide.html':   { vial:10,  bac:3 },
+    'tirzepatide.html':   { vial:30,  bac:1.5 },
     'melanotan1.html':    { vial:10,  bac:3 },
     'melanotan2.html':    { vial:10,  bac:3 },
     'pt141.html':         { vial:10,  bac:3 },
     'ipamorelin.html':    { vial:5,   bac:3 },
-    'cjc1295-dac.html':   { vial:2,   bac:3 },
-    'cjc-no-dac.html':    { vial:2,   bac:3 },
-    'sermorelin.html':    { vial:5,   bac:3 },
-    'tesamorelin.html':   { vial:5,   bac:3 },
-    'cjc-ipa-blend.html': { vial:10,  bac:3 },
-    'igf1-lr3.html':      { vial:10,  bac:3 },
+    'cjc1295-dac.html':   { vial:5,   bac:2 },
+    'cjc-no-dac.html':    { vial:5,   bac:2 },
+    'sermorelin.html':    { vial:5,   bac:2 },
+    'tesamorelin.html':   { vial:10,  bac:2 },
+    'cjc-ipa-blend.html': { vial:10,  bac:2 },
+    'igf1-lr3.html':      { vial:1,   bac:3 },
     'bpc157.html':        { vial:5,   bac:3 },
-    'tb500.html':         { vial:5,   bac:3 },
+    'tb500.html':         { vial:10,  bac:2 },
     'ghkcu.html':         { vial:50,  bac:3 },
     'kpv.html':           { vial:5,   bac:3 },
     'll37.html':          { vial:5,   bac:3 },
-    'thymosin-alpha1.html':{ vial:5,  bac:3 },
-    'ara290.html':        { vial:5,   bac:3 },
-    'epitalon.html':      { vial:10,  bac:3 },
+    'thymosin-alpha1.html':{ vial:5,  bac:2 },
+    'ara290.html':        { vial:10,  bac:1 },
+    'epitalon.html':      { vial:50,  bac:3 },
     'ss31.html':          { vial:10,  bac:3 },
-    'motsc.html':         { vial:10,  bac:3 },
-    'cartalax.html':      { vial:20,  bac:3 },
-    'fox04-dri.html':     { vial:5,   bac:3 },
-    'glutathione.html':   { vial:200, bac:3 },
+    'motsc.html':         { vial:10,  bac:1 },
+    'cartalax.html':      { vial:5,   bac:3 },
+    'fox04-dri.html':     { vial:10,  bac:2 },
+    'glutathione.html':   { vial:1000,bac:3 },
     'nad-plus.html':      { vial:500, bac:5 },
     'selank.html':        { vial:10,  bac:6 },
     'semax.html':         { vial:10,  bac:6 },
     'dsip.html':          { vial:5,   bac:3 },
-    'dihexa.html':        { vial:10,  bac:3 },
+    'dihexa.html':        { vial:50,  bac:1 },
     'pe2228.html':        { vial:10,  bac:3 },
-    'l-carnitine.html':   { vial:200, bac:3 },
-    'glutamine.html':     { vial:200, bac:3 }
+    'l-carnitine.html':   { vial:1000,bac:3 },
+    'glutamine.html':     { vial:1000,bac:3 },
+    'wolverine.html':     { vial:10,  bac:3 },
+    'klow.html':          { vial:10,  bac:3 },
+    'glow.html':          { vial:10,  bac:3 }
   };
   // SLU-PP-332 is the only pill. Selank + Semax are intranasal. Everything else = injection.
   const ORAL_SLUGS  = new Set(['slu-pp-322.html']);
@@ -663,6 +675,8 @@ body::before{
     if (ORAL_SLUGS.has(p.slug)) return true;
     if (SPRAY_SLUGS.has(p.slug)) return true; // spray also bypasses pen-units
     const f = (p.freq || '').toLowerCase();
+    // Injection markers WIN — peptides like GHK-Cu list "SubQ or topical", we still show units
+    if (/\b(subq|sub-q|sc|im|injection|inject|pin)\b/i.test(f)) return false;
     return /oral|nasal|sublingual|topical|capsule|tablet|by mouth|spray/i.test(f);
   }
   function pillOrSprayLabel(p){
@@ -672,6 +686,25 @@ body::before{
   }
   function isExperimental(doseStr){
     return /experimental|preclinical|see components|as scheduled/i.test(String(doseStr));
+  }
+  // Collapse a ranged dose to a single value based on intensity tier.
+  // mild = low end, recommended = midpoint, aggressive = high end.
+  function pickFromRange(doseStr, intensity){
+    if (!doseStr) return doseStr;
+    const s = String(doseStr);
+    const range = s.match(/(\d+(?:\.\d+)?)\s*[-–—]\s*(\d+(?:\.\d+)?)\s*(mg|mcg)/i);
+    if (!range) return s;
+    const lo = parseFloat(range[1]);
+    const hi = parseFloat(range[2]);
+    const unit = range[3];
+    const tier = (intensity || 'recommended').toLowerCase();
+    let val;
+    if      (tier === 'mild')       val = lo;
+    else if (tier === 'aggressive') val = hi;
+    else                            val = (lo + hi) / 2;
+    // Round mcg to nearest 5; round mg to 1 decimal
+    val = unit.toLowerCase() === 'mcg' ? Math.round(val/5)*5 : Math.round(val*10)/10;
+    return s.replace(range[0], val + ' ' + unit);
   }
   function doseToUnits(doseStr, concentrationMgPerMl, p){
     if (!doseStr || !concentrationMgPerMl) return null;
@@ -690,7 +723,7 @@ body::before{
       const hiVol = hiMg / parseFloat(concentrationMgPerMl);
       const loU = Math.round(loVol * 100);
       const hiU = Math.round(hiVol * 100);
-      if (loU < 1 || hiU > 120 || !isFinite(loU) || !isFinite(hiU)) return null;
+      if (loU < 1 || hiU > 200 || !isFinite(loU) || !isFinite(hiU)) return null;
       return { mL: loVol.toFixed(2) + '–' + hiVol.toFixed(2), minUnits: loU, maxUnits: hiU, units: hiU, range: true };
     }
 
@@ -703,7 +736,7 @@ body::before{
     const vol = amountMg / parseFloat(concentrationMgPerMl);
     if (!vol || !isFinite(vol)) return null;
     const units = Math.round(vol * 100);
-    if (units > 120) return null;
+    if (units > 200) return null;
     if (units < 1) return null;
     return { mL: vol.toFixed(2), units: units };
   }
@@ -820,10 +853,12 @@ body::before{
         const cycleDays = cycleSpec.days || 56;
         const dayNum = cycleSpec.isAsNeeded ? 0 : Math.max(1, Math.min(cycleDays, daysBetween(start, today) + 1));
         const dose = resolveDose(p, dayNum || 1, cycleDays);
+        // Collapse ranged dose to single value based on user-selected intensity (mild|recommended|aggressive)
+        const effectiveDose = pickFromRange(dose.current, p.intensity);
         const reconKey = p.slug || '';
         const reconInfo = recon[reconKey] || {};
         const conc = reconInfo.vial && (reconInfo.bac || reconInfo.acetic) ? reconInfo.vial / ((reconInfo.bac||0) + (reconInfo.acetic||0)) : null;
-        const units = doseToUnits(dose.current, conc, p);
+        const units = doseToUnits(effectiveDose, conc, p);
 
         // Stats: bottle countdown (use mixDate, NOT cycle start), cycle progress, next titration
         const mixDateRow = p.mixDate ? new Date(p.mixDate) : start;
@@ -838,7 +873,9 @@ body::before{
           const nextDate = new Date(start);
           nextDate.setDate(nextDate.getDate() + dose.next.startDay - 1);
           const daysAway = Math.max(0, daysBetween(today, nextDate));
-          nextTitChip = `<div class="ts-line">🔼 <span class="ts-val next">${dose.next.dose}</span> in <span class="ts-val next">${daysAway}d</span></div>`;
+          const nextU = doseToUnits(pickFromRange(dose.next.dose, p.intensity), conc, p);
+          const nextLabel = nextU ? (nextU.range ? nextU.minUnits+'–'+nextU.maxUnits+' u' : nextU.units+' u') : '↑';
+          nextTitChip = `<div class="ts-line">🔼 <span class="ts-val next">${nextLabel}</span> in <span class="ts-val next">${daysAway}d</span></div>`;
         }
 
         const row = document.createElement('div');
@@ -847,14 +884,25 @@ body::before{
         //   1. Pill / spray peptide → show form tag
         //   2. Computable units → show "X units on the pen"
         //   3. Fallback → just the dose label (rare; recon defaults usually cover it)
+        const tier = (p.intensity || 'recommended').toLowerCase();
+        const tierBadge = (/[-–—]/.test(String(dose.current)))
+          ? ` <span style="font-size:10px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:.08em;text-transform:uppercase;">· ${tier}</span>`
+          : '';
         let doseDetail;
-        if (ORAL_SLUGS.has(p.slug) || SPRAY_SLUGS.has(p.slug)) {
-          doseDetail = '<strong>' + dose.current + '</strong>' + pillOrSprayLabel(p);
+        if (ORAL_SLUGS.has(p.slug)) {
+          doseDetail = '<span style="color:var(--accent3);font-weight:800;">1</span> <span style="color:var(--muted);">capsule</span>' + tierBadge;
+        } else if (SPRAY_SLUGS.has(p.slug)) {
+          // Intranasal — count sprays. Default Selank/Semax: ~1 spray per 100mcg dose.
+          const sprayCount = (function(){ const m = String(effectiveDose).match(/(\d+(?:\.\d+)?)\s*mcg/i); return m ? Math.max(1, Math.round(parseFloat(m[1])/100)) : null; })();
+          doseDetail = sprayCount
+            ? '<span style="color:var(--accent);font-weight:800;font-size:1.1em;">' + sprayCount + '</span> <span style="color:var(--muted);">spray' + (sprayCount>1?'s':'') + ' · intranasal</span>' + tierBadge
+            : '<span style="color:var(--accent);font-weight:800;">intranasal</span>' + tierBadge;
         } else if (units) {
           const num = units.range ? units.minUnits + '–' + units.maxUnits : units.units;
-          doseDetail = '<span style="color:var(--accent2);font-weight:800;font-size:1.1em;">' + num + '</span> <span style="color:var(--muted);">units on the pen</span>';
+          doseDetail = '<span style="color:var(--accent2);font-weight:800;font-size:1.1em;">' + num + '</span> <span style="color:var(--muted);">units on the pen</span>' + tierBadge;
         } else {
-          doseDetail = '<strong>' + dose.current + '</strong>';
+          // No usable concentration — DO NOT fall back to mg/mcg. Tell user to set vial.
+          doseDetail = '<a href="reconstitute.html" style="color:var(--warn,#fbbf24);font-weight:700;text-decoration:none;">⚠ Set vial size →</a>';
         }
 
         row.innerHTML = `
@@ -875,12 +923,12 @@ body::before{
             ${dose.next ? `
             <div class="ts-row">
               <div class="ts-label">Next Dose Increase</div>
-              <div class="ts-val next">${dose.next.dose} <span class="ts-sub">in ${(function(){const nd=new Date(start);nd.setDate(nd.getDate()+dose.next.startDay-1);return Math.max(0,daysBetween(today,nd));})()} days</span></div>
+              <div class="ts-val next">${(function(){const u=doseToUnits(pickFromRange(dose.next.dose,p.intensity),conc,p);return u?(u.range?u.minUnits+'–'+u.maxUnits+' u':u.units+' u'):'↑ next phase';})()} <span class="ts-sub">in ${(function(){const nd=new Date(start);nd.setDate(nd.getDate()+dose.next.startDay-1);return Math.max(0,daysBetween(today,nd));})()} days</span></div>
             </div>` : ''}
           </div>
           <button class="today-edit-btn" data-act="edit" aria-label="Edit ${p.name}" title="Edit ${p.name}" style="background:transparent;border:1px solid var(--border);color:var(--muted);width:30px;height:30px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;-webkit-tap-highlight-color:transparent;transition:all .15s;">✎</button>
           <div class="today-stats-mobile">
-            <strong>Day ${dayNum}/${cycleDays}</strong> · Bottle: <strong class="${vialCls}">${vialDaysLeft} days</strong>${dose.next ? ' · Next: <strong class="next">' + dose.next.dose + ' in ' + (function(){const nd=new Date(start);nd.setDate(nd.getDate()+dose.next.startDay-1);return Math.max(0,daysBetween(today,nd));})() + 'd</strong>' : ''}
+            <strong>Day ${dayNum}/${cycleDays}</strong> · Bottle: <strong class="${vialCls}">${vialDaysLeft} days</strong>${dose.next ? ' · Next: <strong class="next">' + (function(){const u=doseToUnits(pickFromRange(dose.next.dose,p.intensity),conc,p);return u?(u.range?u.minUnits+'–'+u.maxUnits+' u':u.units+' u'):'↑'})() + ' in ' + (function(){const nd=new Date(start);nd.setDate(nd.getDate()+dose.next.startDay-1);return Math.max(0,daysBetween(today,nd));})() + 'd</strong>' : ''}
           </div>
         `;
         // Edit button — must stop propagation so it doesn't toggle log
@@ -951,10 +999,11 @@ body::before{
     const pct = isAsNeededCycle ? 0 : Math.round((dayNum / cycleDays) * 100);
 
     const dose = resolveDose(p, dayNum || 1, cycleDays || 56);
+    const effectiveDose = pickFromRange(dose.current, p.intensity);
     const reconInfo = recon[p.slug] || {};
     const totalVol = (reconInfo.bac || 0) + (reconInfo.acetic || 0);
     const conc = reconInfo.vial && totalVol > 0 ? reconInfo.vial / totalVol : null;
-    const units = doseToUnits(dose.current, conc, p);
+    const units = doseToUnits(effectiveDose, conc, p);
 
     const sched = shouldDoToday(p, today);
     const isDone = !!todayDoses[p.id];
@@ -978,7 +1027,9 @@ body::before{
       const nextDate = new Date(start);
       nextDate.setDate(nextDate.getDate() + dose.next.startDay - 1);
       const daysAway = Math.max(0, daysBetween(today, nextDate));
-      nextTitText = dose.next.dose + ' · in ' + daysAway + 'd · ' + fmtDate(nextDate);
+      const nu = doseToUnits(pickFromRange(dose.next.dose, p.intensity), conc, p);
+      const nextLabel = nu ? (nu.range ? nu.minUnits+'–'+nu.maxUnits+' units' : nu.units+' units') : '↑ next phase';
+      nextTitText = nextLabel + ' · in ' + daysAway + 'd · ' + fmtDate(nextDate);
     }
 
     let statusBadge;
@@ -1003,17 +1054,24 @@ body::before{
         <div class="ti-text">
           <div class="ti-label">${sched.go ? "Inject today" : (isAsNeededCycle ? 'Use as needed' : 'Next injection')}</div>
           <div class="ti-value">${(function(){
-            // Pill / spray → show dose + form tag (no units)
-            if (ORAL_SLUGS.has(p.slug) || SPRAY_SLUGS.has(p.slug)) {
-              return dose.current + pillOrSprayLabel(p);
+            const tier = (p.intensity || 'recommended').toLowerCase();
+            const isRanged = /[-–—]/.test(String(dose.current));
+            const tierTag = isRanged ? ` <span style="font-size:10px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:.08em;text-transform:uppercase;margin-left:6px;">· ${tier}</span>` : '';
+            if (ORAL_SLUGS.has(p.slug)) {
+              return '<span style="color:var(--accent3);font-weight:800;font-size:1.05em;">1</span> <span class="units" style="color:var(--muted);">capsule</span>' + tierTag;
             }
-            // Injectable with calc-able units → show big green units number
+            if (SPRAY_SLUGS.has(p.slug)) {
+              const m = String(effectiveDose).match(/(\d+(?:\.\d+)?)\s*mcg/i);
+              const sprayCount = m ? Math.max(1, Math.round(parseFloat(m[1])/100)) : null;
+              return sprayCount
+                ? '<span style="color:var(--accent);font-weight:800;font-size:1.05em;">' + sprayCount + '</span> <span class="units" style="color:var(--muted);">spray' + (sprayCount>1?'s':'') + '</span>' + tierTag
+                : '<span style="color:var(--accent);font-weight:800;">intranasal</span>' + tierTag;
+            }
             if (units) {
               const num = units.range ? units.minUnits + '–' + units.maxUnits : units.units;
-              return '<span style="color:var(--accent2);font-weight:800;font-size:1.05em;">' + num + '</span> <span class="units" style="color:var(--muted);">units</span>';
+              return '<span style="color:var(--accent2);font-weight:800;font-size:1.05em;">' + num + '</span> <span class="units" style="color:var(--muted);">units</span>' + tierTag;
             }
-            // Fallback (shouldn't usually hit since RECON_DEFAULTS now covers all slugs)
-            return dose.current;
+            return '<a href="reconstitute.html" style="color:var(--warn,#fbbf24);font-weight:700;text-decoration:none;font-size:.95em;">⚠ Set vial size</a>';
           })()}<span class="when">${sched.go ? 'today' : sched.reason}</span></div>
         </div>
       </div>
@@ -1035,8 +1093,8 @@ body::before{
           <div class="tile-meta-value ${vialClass}">${vialDaysLeft} <span class="vu">days · ${fmtDate(nextMixDate)}</span></div>
         </div>
         <div class="tile-meta-row">
-          <div class="tile-meta-label">${nextTitText ? 'Next titration' : (conc ? 'Concentration' : 'Frequency')}</div>
-          <div class="tile-meta-value">${nextTitText ? nextTitText : (conc ? conc.toFixed(2) + ' <span class="vu">mg/mL</span>' : (p.freq || 'daily'))}</div>
+          <div class="tile-meta-label">${nextTitText ? 'Next titration' : 'Frequency'}</div>
+          <div class="tile-meta-value">${nextTitText ? nextTitText : (p.freq || 'daily')}</div>
         </div>
       </div>
 
@@ -1220,12 +1278,55 @@ body::before{
   // ── EDIT MODAL ────────────────────
   let editingId = null;
   let editingDefaults = null;
+  let editingIntensity = 'recommended';
+  function paintIntensityButtons(tier){
+    editingIntensity = tier;
+    document.querySelectorAll('.em-int-btn').forEach(b => {
+      const active = b.dataset.int === tier;
+      b.style.background  = active ? 'linear-gradient(135deg,var(--accent2),var(--accent))' : 'transparent';
+      b.style.color       = active ? '#080c10' : 'var(--muted)';
+      b.style.borderColor = active ? 'var(--accent2)' : 'var(--border)';
+    });
+  }
+  function updateIntensityPreview(p){
+    const dose = document.getElementById('em-dose').value || (p && p.dose) || '';
+    const picked = pickFromRange(dose, editingIntensity);
+    const reconNow = (function(){ try { return JSON.parse(localStorage.getItem('apex_recon')||'{}')[(p&&p.slug)||''] || {}; } catch(e){ return {}; } })();
+    const vial = parseFloat(document.getElementById('em-vial').value) || reconNow.vial || (RECON_DEFAULTS[(p&&p.slug)||'']||{}).vial;
+    const bac  = parseFloat(document.getElementById('em-bac').value)  || reconNow.bac  || (RECON_DEFAULTS[(p&&p.slug)||'']||{}).bac;
+    const acetic = reconNow.acetic || 0;
+    const conc = (vial && (bac || acetic)) ? vial / (bac + acetic) : null;
+    const u = doseToUnits(picked, conc, p);
+    const previewEl = document.getElementById('em-intensity-preview');
+    if (previewEl) {
+      if (u && !u.range) previewEl.innerHTML = '→ <strong style="color:var(--accent2);">' + u.units + ' units on the pen</strong>';
+      else if (u && u.range) previewEl.innerHTML = '→ <strong style="color:var(--accent2);">' + u.minUnits + '–' + u.maxUnits + ' units</strong>';
+      else previewEl.innerHTML = '<span style="color:var(--warn,#fbbf24);">⚠ Set vial size to see units</span>';
+    }
+  }
+  document.getElementById('em-intensity').addEventListener('click', e => {
+    const b = e.target.closest('.em-int-btn');
+    if (!b) return;
+    paintIntensityButtons(b.dataset.int);
+    const state = getState();
+    const p = (state.protocols || []).find(x => x.id === editingId);
+    if (p) updateIntensityPreview(p);
+  });
   function openEditModal(p){
     editingId = p.id;
     const reconNow = (function(){ try { return JSON.parse(localStorage.getItem('apex_recon')||'{}')[p.slug] || {}; } catch(e){ return {}; } })();
-    editingDefaults = { dose: p.dose, freq: p.freq, cycleWeeks: p.cycleWeeks, cycleWks: p.cycleWks, startDate: p.startDate, mixDate: p.mixDate, vial: reconNow.vial, bac: reconNow.bac };
+    editingDefaults = { dose: p.dose, freq: p.freq, cycleWeeks: p.cycleWeeks, cycleWks: p.cycleWks, startDate: p.startDate, mixDate: p.mixDate, vial: reconNow.vial, bac: reconNow.bac, intensity: p.intensity || 'recommended' };
     document.getElementById('em-title').textContent = p.name;
     document.getElementById('em-dose').value = p.dose || '';
+    // Intensity selector — only show if dose has a range (e.g. "1-3 mg" / "250-500 mcg")
+    const isRangedDose = /\d+(?:\.\d+)?\s*[-–—]\s*\d+(?:\.\d+)?\s*(mg|mcg)/i.test(p.dose || '');
+    const intensityWrap = document.getElementById('em-intensity-wrap');
+    intensityWrap.style.display = isRangedDose ? 'block' : 'none';
+    if (isRangedDose) {
+      const currentTier = (p.intensity || 'recommended').toLowerCase();
+      paintIntensityButtons(currentTier);
+      updateIntensityPreview(p);
+    }
     document.getElementById('em-freq').value = p.freq || '';
     document.getElementById('em-cycle').value = (typeof p.cycleWeeks === 'number' ? p.cycleWeeks : 8);
     document.getElementById('em-start').value = p.startDate || (new Date().toISOString().slice(0,10));
@@ -1267,6 +1368,8 @@ body::before{
       recon[state.protocols[idx].slug].acetic = recon[state.protocols[idx].slug].acetic || 0;
       try { localStorage.setItem('apex_recon', JSON.stringify(recon)); } catch(_){}
     }
+    // Save intensity tier (mild|recommended|aggressive) — collapses ranged doses to one value
+    state.protocols[idx].intensity = editingIntensity || 'recommended';
     state.protocols[idx].editedAt = new Date().toISOString();
     setState(state);
     closeEditModal();
@@ -1281,6 +1384,7 @@ body::before{
     document.getElementById('em-mix').value = editingDefaults.mixDate || editingDefaults.startDate || '';
     document.getElementById('em-vial').value = editingDefaults.vial || '';
     document.getElementById('em-bac').value = editingDefaults.bac || '';
+    paintIntensityButtons(editingDefaults.intensity || 'recommended');
   });
   document.getElementById('edit-overlay').addEventListener('click', e => {
     if (e.target.id === 'edit-overlay') closeEditModal();
