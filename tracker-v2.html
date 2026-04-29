@@ -1170,8 +1170,32 @@ body::before{
       </div>
     `;
 
-    protocols.forEach(p => { html += renderTimelineRow(p, earliest, totalWeeks); });
+    const recon = getRecon();
+    protocols.forEach(p => { html += renderTimelineRow(p, earliest, totalWeeks, recon); });
     grid.innerHTML = html;
+  }
+
+  // Convert a phase dose string ("25 mg M/W/F", "5 mg/wk") to units label
+  // using the user's reconstitution concentration. Falls back to original
+  // label if conversion isn't possible (oral, spray, no recon match).
+  function phaseToUnits(doseStr, p, recon){
+    if (!doseStr) return '';
+    if (ORAL_SLUGS.has(p.slug)) return '1 cap';
+    if (SPRAY_SLUGS.has(p.slug)) return doseStr; // sprays show mcg labels in encyclopedia
+    const reconInfo = recon[p.slug] || {};
+    const totalVol = (reconInfo.bac||0) + (reconInfo.acetic||0);
+    const conc = reconInfo.vial && totalVol > 0 ? reconInfo.vial / totalVol : 0;
+    if (!conc) return doseStr;
+    // Use the mid-range value if range, else the single value
+    const picked = pickFromRange(doseStr, p.intensity);
+    const m = String(picked).match(/(\d+(?:\.\d+)?)\s*(mg|mcg)/i);
+    if (!m) return doseStr;
+    const mg = (m[2].toLowerCase() === 'mcg') ? parseFloat(m[1])/1000 : parseFloat(m[1]);
+    const units = Math.round((mg / conc) * 100);
+    if (units < 1 || units > 200) return doseStr;
+    // Preserve schedule suffix like "M/W/F" or "/wk"
+    const suffix = String(picked).replace(/(\d+(?:\.\d+)?)\s*(mg|mcg)/i, '').trim();
+    return units + ' u' + (suffix ? ' ' + suffix : '');
   }
 
   // Standard OFF-cycle length (weeks) per peptide class. Titrating peptides
@@ -1181,7 +1205,7 @@ body::before{
     return 4; // standard 4-week off for non-titrating cycles (BPC, TB-500, GHK, etc.)
   }
 
-  function renderTimelineRow(p, anchor, totalWeeks){
+  function renderTimelineRow(p, anchor, totalWeeks, recon){
     const start = p.startDate ? new Date(p.startDate) : new Date();
     const cycleWks = typeof p.cycleWeeks === 'number' ? p.cycleWeeks : 8;
     const startWeek = daysBetween(anchor, start) / 7;
@@ -1196,7 +1220,7 @@ body::before{
         segments.push({
           start: startWeek + (i*phaseLen),
           end: startWeek + (i*phaseLen) + phaseLen,
-          label: t.d, phase: i % 6, kind: 'up'
+          label: phaseToUnits(t.d, p, recon || {}), phase: i % 6, kind: 'up'
         });
       });
       // TAPER DOWN: mirror the ramp using same colors. Skip the max phase
@@ -1209,7 +1233,7 @@ body::before{
         segments.push({
           start: startWeek + (segIdx * phaseLen),
           end: startWeek + (segIdx * phaseLen) + phaseLen,
-          label: t.d, phase: colorPhase, kind: 'down'
+          label: phaseToUnits(t.d, p, recon || {}), phase: colorPhase, kind: 'down'
         });
       });
       cycleEndWeek = startWeek + cycleWks + (taperPhases.length * phaseLen);

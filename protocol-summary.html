@@ -278,9 +278,9 @@ body::before{
     'fox04-dri.html':    { name:'FOX04-DRI',      mech:'Senolytic',                 cycleWks:'5 days pulsed', dose:'5-10 mg', freq:'5-day pulses' },
     'glutathione.html':  { name:'Glutathione',    mech:'Master antioxidant',        cycleWks:12, dose:'200-600 mg', freq:'2-3x weekly' },
     'nad-plus.html':     { name:'NAD+',           mech:'Mitochondrial cofactor',    cycleWks:12, dose:'titrated', freq:'3x weekly (Mon · Wed · Fri)',
-      // NAD+ subQ stings. Same 3x/wk schedule throughout — just lower mg in week 1
-      // for tolerance build. daySpans = explicit [startDay, endDay].
-      titration:[{w:'Wk 1-2 tolerance build',d:'50 mg M/W/F',daySpan:[1,14]},{w:'Wk 3-12 full dose',d:'100 mg M/W/F',daySpan:[15,84]}] },
+      // NAD+ subQ stings — gradual ramp on same M/W/F schedule throughout.
+      // daySpans = explicit [startDay, endDay] for non-uniform phase lengths.
+      titration:[{w:'Wk 1 tolerance',d:'25 mg M/W/F',daySpan:[1,7]},{w:'Wk 2',d:'50 mg M/W/F',daySpan:[8,14]},{w:'Wk 3-4',d:'75 mg M/W/F',daySpan:[15,28]},{w:'Wk 5-12 full dose',d:'100 mg M/W/F',daySpan:[29,84]}] },
     'selank.html':       { name:'Selank',         mech:'Anxiolytic neuropeptide',   cycleWks:4,  dose:'250-500 mcg', freq:'daily intranasal' },
     'semax.html':        { name:'Semax',          mech:'BDNF upregulator',          cycleWks:4,  dose:'250-500 mcg', freq:'daily intranasal' },
     'dsip.html':         { name:'DSIP',           mech:'Delta sleep peptide',       cycleWks:4,  dose:'100-300 mcg', freq:'pre-bed' },
