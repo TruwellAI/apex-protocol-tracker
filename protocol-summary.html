@@ -556,8 +556,42 @@ body::before{
     }
 
     function buildCycleAsk(){
-      if (!p.titration || !Array.isArray(p.titration) || p.titration.length < 2) return '';
+      // Skip ONLY for stacks (where dose is "see components")
+      if (COMPONENT_RX.test(p.dose || '')) return '';
+      const hasTitration = p.titration && Array.isArray(p.titration) && p.titration.length >= 2;
       const cs = cycleState[slug] || { mode: 'new' };
+
+      // Non-titrating peptide: render the simple version (week-only)
+      if (!hasTitration) {
+        const isMid = cs.mode === 'mid';
+        const totalWeeks = (typeof p.cycleWks === 'number') ? p.cycleWks : 8;
+        let weekOpts = '';
+        for (let w = 1; w <= totalWeeks; w++) {
+          weekOpts += `<option value="${w}"${cs.currentWeek === w ? ' selected' : ''}>Week ${w}</option>`;
+        }
+        const summary = (isMid && cs.currentWeek)
+          ? `<div class="cycle-ask-summary"><strong>Picking up at Week ${cs.currentWeek}.</strong> Tracker will set your start date back so you land on the right cycle day.</div>`
+          : '';
+        return `
+          <div class="cycle-ask">
+            <div class="cycle-ask-title">Where are you in your cycle?</div>
+            <div class="cycle-ask-buttons">
+              <button class="cycle-ask-btn${!isMid ? ' on' : ''}" data-cycle-mode="new" data-slug="${slug}">Brand new — start week 1</button>
+              <button class="cycle-ask-btn${isMid ? ' on' : ''}" data-cycle-mode="mid" data-slug="${slug}">Already on cycle</button>
+            </div>
+            <div class="cycle-ask-fields${isMid ? ' show' : ''}">
+              <div class="cycle-ask-field-row">
+                <div class="cycle-ask-field">
+                  <label>Current week</label>
+                  <select data-cycle-week data-slug="${slug}">${weekOpts}</select>
+                </div>
+              </div>
+              ${summary}
+            </div>
+          </div>
+        `;
+      }
+      // Titrating peptide → continue to full form below
       const isMid = cs.mode === 'mid';
       const isSplitEligible = !!splitCfg; // GLP-1s only
       const isMidSplit = isMid && cs.midSplit === true;
@@ -661,8 +695,8 @@ body::before{
             <select data-cycle-week data-slug="${slug}">${weekOpts}</select>
           </div>
           <div class="cycle-ask-field" style="background:rgba(0,255,157,.04);border-color:rgba(0,255,157,.25);">
-            <label style="color:var(--accent2);">Effective weekly dose</label>
-            <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:var(--accent2);">${weeklyDoseMg > 0 ? fmt(weeklyDoseMg) + ' mg/wk' : '—'}</div>
+            <label style="color:var(--accent2);">Total weekly units</label>
+            <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:var(--accent2);">${(typeof cs.lastUnits === 'number' && cs.lastUnits > 0) ? (cs.lastUnits * pinsPerWeek) + ' u/wk' : '—'}</div>
           </div>
         </div>
       ` : '';
