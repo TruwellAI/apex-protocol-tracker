@@ -865,11 +865,20 @@ body::before{
       const startDate = computeStartDate(slug, p);
       // mixDate stays today regardless — fresh vial, even if cycle is mid-flight
       const mixDate = new Date().toISOString().slice(0,10);
+      // If user opted into split protocol, override freq with the actual schedule
+      // so tracker's parseFrequency picks Mon+Thu (2x) or Mon/Wed/Fri (3x), not the
+      // PROTO default like "weekly" which would only schedule one day per week.
+      const cs = cycleState[slug] || {};
+      let freqOverride = null;
+      if (cs.midSplit) {
+        const pins = (typeof cs.pinsPerWeek === 'number' && cs.pinsPerWeek > 0) ? cs.pinsPerWeek : 2;
+        freqOverride = pins === 3 ? '3x weekly (Mon · Wed · Fri)' : '2x weekly (Mon + Thu)';
+      }
       if (p) {
-        return { slug, name:p.name, mech:p.mech, cycleWks:p.cycleWks, dose:p.dose, freq:p.freq, titration:p.titration||null, startDate, mixDate };
+        return { slug, name:p.name, mech:p.mech, cycleWks:p.cycleWks, dose:p.dose, freq:freqOverride || p.freq, titration:p.titration||null, startDate, mixDate };
       }
       console.warn('[protocol-summary] missing PROTO for', slug, '→ fallback');
-      return { slug, name:slugToName(slug), mech:'', cycleWks:8, dose:'set in tracker', freq:'daily', titration:null, startDate, mixDate };
+      return { slug, name:slugToName(slug), mech:'', cycleWks:8, dose:'set in tracker', freq:freqOverride || 'daily', titration:null, startDate, mixDate };
     });
 
     if (protocols.length === 0) {
