@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover">
 <title>Research — Apex Protocol</title>
-<meta name="description" content="Pick your research path. Sources, basics, compare, or browse.">
+<meta name="description" content="Pick a category. Pick a peptide. Read the deep research.">
 <link rel="icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" href="assets/favicon.ico">
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -12,7 +12,7 @@
 :root {
   --bg:#080c10; --panel:#0d1318; --panel2:#121a22; --border:#1a2d3a;
   --accent:#00d4ff; --accent2:#00ff9d; --accent3:#ff6b35; --accent4:#a78bfa;
-  --text:#cbd5e1; --muted:#7a8d99; --white:#eaf4f8;
+  --text:#cbd5e1; --muted:#7a8d99; --white:#eaf4f8; --warn:#fbbf24; --danger:#ef4444;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{min-height:100%;}
@@ -42,74 +42,131 @@ body::before{
   font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.22em;
   color:var(--muted);text-decoration:none;text-transform:uppercase;
   padding:8px 12px;border:1px solid var(--border);border-radius:6px;
+  background:transparent;cursor:pointer;
   transition:all .15s;-webkit-tap-highlight-color:transparent;
 }
 .back-btn:hover,.back-btn:active{color:var(--accent2);border-color:var(--accent2);}
 
-/* HERO (small) */
-.hero{text-align:center;padding:36px 0 18px;}
+/* HERO */
+.hero{text-align:center;padding:30px 0 14px;}
 .hero h1{
   font-family:'Rajdhani',sans-serif;font-weight:700;
-  font-size:clamp(30px,5.5vw,44px);line-height:1.05;letter-spacing:-.5px;
-  color:var(--white);margin-bottom:10px;
+  font-size:clamp(28px,5vw,40px);line-height:1.05;letter-spacing:-.5px;
+  color:var(--white);margin-bottom:8px;
 }
 .hero h1 .hl{color:var(--accent2);}
 .hero .sub{font-size:14px;color:var(--text);max-width:480px;margin:0 auto;line-height:1.5;}
 
-/* TILES — same component pattern as landing */
-.tiles{
-  display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:20px 0 28px;
+/* SOURCE BUTTON (top, prominent) */
+.source-btn{
+  display:flex;align-items:center;gap:14px;
+  padding:18px 22px;margin:18px auto 28px;max-width:720px;
+  background:linear-gradient(135deg,rgba(0,255,157,.06),rgba(0,212,255,.04));
+  border:1px solid rgba(0,255,157,.4);border-left:3px solid var(--accent2);
+  border-radius:10px;text-decoration:none;color:inherit;
+  transition:all .15s;-webkit-tap-highlight-color:transparent;
 }
-@media (max-width:680px){.tiles{grid-template-columns:1fr;gap:12px;}}
+.source-btn:hover,.source-btn:active{background:rgba(0,255,157,.08);border-color:var(--accent2);transform:translateY(-1px);}
+.source-btn-icon{font-size:32px;line-height:1;flex-shrink:0;}
+.source-btn-text{flex:1;}
+.source-btn-eyebrow{
+  font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.2em;
+  color:var(--accent2);text-transform:uppercase;margin-bottom:3px;
+}
+.source-btn-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:17px;color:var(--white);letter-spacing:-.2px;line-height:1.25;}
+.source-btn-arrow{font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--accent2);flex-shrink:0;}
 
-.tile{
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:24px 22px;
-  text-decoration:none;color:inherit;
-  display:flex;flex-direction:column;align-items:flex-start;text-align:left;
-  cursor:pointer;
-  transition:transform .2s,border-color .2s,box-shadow .2s;
-  min-height:160px;
-  position:relative;overflow:hidden;
-  -webkit-tap-highlight-color:transparent;
+/* SECTION HEADER */
+.section-h{
+  text-align:center;font-family:'Share Tech Mono',monospace;font-size:11px;
+  letter-spacing:.28em;color:var(--muted);text-transform:uppercase;
+  margin:8px 0 18px;
 }
-.tile::before{
+.section-h::before,.section-h::after{
+  content:'';display:inline-block;width:30px;height:1px;background:var(--border);
+  vertical-align:middle;margin:0 14px;
+}
+
+/* CATEGORY GRID */
+.cat-grid{
+  display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px;
+  padding:0 0 24px;
+}
+.cat-tile{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:12px;padding:20px 18px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:flex-start;gap:8px;
+  transition:all .18s;-webkit-tap-highlight-color:transparent;
+  position:relative;overflow:hidden;
+}
+.cat-tile::before{
   content:'';position:absolute;inset:0;
   background:radial-gradient(ellipse at 50% 0%,currentColor 0%,transparent 65%);
   opacity:0;transition:opacity .25s;pointer-events:none;
 }
-.tile:hover,.tile:active{transform:translateY(-2px);}
-.tile:hover::before,.tile:active::before{opacity:.06;}
+.cat-tile:hover,.cat-tile:active{transform:translateY(-2px);}
+.cat-tile:hover::before,.cat-tile:active::before{opacity:.05;}
+.cat-tile.cat-fatloss   {color:var(--accent3);border-color:rgba(255,107,53,.3);}
+.cat-tile.cat-fatloss:hover   {border-color:var(--accent3);}
+.cat-tile.cat-gh        {color:var(--accent4);border-color:rgba(167,139,250,.3);}
+.cat-tile.cat-gh:hover        {border-color:var(--accent4);}
+.cat-tile.cat-repair    {color:var(--accent2);border-color:rgba(0,255,157,.3);}
+.cat-tile.cat-repair:hover    {border-color:var(--accent2);}
+.cat-tile.cat-longevity {color:var(--accent);border-color:rgba(0,212,255,.3);}
+.cat-tile.cat-longevity:hover {border-color:var(--accent);}
+.cat-tile.cat-libido    {color:#ec4899;border-color:rgba(236,72,153,.3);}
+.cat-tile.cat-libido:hover    {border-color:#ec4899;}
+.cat-tile.cat-cognitive {color:#fbbf24;border-color:rgba(251,191,36,.3);}
+.cat-tile.cat-cognitive:hover {border-color:#fbbf24;}
+.cat-tile.cat-trt       {color:var(--danger);border-color:rgba(239,68,68,.3);}
+.cat-tile.cat-trt:hover       {border-color:var(--danger);}
 
-.tile.t-sources   {color:var(--accent2);border-color:rgba(0,255,157,.35);}
-.tile.t-sources:hover  {border-color:var(--accent2);box-shadow:0 10px 28px rgba(0,255,157,.18);}
-.tile.t-basics    {color:var(--accent3);border-color:rgba(255,107,53,.4);}
-.tile.t-basics:hover   {border-color:var(--accent3);box-shadow:0 10px 28px rgba(255,107,53,.18);}
-.tile.t-compare   {color:var(--accent4);border-color:rgba(167,139,250,.4);}
-.tile.t-compare:hover  {border-color:var(--accent4);box-shadow:0 10px 28px rgba(167,139,250,.2);}
-.tile.t-research  {color:var(--accent);border-color:rgba(0,212,255,.4);}
-.tile.t-research:hover {border-color:var(--accent);box-shadow:0 10px 28px rgba(0,212,255,.18);}
-
-.tile-row{display:flex;align-items:center;gap:14px;width:100%;margin-bottom:10px;}
-.tile-icon{font-size:38px;line-height:1;flex-shrink:0;filter:drop-shadow(0 4px 10px rgba(0,0,0,.4));}
-.tile-eyebrow{
+.cat-icon{font-size:34px;line-height:1;flex-shrink:0;filter:drop-shadow(0 4px 10px rgba(0,0,0,.4));}
+.cat-eyebrow{
   font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.22em;
   color:currentColor;text-transform:uppercase;opacity:.85;
 }
-.tile-title{
-  font-family:'Rajdhani',sans-serif;font-weight:700;font-size:20px;
-  color:var(--white);letter-spacing:-.2px;line-height:1.15;margin-bottom:4px;
+.cat-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;color:var(--white);letter-spacing:-.2px;line-height:1.2;}
+.cat-sub{font-size:12px;color:var(--text);line-height:1.4;opacity:.85;}
+.cat-count{
+  margin-top:auto;padding-top:10px;
+  font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.18em;
+  color:currentColor;text-transform:uppercase;opacity:.7;
 }
-.tile-sub{font-size:13px;color:var(--text);line-height:1.45;}
-.tile-cta{
-  display:inline-flex;align-items:center;gap:6px;margin-top:auto;padding-top:14px;
-  font-family:'Share Tech Mono',monospace;font-size:10px;font-weight:700;
-  letter-spacing:.22em;text-transform:uppercase;color:currentColor;
+
+/* PEPTIDE LIST (when category selected) */
+.peptide-list{
+  display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:10px;
+  padding:0 0 24px;
 }
-.tile-cta .arrow{transition:transform .2s;}
-.tile:hover .tile-cta .arrow,.tile:active .tile-cta .arrow{transform:translateX(3px);}
+.pep-tile{
+  background:var(--panel);border:1px solid var(--border);
+  border-left:3px solid var(--accent2);
+  border-radius:8px;padding:14px 16px;text-decoration:none;color:inherit;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  transition:all .15s;-webkit-tap-highlight-color:transparent;
+}
+.pep-tile:hover,.pep-tile:active{background:var(--panel2);border-left-color:var(--accent);transform:translateX(2px);}
+.pep-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;color:var(--white);letter-spacing:-.1px;}
+.pep-mech{font-size:11px;color:var(--muted);margin-top:2px;}
+.pep-arrow{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--accent2);flex-shrink:0;}
+.pep-rx{
+  display:inline-block;padding:2px 7px;background:rgba(239,68,68,.15);
+  border:1px solid rgba(239,68,68,.5);color:var(--danger);
+  font-family:'Share Tech Mono',monospace;font-size:9px;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;border-radius:4px;
+  margin-left:6px;vertical-align:middle;
+}
+
+.cat-back{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.22em;
+  color:var(--muted);text-decoration:none;text-transform:uppercase;
+  padding:10px 16px;border:1px solid var(--border);border-radius:6px;
+  background:transparent;cursor:pointer;margin-bottom:18px;
+  transition:all .15s;-webkit-tap-highlight-color:transparent;
+}
+.cat-back:hover{color:var(--accent2);border-color:var(--accent2);}
 
 /* FOOT */
 .foot{
@@ -119,89 +176,48 @@ body::before{
 }
 .foot a{color:var(--muted);text-decoration:none;}
 .foot a:hover{color:var(--accent2);}
-@media (max-width:560px){.foot{justify-content:center;text-align:center;font-size:8px;}}
 </style>
-<link rel="stylesheet" href="assets/apex-ios.css">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Apex">
-<meta name="theme-color" content="#080c10">
 </head>
 <body>
 
 <div class="wrap">
 
-  <!-- HEADER with back button -->
+  <!-- HEADER -->
   <div class="top">
-    <a href="index.html" class="back-btn" aria-label="Back to home">← Home</a>
     <a href="index.html" class="brand">
-      <span class="brand-mark">APEX</span>
-      <span class="brand-tag">Research</span>
+      <div class="brand-mark">APEX</div>
+      <div class="brand-tag">Research</div>
     </a>
-    <div style="width:60px;"></div>
+    <a href="index.html" class="back-btn">← Home</a>
   </div>
 
   <!-- HERO -->
   <div class="hero">
-    <h1>How do you want to <span class="hl">research?</span></h1>
-    <p class="sub">Pick a path. Or skip straight to the encyclopedia.</p>
+    <h1>Research <span class="hl">&amp; add</span></h1>
+    <p class="sub">Pick a category. Pick a peptide. Read everything. Add to your stack when you're ready.</p>
   </div>
 
-  <!-- 4 TILES -->
-  <div class="tiles">
+  <!-- SOURCE BUTTON (top, prominent — single CTA above the categories) -->
+  <a href="research.html" class="source-btn">
+    <div class="source-btn-icon">📚</div>
+    <div class="source-btn-text">
+      <div class="source-btn-eyebrow">The Paper Trail</div>
+      <div class="source-btn-title">This is how we got our research and where every number comes from</div>
+    </div>
+    <div class="source-btn-arrow">→</div>
+  </a>
 
-    <!-- TILE 1: SOURCES / RECEIPTS -->
-    <a href="research.html" class="tile t-sources">
-      <div class="tile-row">
-        <div class="tile-icon">📚</div>
-        <div>
-          <div class="tile-eyebrow">The Paper Trail</div>
-          <div class="tile-title">How we know every dose is right</div>
-        </div>
-      </div>
-      <div class="tile-sub">NEJM trials · FDA labels · 5+ pharmacy SOPs · cited for every number.</div>
-      <div class="tile-cta">See sources <span class="arrow">→</span></div>
-    </a>
+  <!-- CATEGORY VIEW (default) -->
+  <div id="cat-view">
+    <div class="section-h">Pick a category</div>
+    <div class="cat-grid" id="cat-grid"></div>
+  </div>
 
-    <!-- TILE 2: BASICS -->
-    <a href="basics.html" class="tile t-basics">
-      <div class="tile-row">
-        <div class="tile-icon">🔬</div>
-        <div>
-          <div class="tile-eyebrow">Read This First</div>
-          <div class="tile-title">New to peptides? Start here</div>
-        </div>
-      </div>
-      <div class="tile-sub">5-min primer: what they are, reconstitution, shelf life, what kills peptides, storage rules.</div>
-      <div class="tile-cta">Walk me through it <span class="arrow">→</span></div>
-    </a>
-
-    <!-- TILE 3: BUILD YOUR PROTOCOL -->
-    <a href="compare.html" class="tile t-compare">
-      <div class="tile-row">
-        <div class="tile-icon">⚖️</div>
-        <div>
-          <div class="tile-eyebrow">Goal-Driven Builder</div>
-          <div class="tile-title">Build My Own Protocol</div>
-        </div>
-      </div>
-      <div class="tile-sub">Pick a goal. Pick peptides. We'll grade the stack — flag double-dipping, show coverage gaps, suggest what's missing.</div>
-      <div class="tile-cta">Build it <span class="arrow">→</span></div>
-    </a>
-
-    <!-- TILE 4: JUST RESEARCH -->
-    <a href="browse.html?from=hub" class="tile t-research">
-      <div class="tile-row">
-        <div class="tile-icon">📖</div>
-        <div>
-          <div class="tile-eyebrow">Encyclopedia</div>
-          <div class="tile-title">Just let me do my research</div>
-        </div>
-      </div>
-      <div class="tile-sub">Drop me into the category panel. 44 peptides, multi-select, live conflict detection.</div>
-      <div class="tile-cta">Open the panel <span class="arrow">→</span></div>
-    </a>
-
+  <!-- PEPTIDE LIST VIEW (shown after category click) -->
+  <div id="pep-view" style="display:none;">
+    <button class="cat-back" id="cat-back-btn">← All categories</button>
+    <div class="section-h" id="pep-section-h">Peptides</div>
+    <div class="peptide-list" id="pep-list"></div>
   </div>
 
   <!-- FOOT -->
@@ -215,7 +231,159 @@ body::before{
 
 </div>
 
-<script src="assets/apex-tracking.js"></script>
-<link rel="stylesheet" href="assets/apex-color-system.css">
+<script>
+(function(){
+  // ── CATEGORIES ─────────────────────────────────────────
+  // 7 categories. Each peptide entry: { slug (HTML file), name, mech, rx? }
+  const CATS = [
+    {
+      key:'fatloss', icon:'🔥', label:'Fat Loss & Metabolic',
+      sub:'GLP-1s, lipolysis, mitochondria, exercise mimetics',
+      peptides:[
+        { slug:'retatrutide.html',  name:'Retatrutide',     mech:'Triple G agonist (GLP-1 + GIP + Glucagon)' },
+        { slug:'semaglutide.html',  name:'Semaglutide',     mech:'GLP-1 agonist' },
+        { slug:'tirzepatide.html',  name:'Tirzepatide',     mech:'GLP-1 + GIP' },
+        { slug:'aod9604.html',      name:'AOD-9604',        mech:'GH fragment · direct lipolysis' },
+        { slug:'5amino1mq.html',    name:'5-Amino-1MQ',     mech:'NNMT inhibitor · fat cell shrinkage' },
+        { slug:'motsc.html',        name:'MOTS-c',          mech:'Mitokine · AMPK activation' },
+        { slug:'tesamorelin.html',  name:'Tesamorelin',     mech:'GHRH · visceral fat' },
+        { slug:'slu-pp-322.html',   name:'SLU-PP-332',      mech:'ERRα agonist · exercise mimetic' },
+        { slug:'l-carnitine.html',  name:'L-Carnitine',     mech:'Fat oxidation cofactor' }
+      ]
+    },
+    {
+      key:'gh', icon:'💪', label:'GH Axis',
+      sub:'GHRH stimulators, ghrelin agonists, IGF-1',
+      peptides:[
+        { slug:'cjc1295-dac.html',  name:'CJC-1295 DAC',    mech:'GHRH analog (long-acting)' },
+        { slug:'cjc-no-dac.html',   name:'CJC-1295 (no DAC)', mech:'GHRH analog (pulsatile)' },
+        { slug:'sermorelin.html',   name:'Sermorelin',      mech:'GHRH analog' },
+        { slug:'ipamorelin.html',   name:'Ipamorelin',      mech:'Ghrelin / GHS-R' },
+        { slug:'cjc-ipa-blend.html',name:'CJC + Ipa Blend', mech:'GHRH + Ghrelin synergy' },
+        { slug:'igf1-lr3.html',     name:'IGF-1 LR3',       mech:'Direct IGF-1 (post-workout)' }
+      ]
+    },
+    {
+      key:'repair', icon:'🩹', label:'Healing & Recovery',
+      sub:'Tissue repair, anti-inflammatory, immune, nerve',
+      peptides:[
+        { slug:'bpc157.html',         name:'BPC-157',          mech:'Body protective compound' },
+        { slug:'tb500.html',          name:'TB-500',           mech:'Thymosin β4 · systemic mobility' },
+        { slug:'ghkcu.html',          name:'GHK-Cu',           mech:'Copper tripeptide · skin/collagen' },
+        { slug:'kpv.html',            name:'KPV',              mech:'Anti-inflammatory tripeptide' },
+        { slug:'ll37.html',           name:'LL-37',            mech:'Cathelicidin · antimicrobial' },
+        { slug:'thymosin-alpha1.html',name:'Thymosin α1',      mech:'Immune modulator' },
+        { slug:'ara290.html',         name:'ARA-290',          mech:'EPO derivative · neuropathy' },
+        { slug:'wolverine.html',      name:'Wolverine Stack',  mech:'BPC-157 + TB-500' },
+        { slug:'klow.html',           name:'KLOW Stack',       mech:'KPV + TB + BPC + GHK' },
+        { slug:'glow.html',           name:'GLOW Stack',       mech:'GHK + TB + BPC' }
+      ]
+    },
+    {
+      key:'longevity', icon:'⏳', label:'Longevity & Anti-Aging',
+      sub:'Telomeres, mitochondria, senolytics, antioxidants',
+      peptides:[
+        { slug:'epitalon.html',     name:'Epitalon',        mech:'Telomerase activator' },
+        { slug:'ss31.html',         name:'SS-31',           mech:'Mitochondrial peptide' },
+        { slug:'fox04-dri.html',    name:'FOX04-DRI',       mech:'Senolytic · clears zombie cells' },
+        { slug:'glutathione.html',  name:'Glutathione',     mech:'Master antioxidant' },
+        { slug:'nad-plus.html',     name:'NAD+',            mech:'Mitochondrial cofactor · sirtuins' },
+        { slug:'cartalax.html',     name:'Cartalax',        mech:'Bioregulator (cartilage)' },
+        { slug:'motsc.html',        name:'MOTS-c',          mech:'Also longevity · mitochondrial biogenesis' }
+      ]
+    },
+    {
+      key:'libido', icon:'🔥', label:'Libido & Sexual Health',
+      sub:'MC4R activation, central arousal, tanning + libido',
+      peptides:[
+        { slug:'pt141.html',        name:'PT-141 (Bremelanotide)', mech:'MC4R agonist · central arousal' },
+        { slug:'melanotan2.html',   name:'Melanotan II',           mech:'MC1-4R · libido + tanning' },
+        { slug:'melanotan1.html',   name:'Melanotan I',            mech:'MC1R · tanning' }
+      ]
+    },
+    {
+      key:'cognitive', icon:'🧠', label:'Cognitive & Mood',
+      sub:'BDNF, GABAergic, sleep, synaptogenesis',
+      peptides:[
+        { slug:'semax.html',        name:'Semax',           mech:'BDNF upregulation' },
+        { slug:'selank.html',       name:'Selank',          mech:'Anxiolytic · GABAergic' },
+        { slug:'dsip.html',         name:'DSIP',            mech:'Delta sleep peptide' },
+        { slug:'dihexa.html',       name:'Dihexa',          mech:'HGF mimetic · synaptogenesis' },
+        { slug:'pe2228.html',       name:'PE-22-28',        mech:'TREK-1 modulator · depression' }
+      ]
+    },
+    {
+      key:'trt', icon:'⚗️', label:'TRT / Hormone Optimization',
+      sub:'Testosterone esters · Rx-only · Schedule III',
+      peptides:[
+        { slug:'testosterone-cyp.html',  name:'Testosterone Cypionate',  mech:'Long ester (8-day half-life)',  rx:true },
+        { slug:'testosterone-enth.html', name:'Testosterone Enanthate',  mech:'Long ester (7-day half-life)',  rx:true },
+        { slug:'testosterone-prop.html', name:'Testosterone Propionate', mech:'Short ester (1-day half-life)', rx:true }
+      ]
+    }
+  ];
+
+  // ── RENDER CATEGORY GRID ───────────────────────────────
+  function renderCategoryGrid(){
+    const grid = document.getElementById('cat-grid');
+    grid.innerHTML = CATS.map(c => `
+      <div class="cat-tile cat-${c.key}" data-cat="${c.key}" role="button" tabindex="0">
+        <div class="cat-icon">${c.icon}</div>
+        <div class="cat-eyebrow">${c.peptides.length} peptide${c.peptides.length === 1 ? '' : 's'}</div>
+        <div class="cat-title">${c.label}</div>
+        <div class="cat-sub">${c.sub}</div>
+        <div class="cat-count">View peptides →</div>
+      </div>
+    `).join('');
+    grid.querySelectorAll('.cat-tile').forEach(el => {
+      el.addEventListener('click', () => showCategory(el.dataset.cat));
+      el.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); showCategory(el.dataset.cat); }
+      });
+    });
+  }
+
+  // ── SHOW PEPTIDE LIST FOR CATEGORY ─────────────────────
+  function showCategory(catKey){
+    const cat = CATS.find(c => c.key === catKey);
+    if (!cat) return;
+    document.getElementById('cat-view').style.display = 'none';
+    const pepView = document.getElementById('pep-view');
+    pepView.style.display = 'block';
+    document.getElementById('pep-section-h').textContent = cat.label;
+    const list = document.getElementById('pep-list');
+    list.innerHTML = cat.peptides.map(p => {
+      const rxBadge = p.rx ? '<span class="pep-rx">⚠ Rx</span>' : '';
+      return `
+        <a href="${p.slug}" class="pep-tile" style="--accent-color:currentColor;">
+          <div>
+            <div class="pep-name">${p.name}${rxBadge}</div>
+            <div class="pep-mech">${p.mech}</div>
+          </div>
+          <div class="pep-arrow">→</div>
+        </a>
+      `;
+    }).join('');
+    // Persist current category in URL hash so back-button works
+    history.replaceState({}, '', '#cat=' + catKey);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ── BACK TO CATEGORY GRID ──────────────────────────────
+  function backToCategories(){
+    document.getElementById('cat-view').style.display = 'block';
+    document.getElementById('pep-view').style.display = 'none';
+    history.replaceState({}, '', location.pathname);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  document.getElementById('cat-back-btn').addEventListener('click', backToCategories);
+
+  // ── INIT ───────────────────────────────────────────────
+  renderCategoryGrid();
+  // If hash specifies a category, deep-link to it
+  const m = location.hash.match(/cat=([a-z]+)/i);
+  if (m && CATS.find(c => c.key === m[1])) showCategory(m[1]);
+})();
+</script>
 </body>
 </html>
