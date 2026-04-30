@@ -683,10 +683,11 @@ function render() {
       }
 
       html += `
-        <div class="tl-row">
-          <div class="tl-row-name">${seqBadge}<span class="tier-dot ${p.tier}"></span>${p.name}</div>
+        <div class="tl-row" data-slug="${p.slug}" style="cursor:pointer;">
+          <div class="tl-row-name">${seqBadge}<span class="tier-dot ${p.tier}"></span>${p.name}<span style="opacity:.4;font-size:10px;margin-left:6px;">▾</span></div>
           <div class="tl-track">${bars}<div class="tl-today tl-today-row" style="left:0%;top:0;"></div></div>
-        </div>`;
+        </div>
+        <div class="tl-detail" id="detail-${p.slug}" style="display:none;grid-column:1/-1;background:rgba(0,212,255,.05);border-left:3px solid var(--accent);padding:10px 14px;margin:-2px 0 8px;font-size:12px;line-height:1.55;border-radius:0 6px 6px 0;"></div>`;
     });
 
     html += `</div>`;
@@ -730,6 +731,96 @@ function render() {
     </div>`;
 
   content.innerHTML = html;
+  wireRowClicks();
+}
+
+// Per-injection dose math for inline detail. Mirrors reconstitute.html defaults.
+// units = round((doseMg / (vialMg / bacMl)) * 100)
+const DOSE_INFO = {
+  'bpc157.html':       {dose:0.25, vial:5,  bac:3, freq:'1-2x daily'},
+  'tb500.html':        {dose:2.5,  vial:10, bac:2, freq:'2x weekly'},
+  'ghkcu.html':        {dose:2,    vial:50, bac:5, freq:'daily SubQ'},
+  'kpv.html':          {dose:0.5,  vial:5,  bac:2, freq:'daily'},
+  'll37.html':         {dose:0.1,  vial:5,  bac:2, freq:'daily'},
+  'thymosin-alpha1.html':{dose:1.6, vial:10, bac:2, freq:'2x weekly'},
+  'ara290.html':       {dose:4,    vial:16, bac:2, freq:'daily'},
+  'epitalon.html':     {dose:7.5,  vial:50, bac:5, freq:'daily PM × 10-20d'},
+  'cartalax.html':     {dose:0.2,  vial:20, bac:2, freq:'daily × 10d'},
+  'fox04-dri.html':    {dose:3,    vial:10, bac:2, freq:'5-day pulse'},
+  'ss31.html':         {dose:5,    vial:50, bac:2, freq:'daily'},
+  'motsc.html':        {dose:3,    vial:10, bac:2, freq:'2-3x weekly'},
+  'nad-plus.html':     {dose:100,  vial:500,bac:5, freq:'2-3x weekly'},
+  'glutathione.html':  {dose:400,  vial:600,bac:3, freq:'2-3x weekly'},
+  'aod9604.html':      {dose:0.3,  vial:5,  bac:2, freq:'daily fasted AM'},
+  'retatrutide.html':  {dose:4,    vial:30, bac:3, freq:'weekly'},
+  'semaglutide.html':  {dose:1,    vial:10, bac:2, freq:'weekly'},
+  'tirzepatide.html':  {dose:5,    vial:30, bac:3, freq:'weekly'},
+  '5amino1mq.html':    {dose:75,   oral:true,                   freq:'oral daily'},
+  'tesamorelin.html':  {dose:1.5,  vial:5,  bac:2, freq:'daily PM'},
+  'cjc1295-dac.html':  {dose:1.5,  vial:5,  bac:2, freq:'2x weekly'},
+  'cjc-no-dac.html':   {dose:0.1,  vial:5,  bac:3, freq:'daily PM'},
+  'sermorelin.html':   {dose:0.3,  vial:5,  bac:2, freq:'daily PM'},
+  'ipamorelin.html':   {dose:0.3,  vial:5,  bac:2, freq:'1-3x daily'},
+  'cjc-ipa-blend.html':{dose:0.25, vial:10, bac:2, freq:'daily PM fasted'},
+  'igf1-lr3.html':     {dose:0.04, vial:1,  bac:1, freq:'post-workout'},
+  'l-carnitine.html':  {dose:350,  vial:600,bac:3, freq:'pre-cardio'},
+  'slu-pp-322.html':   {dose:0.375,vial:10, bac:2, freq:'daily'},
+  'selank.html':       {dose:0.4,  spray:true,                  freq:'2-3x daily intranasal'},
+  'semax.html':        {dose:0.4,  spray:true,                  freq:'2-3x daily intranasal'},
+  'dsip.html':         {dose:0.2,  vial:5,  bac:2, freq:'pre-bed'},
+  'dihexa.html':       {dose:25,   oral:true,                   freq:'daily oral'},
+  'pe2228.html':       {dose:0.375,spray:true,                  freq:'intranasal'},
+  'pt141.html':        {dose:1.5,  vial:10, bac:2, freq:'as-needed (45 min before)'},
+  'melanotan2.html':   {dose:0.5,  vial:10, bac:2, freq:'daily SubQ'},
+  'melanotan1.html':   {dose:0.5,  vial:10, bac:2, freq:'daily SubQ'},
+  'testosterone-cyp.html': {dose:100, premixed:'200mg/mL',      freq:'2x weekly (Mon+Thu)'},
+  'testosterone-enth.html':{dose:100, premixed:'200mg/mL',      freq:'2x weekly (Mon+Thu)'},
+  'testosterone-prop.html':{dose:50,  premixed:'100mg/mL',      freq:'every other day'},
+  'glutamine.html':    {dose:350,  vial:600,bac:3, freq:'daily'},
+  'wolverine.html':    {dose:'BPC 0.25mg + TB 2.5mg', combined:true, components:[{name:'BPC-157',dose:0.25},{name:'TB-500',dose:2.5}], vial:10, bac:3, freq:'daily', note:'Combined-bottle stack — each draw delivers both peptides. No copper conflict.'},
+  'klow.html':         {combined:true, components:[{name:'KPV',dose:0.5},{name:'TB-500',dose:2.5},{name:'BPC-157',dose:0.25},{name:'GHK-Cu',dose:2}], vial:20, bac:5, freq:'daily', warning:'⚠ GHK-Cu copper degrades TB-500. Mix fresh weekly or run separate bottles.'},
+  'glow.html':         {combined:true, components:[{name:'GHK-Cu',dose:2},{name:'TB-500',dose:2.5},{name:'BPC-157',dose:0.25}], vial:15, bac:5, freq:'daily', warning:'⚠ GHK-Cu copper degrades TB-500. Mix fresh weekly or run separate bottles.'},
+};
+
+function unitsFor(doseMg, vialMg, bacMl){
+  if (!doseMg || !vialMg || !bacMl) return null;
+  return Math.round((doseMg / (vialMg / bacMl)) * 100);
+}
+
+function wireRowClicks(){
+  document.querySelectorAll('.tl-row[data-slug]').forEach(row => {
+    row.addEventListener('click', () => {
+      const slug = row.getAttribute('data-slug');
+      const detail = document.getElementById('detail-' + slug);
+      if (!detail) return;
+      if (detail.style.display === 'block') { detail.style.display = 'none'; return; }
+      const info = DOSE_INFO[slug];
+      const pep = PEPS[slug.replace('.html','')] || {};
+      let body = '';
+      if (!info) {
+        body = `<em style="color:var(--muted);">No dose data — open the peptide page for details.</em>`;
+      } else if (info.oral) {
+        body = `<strong>${info.dose} mg per dose</strong> · oral capsule · <span style="color:var(--muted);">${info.freq}</span><br><span style="color:var(--accent2);">No injection — no units to calculate.</span>`;
+      } else if (info.spray) {
+        body = `<strong>${info.dose} mg per spray</strong> · intranasal · <span style="color:var(--muted);">${info.freq}</span><br><span style="color:var(--accent2);">No injection — no units to calculate.</span>`;
+      } else if (info.premixed) {
+        body = `<strong>${info.dose} mg per injection</strong> · pre-mixed ${info.premixed} · <span style="color:var(--muted);">${info.freq}</span><br><strong style="color:var(--accent);">${Math.round(info.dose / parseFloat(info.premixed) * 100)} units on the pen</strong>`;
+      } else if (info.combined) {
+        const compRows = info.components.map(c => {
+          const u = unitsFor(c.dose, info.vial, info.bac);
+          const dispDose = c.dose < 1 ? (c.dose*1000)+' mcg' : c.dose+' mg';
+          return `<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed rgba(0,212,255,.15);"><span>${c.name} — ${dispDose}</span><strong style="color:var(--accent);">${u} units</strong></div>`;
+        }).join('');
+        body = `<div style="margin-bottom:6px;"><strong>One bottle = ${info.vial} mg total in ${info.bac} mL BAC</strong> · <span style="color:var(--muted);">${info.freq}</span></div>${compRows}<div style="margin-top:6px;color:var(--muted);font-size:11px;">Each draw delivers ALL components at once.</div>${info.warning?`<div style="margin-top:8px;padding:8px 10px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.4);border-radius:6px;color:#fca5a5;">${info.warning}</div>`:''}${info.note?`<div style="margin-top:6px;color:var(--accent2);font-size:11px;">${info.note}</div>`:''}`;
+      } else {
+        const u = unitsFor(info.dose, info.vial, info.bac);
+        const dispDose = info.dose < 1 ? (info.dose*1000)+' mcg' : info.dose+' mg';
+        body = `<strong>${dispDose} per injection</strong> · vial ${info.vial}mg + ${info.bac}mL BAC · <span style="color:var(--muted);">${info.freq}</span><br><strong style="color:var(--accent);font-size:14px;">${u} units on the pen</strong>`;
+      }
+      detail.innerHTML = body;
+      detail.style.display = 'block';
+    });
+  });
 }
 
 render();
