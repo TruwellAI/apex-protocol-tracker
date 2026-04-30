@@ -212,7 +212,7 @@ body::before{
 
   <div class="continue-bar">
     <div class="cb-summary"><strong id="cb-count">0</strong> peptides selected</div>
-    <button class="cb-btn" id="add-stack-btn" disabled>＋ Add To Stack</button>
+    <button class="cb-btn" id="add-stack-btn" disabled>View my 52-week plan →</button>
   </div>
 
   <div class="foot">⚠ RESEARCH USE ONLY · NOT MEDICAL ADVICE</div>
@@ -778,7 +778,7 @@ body::before{
   addBtn.addEventListener('click', () => {
     if (selected.size === 0) return;
     persistSelection();
-    location.href = 'reconstitute.html';
+    location.href = 'protocol-sequencer.html';
   });
 
   renderHero();
