@@ -320,7 +320,7 @@ body::before{
       <span class="brand-mark">APEX</span>
       <span class="brand-tag">Tracker</span>
     </a>
-    <a href="research-hub.html" class="add-btn">＋ Add</a>
+    <a href="compare.html" class="add-btn">＋ Add</a>
   </div>
 
   <div class="greet">
@@ -380,7 +380,7 @@ body::before{
     <div class="empty-icon">🧪</div>
     <div class="empty-title">No active protocols</div>
     <div class="empty-sub">Build your first protocol — pick peptides, mix them, set your titration. We'll handle the math. 90 seconds.</div>
-    <a href="research-hub.html" class="empty-btn">＋ Add Protocol →</a>
+    <a href="compare.html" class="empty-btn">＋ Add Protocol →</a>
   </div>
 
   <!-- DANGER ZONE -->
@@ -1298,9 +1298,27 @@ body::before{
       resetBtn.style.background = 'transparent';
       resetBtn.style.borderColor = 'rgba(239,68,68,.4)';
     });
+    let resetArmed = false;
+    let resetArmTimer = null;
+    const armReset = () => {
+      resetArmed = true;
+      resetBtn.textContent = '⚠ Tap again within 4s to ERASE EVERYTHING';
+      resetBtn.style.background = '#ef4444';
+      resetBtn.style.color = '#fff';
+      resetBtn.style.borderColor = '#ef4444';
+      try { if (navigator.vibrate) navigator.vibrate(20); } catch(e){}
+      clearTimeout(resetArmTimer);
+      resetArmTimer = setTimeout(() => {
+        resetArmed = false;
+        resetBtn.textContent = '↺ Erase & Start Over';
+        resetBtn.style.background = 'transparent';
+        resetBtn.style.color = '#ef4444';
+        resetBtn.style.borderColor = 'rgba(239,68,68,.4)';
+      }, 4000);
+    };
     resetBtn.addEventListener('click', () => {
-      const confirmTxt = prompt('This will permanently erase ALL protocols, dose logs, and selections. Type ERASE to confirm:');
-      if (!confirmTxt || confirmTxt.trim().toUpperCase() !== 'ERASE') return;
+      if (!resetArmed) { armReset(); return; }
+      clearTimeout(resetArmTimer);
       // Wipe everything app-related from localStorage
       const KEYS_TO_WIPE = [
         'apex_state',
