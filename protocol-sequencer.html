@@ -90,6 +90,28 @@ h1 em{color:var(--accent2);font-style:normal;}
 .tl-bar.pulse{background:var(--pulse);}
 .tl-week-marks{display:grid;grid-template-columns:120px 1fr;gap:10px;margin-top:6px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;}
 .tl-week-marks-bar{display:flex;justify-content:space-between;}
+.tl-phases{display:grid;grid-template-columns:120px 1fr;gap:10px;margin-bottom:8px;align-items:center;}
+.tl-phases-bar{position:relative;height:24px;background:var(--panel2);border-radius:4px;overflow:hidden;}
+.tl-phase-band{position:absolute;top:0;bottom:0;display:flex;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--white);font-weight:700;text-transform:uppercase;opacity:.85;}
+.tl-phase-band.p-clear{background:#a78bfa;}
+.tl-phase-band.p-reset{background:#00D4FF;}
+.tl-phase-band.p-rebuild{background:#00C48C;}
+.tl-phase-band.p-repair{background:#10b981;}
+.tl-phase-band.p-maintain{background:#7a8d99;}
+.tl-phase-band.p-titrate{background:#fbbf24;color:#000;}
+.tl-phase-band.p-active{background:#00C48C;}
+.tl-phase-band.p-taper{background:#FF6B35;}
+.tl-phase-band.p-recomp{background:#a78bfa;}
+.tl-phase-band.p-ramp{background:#fbbf24;color:#000;}
+.tl-phase-band.p-cycle{background:#00C48C;}
+.tl-phase-band.p-off{background:#7a8d99;}
+.tl-phase-band.p-pulse{background:#FF6B35;}
+.tl-phase-band.p-daily{background:#10b981;}
+.tl-phase-band.p-asneeded{background:#a78bfa;}
+.tl-phase-band.p-continuous{background:#00D4FF;}
+.tl-today{position:absolute;top:0;bottom:0;width:2px;background:#fbbf24;box-shadow:0 0 8px #fbbf24;z-index:10;pointer-events:none;}
+.tl-today::after{content:'TODAY';position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-family:'Share Tech Mono',monospace;font-size:8px;color:#fbbf24;letter-spacing:.1em;}
+.tl-today-row::after{content:none;}
 
 .actions{display:grid;gap:10px;margin-top:24px;}
 .btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:16px 22px;border-radius:10px;text-decoration:none;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border:0;}
@@ -247,10 +269,25 @@ const SYNERGIES = [
 ];
 
 // ============================================================
+// DEMO MODE — shows a sample stack per goal so users can see
+// the view without building a stack first
+// ============================================================
+const DEMO_STACKS = {
+  longevity: ['fox04-dri','epitalon','cartalax','nad-plus','motsc','ss31','ghkcu','glutathione'],
+  fatloss:   ['tirzepatide','aod9604','5amino1mq','tesamorelin','l-carnitine'],
+  'gh-axis': ['cjc-ipa-blend','igf1-lr3'],
+  recovery:  ['bpc157','tb500','kpv','thymosin-alpha1','wolverine'],
+  cognitive: ['selank','semax','dsip','dihexa'],
+  libido:    ['pt141','melanotan2'],
+  trt:       ['testosterone-cyp']
+};
+
+// ============================================================
 // LOAD STATE
 // ============================================================
 let activeGoal = 'longevity';
 let selection = [];
+let isDemo = false;
 try {
   const params = new URLSearchParams(location.search);
   if (params.get('goal') && PHASE_TEMPLATES[params.get('goal')]) activeGoal = params.get('goal');
@@ -262,6 +299,12 @@ try {
   const raw = JSON.parse(localStorage.getItem('apex_selection') || '[]');
   selection = raw.map(s => s.replace('.html','')).filter(s => PEPS[s]);
 } catch(e){}
+
+// If no real selection, fall back to demo stack for current goal so users see the view
+if (selection.length === 0) {
+  selection = DEMO_STACKS[activeGoal] || DEMO_STACKS.longevity;
+  isDemo = true;
+}
 
 // ============================================================
 // RENDER
@@ -275,6 +318,9 @@ Object.keys(PHASE_TEMPLATES).forEach(k => {
   chip.addEventListener('click', () => {
     activeGoal = k;
     try { localStorage.setItem('apex_active_goal', k); } catch(e){}
+    if (isDemo) {
+      selection = DEMO_STACKS[k] || DEMO_STACKS.longevity;
+    }
     document.querySelectorAll('.goal-chip').forEach(c => c.classList.toggle('active', c.dataset.goal === k));
     render();
   });
@@ -336,6 +382,13 @@ function render() {
 
   let html = '';
 
+  // Demo banner
+  if (isDemo) {
+    html += `<div style="background:rgba(0,212,255,.08);border-left:3px solid var(--accent);padding:12px 14px;border-radius:8px;margin-bottom:18px;font-size:13px;">
+      <strong style="color:var(--accent);">📺 Demo view —</strong> showing a sample <strong>${GOAL_LABELS[activeGoal]}</strong> stack so you can see the schedule logic. Switch goal chips above to compare. <a href="compare.html" style="color:var(--accent2);text-decoration:none;font-weight:700;">Build your real stack →</a>
+    </div>`;
+  }
+
   // Pulse-conflict warning
   if (pulseConflicts.length >= 2) {
     const order = pulseConflicts
@@ -389,8 +442,21 @@ function render() {
   // Visual 52-week timeline
   html += `
     <div class="timeline-section">
-      <div class="timeline-title">📅 52-Week Visual Timeline</div>
-      <div class="tl-grid">`;
+      <div class="timeline-title">📅 52-Week Visual Timeline</div>`;
+
+  // Phase-band row at top of timeline
+  html += '<div class="tl-phases"><div style="font-family:Share Tech Mono,monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;">PHASES</div><div class="tl-phases-bar">';
+  template.forEach(phase => {
+    const left = ((phase.weeks[0]-1)/52)*100;
+    const right = 100 - (phase.weeks[1]/52)*100;
+    html += `<div class="tl-phase-band p-${phase.key}" style="left:${left}%;right:${right}%;">${phase.name}</div>`;
+  });
+  // Today marker — calculate position based on weeks since cycle start
+  // For demo, show today at week 0 (start of timeline)
+  html += `<div class="tl-today" style="left:0%;"></div>`;
+  html += '</div></div>';
+
+  html += `<div class="tl-grid">`;
   selection.forEach(slug => {
     const p = PEPS[slug];
     if (!p) return;
@@ -423,15 +489,30 @@ function render() {
     html += `
       <div class="tl-row">
         <div class="tl-row-name"><span class="tier-dot ${p.tier}"></span>${p.name}</div>
-        <div class="tl-track">${bars}</div>
+        <div class="tl-track">${bars}<div class="tl-today tl-today-row" style="left:0%;top:0;"></div></div>
       </div>`;
   });
   html += `</div>
       <div class="tl-week-marks">
         <div></div>
-        <div class="tl-week-marks-bar"><span>Wk 1</span><span>13</span><span>26</span><span>39</span><span>52</span></div>
+        <div class="tl-week-marks-bar" id="month-marks"></div>
       </div>
     </div>`;
+
+  // Build month labels dynamically based on today
+  setTimeout(() => {
+    const monthMarks = document.getElementById('month-marks');
+    if (monthMarks) {
+      const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+      const today = new Date();
+      const startMonth = today.getMonth();
+      let labels = '';
+      for (let i = 0; i < 12; i += 2) {
+        labels += `<span>${months[(startMonth + i) % 12]}</span>`;
+      }
+      monthMarks.innerHTML = labels;
+    }
+  }, 0);
 
   // Legend
   html += `
