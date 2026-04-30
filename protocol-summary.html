@@ -288,7 +288,7 @@ body::before{
     'pe2228.html':       { name:'PE-22-28',       mech:'TREK-1 modulator',          cycleWks:4,  dose:'250-500 mcg', freq:'daily SubQ' },
     'l-carnitine.html':  { name:'L-Carnitine',    mech:'Fat oxidation cofactor',    cycleWks:8,  dose:'200-500 mg', freq:'pre-workout SubQ' },
     'glutamine.html':    { name:'Glutamine',      mech:'Gut + immune amino',        cycleWks:8,  dose:'500-1000 mg', freq:'daily SubQ' },
-    'wolverine.html':    { name:'Wolverine Stack',mech:'BPC-157 + TB-500',          cycleWks:6,  dose:'see components', freq:'daily' },
+    'wolverine.html':    { name:'Wolverine Stack',mech:'BPC 5mg + TB-500 5mg combined in ONE vial', cycleWks:6, dose:'see components', freq:'daily', combinedBottle:true },
     'klow.html':         { name:'KLOW Stack',     mech:'KPV + TB + BPC + GHK',      cycleWks:6,  dose:'see components', freq:'daily' },
     'glow.html':         { name:'GLOW Stack',     mech:'GHK + TB + BPC',            cycleWks:8,  dose:'see components', freq:'daily' },
     'cardiac-stack.html':{ name:'Cardiac Stack',  mech:'Heart-focused stack',       cycleWks:12, dose:'see components', freq:'daily' },
@@ -575,8 +575,9 @@ body::before{
     }
 
     function buildCycleAsk(){
-      // Skip ONLY for stacks (where dose is "see components")
-      if (COMPONENT_RX.test(p.dose || '')) return '';
+      // Skip ONLY for multi-bottle stacks. Combined-bottle stacks (Wolverine)
+      // need vial+BAC inputs because they're physically ONE bottle the user mixes.
+      if (COMPONENT_RX.test(p.dose || '') && !p.combinedBottle) return '';
       const hasTitration = p.titration && Array.isArray(p.titration) && p.titration.length >= 2;
       const cs = cycleState[slug] || { mode: 'new' };
 
@@ -793,9 +794,15 @@ body::before{
     function buildStackComponents(){
       const comps = STACK_COMPONENTS[slug];
       if (!comps) return '';
+      const isCombined = !!p.combinedBottle;
       const rows = comps.map(c => {
-        const compRecon = RECON_DEFAULTS[c.slug];
-        const unitsLbl = doseToUnitsLabel(c.dose, c.slug, { userRecon: compRecon });
+        // For combined-bottle stacks, components share the user-entered vial+BAC.
+        // For multi-bottle stacks, each component has its own recon defaults.
+        const cs = cycleState[slug] || {};
+        const userRecon = (isCombined && cs.vialMg > 0 && cs.bacMl > 0)
+          ? { vial: cs.vialMg, bac: cs.bacMl }
+          : (isCombined ? null : RECON_DEFAULTS[c.slug]);
+        const unitsLbl = doseToUnitsLabel(c.dose, c.slug, { userRecon });
         return `
           <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;background:rgba(0,212,255,.04);border:1px solid rgba(0,212,255,.15);border-radius:8px;margin-top:6px;">
             <div style="display:flex;flex-direction:column;gap:2px;min-width:0;">
@@ -805,9 +812,12 @@ body::before{
             <div style="text-align:right;font-size:13px;font-weight:700;flex-shrink:0;">${unitsLbl}</div>
           </div>`;
       }).join('');
+      const heading = isCombined
+        ? `🧪 Inside this ONE bottle <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0;">— each draw delivers BOTH peptides</span>`
+        : `⊞ Stack Components <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0;">— separate bottles</span>`;
       return `
         <div style="margin-top:14px;padding:12px;background:rgba(11,15,20,.4);border:1px solid var(--border);border-radius:10px;">
-          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">⊞ Stack Components</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">${heading}</div>
           ${rows}
         </div>`;
     }
