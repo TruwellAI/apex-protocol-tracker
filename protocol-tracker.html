@@ -13113,10 +13113,11 @@ async function handleLabPDF(file) {
       throw new Error(err.error || 'Extraction failed');
     }
 
-    const { values, count } = await resp.json();
+    const data = await resp.json();
+    const { values, count } = data;
 
     if (!count || count === 0) {
-      const debugMsg = data.debug ? ` AI said: "${data.debug.slice(0,120)}"` : '';
+      const debugMsg = data.debug ? ` AI said: "${String(data.debug).slice(0,120)}"` : '';
       showLabPdfStatus('warn', '⚠ No lab values found in PDF.' + debugMsg);
       return;
     }
@@ -15300,16 +15301,34 @@ function chatAddMessage(role, html) {
   renderChatMessages();
 }
 
+// XSS-safe HTML escape — applied to all chat content (user input AND model output)
+function _escapeHtml(s) {
+  if (s == null) return '';
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+// Allow whitelisted formatting tokens AFTER escape: **bold**, line breaks
+function _safeChatFormat(s) {
+  return _escapeHtml(s)
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n/g, '<br>');
+}
+
 function renderChatMessages() {
   const container = document.getElementById('rocky-chat-messages');
   if (!container) return;
   container.innerHTML = _chatMessages.map(m => {
+    const safe = _safeChatFormat(m.html);
     if (m.role === 'rocky') {
       return `
         <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:12px;">
           <div style="font-size:18px;line-height:1.4;flex-shrink:0;">🤖</div>
           <div style="background:rgba(20,184,166,.08);border:1px solid rgba(20,184,166,.25);border-radius:4px 12px 12px 12px;padding:10px 13px;max-width:85%;">
-            <div style="font-family:'Barlow',sans-serif;font-size:14px;color:#e4e9ed;line-height:1.55;">${m.html}</div>
+            <div style="font-family:'Barlow',sans-serif;font-size:14px;color:#e4e9ed;line-height:1.55;">${safe}</div>
           </div>
         </div>
       `;
@@ -15317,7 +15336,7 @@ function renderChatMessages() {
       return `
         <div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
           <div style="background:linear-gradient(135deg,#14b8a6,#0d9488);color:#fff;border-radius:12px 4px 12px 12px;padding:10px 13px;max-width:85%;">
-            <div style="font-family:'Barlow',sans-serif;font-size:14px;line-height:1.55;">${m.html}</div>
+            <div style="font-family:'Barlow',sans-serif;font-size:14px;line-height:1.55;">${safe}</div>
           </div>
         </div>
       `;

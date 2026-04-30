@@ -7,10 +7,26 @@
 //
 // Uses Claude API via the existing ANTHROPIC_API_KEY env var.
 
+// ── HARDENING ─────────────────────────────────────────────────
+// Origin allow-list — only our own pages may invoke this function
+const ALLOWED_ORIGINS = [
+  'https://apexdosing.com',
+  'https://www.apexdosing.com',
+  'https://truwellai.github.io',
+  'http://localhost:8888',
+  'http://localhost:3000',
+];
+// Hard cap on request body — text input ~few KB; image base64 ~2-3MB max
+const MAX_BODY_BYTES = 4 * 1024 * 1024; // 4 MB
+
 exports.handler = async (event) => {
+  const reqOrigin = (event.headers && (event.headers.origin || event.headers.Origin)) || '';
+  const corsOrigin = ALLOWED_ORIGINS.includes(reqOrigin) ? reqOrigin : ALLOWED_ORIGINS[0];
   const headers = {
-    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Origin': corsOrigin,
     'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Vary': 'Origin',
     'Content-Type': 'application/json',
   };
 
@@ -19,6 +35,17 @@ exports.handler = async (event) => {
   }
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
+  }
+
+  // Reject oversized payloads before we even parse JSON
+  const bodyLen = event.body ? Buffer.byteLength(event.body, 'utf8') : 0;
+  if (bodyLen > MAX_BODY_BYTES) {
+    return { statusCode: 413, headers, body: JSON.stringify({ error: 'Payload too large' }) };
+  }
+
+  // Origin gate — block calls from off-domain pages (CORS bypass attempts)
+  if (reqOrigin && !ALLOWED_ORIGINS.includes(reqOrigin)) {
+    return { statusCode: 403, headers, body: JSON.stringify({ error: 'Origin not allowed' }) };
   }
 
   const apiKey = process.env.ANTHROPIC_API_KEY;

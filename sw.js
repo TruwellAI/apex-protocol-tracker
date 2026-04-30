@@ -4,7 +4,7 @@
    - Assets: cache-first, refresh in background
    - Push notifications + background sync ready
    ═══════════════════════════════════════════════════════════ */
-const CACHE_VERSION = 'apex-v3';
+const CACHE_VERSION = 'apex-v4-2026-04-30';
 const STATIC_CACHE = CACHE_VERSION + '-static';
 const HTML_CACHE = CACHE_VERSION + '-html';
 const PRECACHE = [
