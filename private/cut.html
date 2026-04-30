@@ -249,6 +249,16 @@ textarea{resize:vertical;min-height:60px;}
       <div class="card-title">🍽️ Today's Meals</div>
       <div class="card-meta"><span id="meal-count">0</span> logged</div>
     </div>
+    <!-- AI Parse — type food, get macros -->
+    <div style="background:rgba(0,212,255,.05);border:1px solid rgba(0,212,255,.2);border-radius:10px;padding:12px;margin-bottom:10px;">
+      <label style="margin-bottom:6px;">🤖 AI estimate · type any food</label>
+      <div style="display:flex;gap:6px;">
+        <input type="text" id="ai-food" placeholder="e.g. Flying Dutchman from In-N-Out · 8oz ribeye + rice · 2 scrambled eggs" style="flex:1;">
+        <button class="btn btn-primary" id="ai-go" onclick="aiParseFood()" style="white-space:nowrap;">Estimate →</button>
+      </div>
+      <div id="ai-status" style="font-size:11px;color:var(--muted);margin-top:6px;font-family:'Share Tech Mono',monospace;"></div>
+    </div>
+
     <div class="row r4">
       <div><label>Food</label><input type="text" id="m-name" placeholder="Chicken bowl"></div>
       <div><label>Cal</label><input type="number" id="m-cal" placeholder="600"></div>
@@ -259,6 +269,13 @@ textarea{resize:vertical;min-height:60px;}
       <div><label>C (g)</label><input type="number" id="m-c" placeholder="40"></div>
       <div style="grid-column:span 2;align-self:end;"><button class="btn btn-primary" style="width:100%;" onclick="addMeal()">＋ Log this meal</button></div>
     </div>
+
+    <!-- FAVORITES — one-tap-add saved meals -->
+    <div id="fav-section" style="margin-top:14px;display:none;">
+      <label style="margin-bottom:6px;">⭐ Your favorites · tap to add</label>
+      <div id="fav-list" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+    </div>
+
     <div class="list" id="meal-list" style="margin-top:10px;"></div>
   </div>
 
@@ -593,6 +610,79 @@ function addStackItem(){
 }
 window.removeStack = (i) => { stack.splice(i,1); put(KEYS.stack, stack); renderStack(); };
 
+// FAVORITES — saved meals for one-tap re-logging
+const FAV_KEY = 'apex_cut_favorites';
+let favorites = get(FAV_KEY, []);
+
+function renderFavorites(){
+  const wrap = document.getElementById('fav-section');
+  const list = document.getElementById('fav-list');
+  if (!favorites.length) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+  list.innerHTML = favorites.map((f,i) => `
+    <button onclick="logFavorite(${i})" style="background:var(--panel2);border:1px solid var(--border2);color:var(--white);padding:8px 12px;border-radius:8px;font-family:'Barlow',sans-serif;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;-webkit-tap-highlight-color:transparent;">
+      <span>${f.name}</span>
+      <span style="color:var(--muted);font-size:11px;">${f.cal}c · ${f.p}P</span>
+      <span onclick="event.stopPropagation();removeFavorite(${i})" style="color:var(--muted);font-size:14px;padding:0 4px;cursor:pointer;">✕</span>
+    </button>
+  `).join('');
+}
+window.logFavorite = (i) => {
+  const f = favorites[i];
+  if (!f) return;
+  meals[today()] = meals[today()] || [];
+  meals[today()].push({name:f.name, cal:f.cal, p:f.p, f:f.f, c:f.c});
+  put(KEYS.meals, meals);
+  renderMeals(); renderHero();
+};
+window.removeFavorite = (i) => { favorites.splice(i,1); put(FAV_KEY, favorites); renderFavorites(); };
+window.starMeal = (i) => {
+  const m = (meals[today()] || [])[i];
+  if (!m) return;
+  // Avoid duplicates
+  if (favorites.some(f => f.name.toLowerCase() === m.name.toLowerCase())) {
+    alert('Already saved as a favorite');
+    return;
+  }
+  favorites.push({name:m.name, cal:m.cal, p:m.p, f:m.f, c:m.c});
+  put(FAV_KEY, favorites);
+  renderFavorites();
+};
+
+// AI PARSE — type food, get macros via Netlify function
+async function aiParseFood(){
+  const input = document.getElementById('ai-food').value.trim();
+  const status = document.getElementById('ai-status');
+  const btn = document.getElementById('ai-go');
+  if (!input) { status.textContent = '⚠ Type a food first'; return; }
+  status.textContent = '🤖 estimating macros…';
+  btn.disabled = true;
+  try {
+    const resp = await fetch('/.netlify/functions/rocky-parse', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ mode: 'macros', input })
+    });
+    const data = await resp.json();
+    if (!resp.ok || !data.ok) {
+      status.textContent = '❌ ' + (data.error || 'failed — try again or enter manually');
+      return;
+    }
+    // Auto-fill the meal form
+    document.getElementById('m-name').value = data.name || input;
+    document.getElementById('m-cal').value  = data.cal || '';
+    document.getElementById('m-p').value    = data.p || '';
+    document.getElementById('m-f').value    = data.f || '';
+    document.getElementById('m-c').value    = data.c || '';
+    status.innerHTML = `✅ <strong style="color:var(--accent2);">${data.name}</strong> · ${data.cal} cal · ${data.p}P / ${data.f}F / ${data.c}C — adjust if needed, then Log`;
+    document.getElementById('ai-food').value = '';
+  } catch (e) {
+    status.textContent = '❌ network error — enter manually';
+  } finally {
+    btn.disabled = false;
+  }
+}
+
 // MEALS
 function renderMeals(){
   const el = document.getElementById('meal-list');
@@ -607,7 +697,10 @@ function renderMeals(){
       <div class="li-name">${m.name}</div>
       <div class="li-sub">${m.cal} cal · P ${m.p}g · F ${m.f}g · C ${m.c}g</div>
     </div>
-    <button class="li-x" onclick="removeMeal(${i})">✕</button>
+    <div style="display:flex;gap:2px;align-items:center;">
+      <button class="li-x" onclick="starMeal(${i})" title="Save as favorite" style="color:var(--yellow);">★</button>
+      <button class="li-x" onclick="removeMeal(${i})">✕</button>
+    </div>
   </div>`).join('');
 }
 function addMeal(){
@@ -620,7 +713,8 @@ function addMeal(){
   meals[today()] = meals[today()] || [];
   meals[today()].push({name, cal, p, f, c});
   put(KEYS.meals, meals);
-  ['m-name','m-cal','m-p','m-f','m-c'].forEach(id => document.getElementById(id).value = '');
+  ['m-name','m-cal','m-p','m-f','m-c','ai-food'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  document.getElementById('ai-status').textContent = '';
   renderMeals(); renderHero();
 }
 window.removeMeal = (i) => { meals[today()].splice(i,1); put(KEYS.meals, meals); renderMeals(); renderHero(); };
@@ -803,6 +897,7 @@ renderHero();
 renderTargets();
 renderStack();
 renderMeals();
+renderFavorites();
 renderCardio();
 renderWeekly();
 // If URL params were passed (from Apple Shortcut), pre-fill the Watch panel

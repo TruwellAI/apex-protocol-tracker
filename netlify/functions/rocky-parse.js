@@ -65,6 +65,9 @@ exports.handler = async (event) => {
   if (mode === 'suggest') {
     return handleSuggestMode(context, apiKey, headers);
   }
+  if (mode === 'macros') {
+    return handleMacrosMode({ input, context }, apiKey, headers);
+  }
 
   // Default: parse mode — type + input required
   if (!type || !input) {
@@ -76,6 +79,58 @@ exports.handler = async (event) => {
 
   return handleParseMode({ type, input, context }, apiKey, headers);
 };
+
+// ───────────────────────────────────────────────────────────
+// MACROS MODE — single food/meal → {name, cal, p, f, c}
+// Used by SHRED (private/cut.html) for one-shot meal logging
+// ───────────────────────────────────────────────────────────
+async function handleMacrosMode({ input, context }, apiKey, headers) {
+  if (!input || typeof input !== 'string') {
+    return { statusCode: 400, headers, body: JSON.stringify({ error: 'input (food description) required' }) };
+  }
+  const trimmed = input.slice(0, 400);
+  const prompt = `You are a precise nutrition estimator. The user says they ate or are about to eat:
+
+"${trimmed}"
+
+Return ONLY a single-line JSON object — no prose, no markdown, no code fences:
+{"name": "<canonical food name with portion>", "cal": <int kcal>, "p": <int g protein>, "f": <int g fat>, "c": <int g carbs>}
+
+Rules:
+- If portion is missing, assume one standard serving for that food.
+- Round to nearest whole number.
+- For chain restaurant items (In-N-Out, Chipotle, Chick-fil-A, etc.), use the chain's actual published macros.
+- For homemade items, use typical recipe macros.
+- If you genuinely cannot identify the food, return: {"error": "unknown food"}.`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5',
+        max_tokens: 200,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    if (!resp.ok) {
+      const errBody = await resp.text();
+      return { statusCode: 502, headers, body: JSON.stringify({ error: 'upstream LLM error', detail: errBody.slice(0, 200) }) };
+    }
+    const data = await resp.json();
+    const text = (data.content && data.content[0] && data.content[0].text || '').trim();
+    // Extract JSON object from response (be forgiving of stray markdown)
+    const m = text.match(/\{[\s\S]*\}/);
+    if (!m) return { statusCode: 502, headers, body: JSON.stringify({ error: 'could not parse model response', raw: text.slice(0, 200) }) };
+    let macros;
+    try { macros = JSON.parse(m[0]); }
+    catch { return { statusCode: 502, headers, body: JSON.stringify({ error: 'invalid JSON from model', raw: text.slice(0, 200) }) }; }
+    if (macros.error) return { statusCode: 200, headers, body: JSON.stringify({ ok: false, error: macros.error }) };
+    return { statusCode: 200, headers, body: JSON.stringify({ ok: true, ...macros }) };
+  } catch (e) {
+    return { statusCode: 500, headers, body: JSON.stringify({ error: 'macros mode failed', detail: String(e).slice(0, 200) }) };
+  }
+}
 
 // ───────────────────────────────────────────────────────────
 // Build a rich context block used by both modes
