@@ -328,9 +328,20 @@ body::before{
     <div class="greet-sub" id="greet-sub"><strong>0 active</strong> · loading…</div>
   </div>
 
+  <!-- F-12: loading skeletons (briefly visible while JS reads state) -->
+  <div id="boot-skeleton" style="display:flex;flex-direction:column;gap:12px;margin:14px 16px;">
+    <div style="height:80px;background:linear-gradient(90deg,var(--panel) 0%,var(--panel2) 50%,var(--panel) 100%);background-size:200% 100%;animation:skel 1.4s linear infinite;border-radius:12px;"></div>
+    <div style="height:160px;background:linear-gradient(90deg,var(--panel) 0%,var(--panel2) 50%,var(--panel) 100%);background-size:200% 100%;animation:skel 1.4s linear infinite;border-radius:12px;"></div>
+    <div style="height:120px;background:linear-gradient(90deg,var(--panel) 0%,var(--panel2) 50%,var(--panel) 100%);background-size:200% 100%;animation:skel 1.4s linear infinite;border-radius:12px;"></div>
+  </div>
+  <style>@keyframes skel { 0%{background-position:200% 0;} 100%{background-position:-200% 0;} }</style>
+
   <div class="disclaim">⚠ Research use only · Not medical advice · Talk to a licensed provider</div>
 
   <a href="protocol-sequencer.html" style="display:block;margin:14px 16px;padding:12px 16px;background:linear-gradient(135deg,#00D4FF,#00C48C);color:#080c10;font-family:'Rajdhani',sans-serif;font-weight:800;font-size:13px;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;border-radius:8px;text-align:center;box-shadow:0 4px 12px rgba(0,212,255,.2);">📅 View My 52-Week Plan →</a>
+
+  <!-- F-25: share my stack -->
+  <button id="share-stack-btn" style="display:block;margin:0 16px 14px;padding:10px 16px;background:transparent;border:1px solid var(--border2);color:var(--text);font-family:'Rajdhani',sans-serif;font-weight:600;font-size:12px;letter-spacing:.08em;text-transform:uppercase;border-radius:8px;cursor:pointer;width:calc(100% - 32px);">📤 Share my stack</button>
 
   <!-- TOP TABS -->
   <div class="tabs top-tabs">
@@ -856,6 +867,9 @@ body::before{
   function render(){
     importPending();
     ensureResumeBanner();
+    // F-12: hide boot skeleton on first render
+    const sk = document.getElementById('boot-skeleton');
+    if (sk) sk.style.display = 'none';
 
     const state = getState();
     const protocols = (state.protocols || []).filter(p => (p.status||'active') === 'active' && !p.isDemoSeed);
@@ -1350,6 +1364,27 @@ body::before{
         <div class="tg-bars">${segHtml}${offHtml}</div>
       </div>
     `;
+  }
+
+  // ── SHARE MY STACK (F-25) ───────────
+  const shareBtn = document.getElementById('share-stack-btn');
+  if (shareBtn) {
+    shareBtn.addEventListener('click', async () => {
+      const state = getState();
+      const protocols = (state.protocols || []).filter(p => p.status !== 'completed');
+      if (!protocols.length) { alert('No active stack to share yet.'); return; }
+      const lines = protocols.map(p => `• ${p.name} — ${p.dose || 'as scheduled'} ${p.freq || ''}`.trim()).join('\n');
+      const text = `My current peptide stack:\n\n${lines}\n\nBuilt with Apex (free): https://apexdosing.com`;
+      try {
+        if (navigator.share) {
+          await navigator.share({ title: 'My Apex Stack', text });
+        } else {
+          await navigator.clipboard.writeText(text);
+          alert('Stack copied to clipboard');
+        }
+        try { if (navigator.vibrate) navigator.vibrate(15); } catch(_){}
+      } catch(e) { /* user canceled */ }
+    });
   }
 
   // ── ERASE & START OVER ───────────

@@ -2,7 +2,7 @@
   "name": "Apex Protocol",
   "short_name": "Apex",
   "description": "Peptide research, stack builder, and cycle tracker — research-backed dosing, live countdowns, and a daily injection card.",
-  "start_url": "protocol-tracker.html",
+  "start_url": "index.html",
   "scope": "./",
   "display": "standalone",
   "display_override": ["standalone", "minimal-ui"],
@@ -40,7 +40,7 @@
       "name": "Today's Doses",
       "short_name": "Today",
       "description": "Your daily injection card",
-      "url": "protocol-tracker.html",
+      "url": "tracker-v2.html",
       "icons": [{ "src": "assets/icon-192.png", "sizes": "192x192" }]
     },
     {
