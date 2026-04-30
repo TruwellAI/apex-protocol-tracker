@@ -276,7 +276,7 @@ body::before{
   // ── PEPTIDE METADATA: vial size + reconstitution rule + display name ──
   const PEP = {
     'aod9604.html':      { name:'AOD-9604',       mech:'GH fragment lipolysis',     vial:10, bac:2, special:true,  acetic:1 },
-    '5amino1mq.html':    { name:'5-Amino-1MQ',    mech:'NNMT inhibitor',            vial:10, bac:3 },
+    '5amino1mq.html':    { name:'5-Amino-1MQ',    mech:'NNMT inhibitor (oral preferred)', vial:10, bac:1 },
     'slu-pp-322.html':   { name:'SLU-PP-332',     mech:'ERRα agonist',              oral:true, doseLabel:'experimental · oral' },
     'retatrutide.html':  { name:'Retatrutide',    mech:'Triple G agonist',          vial:30, bac:3, titration:true },
     'semaglutide.html':  { name:'Semaglutide',    mech:'GLP-1 agonist',             vial:10, bac:3, titration:true },
@@ -474,12 +474,12 @@ body::before{
     // Recommended-tier typical dose for each peptide (mg). Used to display
     // "X units per dose" so user knows exactly how many to draw on the pen.
     const TYPICAL_DOSE_MG = {
-      'aod9604.html':0.3,'5amino1mq.html':4.5,'retatrutide.html':4,'semaglutide.html':1,
+      'aod9604.html':0.3,'5amino1mq.html':2,'retatrutide.html':4,'semaglutide.html':1,
       'tirzepatide.html':5,'melanotan1.html':0.5,'melanotan2.html':0.5,'pt141.html':1.5,
       'ipamorelin.html':0.3,'cjc1295-dac.html':1.5,'cjc-no-dac.html':0.1,'sermorelin.html':0.3,
       'tesamorelin.html':1.5,'cjc-ipa-blend.html':0.25,'igf1-lr3.html':0.04,'bpc157.html':0.25,
       'tb500.html':2.5,'ghkcu.html':2,'kpv.html':0.5,'ll37.html':0.1,'thymosin-alpha1.html':1.6,
-      'ara290.html':4,'epitalon.html':7.5,'ss31.html':5,'motsc.html':5,'cartalax.html':0.2,
+      'ara290.html':4,'epitalon.html':7.5,'ss31.html':5,'motsc.html':3,'cartalax.html':0.2,
       'fox04-dri.html':7.5,'glutathione.html':400,'nad-plus.html':100,'dsip.html':0.2,
       'dihexa.html':25,'pe2228.html':0.375,'l-carnitine.html':350,'glutamine.html':350,
       // Testosterone typical recommended dose per week (split per pin in tracker)
