@@ -84,10 +84,27 @@ h1 em{color:var(--accent2);font-style:normal;}
 .tl-row{display:grid;grid-template-columns:120px 1fr;gap:10px;align-items:center;}
 .tl-row-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;color:var(--white);display:flex;align-items:center;gap:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .tl-track{position:relative;height:20px;background:var(--panel2);border-radius:4px;overflow:hidden;}
-.tl-bar{position:absolute;top:0;bottom:0;border-radius:3px;}
-.tl-bar.foundation{background:var(--foundation);opacity:.85;}
-.tl-bar.layer{background:var(--layer);opacity:.8;}
+.tl-bar{position:absolute;top:0;bottom:0;border-radius:3px;opacity:.85;}
+.tl-bar.foundation{background:var(--foundation);}
+.tl-bar.layer{background:var(--layer);}
 .tl-bar.pulse{background:var(--pulse);}
+/* Phase-colored bars — match the phase band above */
+.tl-bar.p-clear{background:#a78bfa;}
+.tl-bar.p-reset{background:#00D4FF;}
+.tl-bar.p-rebuild{background:#00C48C;}
+.tl-bar.p-repair{background:#10b981;}
+.tl-bar.p-maintain{background:#7a8d99;}
+.tl-bar.p-titrate{background:#fbbf24;}
+.tl-bar.p-active{background:#00C48C;}
+.tl-bar.p-taper{background:#FF6B35;}
+.tl-bar.p-recomp{background:#a78bfa;}
+.tl-bar.p-ramp{background:#fbbf24;}
+.tl-bar.p-cycle{background:#00C48C;}
+.tl-bar.p-off{background:#7a8d99;}
+.tl-bar.p-pulse{background:#FF6B35;}
+.tl-bar.p-daily{background:#10b981;}
+.tl-bar.p-asneeded{background:#a78bfa;}
+.tl-bar.p-continuous{background:#00D4FF;}
 .tl-cat-header{display:grid;grid-template-columns:120px 1fr;gap:10px;align-items:center;margin:18px 0 8px 0;}
 .tl-cat-label{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;letter-spacing:.04em;color:var(--white);text-transform:uppercase;}
 .tl-cat-meta{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;}
@@ -636,6 +653,14 @@ function render() {
 
     html += `<div class="tl-grid">`;
 
+    // Helper: which phase covers a given week (uses midpoint of segment)
+    const phaseForWeek = (wk) => {
+      for (const ph of template) {
+        if (wk >= ph.weeks[0] && wk <= ph.weeks[1]) return ph.key;
+      }
+      return null;
+    };
+
     peps.forEach((p, idx) => {
       let bars = '';
       // First check year-long curriculum schedule for this category
@@ -645,7 +670,11 @@ function render() {
         sched.forEach(seg => {
           const left = ((seg.start-1)/52)*100;
           const right = 100 - (seg.end/52)*100;
-          bars += `<div class="tl-bar ${p.tier}" style="left:${left}%;right:${right}%;" title="${seg.label||''} (Wk ${seg.start}-${seg.end})"></div>`;
+          // Color by phase if peptide belongs to active goal, else fall back to tier color
+          const segMid = Math.floor((seg.start + seg.end) / 2);
+          const phaseKey = (p.category === activeGoal) ? phaseForWeek(segMid) : null;
+          const colorClass = phaseKey ? `p-${phaseKey}` : p.tier;
+          bars += `<div class="tl-bar ${colorClass}" style="left:${left}%;right:${right}%;" title="${seg.label||''} (Wk ${seg.start}-${seg.end})"></div>`;
         });
       } else {
         // Fall back to cycleWeeks/offWeeks pattern if not scheduled for this goal
