@@ -1,7 +1,7 @@
 /* AUTO-GENERATED — DO NOT EDIT.
  * Source: /data/peptides.json
  * Regenerate: node scripts/build-peptide-data.js
- * Built: 2026-04-30T17:56:11.050Z
+ * Built: 2026-04-30T18:00:01.930Z
  */
 window.APEX_PEPTIDES = {
   "_meta": {
@@ -76,7 +76,7 @@ window.APEX_PEPTIDES = {
     "mech": "Copper-binding peptide — collagen + skin remodeling",
     "route": "sc",
     "vial_mg": 50,
-    "bac_ml": 5,
+    "bac_ml": 3,
     "dose_mg_per_inj": 2,
     "dose_label": "1-3 mg",
     "dose_range_mg": [
@@ -95,7 +95,7 @@ window.APEX_PEPTIDES = {
     "mech": "α-MSH C-terminus — anti-inflammatory + gut",
     "route": "sc",
     "vial_mg": 5,
-    "bac_ml": 2,
+    "bac_ml": 3,
     "dose_mg_per_inj": 0.5,
     "dose_label": "500 mcg",
     "dose_range_mg": [
@@ -114,7 +114,7 @@ window.APEX_PEPTIDES = {
     "mech": "Cathelicidin antimicrobial peptide",
     "route": "sc",
     "vial_mg": 5,
-    "bac_ml": 2,
+    "bac_ml": 3,
     "dose_mg_per_inj": 0.1,
     "dose_label": "50-200 mcg",
     "dose_range_mg": [
@@ -132,7 +132,7 @@ window.APEX_PEPTIDES = {
     "tier": "layer",
     "mech": "Immune modulator (thymic origin)",
     "route": "sc",
-    "vial_mg": 10,
+    "vial_mg": 5,
     "bac_ml": 2,
     "dose_mg_per_inj": 1.6,
     "dose_label": "1.6 mg",
@@ -151,8 +151,8 @@ window.APEX_PEPTIDES = {
     "tier": "layer",
     "mech": "EPO-derived 11-mer; tissue protection + neuropathy",
     "route": "sc",
-    "vial_mg": 16,
-    "bac_ml": 2,
+    "vial_mg": 10,
+    "bac_ml": 1,
     "dose_mg_per_inj": 4,
     "dose_label": "4 mg",
     "dose_range_mg": [
@@ -171,7 +171,7 @@ window.APEX_PEPTIDES = {
     "mech": "Pineal bioregulator — telomerase activator",
     "route": "sc",
     "vial_mg": 50,
-    "bac_ml": 5,
+    "bac_ml": 3,
     "dose_mg_per_inj": 7.5,
     "dose_label": "5-10 mg",
     "dose_range_mg": [
@@ -189,8 +189,8 @@ window.APEX_PEPTIDES = {
     "tier": "layer",
     "mech": "Cardiolipin-targeted mitochondrial peptide",
     "route": "sc",
-    "vial_mg": 50,
-    "bac_ml": 2,
+    "vial_mg": 10,
+    "bac_ml": 3,
     "dose_mg_per_inj": 5,
     "dose_label": "3-7 mg",
     "dose_range_mg": [
@@ -227,8 +227,8 @@ window.APEX_PEPTIDES = {
     "tier": "pulse",
     "mech": "Bioregulator — cartilage focus",
     "route": "sc",
-    "vial_mg": 20,
-    "bac_ml": 2,
+    "vial_mg": 5,
+    "bac_ml": 3,
     "dose_mg_per_inj": 0.2,
     "dose_label": "100-300 mcg",
     "dose_range_mg": [
@@ -325,7 +325,7 @@ window.APEX_PEPTIDES = {
     "mech": "Dual GLP-1 + GIP agonist",
     "route": "sc",
     "vial_mg": 30,
-    "bac_ml": 3,
+    "bac_ml": 1.5,
     "dose_mg_per_inj": 5,
     "dose_label": "titrated 2.5→15 mg",
     "dose_range_mg": [
@@ -363,7 +363,7 @@ window.APEX_PEPTIDES = {
     "tier": "layer",
     "mech": "Stabilized GHRH analog — visceral fat reduction (FDA-approved HIV-LD)",
     "route": "sc",
-    "vial_mg": 5,
+    "vial_mg": 10,
     "bac_ml": 2,
     "dose_mg_per_inj": 1.5,
     "dose_label": "1-2 mg",
@@ -383,7 +383,7 @@ window.APEX_PEPTIDES = {
     "mech": "GHRH analog — short half-life pulse",
     "route": "sc",
     "vial_mg": 5,
-    "bac_ml": 3,
+    "bac_ml": 2,
     "dose_mg_per_inj": 0.1,
     "dose_label": "100 mcg",
     "dose_range_mg": [
@@ -421,7 +421,7 @@ window.APEX_PEPTIDES = {
     "mech": "Ghrelin mimetic — selective GH release",
     "route": "sc",
     "vial_mg": 5,
-    "bac_ml": 2,
+    "bac_ml": 3,
     "dose_mg_per_inj": 0.3,
     "dose_label": "100-300 mcg",
     "dose_range_mg": [
@@ -478,7 +478,7 @@ window.APEX_PEPTIDES = {
     "mech": "Long-R3 IGF-1 — extended half-life",
     "route": "sc",
     "vial_mg": 1,
-    "bac_ml": 1,
+    "bac_ml": 3,
     "dose_mg_per_inj": 0.04,
     "dose_label": "20-80 mcg",
     "dose_range_mg": [
@@ -515,7 +515,7 @@ window.APEX_PEPTIDES = {
     "tier": "foundation",
     "mech": "Master antioxidant",
     "route": "sc",
-    "vial_mg": 600,
+    "vial_mg": 1000,
     "bac_ml": 3,
     "dose_mg_per_inj": 400,
     "dose_label": "200-600 mg",
@@ -567,7 +567,7 @@ window.APEX_PEPTIDES = {
     "mech": "Delta sleep-inducing peptide",
     "route": "sc",
     "vial_mg": 5,
-    "bac_ml": 2,
+    "bac_ml": 3,
     "dose_mg_per_inj": 0.2,
     "dose_label": "100-300 mcg",
     "dose_range_mg": [
@@ -586,7 +586,7 @@ window.APEX_PEPTIDES = {
     "mech": "HGF mimetic — synaptogenesis",
     "route": "sc",
     "vial_mg": 50,
-    "bac_ml": 2,
+    "bac_ml": 1,
     "dose_mg_per_inj": 25,
     "dose_label": "8-25 mg",
     "dose_range_mg": [
@@ -624,7 +624,7 @@ window.APEX_PEPTIDES = {
     "mech": "Bremelanotide — melanocortin receptor agonist",
     "route": "sc",
     "vial_mg": 10,
-    "bac_ml": 2,
+    "bac_ml": 3,
     "dose_mg_per_inj": 1.5,
     "dose_label": "1-2 mg",
     "dose_range_mg": [
@@ -643,7 +643,7 @@ window.APEX_PEPTIDES = {
     "mech": "α-MSH analog — melanin stimulation",
     "route": "sc",
     "vial_mg": 10,
-    "bac_ml": 2,
+    "bac_ml": 3,
     "dose_mg_per_inj": 0.5,
     "dose_label": "0.5-1 mg",
     "dose_range_mg": [
@@ -662,7 +662,7 @@ window.APEX_PEPTIDES = {
     "mech": "α-MSH analog — melanin + sexual response",
     "route": "sc",
     "vial_mg": 10,
-    "bac_ml": 2,
+    "bac_ml": 3,
     "dose_mg_per_inj": 0.5,
     "dose_label": "0.5-1 mg",
     "dose_range_mg": [
@@ -680,7 +680,7 @@ window.APEX_PEPTIDES = {
     "tier": "foundation",
     "mech": "Fatty-acid β-oxidation cofactor",
     "route": "sc",
-    "vial_mg": 600,
+    "vial_mg": 1000,
     "bac_ml": 3,
     "dose_mg_per_inj": 350,
     "dose_label": "200-500 mg",
@@ -699,7 +699,7 @@ window.APEX_PEPTIDES = {
     "tier": "foundation",
     "mech": "Conditionally-essential amino — gut + immune",
     "route": "sc",
-    "vial_mg": 600,
+    "vial_mg": 1000,
     "bac_ml": 3,
     "dose_mg_per_inj": 350,
     "dose_label": "200-500 mg",
@@ -834,8 +834,8 @@ window.APEX_PEPTIDES = {
     "tier": "layer",
     "mech": "KPV + TB-500 + BPC-157 + GHK-Cu combined in ONE vial",
     "route": "sc",
-    "vial_mg": 20,
-    "bac_ml": 5,
+    "vial_mg": 10,
+    "bac_ml": 3,
     "dose_label": "see components",
     "freq": "daily",
     "cycle_weeks": 6,
@@ -867,8 +867,8 @@ window.APEX_PEPTIDES = {
     "tier": "layer",
     "mech": "GHK-Cu + TB-500 + BPC-157 combined in ONE vial",
     "route": "sc",
-    "vial_mg": 15,
-    "bac_ml": 5,
+    "vial_mg": 10,
+    "bac_ml": 3,
     "dose_label": "see components",
     "freq": "daily",
     "cycle_weeks": 8,
