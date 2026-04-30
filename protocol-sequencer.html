@@ -545,37 +545,7 @@ function render() {
     </div>`;
   }
 
-  // Phases
-  html += '<div class="phases">';
-  template.forEach(phase => {
-    const peps = buckets[phase.key] || [];
-    if (peps.length === 0 && template.length > 2) return; // hide empty phases when goal has many
-    html += `
-      <div class="phase p-${phase.key}">
-        <div class="phase-head">
-          <div class="phase-name">${phase.name}</div>
-          <div class="phase-weeks">Wk ${phase.weeks[0]}–${phase.weeks[1]}</div>
-        </div>
-        <div class="phase-desc">${phase.desc}</div>`;
-    if (peps.length === 0) {
-      html += `<div style="color:var(--muted);font-size:12px;font-style:italic;">No peptides scheduled in this phase from your selection.</div>`;
-    } else {
-      html += '<div class="pep-rows">';
-      peps.forEach(p => {
-        const tierLbl = p.tier.charAt(0).toUpperCase() + p.tier.slice(1);
-        html += `
-          <div class="pep-row">
-            <div class="tier-dot ${p.tier}" title="${tierLbl}"></div>
-            <div class="pep-name">${p.name}${p.rx?' <span style="color:var(--orange);font-size:10px;">⚠Rx</span>':''}</div>
-            <div class="pep-cadence">${p.freq}${p.note?' · '+p.note:''}</div>
-            <div class="pep-window">${p.cycleWeeks}wk ${p.offWeeks?'on / '+p.offWeeks+'wk off':''}</div>
-          </div>`;
-      });
-      html += '</div>';
-    }
-    html += '</div>';
-  });
-  html += '</div>';
+  // (Phase cards removed — go straight from goal bar to the 52-week timeline)
 
   // Synergy callouts
   if (synergies.length > 0) {
