@@ -49,7 +49,7 @@
         </div>\
         <div style="display:flex;flex-direction:column;gap:10px;">\
           <a href="research-hub.html" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 18px;background:transparent;border:1px solid #1a2d3a;color:#cbd5e1;font-family:Rajdhani,sans-serif;font-weight:700;font-size:14px;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;border-radius:8px;-webkit-tap-highlight-color:transparent;">📚 Add another peptide</a>\
-          <a href="reconstitute.html" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 18px;background:linear-gradient(135deg,#00ff9d,#10b981);color:#080c10;font-family:Rajdhani,sans-serif;font-weight:800;font-size:14px;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;border-radius:8px;box-shadow:0 4px 16px rgba(0,255,157,.3);-webkit-tap-highlight-color:transparent;">⚡ Build my protocol →</a>\
+          <a href="compare.html" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 18px;background:linear-gradient(135deg,#00ff9d,#10b981);color:#080c10;font-family:Rajdhani,sans-serif;font-weight:800;font-size:14px;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;border-radius:8px;box-shadow:0 4px 16px rgba(0,255,157,.3);-webkit-tap-highlight-color:transparent;">⚡ Build my protocol →</a>\
           <button type="button" id="apex-post-add-close" style="background:transparent;border:0;color:#7a8d99;font-family:Share Tech Mono,monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;padding:10px;cursor:pointer;-webkit-tap-highlight-color:transparent;">Close · keep reading</button>\
         </div>\
       </div>';

@@ -71,11 +71,11 @@ body::before{
   font-size:clamp(14px,2vw,16px);color:var(--text);max-width:520px;margin:0 auto;line-height:1.55;
 }
 
-/* TWO TILES */
+/* THREE TILES */
 .tiles{
-  display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:24px 0 32px;
+  display:grid;grid-template-columns:repeat(3,1fr);gap:18px;padding:24px 0 32px;
 }
-@media (max-width:680px){.tiles{grid-template-columns:1fr;gap:16px;}}
+@media (max-width:900px){.tiles{grid-template-columns:1fr;gap:16px;}}
 
 .tile{
   background:var(--panel);
@@ -100,6 +100,8 @@ body::before{
 
 .tile.protocol{color:var(--accent2);border-color:rgba(0,255,157,.35);}
 .tile.protocol:hover{border-color:var(--accent2);box-shadow:0 12px 32px rgba(0,255,157,.18);}
+.tile.build{color:#ff6b35;border-color:rgba(255,107,53,.35);}
+.tile.build:hover{border-color:#ff6b35;box-shadow:0 12px 32px rgba(255,107,53,.18);}
 .tile.research{color:var(--accent);border-color:rgba(0,212,255,.35);}
 .tile.research:hover{border-color:var(--accent);box-shadow:0 12px 32px rgba(0,212,255,.18);}
 
@@ -219,7 +221,7 @@ body::before{
     <p class="sub">Track your peptide protocols. Or research the science and build a new one. Free. No fluff.</p>
   </div>
 
-  <!-- TWO TILES -->
+  <!-- THREE TILES -->
   <div class="tiles">
 
     <!-- TILE 1: DAILY PROTOCOL -->
@@ -230,7 +232,15 @@ body::before{
       <div class="tile-cta">Open my tracker <span class="arrow">→</span></div>
     </a>
 
-    <!-- TILE 2: RESEARCH & ADD -->
+    <!-- TILE 2: BUILD A PROTOCOL -->
+    <a href="compare.html" class="tile build">
+      <div class="tile-icon">🧬</div>
+      <div class="tile-title">Build A<br>Protocol</div>
+      <div class="tile-sub">Pick by goal. Stack multiple peptides. Get a grade + conflict check before you commit.</div>
+      <div class="tile-cta">Build my stack <span class="arrow">→</span></div>
+    </a>
+
+    <!-- TILE 3: RESEARCH & ADD -->
     <a href="research-hub.html" class="tile research">
       <div class="tile-icon">🔬</div>
       <div class="tile-title">Research<br>& Add</div>
