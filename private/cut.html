@@ -284,6 +284,72 @@ textarea{resize:vertical;min-height:60px;}
   </div>
 
   <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- 6.5. APPLE WATCH SYNC -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">⌚ Apple Watch Sync</div>
+      <div class="card-meta" id="watch-meta">Manual or Shortcut</div>
+    </div>
+    <div class="row r3">
+      <div><label>Active Cal (today)</label><input type="number" id="aw-active" placeholder="From Activity ring"></div>
+      <div><label>Workout Cal</label><input type="number" id="aw-workout" placeholder="From Workouts"></div>
+      <div><label>Steps</label><input type="number" id="aw-steps" placeholder="e.g. 12,400"></div>
+    </div>
+    <div class="row r3">
+      <div><label>Weight (smart scale)</label><input type="number" id="aw-weight" step="0.1" placeholder="lb"></div>
+      <div><label>Resting HR</label><input type="number" id="aw-rhr" placeholder="bpm"></div>
+      <div><label>HRV</label><input type="number" id="aw-hrv" placeholder="ms"></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
+      <button class="btn btn-primary btn-sm" onclick="applyWatchSync()">⚡ Apply to today</button>
+      <button class="btn btn-secondary btn-sm" onclick="document.getElementById('watch-howto').open=!document.getElementById('watch-howto').open">📱 Build the Shortcut →</button>
+    </div>
+    <div id="watch-status" style="margin-top:8px;font-size:12px;color:var(--accent2);"></div>
+
+    <details id="watch-howto" style="margin-top:12px;border-top:1px dashed var(--border);padding-top:12px;">
+      <summary style="cursor:pointer;color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;list-style:none;">▾ Build the iOS Shortcut (one-time, 5 min)</summary>
+      <div style="margin-top:10px;font-size:13px;line-height:1.7;color:var(--text);">
+        <strong style="color:var(--white);">What this does:</strong> One tap on your Apple Watch (or "Hey Siri, sync shred") pulls today's HealthKit data and opens this page with it pre-filled. Pure deep-link — no server, no API key.<br><br>
+
+        <strong style="color:var(--white);">Setup (iPhone):</strong>
+        <ol style="margin-left:20px;line-height:1.7;color:var(--text);">
+          <li>Open the <strong>Shortcuts</strong> app → tap <strong>+</strong> (top-right) → <em>New Shortcut</em></li>
+          <li>Name it: <code style="background:var(--panel2);padding:2px 6px;border-radius:4px;color:var(--accent2);">Sync SHRED</code></li>
+          <li>Tap <strong>+ Add Action</strong> and add these blocks in order:
+            <ul style="margin:6px 0 6px 20px;color:var(--muted);">
+              <li><code>Find Health Samples</code> · type: <strong>Active Energy</strong> · today only · sum</li>
+              <li><code>Find Health Samples</code> · type: <strong>Workout</strong> · today · sum Active Energy Burned</li>
+              <li><code>Find Health Samples</code> · type: <strong>Step Count</strong> · today · sum</li>
+              <li><code>Find Health Samples</code> · type: <strong>Body Mass</strong> · most recent · 1 result <em style="color:var(--accent2);">(Yunmai writes here)</em></li>
+              <li><code>Find Health Samples</code> · type: <strong>Body Fat Percentage</strong> · most recent · 1 result <em style="color:var(--accent2);">(Yunmai writes here)</em></li>
+              <li><code>Find Health Samples</code> · type: <strong>Lean Body Mass</strong> · most recent · 1 result <em style="color:var(--accent2);">(Yunmai writes here)</em></li>
+              <li><code>Find Health Samples</code> · type: <strong>Resting Heart Rate</strong> · today · average</li>
+              <li><code>Find Health Samples</code> · type: <strong>Heart Rate Variability SDNN</strong> · today · average</li>
+              <li><code>Text</code> action — paste this template (drag the variables from above into each placeholder):
+                <pre style="background:var(--panel2);padding:10px;border-radius:6px;font-size:11px;margin-top:6px;overflow-x:auto;color:var(--accent2);font-family:'Share Tech Mono',monospace;">https://truwellai.github.io/apex-protocol-tracker/private/cut.html?ae=[ACTIVE]&amp;wc=[WORKOUT]&amp;steps=[STEPS]&amp;w=[WEIGHT]&amp;bf=[BODYFAT]&amp;lbm=[LEAN]&amp;rhr=[RHR]&amp;hrv=[HRV]</pre>
+              </li>
+              <li><code>Open URLs</code> — pass the Text from above</li>
+            </ul>
+          </li>
+          <li>Tap the settings icon → <strong>Add to Home Screen</strong> (or pin to your Watch face under Shortcuts complication)</li>
+        </ol>
+
+        <strong style="color:var(--white);">Daily flow:</strong>
+        <ol style="margin-left:20px;color:var(--text);">
+          <li>Wake up · weigh in · workout</li>
+          <li>Tap <strong>Sync SHRED</strong> on watch face <em>or</em> say "Hey Siri, sync shred"</li>
+          <li>SHRED opens with today's numbers pre-filled · tap <strong>Apply</strong> · done.</li>
+        </ol>
+
+        <strong style="color:var(--orange);">Pro tip:</strong> Add a second shortcut block to silently log everything to a Notes file with date stamp — instant audit trail.<br><br>
+
+        <strong style="color:var(--white);">Don't want to build the Shortcut?</strong> Open Apple Health every morning, read the 6 numbers off the dashboard, type them above, hit Apply. Takes 30 seconds.
+      </div>
+    </details>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
   <!-- 7. AI CALIBRATE — what to eat tonight -->
   <!-- ═══════════════════════════════════════════════════════ -->
   <div class="card coach">
@@ -643,6 +709,72 @@ function resetAll(){
   location.reload();
 }
 
+// ═══════════════════════════════════════════════════════
+// APPLE WATCH / YUNMAI SYNC
+// URL params (from Apple Shortcut):
+//   ae   = active energy (cal)
+//   wc   = workout calories
+//   steps= step count
+//   w    = body mass (lb)
+//   bf   = body fat %
+//   lbm  = lean body mass (lb)
+//   rhr  = resting heart rate
+//   hrv  = HRV (ms)
+// ═══════════════════════════════════════════════════════
+function readUrlParamsToFields(){
+  const params = new URLSearchParams(window.location.search);
+  if (!params.toString()) return false;
+  const map = {ae:'aw-active', wc:'aw-workout', steps:'aw-steps', w:'aw-weight', rhr:'aw-rhr', hrv:'aw-hrv'};
+  let any = false;
+  for (const [k, id] of Object.entries(map)) {
+    const v = params.get(k);
+    if (v != null && v !== '') {
+      const num = parseFloat(v);
+      if (!isNaN(num)) { document.getElementById(id).value = num; any = true; }
+    }
+  }
+  // BF + LBM also flow into the Stats card
+  const bf = parseFloat(params.get('bf'));
+  if (!isNaN(bf)) { document.getElementById('s-bf').value = bf; stats.bf = bf; }
+  const lbm = parseFloat(params.get('lbm'));
+  if (!isNaN(lbm)) { document.getElementById('s-lbm').value = lbm; stats.lbm = lbm; }
+  const w = parseFloat(params.get('w'));
+  if (!isNaN(w)) { document.getElementById('s-weight').value = w; stats.weight = w; }
+  if (any || !isNaN(bf) || !isNaN(lbm) || !isNaN(w)) {
+    put(KEYS.stats, stats);
+    document.getElementById('watch-meta').textContent = '✅ Synced from Apple Watch';
+    document.getElementById('watch-status').textContent = '⚡ Pre-filled from URL params. Tap Apply to commit.';
+    return true;
+  }
+  return false;
+}
+
+function applyWatchSync(){
+  const active = parseFloat(document.getElementById('aw-active').value) || 0;
+  const workout = parseFloat(document.getElementById('aw-workout').value) || 0;
+  const weight  = parseFloat(document.getElementById('aw-weight').value);
+  const totalBurn = active + workout; // total calories burned today
+
+  // Add today's burn as a synthetic cardio entry (replaces previous "watch sync" entry)
+  cardio[today()] = (cardio[today()] || []).filter(c => c.type !== 'Apple Watch sync');
+  if (totalBurn > 0) {
+    cardio[today()].push({type:'Apple Watch sync', min:0, cal: Math.round(totalBurn)});
+    put(KEYS.cardio, cardio);
+  }
+
+  // Update stats with weight if provided
+  if (!isNaN(weight) && weight > 0) {
+    stats.weight = weight;
+    document.getElementById('s-weight').value = weight;
+    put(KEYS.stats, stats);
+  }
+
+  document.getElementById('watch-status').textContent = `✅ Applied · ${Math.round(totalBurn)} cal burned · weight ${stats.weight || '—'} lb`;
+  renderHero(); renderTargets(); renderCardio();
+  // Strip URL params so refresh doesn't re-apply
+  if (window.location.search) history.replaceState({}, '', window.location.pathname);
+}
+
 // INIT
 bindStats();
 renderHero();
@@ -651,6 +783,12 @@ renderStack();
 renderMeals();
 renderCardio();
 renderWeekly();
+// If URL params were passed (from Apple Shortcut), pre-fill the Watch panel
+if (readUrlParamsToFields()) {
+  renderTargets(); renderHero();
+  // Auto-scroll to the Watch sync card so user sees the pre-fill
+  setTimeout(() => document.querySelector('#watch-meta').closest('.card').scrollIntoView({behavior:'smooth', block:'center'}), 200);
+}
 </script>
 </body>
 </html>
