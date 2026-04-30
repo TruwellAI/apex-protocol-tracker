@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>SHRED — Personal Cut Engine</title>
+<link rel="icon" href="../assets/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="../data/peptide-data.js"></script>
+<style>
+:root{
+  --bg:#080c10; --panel:#0d1318; --panel2:#11181f; --border:#1a2d3a; --border2:#243845;
+  --accent:#00d4ff; --accent2:#00ff9d; --orange:#ff6b35; --red:#ef4444; --yellow:#fbbf24;
+  --text:#cbd5e1; --muted:#7a8d99; --white:#eaf4f8;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;line-height:1.55;}
+body{padding-bottom:env(safe-area-inset-bottom);}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 80% 0%,rgba(0,212,255,.06) 0%,transparent 55%),radial-gradient(ellipse at 10% 90%,rgba(0,255,157,.04) 0%,transparent 50%);pointer-events:none;z-index:0;}
+.wrap{max-width:880px;margin:0 auto;padding:18px 16px 100px;position:relative;z-index:1;}
+
+/* HEADER */
+.brand{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+.brand-mark{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--accent2);letter-spacing:.18em;}
+.brand-tag{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.22em;color:var(--muted);text-transform:uppercase;}
+h1{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:28px;color:var(--white);letter-spacing:-.4px;line-height:1.1;margin-bottom:4px;}
+h1 .hl{color:var(--orange);}
+.sub{color:var(--muted);font-size:12px;font-family:'Share Tech Mono',monospace;letter-spacing:.12em;text-transform:uppercase;margin-bottom:18px;}
+
+/* CARD */
+.card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:16px 16px;margin-bottom:14px;}
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:10px;}
+.card-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;color:var(--white);letter-spacing:-.2px;display:flex;align-items:center;gap:8px;}
+.card-meta{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;}
+
+/* HERO TODAY */
+.hero{background:linear-gradient(135deg,rgba(255,107,53,.08),rgba(0,212,255,.05));border:1px solid rgba(255,107,53,.3);}
+.hero-num{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:54px;color:var(--orange);line-height:1;letter-spacing:-2px;}
+.hero-num .small{font-size:18px;color:var(--muted);font-weight:500;}
+.hero-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-top:14px;}
+.hero-stat{text-align:center;background:var(--panel2);border-radius:8px;padding:10px 6px;}
+.hero-stat .v{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;color:var(--accent2);}
+.hero-stat .v.over{color:var(--red);}
+.hero-stat .l{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-top:2px;}
+
+/* PROGRESS BARS */
+.macro-bars{display:flex;flex-direction:column;gap:8px;margin-top:12px;}
+.mb-row{display:grid;grid-template-columns:54px 1fr 80px;gap:10px;align-items:center;font-size:12px;}
+.mb-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;}
+.mb-track{height:8px;background:var(--panel2);border-radius:4px;overflow:hidden;}
+.mb-fill{height:100%;border-radius:4px;transition:width .25s;}
+.mb-p{background:var(--accent2);} .mb-c{background:var(--accent);} .mb-f{background:var(--yellow);}
+.mb-fill.over{background:var(--red);}
+.mb-val{text-align:right;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--white);}
+
+/* INPUTS */
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.row.r3{grid-template-columns:1fr 1fr 1fr;}
+.row.r4{grid-template-columns:1fr 1fr 1fr 1fr;}
+label{display:block;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.16em;text-transform:uppercase;margin-bottom:4px;}
+input,select,textarea{width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:8px;color:var(--white);padding:10px 12px;font-family:'Barlow',sans-serif;font-size:14px;outline:none;-webkit-tap-highlight-color:transparent;}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);}
+textarea{resize:vertical;min-height:60px;}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 18px;border-radius:8px;border:0;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;-webkit-tap-highlight-color:transparent;text-decoration:none;}
+.btn-primary{background:linear-gradient(135deg,var(--accent2),#10b981);color:#080c10;box-shadow:0 4px 14px rgba(0,255,157,.3);}
+.btn-primary:hover{transform:translateY(-1px);}
+.btn-orange{background:linear-gradient(135deg,var(--orange),#dc2626);color:#fff;}
+.btn-secondary{background:transparent;border:1px solid var(--border2);color:var(--text);}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent);}
+.btn-sm{padding:7px 12px;font-size:11px;}
+.btn-danger{background:transparent;border:1px solid rgba(239,68,68,.4);color:var(--red);}
+
+/* LISTS */
+.list{display:flex;flex-direction:column;gap:6px;}
+.list-item{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;}
+.li-name{font-weight:600;color:var(--white);font-size:13px;}
+.li-sub{font-size:11px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:.06em;}
+.li-stat{text-align:right;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:var(--accent2);}
+.li-x{background:none;border:0;color:var(--muted);cursor:pointer;font-size:14px;padding:4px 8px;}
+.li-x:hover{color:var(--red);}
+
+/* TARGET CARD */
+.target-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.target-cell{background:var(--panel2);border-radius:8px;padding:14px 10px;text-align:center;}
+.target-v{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:22px;color:var(--white);line-height:1;}
+.target-l{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-top:4px;}
+.target-cell.protein .target-v{color:var(--accent2);}
+.target-cell.fat .target-v{color:var(--yellow);}
+.target-cell.carbs .target-v{color:var(--accent);}
+.target-cell.cal .target-v{color:var(--orange);}
+
+/* COACH */
+.coach{background:linear-gradient(135deg,rgba(0,212,255,.08),rgba(0,255,157,.04));border:1px solid rgba(0,212,255,.3);}
+.coach-out{background:var(--panel2);border-radius:8px;padding:14px;margin-top:12px;font-family:'Barlow',sans-serif;line-height:1.6;color:var(--white);font-size:14px;white-space:pre-wrap;}
+.coach-out:empty{display:none;}
+
+/* PILLS */
+.pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:11px;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;}
+.pill-rx{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.3);}
+.pill-ana{background:rgba(255,107,53,.12);color:var(--orange);border:1px solid rgba(255,107,53,.3);}
+
+@media(max-width:520px){
+  .hero-row{grid-template-columns:1fr 1fr;}
+  .target-grid{grid-template-columns:1fr 1fr;}
+  .row,.row.r3,.row.r4{grid-template-columns:1fr 1fr;}
+  h1{font-size:24px;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="brand">
+    <div>
+      <div class="brand-mark">SHRED</div>
+      <div class="brand-tag">Personal · Cut Engine · 9% target</div>
+    </div>
+    <a href="../index.html" class="btn btn-secondary btn-sm">← Public app</a>
+  </div>
+
+  <h1>Get me to <span class="hl">9%</span> body fat.</h1>
+  <div class="sub">Holistic cut planner · DEXA + skins + macros + stack + cardio + AI calibration</div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- 1. TODAY HERO -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="card hero">
+    <div class="card-head">
+      <div class="card-title">🎯 Today</div>
+      <div class="card-meta" id="today-date">—</div>
+    </div>
+    <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;">
+      <div class="hero-num"><span id="cal-remaining">0</span> <span class="small">cal left</span></div>
+      <div class="card-meta" style="margin-left:auto;">Target <strong id="cal-target" style="color:var(--orange);">0</strong></div>
+    </div>
+    <div class="macro-bars">
+      <div class="mb-row"><div class="mb-label">Protein</div><div class="mb-track"><div class="mb-fill mb-p" id="mb-p" style="width:0%"></div></div><div class="mb-val"><span id="p-eaten">0</span>/<span id="p-target">0</span>g</div></div>
+      <div class="mb-row"><div class="mb-label">Carbs</div><div class="mb-track"><div class="mb-fill mb-c" id="mb-c" style="width:0%"></div></div><div class="mb-val"><span id="c-eaten">0</span>/<span id="c-target">0</span>g</div></div>
+      <div class="mb-row"><div class="mb-label">Fat</div><div class="mb-track"><div class="mb-fill mb-f" id="mb-f" style="width:0%"></div></div><div class="mb-val"><span id="f-eaten">0</span>/<span id="f-target">0</span>g</div></div>
+    </div>
+    <div class="hero-row">
+      <div class="hero-stat"><div class="v" id="cal-eaten">0</div><div class="l">Eaten</div></div>
+      <div class="hero-stat"><div class="v" id="cal-burned">0</div><div class="l">Burned</div></div>
+      <div class="hero-stat"><div class="v" id="net-deficit">0</div><div class="l">Deficit</div></div>
+      <div class="hero-stat"><div class="v" id="weeks-to-goal">—</div><div class="l">Wk to goal</div></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- 2. STATS — Stats / measurements -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">📐 Stats</div>
+      <div class="card-meta">DEXA + skins · update weekly</div>
+    </div>
+    <div class="row r3">
+      <div><label>Weight (lb)</label><input type="number" id="s-weight" step="0.1" placeholder="e.g. 195"></div>
+      <div><label>Body Fat %</label><input type="number" id="s-bf" step="0.1" placeholder="DEXA % or skin"></div>
+      <div><label>Lean Mass (lb)</label><input type="number" id="s-lbm" step="0.1" placeholder="auto-calc OK"></div>
+    </div>
+    <div class="row r3">
+      <div><label>Age</label><input type="number" id="s-age" placeholder="years"></div>
+      <div><label>Height (in)</label><input type="number" id="s-height" placeholder="e.g. 70"></div>
+      <div><label>Goal BF %</label><input type="number" id="s-goal-bf" step="0.1" value="9"></div>
+    </div>
+    <div class="row r3">
+      <div><label>Last DEXA date</label><input type="date" id="s-dexa-date"></div>
+      <div><label>Visceral fat (lb)</label><input type="number" id="s-vis" step="0.1" placeholder="from DEXA"></div>
+      <div><label>RMR (DEXA)</label><input type="number" id="s-rmr" placeholder="kcal/day if measured"></div>
+    </div>
+    <div style="margin-top:8px;font-size:11px;color:var(--muted);">📏 Skinfolds (Jackson-Pollock 3-site, men):</div>
+    <div class="row r3">
+      <div><label>Chest (mm)</label><input type="number" id="sk-chest" step="0.5"></div>
+      <div><label>Abdominal (mm)</label><input type="number" id="sk-abd" step="0.5"></div>
+      <div><label>Thigh (mm)</label><input type="number" id="sk-thigh" step="0.5"></div>
+    </div>
+    <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn btn-secondary btn-sm" onclick="calcBfFromSkins()">Calc BF% from skins →</button>
+      <span style="font-size:11px;color:var(--muted);align-self:center;" id="sk-result"></span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- 3. ENERGY — TDEE + targets -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">⚡ Energy</div>
+      <div class="card-meta" id="bmr-meta">BMR · TDEE · target</div>
+    </div>
+    <div class="row">
+      <div><label>Activity (non-cardio)</label>
+        <select id="s-activity">
+          <option value="1.2">Sedentary (desk)</option>
+          <option value="1.375">Light (1-3 d/wk training)</option>
+          <option value="1.55" selected>Moderate (3-5 d/wk)</option>
+          <option value="1.725">Heavy (6-7 d/wk)</option>
+          <option value="1.9">Athlete (2x daily)</option>
+        </select>
+      </div>
+      <div><label>Cut aggressiveness</label>
+        <select id="s-cut">
+          <option value="0.10">Lean (-10%)</option>
+          <option value="0.15">Slow (-15%)</option>
+          <option value="0.20" selected>Moderate (-20%)</option>
+          <option value="0.25">Aggressive (-25%)</option>
+        </select>
+      </div>
+    </div>
+    <div class="target-grid" style="margin-top:12px;">
+      <div class="target-cell cal"><div class="target-v" id="t-tdee">—</div><div class="target-l">TDEE</div></div>
+      <div class="target-cell cal"><div class="target-v" id="t-cal">—</div><div class="target-l">Cal Target</div></div>
+      <div class="target-cell protein"><div class="target-v" id="t-p">—</div><div class="target-l">Protein g</div></div>
+      <div class="target-cell fat"><div class="target-v" id="t-f">—</div><div class="target-l">Fat g</div></div>
+    </div>
+    <div class="target-grid" style="margin-top:8px;">
+      <div class="target-cell carbs"><div class="target-v" id="t-c">—</div><div class="target-l">Carbs g</div></div>
+      <div class="target-cell"><div class="target-v" id="t-bmr" style="color:var(--muted);">—</div><div class="target-l">BMR</div></div>
+      <div class="target-cell"><div class="target-v" id="t-deficit" style="color:var(--red);">—</div><div class="target-l">Daily Deficit</div></div>
+      <div class="target-cell"><div class="target-v" id="t-lbs-to-go" style="color:var(--orange);">—</div><div class="target-l">Lbs to Goal</div></div>
+    </div>
+    <div style="margin-top:10px;font-size:11px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:.06em;">
+      Protein 1.2 g/lb LBM (Anavar-supported preservation) · Fat 0.35 g/lb body weight (hormonal floor) · Carbs fill remainder.
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- 4. STACK — Peptides + Anavar + Test -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">💉 Cut Stack</div>
+      <button class="btn btn-secondary btn-sm" onclick="addStackItem()">+ Add</button>
+    </div>
+    <div class="list" id="stack-list"></div>
+    <div style="font-size:11px;color:var(--muted);margin-top:8px;">Anavar / testosterone are tracked as Rx. Peptides pull from Apex SSOT.</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- 5. MEALS — log what you ate -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">🍽️ Today's Meals</div>
+      <div class="card-meta"><span id="meal-count">0</span> logged</div>
+    </div>
+    <div class="row r4">
+      <div><label>Food</label><input type="text" id="m-name" placeholder="Chicken bowl"></div>
+      <div><label>Cal</label><input type="number" id="m-cal" placeholder="600"></div>
+      <div><label>P (g)</label><input type="number" id="m-p" placeholder="50"></div>
+      <div><label>F (g)</label><input type="number" id="m-f" placeholder="20"></div>
+    </div>
+    <div class="row r3">
+      <div><label>C (g)</label><input type="number" id="m-c" placeholder="40"></div>
+      <div style="grid-column:span 2;align-self:end;"><button class="btn btn-primary" style="width:100%;" onclick="addMeal()">＋ Log this meal</button></div>
+    </div>
+    <div class="list" id="meal-list" style="margin-top:10px;"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- 6. CARDIO — log calories burned -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">🏃 Cardio + Burn</div>
+      <div class="card-meta">Adds to deficit</div>
+    </div>
+    <div class="row r3">
+      <div><label>Type</label>
+        <select id="cd-type">
+          <option>Walk (incline)</option><option>Run / jog</option><option>Bike</option><option>Stairmaster</option><option>Row</option><option>HIIT</option><option>Lifting</option><option>Other</option>
+        </select>
+      </div>
+      <div><label>Minutes</label><input type="number" id="cd-min" placeholder="45"></div>
+      <div><label>Cal burned</label><input type="number" id="cd-cal" placeholder="from watch"></div>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="addCardio()" style="margin-top:6px;">＋ Log session</button>
+    <div class="list" id="cd-list" style="margin-top:10px;"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- 7. AI CALIBRATE — what to eat tonight -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="card coach">
+    <div class="card-head">
+      <div class="card-title">🤖 Calibrate me</div>
+      <div class="card-meta">Tells you exactly what to eat tonight to hit macros</div>
+    </div>
+    <textarea id="coach-q" placeholder="Optional: anything specific? e.g. 'I want to eat sushi tonight' or 'I'm at a steakhouse'"></textarea>
+    <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
+      <button class="btn btn-orange" onclick="askCoach()">⚡ Tell me what to eat</button>
+      <button class="btn btn-secondary btn-sm" onclick="document.getElementById('coach-out').textContent='';">Clear</button>
+    </div>
+    <div class="coach-out" id="coach-out"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- 8. WEEKLY -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title">📈 Weekly Check-in</div>
+      <button class="btn btn-secondary btn-sm" onclick="logWeek()">+ Snapshot today</button>
+    </div>
+    <div id="week-list" class="list"></div>
+    <div style="font-size:11px;color:var(--muted);margin-top:8px;">Each snapshot freezes weight + BF% + LBM so you see trend. Take one weekly, same morning, fasted.</div>
+  </div>
+
+  <!-- DANGER -->
+  <div style="text-align:center;margin-top:20px;">
+    <button class="btn btn-danger btn-sm" onclick="if(confirm('Erase all SHRED data?'))resetAll()">↺ Erase all data</button>
+  </div>
+
+  <div style="text-align:center;margin-top:20px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.18em;text-transform:uppercase;">
+    Personal use · Not medical advice · Data lives in this browser only
+  </div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// STATE — namespaced apex_cut_*  (separate from public app)
+// ═══════════════════════════════════════════════════════
+const KEYS = {
+  stats:'apex_cut_stats',
+  stack:'apex_cut_stack',
+  meals:'apex_cut_meals',     // {date: [{name,cal,p,f,c}]}
+  cardio:'apex_cut_cardio',   // {date: [{type,min,cal}]}
+  weekly:'apex_cut_weekly',   // [{date,wt,bf,lbm}]
+};
+const today = () => new Date().toISOString().slice(0,10);
+const get = (k, fallback) => { try { return JSON.parse(localStorage.getItem(k)) ?? fallback; } catch(e) { return fallback; } };
+const put = (k, v) => localStorage.setItem(k, JSON.stringify(v));
+
+let stats = get(KEYS.stats, {weight:'',bf:'',lbm:'',age:'',height:'',goalBf:9,activity:1.55,cutPct:0.20,visceral:'',rmr:'',dexaDate:'',skChest:'',skAbd:'',skThigh:''});
+let stack  = get(KEYS.stack, []);
+let meals  = get(KEYS.meals, {});
+let cardio = get(KEYS.cardio, {});
+let weekly = get(KEYS.weekly, []);
+
+// ═══════════════════════════════════════════════════════
+// CALCULATIONS
+// ═══════════════════════════════════════════════════════
+function lbToKg(lb){ return lb*0.453592; }
+function inToCm(inch){ return inch*2.54; }
+
+function jacksonPollock3(chest, abd, thigh, age){
+  // 3-site for men: chest, abdominal, thigh
+  const sum = chest + abd + thigh;
+  const density = 1.10938 - 0.0008267*sum + 0.0000016*sum*sum - 0.0002574*age;
+  return ((4.95/density) - 4.50) * 100; // Siri equation
+}
+
+function calcBmr(){
+  const w = parseFloat(stats.weight), bf = parseFloat(stats.bf), age = parseFloat(stats.age), h = parseFloat(stats.height);
+  if (!w || !age || !h) return 0;
+  const lbm = stats.lbm ? parseFloat(stats.lbm) : (bf ? w * (1 - bf/100) : 0);
+  // Prefer Katch-McArdle if LBM known (more accurate for cutting/lean folks)
+  if (lbm > 0) return Math.round(370 + 21.6 * lbToKg(lbm));
+  // Fallback: Mifflin-St Jeor (men): 10*kg + 6.25*cm - 5*age + 5
+  return Math.round(10*lbToKg(w) + 6.25*inToCm(h) - 5*age + 5);
+}
+
+function calcTargets(){
+  const bmr = calcBmr();
+  if (!bmr) return null;
+  const tdee = Math.round(bmr * parseFloat(stats.activity || 1.55));
+  const calTarget = Math.round(tdee * (1 - parseFloat(stats.cutPct || 0.20)));
+  const w = parseFloat(stats.weight), bf = parseFloat(stats.bf);
+  const lbm = stats.lbm ? parseFloat(stats.lbm) : (bf ? w * (1 - bf/100) : w * 0.85);
+  // Anavar-supported cut: 1.2 g/lb LBM protein, 0.35 g/lb body fat floor
+  const pG = Math.round(1.2 * lbm);
+  const fG = Math.round(0.35 * w);
+  const cG = Math.round((calTarget - pG*4 - fG*9) / 4);
+  return { bmr, tdee, calTarget, pG, fG, cG: Math.max(0, cG), lbm };
+}
+
+function calcLbsToGoal(){
+  const w = parseFloat(stats.weight), bf = parseFloat(stats.bf), goalBf = parseFloat(stats.goalBf || 9);
+  if (!w || !bf) return null;
+  const lbm = w * (1 - bf/100);
+  // To hit goalBf with same LBM: weight = LBM / (1 - goalBf/100)
+  const targetWt = lbm / (1 - goalBf/100);
+  return +(w - targetWt).toFixed(1);
+}
+
+function todayCalsEaten(){
+  const d = (meals[today()] || []);
+  return d.reduce((acc, m) => ({
+    cal: acc.cal + (+m.cal||0),
+    p: acc.p + (+m.p||0), f: acc.f + (+m.f||0), c: acc.c + (+m.c||0)
+  }), {cal:0,p:0,f:0,c:0});
+}
+function todayCalsBurned(){
+  return (cardio[today()] || []).reduce((s,c) => s + (+c.cal||0), 0);
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════════
+function bindStats(){
+  const fields = ['weight','bf','lbm','age','height','goalBf','activity','cutPct','visceral','rmr','dexaDate','skChest','skAbd','skThigh'];
+  const ids = {weight:'s-weight',bf:'s-bf',lbm:'s-lbm',age:'s-age',height:'s-height',goalBf:'s-goal-bf',activity:'s-activity',cutPct:'s-cut',visceral:'s-vis',rmr:'s-rmr',dexaDate:'s-dexa-date',skChest:'sk-chest',skAbd:'sk-abd',skThigh:'sk-thigh'};
+  fields.forEach(f => {
+    const el = document.getElementById(ids[f]);
+    if (!el) return;
+    if (stats[f] != null && stats[f] !== '') el.value = stats[f];
+    el.addEventListener('input', () => {
+      stats[f] = el.value;
+      put(KEYS.stats, stats);
+      renderHero(); renderTargets();
+    });
+  });
+}
+
+function renderHero(){
+  const t = calcTargets();
+  const eaten = todayCalsEaten();
+  const burned = todayCalsBurned();
+  document.getElementById('today-date').textContent = new Date().toDateString();
+  document.getElementById('cal-target').textContent = t ? t.calTarget : '—';
+  document.getElementById('cal-eaten').textContent = eaten.cal;
+  document.getElementById('cal-burned').textContent = burned;
+  const remaining = t ? (t.calTarget + burned - eaten.cal) : 0;
+  document.getElementById('cal-remaining').textContent = remaining;
+  document.getElementById('net-deficit').textContent = t ? (t.tdee + burned - eaten.cal) : '—';
+  // Macros
+  const setBar = (id, eatenG, targetG, type) => {
+    const pct = targetG > 0 ? Math.min(100, (eatenG/targetG)*100) : 0;
+    const el = document.getElementById('mb-'+type);
+    el.style.width = pct + '%';
+    el.classList.toggle('over', eatenG > targetG);
+  };
+  document.getElementById('p-eaten').textContent = eaten.p;
+  document.getElementById('c-eaten').textContent = eaten.c;
+  document.getElementById('f-eaten').textContent = eaten.f;
+  document.getElementById('p-target').textContent = t ? t.pG : 0;
+  document.getElementById('c-target').textContent = t ? t.cG : 0;
+  document.getElementById('f-target').textContent = t ? t.fG : 0;
+  setBar('mb-p', eaten.p, t?t.pG:0, 'p');
+  setBar('mb-c', eaten.c, t?t.cG:0, 'c');
+  setBar('mb-f', eaten.f, t?t.fG:0, 'f');
+  // Weeks-to-goal — at 1 lb/wk fat loss
+  const lbsToGoal = calcLbsToGoal();
+  if (t && lbsToGoal != null) {
+    const dailyDeficit = t.tdee - t.calTarget;
+    const weeklyDeficit = dailyDeficit * 7;
+    const weeksNeeded = Math.ceil((lbsToGoal * 3500) / weeklyDeficit);
+    document.getElementById('weeks-to-goal').textContent = weeksNeeded > 0 ? weeksNeeded : 0;
+  }
+}
+
+function renderTargets(){
+  const t = calcTargets();
+  ['t-tdee','t-cal','t-p','t-f','t-c','t-bmr','t-deficit','t-lbs-to-go'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+  });
+  document.getElementById('t-tdee').textContent = t ? t.tdee : '—';
+  document.getElementById('t-cal').textContent = t ? t.calTarget : '—';
+  document.getElementById('t-p').textContent = t ? t.pG : '—';
+  document.getElementById('t-f').textContent = t ? t.fG : '—';
+  document.getElementById('t-c').textContent = t ? t.cG : '—';
+  document.getElementById('t-bmr').textContent = t ? t.bmr : '—';
+  document.getElementById('t-deficit').textContent = t ? (t.tdee - t.calTarget) : '—';
+  const lbs = calcLbsToGoal();
+  document.getElementById('t-lbs-to-go').textContent = lbs != null ? lbs : '—';
+}
+
+function calcBfFromSkins(){
+  const c = parseFloat(stats.skChest), a = parseFloat(stats.skAbd), t = parseFloat(stats.skThigh), age = parseFloat(stats.age);
+  if (!c || !a || !t || !age) { document.getElementById('sk-result').textContent = 'Need chest + abd + thigh + age'; return; }
+  const bf = jacksonPollock3(c, a, t, age);
+  document.getElementById('sk-result').innerHTML = `Jackson-Pollock 3-site: <strong style="color:var(--accent2);">${bf.toFixed(1)}%</strong> · <a href="#" onclick="stats.bf=${bf.toFixed(1)};put(KEYS.stats,stats);document.getElementById('s-bf').value='${bf.toFixed(1)}';renderTargets();renderHero();return false;" style="color:var(--accent);">apply →</a>`;
+}
+
+// STACK
+function renderStack(){
+  const el = document.getElementById('stack-list');
+  if (stack.length === 0) {
+    el.innerHTML = `<div style="color:var(--muted);font-size:13px;text-align:center;padding:14px;">No items yet — add testosterone, Anavar, GLP-1, peptides…</div>`;
+    return;
+  }
+  el.innerHTML = stack.map((s,i) => {
+    let pill = '';
+    if (s.type === 'rx') pill = '<span class="pill pill-rx">Rx</span>';
+    if (s.type === 'oral') pill = '<span class="pill pill-ana">Anabolic</span>';
+    return `<div class="list-item">
+      <div>
+        <div class="li-name">${s.name} ${pill}</div>
+        <div class="li-sub">${s.dose || '—'} · ${s.freq || '—'}${s.note ? ' · '+s.note : ''}</div>
+      </div>
+      <button class="li-x" onclick="removeStack(${i})">✕</button>
+    </div>`;
+  }).join('');
+}
+function addStackItem(){
+  const name = prompt('Name (e.g. Anavar, Testosterone Cypionate, BPC-157):');
+  if (!name) return;
+  const dose = prompt('Dose (e.g. 25 mg, 100 mg, 250 mcg):') || '';
+  const freq = prompt('Frequency (e.g. daily, 2x/wk):') || '';
+  const type = /anavar|oxandrolone/i.test(name) ? 'oral' : (/testosterone|test |trt/i.test(name) ? 'rx' : 'peptide');
+  stack.push({name, dose, freq, type, note:''});
+  put(KEYS.stack, stack);
+  renderStack();
+}
+window.removeStack = (i) => { stack.splice(i,1); put(KEYS.stack, stack); renderStack(); };
+
+// MEALS
+function renderMeals(){
+  const el = document.getElementById('meal-list');
+  const today_meals = meals[today()] || [];
+  document.getElementById('meal-count').textContent = today_meals.length;
+  if (today_meals.length === 0) {
+    el.innerHTML = `<div style="color:var(--muted);font-size:13px;text-align:center;padding:10px;">Nothing logged yet today</div>`;
+    return;
+  }
+  el.innerHTML = today_meals.map((m,i) => `<div class="list-item">
+    <div>
+      <div class="li-name">${m.name}</div>
+      <div class="li-sub">${m.cal} cal · P ${m.p}g · F ${m.f}g · C ${m.c}g</div>
+    </div>
+    <button class="li-x" onclick="removeMeal(${i})">✕</button>
+  </div>`).join('');
+}
+function addMeal(){
+  const name = document.getElementById('m-name').value.trim();
+  const cal = parseFloat(document.getElementById('m-cal').value) || 0;
+  const p = parseFloat(document.getElementById('m-p').value) || 0;
+  const f = parseFloat(document.getElementById('m-f').value) || 0;
+  const c = parseFloat(document.getElementById('m-c').value) || 0;
+  if (!name || !cal) return alert('Need name + calories');
+  meals[today()] = meals[today()] || [];
+  meals[today()].push({name, cal, p, f, c});
+  put(KEYS.meals, meals);
+  ['m-name','m-cal','m-p','m-f','m-c'].forEach(id => document.getElementById(id).value = '');
+  renderMeals(); renderHero();
+}
+window.removeMeal = (i) => { meals[today()].splice(i,1); put(KEYS.meals, meals); renderMeals(); renderHero(); };
+
+// CARDIO
+function renderCardio(){
+  const el = document.getElementById('cd-list');
+  const list = cardio[today()] || [];
+  if (list.length === 0) { el.innerHTML = ''; return; }
+  el.innerHTML = list.map((c,i) => `<div class="list-item">
+    <div><div class="li-name">${c.type}</div><div class="li-sub">${c.min} min</div></div>
+    <div class="li-stat">${c.cal} cal <button class="li-x" onclick="removeCardio(${i})">✕</button></div>
+  </div>`).join('');
+}
+function addCardio(){
+  const type = document.getElementById('cd-type').value;
+  const min = parseFloat(document.getElementById('cd-min').value) || 0;
+  const cal = parseFloat(document.getElementById('cd-cal').value) || 0;
+  if (!cal) return alert('Need calories burned');
+  cardio[today()] = cardio[today()] || [];
+  cardio[today()].push({type, min, cal});
+  put(KEYS.cardio, cardio);
+  ['cd-min','cd-cal'].forEach(id => document.getElementById(id).value='');
+  renderCardio(); renderHero();
+}
+window.removeCardio = (i) => { cardio[today()].splice(i,1); put(KEYS.cardio, cardio); renderCardio(); renderHero(); };
+
+// WEEKLY
+function renderWeekly(){
+  const el = document.getElementById('week-list');
+  if (weekly.length === 0) { el.innerHTML = `<div style="color:var(--muted);font-size:13px;text-align:center;padding:10px;">No snapshots yet</div>`; return; }
+  el.innerHTML = weekly.slice().reverse().map(w => `<div class="list-item">
+    <div><div class="li-name">${w.date}</div><div class="li-sub">BF ${w.bf}% · LBM ${w.lbm} lb</div></div>
+    <div class="li-stat">${w.wt} lb</div>
+  </div>`).join('');
+}
+function logWeek(){
+  if (!stats.weight || !stats.bf) return alert('Set weight + BF% first');
+  const lbm = +(parseFloat(stats.weight) * (1 - parseFloat(stats.bf)/100)).toFixed(1);
+  weekly.push({date: today(), wt: parseFloat(stats.weight), bf: parseFloat(stats.bf), lbm});
+  put(KEYS.weekly, weekly);
+  renderWeekly();
+}
+
+// AI COACH — uses local computation + structured plan (no API call needed for v1)
+function askCoach(){
+  const t = calcTargets();
+  const eaten = todayCalsEaten();
+  const burned = todayCalsBurned();
+  const userQ = document.getElementById('coach-q').value.trim();
+  const out = document.getElementById('coach-out');
+  if (!t) { out.textContent = '⚠ Set weight, BF%, age, height first.'; return; }
+
+  const remaining = t.calTarget + burned - eaten.cal;
+  const pLeft = t.pG - eaten.p;
+  const cLeft = t.cG - eaten.c;
+  const fLeft = t.fG - eaten.f;
+
+  let plan = `🎯 ${remaining} cal left to hit your target (${t.calTarget} + ${burned} burned - ${eaten.cal} eaten)\n\n`;
+  plan += `MACRO REMAINING:\n  • Protein: ${pLeft}g\n  • Carbs:   ${cLeft}g\n  • Fat:     ${fLeft}g\n\n`;
+
+  // Strategic recommendation
+  if (pLeft > 30) plan += `⚡ Priority: hit protein. ${pLeft}g still needed. On Anavar + cut you NEED 1.2g/lb LBM to preserve muscle.\n\n`;
+  if (remaining < -100) plan += `⚠ ${Math.abs(remaining)} cal OVER target. Two options:\n  1) Skip remaining meals + add 30 min walk (~150 cal)\n  2) Eat back tomorrow with -200 cal\n\n`;
+  else if (remaining < 200) plan += `✅ You're close to target. Stop here unless protein is short.\n\n`;
+  else if (remaining > 800) plan += `📊 Plenty of room. ${remaining} cal to spend.\n\n`;
+
+  // Concrete meal suggestions based on what's left
+  plan += `MEAL IDEAS for ${remaining} cal · ${pLeft}P / ${cLeft}C / ${fLeft}F:\n`;
+  if (pLeft > 50 && fLeft < 20) {
+    plan += `  ▸ 8oz chicken breast + 1.5 cups jasmine rice + steamed veg (~600 cal · 60P/70C/8F)\n`;
+    plan += `  ▸ 2 cans tuna + rice cakes + 1 tbsp olive oil (~500 cal · 60P/40C/15F)\n`;
+    plan += `  ▸ 1.5 scoops whey + 1 cup oats + banana (~500 cal · 50P/65C/8F)\n`;
+  } else if (pLeft > 30 && fLeft > 20) {
+    plan += `  ▸ 8oz ribeye + sweet potato + asparagus (~700 cal · 55P/40C/35F)\n`;
+    plan += `  ▸ 4 whole eggs + 4 egg whites + avocado + ezekiel toast (~550 cal · 45P/35C/30F)\n`;
+  } else if (pLeft < 20) {
+    plan += `  ▸ Greek yogurt 2% + berries + slivered almonds (~250 cal · 25P/20C/10F)\n`;
+    plan += `  ▸ Casein shake (~150 cal · 30P/8C/2F) before bed\n`;
+  }
+
+  if (userQ) {
+    plan += `\n📝 Your question: "${userQ}"\n`;
+    if (/sushi/i.test(userQ)) plan += `   Sushi pick: nigiri only (skip rolls). 8 pcs salmon nigiri + 4 pcs tuna nigiri + edamame + miso = ~600 cal · 50P / 70C / 8F. AVOID tempura, spicy mayo, eel sauce.\n`;
+    else if (/steakhouse|steak/i.test(userQ)) plan += `   Steakhouse: 8-10oz filet (lean) + double broccolini + house salad (oil/vinegar). Skip the mashed potatoes + bread basket. ~650 cal · 55P / 15C / 35F.\n`;
+    else if (/chipotle|burrito/i.test(userQ)) plan += `   Chipotle bowl: double chicken + brown rice (half scoop) + black beans + fajita + salsa + lettuce. Skip cheese/sour cream. ~640 cal · 65P / 65C / 15F.\n`;
+    else if (/pizza/i.test(userQ)) plan += `   Pizza night: 2 slices thin crust + big salad with grilled chicken on top + vinaigrette. Cap at 2 slices. ~700 cal · 50P / 70C / 25F.\n`;
+    else plan += `   (For specific food math, type the food + portion in the query and re-ask.)\n`;
+  }
+
+  // Cardio nudge
+  if (remaining < 0 && Math.abs(remaining) > 200) {
+    plan += `\n🏃 EMERGENCY DEFICIT REPAIR: 45 min incline treadmill walk @ 3.5 mph / 12% = ~350 cal. That clears the overage.\n`;
+  }
+
+  out.textContent = plan;
+}
+
+// RESET
+function resetAll(){
+  Object.values(KEYS).forEach(k => localStorage.removeItem(k));
+  location.reload();
+}
+
+// INIT
+bindStats();
+renderHero();
+renderTargets();
+renderStack();
+renderMeals();
+renderCardio();
+renderWeekly();
+</script>
+</body>
+</html>
