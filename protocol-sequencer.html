@@ -7,6 +7,8 @@
 <link rel="icon" type="image/png" href="assets/icon-192.png">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#080C10">
+<!-- SINGLE SOURCE OF TRUTH for peptide data — see /data/peptides.json -->
+<script src="data/peptide-data.js"></script>
 <style>
 :root{
   --bg:#080C10; --panel:#0d1318; --panel2:#11181f;
@@ -790,9 +792,31 @@ function render() {
   wireRowClicks();
 }
 
-// Per-injection dose math for inline detail. Mirrors reconstitute.html defaults.
+// SSOT: per-injection dose math derived from /data/peptides.json (APEX_PEPTIDES).
 // units = round((doseMg / (vialMg / bacMl)) * 100)
-const DOSE_INFO = {
+const DOSE_INFO = (function(){
+  const m = {};
+  const all = window.APEX_PEPTIDES || {};
+  for (const [slug, p] of Object.entries(all)) {
+    if (slug === '_meta') continue;
+    m[slug] = {
+      dose: p.dose_mg_per_inj,
+      vial: p.vial_mg, bac: p.bac_ml,
+      freq: p.freq,
+      oral: p.route === 'oral',
+      spray: p.route === 'spray',
+      premixed: p.premixed || null,
+      combined: !!p.combined_bottle,
+      components: p.components || null,
+      warning: p.warning || null,
+      note: p.research_note || null
+    };
+  }
+  return m;
+})();
+
+// Legacy hardcoded fallback (kept for environments where APEX_PEPTIDES fails to load)
+const _DOSE_INFO_LEGACY = {
   'bpc157.html':       {dose:0.25, vial:5,  bac:3, freq:'1-2x daily'},
   'tb500.html':        {dose:2.5,  vial:10, bac:2, freq:'2x weekly'},
   'ghkcu.html':        {dose:2,    vial:50, bac:5, freq:'daily SubQ'},

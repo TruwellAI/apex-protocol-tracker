@@ -11,6 +11,8 @@
 <link rel="icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" href="assets/favicon.ico">
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<!-- SINGLE SOURCE OF TRUTH for peptide data — see /data/peptides.json -->
+<script src="data/peptide-data.js"></script>
 <script>
   // Nuke any service worker / cached HTML so the latest renderer runs
   if ('serviceWorker' in navigator) {
@@ -405,6 +407,24 @@ body::before{
     'testosterone-enth.html': { vial:2000, bac:10 },
     'testosterone-prop.html': { vial:1000, bac:10 }
   };
+
+  // ── SSOT OVERRIDE: pull vial/bac and key flags from /data/peptides.json ──
+  if (window.APEX_PEPTIDES) {
+    for (const [slug, p] of Object.entries(window.APEX_PEPTIDES)) {
+      if (slug === '_meta') continue;
+      if (p.vial_mg != null && p.bac_ml != null) {
+        RECON_DEFAULTS[slug] = { vial: p.vial_mg, bac: p.bac_ml };
+      }
+      if (PROTO[slug]) {
+        if (p.cycle_weeks != null) PROTO[slug].cycleWks = p.cycle_weeks;
+        if (p.dose_label) PROTO[slug].dose = p.dose_label;
+        if (p.freq) PROTO[slug].freq = p.freq;
+        if (p.combined_bottle === true) PROTO[slug].combinedBottle = true;
+        if (p.warning && /copper.*tb-?500/i.test(p.warning)) PROTO[slug].copperWarning = true;
+      }
+    }
+  }
+
   // Only SLU-PP-332 is pill form. Selank + Semax are nasal spray. Everything else is injection (units).
   const ORAL_SLUGS  = new Set(['slu-pp-322.html']);
   const SPRAY_SLUGS = new Set(['selank.html','semax.html']);

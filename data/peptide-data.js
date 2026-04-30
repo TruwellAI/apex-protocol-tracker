@@ -1,0 +1,1042 @@
+/* AUTO-GENERATED — DO NOT EDIT.
+ * Source: /data/peptides.json
+ * Regenerate: node scripts/build-peptide-data.js
+ * Built: 2026-04-30T17:56:11.050Z
+ */
+window.APEX_PEPTIDES = {
+  "_meta": {
+    "version": "1.0.0",
+    "lastUpdated": "2026-04-30",
+    "description": "SINGLE SOURCE OF TRUTH for every peptide in Apex. Every HTML page + the audit bot reads from here. Update this file ONLY — never duplicate data into individual HTML files.",
+    "schema": {
+      "slug": "filename .html (matches the page slug)",
+      "name": "display name",
+      "category": "fatloss | gh-axis | recovery | longevity | cognitive | libido | trt | stack",
+      "tier": "foundation | layer | pulse",
+      "mech": "1-line mechanism description",
+      "route": "sc | im | sc/im | oral | spray | premixed",
+      "vial_mg": "default vial size in mg (or null if oral/spray/premixed)",
+      "bac_ml": "default bac water volume in mL (or null)",
+      "dose_mg_per_inj": "default per-injection dose in mg (TYPICAL_DOSE_MG)",
+      "dose_label": "human-readable dose string (e.g. '300 mcg' or '1-2 mg')",
+      "dose_range_mg": "[min, max] research-backed per-injection range in mg",
+      "freq": "human-readable frequency",
+      "cycle_weeks": "default on-cycle length",
+      "off_weeks": "default off-period length",
+      "research_note": "1-line study citation summary",
+      "rx": "true if prescription required (testosterone, etc.)",
+      "premixed": "true if pre-mixed (testosterone vials)",
+      "combined_bottle": "true if multi-peptide single vial (Wolverine/KLOW/GLOW)",
+      "components": "[{name, dose_mg}] for combined-bottle stacks",
+      "warning": "any compliance/chemistry warning (e.g. copper degrades TB-500)"
+    }
+  },
+  "bpc157.html": {
+    "name": "BPC-157",
+    "category": "recovery",
+    "tier": "layer",
+    "mech": "Body protective compound — gut-derived peptide for tissue repair",
+    "route": "sc",
+    "vial_mg": 5,
+    "bac_ml": 3,
+    "dose_mg_per_inj": 0.25,
+    "dose_label": "250 mcg",
+    "dose_range_mg": [
+      0.2,
+      0.5
+    ],
+    "freq": "1-2x daily",
+    "cycle_weeks": 6,
+    "off_weeks": 4,
+    "research_note": "Sikiric et al; tendon/ligament/gut healing 250-500 mcg/day"
+  },
+  "tb500.html": {
+    "name": "TB-500",
+    "category": "recovery",
+    "tier": "layer",
+    "mech": "Thymosin Beta-4 — angiogenesis + cell migration",
+    "route": "sc",
+    "vial_mg": 10,
+    "bac_ml": 2,
+    "dose_mg_per_inj": 2.5,
+    "dose_label": "2.5 mg",
+    "dose_range_mg": [
+      2,
+      5
+    ],
+    "freq": "2x weekly",
+    "cycle_weeks": 6,
+    "off_weeks": 4,
+    "research_note": "Loading 5mg 2x/wk × 4-6wk, then maintenance"
+  },
+  "ghkcu.html": {
+    "name": "GHK-Cu",
+    "category": "longevity",
+    "tier": "layer",
+    "mech": "Copper-binding peptide — collagen + skin remodeling",
+    "route": "sc",
+    "vial_mg": 50,
+    "bac_ml": 5,
+    "dose_mg_per_inj": 2,
+    "dose_label": "1-3 mg",
+    "dose_range_mg": [
+      1,
+      3
+    ],
+    "freq": "daily SubQ",
+    "cycle_weeks": 12,
+    "off_weeks": 4,
+    "research_note": "Pickart 1973; 1-3mg/day skin/recovery/wound healing"
+  },
+  "kpv.html": {
+    "name": "KPV",
+    "category": "recovery",
+    "tier": "layer",
+    "mech": "α-MSH C-terminus — anti-inflammatory + gut",
+    "route": "sc",
+    "vial_mg": 5,
+    "bac_ml": 2,
+    "dose_mg_per_inj": 0.5,
+    "dose_label": "500 mcg",
+    "dose_range_mg": [
+      0.25,
+      1
+    ],
+    "freq": "daily",
+    "cycle_weeks": 6,
+    "off_weeks": 4,
+    "research_note": "250-1000 mcg/day; gut + dermal inflammation"
+  },
+  "ll37.html": {
+    "name": "LL-37",
+    "category": "recovery",
+    "tier": "layer",
+    "mech": "Cathelicidin antimicrobial peptide",
+    "route": "sc",
+    "vial_mg": 5,
+    "bac_ml": 2,
+    "dose_mg_per_inj": 0.1,
+    "dose_label": "50-200 mcg",
+    "dose_range_mg": [
+      0.05,
+      0.2
+    ],
+    "freq": "daily",
+    "cycle_weeks": 4,
+    "off_weeks": 4,
+    "research_note": "Microdose 50-200 mcg; antimicrobial + immune modulator"
+  },
+  "thymosin-alpha1.html": {
+    "name": "Thymosin α1",
+    "category": "recovery",
+    "tier": "layer",
+    "mech": "Immune modulator (thymic origin)",
+    "route": "sc",
+    "vial_mg": 10,
+    "bac_ml": 2,
+    "dose_mg_per_inj": 1.6,
+    "dose_label": "1.6 mg",
+    "dose_range_mg": [
+      1.6,
+      3.2
+    ],
+    "freq": "2x weekly",
+    "cycle_weeks": 8,
+    "off_weeks": 8,
+    "research_note": "1.6mg 2x/wk standard immune protocol"
+  },
+  "ara290.html": {
+    "name": "ARA-290",
+    "category": "recovery",
+    "tier": "layer",
+    "mech": "EPO-derived 11-mer; tissue protection + neuropathy",
+    "route": "sc",
+    "vial_mg": 16,
+    "bac_ml": 2,
+    "dose_mg_per_inj": 4,
+    "dose_label": "4 mg",
+    "dose_range_mg": [
+      1,
+      8
+    ],
+    "freq": "daily",
+    "cycle_weeks": 4,
+    "off_weeks": 8,
+    "research_note": "Brines et al; 4mg typical for neuropathy"
+  },
+  "epitalon.html": {
+    "name": "Epitalon",
+    "category": "longevity",
+    "tier": "pulse",
+    "mech": "Pineal bioregulator — telomerase activator",
+    "route": "sc",
+    "vial_mg": 50,
+    "bac_ml": 5,
+    "dose_mg_per_inj": 7.5,
+    "dose_label": "5-10 mg",
+    "dose_range_mg": [
+      5,
+      10
+    ],
+    "freq": "daily PM × 10-20 days",
+    "cycle_weeks": 2,
+    "off_weeks": 24,
+    "research_note": "Khavinson; 5-10mg × 10-20d pulse, 1-2x/yr"
+  },
+  "ss31.html": {
+    "name": "SS-31",
+    "category": "longevity",
+    "tier": "layer",
+    "mech": "Cardiolipin-targeted mitochondrial peptide",
+    "route": "sc",
+    "vial_mg": 50,
+    "bac_ml": 2,
+    "dose_mg_per_inj": 5,
+    "dose_label": "3-7 mg",
+    "dose_range_mg": [
+      3,
+      7
+    ],
+    "freq": "daily",
+    "cycle_weeks": 6,
+    "off_weeks": 6,
+    "research_note": "Mitochondrial repair; 5mg typical, post-MOTS-c sequencing"
+  },
+  "motsc.html": {
+    "name": "MOTS-c",
+    "category": "longevity",
+    "tier": "layer",
+    "mech": "Mitokine — AMPK activator + biogenesis",
+    "route": "sc",
+    "vial_mg": 10,
+    "bac_ml": 2,
+    "dose_mg_per_inj": 3,
+    "dose_label": "2-5 mg",
+    "dose_range_mg": [
+      2,
+      5
+    ],
+    "freq": "2-3x weekly",
+    "cycle_weeks": 8,
+    "off_weeks": 8,
+    "research_note": "Total weekly 5-10mg; substrate for biogenesis (run with NAD+)"
+  },
+  "cartalax.html": {
+    "name": "Cartalax",
+    "category": "longevity",
+    "tier": "pulse",
+    "mech": "Bioregulator — cartilage focus",
+    "route": "sc",
+    "vial_mg": 20,
+    "bac_ml": 2,
+    "dose_mg_per_inj": 0.2,
+    "dose_label": "100-300 mcg",
+    "dose_range_mg": [
+      0.1,
+      0.3
+    ],
+    "freq": "daily × 10 days",
+    "cycle_weeks": 2,
+    "off_weeks": 24,
+    "research_note": "100-300 mcg × 10-20d pulse, 1-2x/yr"
+  },
+  "fox04-dri.html": {
+    "name": "FOX04-DRI",
+    "category": "longevity",
+    "tier": "pulse",
+    "mech": "Senolytic — clears p53/FOXO4 senescent cells",
+    "route": "sc",
+    "vial_mg": 10,
+    "bac_ml": 2,
+    "dose_mg_per_inj": 5,
+    "dose_label": "1-5 mg",
+    "dose_range_mg": [
+      1,
+      5
+    ],
+    "freq": "5-day pulse, 1-2x/yr",
+    "cycle_weeks": 1,
+    "off_weeks": 24,
+    "research_note": "5-day pulse; clears senescent cells before rebuilding"
+  },
+  "aod9604.html": {
+    "name": "AOD-9604",
+    "category": "fatloss",
+    "tier": "layer",
+    "mech": "GH fragment 176-191 — lipolysis without GH effects",
+    "route": "sc",
+    "vial_mg": 10,
+    "bac_ml": 2,
+    "dose_mg_per_inj": 0.3,
+    "dose_label": "300 mcg",
+    "dose_range_mg": [
+      0.25,
+      0.5
+    ],
+    "freq": "daily fasted AM",
+    "cycle_weeks": 12,
+    "off_weeks": 4,
+    "research_note": "300 mcg fasted morning; lipolysis-selective"
+  },
+  "retatrutide.html": {
+    "name": "Retatrutide",
+    "category": "fatloss",
+    "tier": "layer",
+    "mech": "Triple G (GLP-1 + GIP + glucagon) agonist",
+    "route": "sc",
+    "vial_mg": 30,
+    "bac_ml": 3,
+    "dose_mg_per_inj": 4,
+    "dose_label": "titrated 2→12 mg",
+    "dose_range_mg": [
+      2,
+      12
+    ],
+    "freq": "weekly",
+    "cycle_weeks": 24,
+    "off_weeks": 0,
+    "titration": true,
+    "research_note": "Titrate 2→4→8→12mg weekly; Phase 2 trials weekly only"
+  },
+  "semaglutide.html": {
+    "name": "Semaglutide",
+    "category": "fatloss",
+    "tier": "layer",
+    "mech": "GLP-1 receptor agonist",
+    "route": "sc",
+    "vial_mg": 10,
+    "bac_ml": 3,
+    "dose_mg_per_inj": 1,
+    "dose_label": "titrated 0.25→2.4 mg",
+    "dose_range_mg": [
+      0.25,
+      2.4
+    ],
+    "freq": "weekly",
+    "cycle_weeks": 24,
+    "off_weeks": 0,
+    "titration": true,
+    "research_note": "STEP trials; titrate 0.25→2.4mg weekly"
+  },
+  "tirzepatide.html": {
+    "name": "Tirzepatide",
+    "category": "fatloss",
+    "tier": "layer",
+    "mech": "Dual GLP-1 + GIP agonist",
+    "route": "sc",
+    "vial_mg": 30,
+    "bac_ml": 3,
+    "dose_mg_per_inj": 5,
+    "dose_label": "titrated 2.5→15 mg",
+    "dose_range_mg": [
+      2.5,
+      15
+    ],
+    "freq": "weekly",
+    "cycle_weeks": 24,
+    "off_weeks": 0,
+    "titration": true,
+    "research_note": "SURMOUNT trials; titrate 2.5→15mg weekly"
+  },
+  "5amino1mq.html": {
+    "name": "5-Amino-1MQ",
+    "category": "fatloss",
+    "tier": "layer",
+    "mech": "NNMT inhibitor — restores NAD+ + reduces methyl trap",
+    "route": "sc",
+    "vial_mg": 10,
+    "bac_ml": 2,
+    "dose_mg_per_inj": 2,
+    "dose_label": "1-2 mg",
+    "dose_range_mg": [
+      1,
+      5
+    ],
+    "freq": "daily SubQ",
+    "cycle_weeks": 12,
+    "off_weeks": 4,
+    "research_note": "NNMT inhibitor; SubQ injection 1-5mg/day"
+  },
+  "tesamorelin.html": {
+    "name": "Tesamorelin",
+    "category": "fatloss",
+    "tier": "layer",
+    "mech": "Stabilized GHRH analog — visceral fat reduction (FDA-approved HIV-LD)",
+    "route": "sc",
+    "vial_mg": 5,
+    "bac_ml": 2,
+    "dose_mg_per_inj": 1.5,
+    "dose_label": "1-2 mg",
+    "dose_range_mg": [
+      1,
+      2
+    ],
+    "freq": "daily PM",
+    "cycle_weeks": 12,
+    "off_weeks": 4,
+    "research_note": "1-2mg/day FDA-approved for visceral fat (lipodystrophy)"
+  },
+  "cjc-no-dac.html": {
+    "name": "CJC-1295 (no DAC)",
+    "category": "gh-axis",
+    "tier": "layer",
+    "mech": "GHRH analog — short half-life pulse",
+    "route": "sc",
+    "vial_mg": 5,
+    "bac_ml": 3,
+    "dose_mg_per_inj": 0.1,
+    "dose_label": "100 mcg",
+    "dose_range_mg": [
+      0.1,
+      0.3
+    ],
+    "freq": "1-3x daily",
+    "cycle_weeks": 12,
+    "off_weeks": 4,
+    "research_note": "100mcg pre-bed; pairs with ipamorelin"
+  },
+  "cjc1295-dac.html": {
+    "name": "CJC-1295 (DAC)",
+    "category": "gh-axis",
+    "tier": "layer",
+    "mech": "GHRH analog with DAC — extended half-life",
+    "route": "sc",
+    "vial_mg": 5,
+    "bac_ml": 2,
+    "dose_mg_per_inj": 1.5,
+    "dose_label": "1-2 mg",
+    "dose_range_mg": [
+      1,
+      2
+    ],
+    "freq": "weekly",
+    "cycle_weeks": 12,
+    "off_weeks": 4,
+    "research_note": "1-2mg/wk; extended GHRH stimulation"
+  },
+  "ipamorelin.html": {
+    "name": "Ipamorelin",
+    "category": "gh-axis",
+    "tier": "layer",
+    "mech": "Ghrelin mimetic — selective GH release",
+    "route": "sc",
+    "vial_mg": 5,
+    "bac_ml": 2,
+    "dose_mg_per_inj": 0.3,
+    "dose_label": "100-300 mcg",
+    "dose_range_mg": [
+      0.1,
+      0.3
+    ],
+    "freq": "1-3x daily",
+    "cycle_weeks": 12,
+    "off_weeks": 4,
+    "research_note": "100-300 mcg pre-bed; selective ghrelin agonist"
+  },
+  "sermorelin.html": {
+    "name": "Sermorelin",
+    "category": "gh-axis",
+    "tier": "layer",
+    "mech": "GHRH 1-29 analog",
+    "route": "sc",
+    "vial_mg": 5,
+    "bac_ml": 2,
+    "dose_mg_per_inj": 0.3,
+    "dose_label": "200-500 mcg",
+    "dose_range_mg": [
+      0.2,
+      0.5
+    ],
+    "freq": "daily PM",
+    "cycle_weeks": 12,
+    "off_weeks": 4,
+    "research_note": "GHRH; 200-500 mcg pre-bed"
+  },
+  "cjc-ipa-blend.html": {
+    "name": "CJC + Ipa Blend",
+    "category": "gh-axis",
+    "tier": "layer",
+    "mech": "GHRH + GHRP synergy blend",
+    "route": "sc",
+    "vial_mg": 10,
+    "bac_ml": 2,
+    "dose_mg_per_inj": 0.25,
+    "dose_label": "200-400 mcg",
+    "dose_range_mg": [
+      0.2,
+      0.4
+    ],
+    "freq": "daily PM fasted",
+    "cycle_weeks": 12,
+    "off_weeks": 4,
+    "research_note": "Pre-blended dual; 200-400 mcg"
+  },
+  "igf1-lr3.html": {
+    "name": "IGF-1 LR3",
+    "category": "gh-axis",
+    "tier": "layer",
+    "mech": "Long-R3 IGF-1 — extended half-life",
+    "route": "sc",
+    "vial_mg": 1,
+    "bac_ml": 1,
+    "dose_mg_per_inj": 0.04,
+    "dose_label": "20-80 mcg",
+    "dose_range_mg": [
+      0.02,
+      0.08
+    ],
+    "freq": "post-workout",
+    "cycle_weeks": 4,
+    "off_weeks": 4,
+    "research_note": "20-80 mcg post-workout; site-specific possible"
+  },
+  "nad-plus.html": {
+    "name": "NAD+",
+    "category": "longevity",
+    "tier": "layer",
+    "mech": "Mitochondrial cofactor",
+    "route": "sc",
+    "vial_mg": 500,
+    "bac_ml": 5,
+    "dose_mg_per_inj": 100,
+    "dose_label": "100 mg",
+    "dose_range_mg": [
+      50,
+      200
+    ],
+    "freq": "loading 2x/wk × 4wk, then weekly maint",
+    "cycle_weeks": 4,
+    "off_weeks": 0,
+    "research_note": "Loading 100mg 2x/wk × 4wk; substrate for MOTS-c biogenesis"
+  },
+  "glutathione.html": {
+    "name": "Glutathione",
+    "category": "longevity",
+    "tier": "foundation",
+    "mech": "Master antioxidant",
+    "route": "sc",
+    "vial_mg": 600,
+    "bac_ml": 3,
+    "dose_mg_per_inj": 400,
+    "dose_label": "200-600 mg",
+    "dose_range_mg": [
+      200,
+      600
+    ],
+    "freq": "2-3x weekly",
+    "cycle_weeks": 52,
+    "off_weeks": 0,
+    "research_note": "Master antioxidant; 200-600mg 2-3x/wk"
+  },
+  "selank.html": {
+    "name": "Selank",
+    "category": "cognitive",
+    "tier": "layer",
+    "mech": "Anxiolytic neuropeptide (intranasal)",
+    "route": "spray",
+    "vial_mg": null,
+    "bac_ml": null,
+    "dose_mg_per_inj": null,
+    "dose_label": "2-3x daily intranasal",
+    "dose_range_mg": null,
+    "freq": "2-3x daily intranasal",
+    "cycle_weeks": 4,
+    "off_weeks": 2,
+    "research_note": "Intranasal; alternate with Semax to avoid tolerance"
+  },
+  "semax.html": {
+    "name": "Semax",
+    "category": "cognitive",
+    "tier": "layer",
+    "mech": "ACTH-derived nootropic (intranasal)",
+    "route": "spray",
+    "vial_mg": null,
+    "bac_ml": null,
+    "dose_mg_per_inj": null,
+    "dose_label": "2-3x daily intranasal",
+    "dose_range_mg": null,
+    "freq": "2-3x daily intranasal",
+    "cycle_weeks": 4,
+    "off_weeks": 2,
+    "research_note": "Intranasal; alternate with Selank"
+  },
+  "dsip.html": {
+    "name": "DSIP",
+    "category": "cognitive",
+    "tier": "layer",
+    "mech": "Delta sleep-inducing peptide",
+    "route": "sc",
+    "vial_mg": 5,
+    "bac_ml": 2,
+    "dose_mg_per_inj": 0.2,
+    "dose_label": "100-300 mcg",
+    "dose_range_mg": [
+      0.1,
+      0.3
+    ],
+    "freq": "pre-bed",
+    "cycle_weeks": 4,
+    "off_weeks": 2,
+    "research_note": "100-300 mcg pre-bed for sleep architecture"
+  },
+  "dihexa.html": {
+    "name": "Dihexa",
+    "category": "cognitive",
+    "tier": "layer",
+    "mech": "HGF mimetic — synaptogenesis",
+    "route": "sc",
+    "vial_mg": 50,
+    "bac_ml": 2,
+    "dose_mg_per_inj": 25,
+    "dose_label": "8-25 mg",
+    "dose_range_mg": [
+      8,
+      25
+    ],
+    "freq": "daily",
+    "cycle_weeks": 4,
+    "off_weeks": 4,
+    "research_note": "HGF mimetic; 8-25 mg/day SubQ"
+  },
+  "pe2228.html": {
+    "name": "PE-22-28",
+    "category": "cognitive",
+    "tier": "layer",
+    "mech": "BDNF-like neuropeptide",
+    "route": "spray",
+    "vial_mg": null,
+    "bac_ml": null,
+    "dose_mg_per_inj": 0.375,
+    "dose_label": "250-500 mcg",
+    "dose_range_mg": [
+      0.25,
+      0.5
+    ],
+    "freq": "intranasal",
+    "cycle_weeks": 4,
+    "off_weeks": 4,
+    "research_note": "BDNF-like; intranasal preferred"
+  },
+  "pt141.html": {
+    "name": "PT-141",
+    "category": "libido",
+    "tier": "layer",
+    "mech": "Bremelanotide — melanocortin receptor agonist",
+    "route": "sc",
+    "vial_mg": 10,
+    "bac_ml": 2,
+    "dose_mg_per_inj": 1.5,
+    "dose_label": "1-2 mg",
+    "dose_range_mg": [
+      1,
+      2
+    ],
+    "freq": "as-needed (45 min before)",
+    "cycle_weeks": 52,
+    "off_weeks": 0,
+    "research_note": "Bremelanotide; 45 min before activity"
+  },
+  "melanotan1.html": {
+    "name": "Melanotan I",
+    "category": "libido",
+    "tier": "layer",
+    "mech": "α-MSH analog — melanin stimulation",
+    "route": "sc",
+    "vial_mg": 10,
+    "bac_ml": 2,
+    "dose_mg_per_inj": 0.5,
+    "dose_label": "0.5-1 mg",
+    "dose_range_mg": [
+      0.25,
+      1
+    ],
+    "freq": "daily/2x weekly",
+    "cycle_weeks": 8,
+    "off_weeks": 8,
+    "research_note": "Loading 1mg/d × 10d, maint 0.5mg 2x/wk"
+  },
+  "melanotan2.html": {
+    "name": "Melanotan II",
+    "category": "libido",
+    "tier": "layer",
+    "mech": "α-MSH analog — melanin + sexual response",
+    "route": "sc",
+    "vial_mg": 10,
+    "bac_ml": 2,
+    "dose_mg_per_inj": 0.5,
+    "dose_label": "0.5-1 mg",
+    "dose_range_mg": [
+      0.25,
+      1
+    ],
+    "freq": "daily/2x weekly",
+    "cycle_weeks": 8,
+    "off_weeks": 8,
+    "research_note": "Loading 0.5-1mg/d, maint 0.5mg 2x/wk"
+  },
+  "l-carnitine.html": {
+    "name": "L-Carnitine",
+    "category": "fatloss",
+    "tier": "foundation",
+    "mech": "Fatty-acid β-oxidation cofactor",
+    "route": "sc",
+    "vial_mg": 600,
+    "bac_ml": 3,
+    "dose_mg_per_inj": 350,
+    "dose_label": "200-500 mg",
+    "dose_range_mg": [
+      200,
+      500
+    ],
+    "freq": "pre-cardio",
+    "cycle_weeks": 52,
+    "off_weeks": 0,
+    "research_note": "200-500 mg pre-cardio for fat oxidation"
+  },
+  "glutamine.html": {
+    "name": "Glutamine",
+    "category": "recovery",
+    "tier": "foundation",
+    "mech": "Conditionally-essential amino — gut + immune",
+    "route": "sc",
+    "vial_mg": 600,
+    "bac_ml": 3,
+    "dose_mg_per_inj": 350,
+    "dose_label": "200-500 mg",
+    "dose_range_mg": [
+      200,
+      500
+    ],
+    "freq": "daily",
+    "cycle_weeks": 52,
+    "off_weeks": 0,
+    "research_note": "Gut + recovery support; 200-500 mg/day"
+  },
+  "slu-pp-322.html": {
+    "name": "SLU-PP-332",
+    "category": "fatloss",
+    "tier": "layer",
+    "mech": "ERRα agonist — exercise-mimetic",
+    "route": "oral",
+    "vial_mg": null,
+    "bac_ml": null,
+    "dose_mg_per_inj": 0.375,
+    "dose_label": "experimental · oral",
+    "dose_range_mg": null,
+    "freq": "daily oral",
+    "cycle_weeks": 8,
+    "off_weeks": 4,
+    "research_note": "ERRα agonist; oral exercise-mimetic"
+  },
+  "testosterone-cyp.html": {
+    "name": "Testosterone Cypionate",
+    "category": "trt",
+    "tier": "layer",
+    "mech": "Long-ester androgen (8-day half-life) · Rx",
+    "route": "sc/im",
+    "vial_mg": 2000,
+    "bac_ml": 10,
+    "dose_mg_per_inj": 100,
+    "dose_label": "100-200 mg/wk total · 50-100 mg/inj 2x weekly",
+    "dose_range_mg": [
+      50,
+      100
+    ],
+    "weekly_total_mg": [
+      100,
+      200
+    ],
+    "freq": "2x weekly (Mon + Thu)",
+    "cycle_weeks": 52,
+    "off_weeks": 0,
+    "rx": true,
+    "premixed": "200 mg/mL",
+    "research_note": "Rx · pre-mixed 200mg/mL · 100-200mg/wk total split 2x"
+  },
+  "testosterone-enth.html": {
+    "name": "Testosterone Enanthate",
+    "category": "trt",
+    "tier": "layer",
+    "mech": "Long-ester androgen (7-day half-life) · Rx",
+    "route": "sc/im",
+    "vial_mg": 2000,
+    "bac_ml": 10,
+    "dose_mg_per_inj": 100,
+    "dose_label": "100-200 mg/wk total · 50-100 mg/inj 2x weekly",
+    "dose_range_mg": [
+      50,
+      100
+    ],
+    "weekly_total_mg": [
+      100,
+      200
+    ],
+    "freq": "2x weekly (Mon + Thu)",
+    "cycle_weeks": 52,
+    "off_weeks": 0,
+    "rx": true,
+    "premixed": "200 mg/mL",
+    "research_note": "Rx · pre-mixed 200mg/mL · 100-200mg/wk total split 2x"
+  },
+  "testosterone-prop.html": {
+    "name": "Testosterone Propionate",
+    "category": "trt",
+    "tier": "layer",
+    "mech": "Short-ester androgen (3-day half-life) · Rx",
+    "route": "sc/im",
+    "vial_mg": 1000,
+    "bac_ml": 10,
+    "dose_mg_per_inj": 50,
+    "dose_label": "75-175 mg/wk total · 25-75 mg/inj EOD",
+    "dose_range_mg": [
+      25,
+      75
+    ],
+    "weekly_total_mg": [
+      75,
+      175
+    ],
+    "freq": "every other day",
+    "cycle_weeks": 52,
+    "off_weeks": 0,
+    "rx": true,
+    "premixed": "100 mg/mL",
+    "research_note": "Rx · pre-mixed 100mg/mL · 75-175mg/wk total EOD"
+  },
+  "wolverine.html": {
+    "name": "Wolverine Stack",
+    "category": "stack",
+    "tier": "layer",
+    "mech": "BPC-157 5mg + TB-500 5mg combined in ONE vial",
+    "route": "sc",
+    "vial_mg": 10,
+    "bac_ml": 3,
+    "dose_label": "see components",
+    "freq": "daily",
+    "cycle_weeks": 6,
+    "off_weeks": 4,
+    "combined_bottle": true,
+    "components": [
+      {
+        "name": "BPC-157",
+        "dose_mg": 0.25
+      },
+      {
+        "name": "TB-500",
+        "dose_mg": 2.5
+      }
+    ],
+    "research_note": "No copper conflict — chemically stable combined"
+  },
+  "klow.html": {
+    "name": "KLOW Stack",
+    "category": "stack",
+    "tier": "layer",
+    "mech": "KPV + TB-500 + BPC-157 + GHK-Cu combined in ONE vial",
+    "route": "sc",
+    "vial_mg": 20,
+    "bac_ml": 5,
+    "dose_label": "see components",
+    "freq": "daily",
+    "cycle_weeks": 6,
+    "off_weeks": 4,
+    "combined_bottle": true,
+    "components": [
+      {
+        "name": "KPV",
+        "dose_mg": 0.5
+      },
+      {
+        "name": "TB-500",
+        "dose_mg": 2.5
+      },
+      {
+        "name": "BPC-157",
+        "dose_mg": 0.25
+      },
+      {
+        "name": "GHK-Cu",
+        "dose_mg": 2
+      }
+    ],
+    "warning": "GHK-Cu copper degrades TB-500 — mix fresh weekly or run separate bottles"
+  },
+  "glow.html": {
+    "name": "GLOW Stack",
+    "category": "stack",
+    "tier": "layer",
+    "mech": "GHK-Cu + TB-500 + BPC-157 combined in ONE vial",
+    "route": "sc",
+    "vial_mg": 15,
+    "bac_ml": 5,
+    "dose_label": "see components",
+    "freq": "daily",
+    "cycle_weeks": 8,
+    "off_weeks": 4,
+    "combined_bottle": true,
+    "components": [
+      {
+        "name": "GHK-Cu",
+        "dose_mg": 2
+      },
+      {
+        "name": "TB-500",
+        "dose_mg": 2.5
+      },
+      {
+        "name": "BPC-157",
+        "dose_mg": 0.25
+      }
+    ],
+    "warning": "GHK-Cu copper degrades TB-500 — mix fresh weekly or run separate bottles"
+  },
+  "cardiac-stack.html": {
+    "name": "Cardiac Stack",
+    "category": "stack",
+    "tier": "layer",
+    "mech": "Heart-focused multi-bottle stack",
+    "route": "sc",
+    "dose_label": "see components",
+    "freq": "daily",
+    "cycle_weeks": 12,
+    "off_weeks": 4,
+    "combined_bottle": false,
+    "components": [
+      {
+        "name": "TB-500",
+        "dose_mg": 2.5
+      },
+      {
+        "name": "BPC-157",
+        "dose_mg": 0.25
+      },
+      {
+        "name": "MOTS-c",
+        "dose_mg": 5
+      },
+      {
+        "name": "SS-31",
+        "dose_mg": 5
+      }
+    ],
+    "research_note": "Multi-bottle — separate vials"
+  },
+  "longevity-stack.html": {
+    "name": "Longevity Stack",
+    "category": "stack",
+    "tier": "layer",
+    "mech": "Multi-bottle longevity protocol",
+    "route": "sc",
+    "dose_label": "see components",
+    "freq": "pulsed",
+    "cycle_weeks": 16,
+    "off_weeks": 4,
+    "combined_bottle": false,
+    "components": [
+      {
+        "name": "GHK-Cu",
+        "dose_mg": 2
+      },
+      {
+        "name": "Epitalon",
+        "dose_mg": 7.5
+      },
+      {
+        "name": "SS-31",
+        "dose_mg": 5
+      },
+      {
+        "name": "NAD+",
+        "dose_mg": 100
+      }
+    ],
+    "research_note": "Multi-bottle — separate vials"
+  },
+  "mito-reset.html": {
+    "name": "Mito Reset",
+    "category": "stack",
+    "tier": "layer",
+    "mech": "Mitochondrial reset protocol",
+    "route": "sc",
+    "dose_label": "see components",
+    "freq": "daily",
+    "cycle_weeks": 12,
+    "off_weeks": 4,
+    "combined_bottle": false,
+    "components": [
+      {
+        "name": "MOTS-c",
+        "dose_mg": 3
+      },
+      {
+        "name": "SS-31",
+        "dose_mg": 5
+      },
+      {
+        "name": "NAD+",
+        "dose_mg": 100
+      },
+      {
+        "name": "Glutathione",
+        "dose_mg": 400
+      }
+    ],
+    "research_note": "Multi-bottle — separate vials. Sequence: NAD+ → MOTS-c → SS-31"
+  }
+};
+
+// Helper accessors derived from APEX_PEPTIDES — every HTML page uses these.
+window.apexPeptide = function(slug) { return window.APEX_PEPTIDES[slug] || null; };
+
+// Build the legacy maps the existing HTML pages expect, in one place.
+window.apexBuildLegacyMaps = function() {
+  const all = window.APEX_PEPTIDES;
+  const PEP = {};                 // reconstitute.html (name, mech, vial, bac, special flags)
+  const TYPICAL_DOSE_MG = {};     // reconstitute.html (per-injection dose in mg)
+  const RECON_DEFAULTS = {};      // protocol-summary.html + tracker-v2.html (vial + bac)
+  const PROTO = {};               // protocol-summary.html (full peptide config)
+  const STACK_COMPONENTS = {};    // protocol-summary.html (stack peptide breakdowns)
+  const DOSE_INFO = {};           // protocol-sequencer.html (per-row tap-to-show units)
+  for (const [slug, p] of Object.entries(all)) {
+    if (slug === '_meta') continue;
+    if (p.vial_mg != null && p.bac_ml != null) {
+      RECON_DEFAULTS[slug] = { vial: p.vial_mg, bac: p.bac_ml };
+      PEP[slug] = {
+        name: p.name, mech: p.mech, vial: p.vial_mg, bac: p.bac_ml,
+        rx: !!p.rx, premixed: p.premixed || false,
+        titration: !!p.titration, combinedBottle: !!p.combined_bottle,
+        copperWarning: !!(p.warning && /copper.*tb-?500/i.test(p.warning))
+      };
+    } else {
+      PEP[slug] = {
+        name: p.name, mech: p.mech,
+        oral: p.route === 'oral', spray: p.route === 'spray',
+        rx: !!p.rx, premixed: !!p.premixed
+      };
+    }
+    if (p.dose_mg_per_inj != null) TYPICAL_DOSE_MG[slug] = p.dose_mg_per_inj;
+    PROTO[slug] = {
+      name: p.name, mech: p.mech, cycleWks: p.cycle_weeks,
+      dose: p.dose_label, freq: p.freq,
+      rx: !!p.rx, premixed: !!p.premixed,
+      combinedBottle: !!p.combined_bottle,
+      copperWarning: !!(p.warning && /copper.*tb-?500/i.test(p.warning))
+    };
+    if (Array.isArray(p.components) && p.components.length > 0) {
+      STACK_COMPONENTS[slug] = p.components.map(c => ({
+        name: c.name, dose_mg: c.dose_mg, dose: (c.dose_mg < 1 ? (c.dose_mg*1000)+' mcg' : c.dose_mg+' mg')
+      }));
+    }
+    DOSE_INFO[slug] = {
+      dose: p.dose_mg_per_inj,
+      vial: p.vial_mg, bac: p.bac_ml,
+      freq: p.freq, oral: p.route === 'oral', spray: p.route === 'spray',
+      premixed: p.premixed || null,
+      combined: !!p.combined_bottle,
+      components: p.components || null,
+      warning: p.warning || null,
+      note: p.research_note || null
+    };
+  }
+  return { PEP, TYPICAL_DOSE_MG, RECON_DEFAULTS, PROTO, STACK_COMPONENTS, DOSE_INFO };
+};
