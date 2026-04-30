@@ -594,10 +594,34 @@ function render() {
       </details>`);
     });
   }
+  // ── PHARMACOLOGICAL INTERACTIONS — the differentiator ──
+  // Surface every cross-compound interaction the user's stack triggers.
+  // GLP-1 + GH timing, GHK-Cu+TB-500 chemistry, MOTS-c sequencing, etc.
+  const stackSlugs = selection.map(s => s.replace(/^\//, ''));
+  const fired = (window.apexInteractionsForStack ? window.apexInteractionsForStack(stackSlugs) : []);
+  fired.forEach(ix => {
+    const sevColor = ix.severity === 'high' ? 'warning' : (ix.severity === 'synergy' ? '' : '');
+    const cardClass = ix.severity === 'high' ? 'insight-card warning' : (ix.severity === 'synergy' ? 'insight-card' : 'insight-card');
+    const cites = (ix.citations || []).map(c => `<li style="margin-bottom:3px;">${c}</li>`).join('');
+    insightCards.unshift(`<details class="${cardClass}" style="${ix.severity === 'synergy' ? 'border-left-color:var(--accent2);' : (ix.severity === 'medium' ? 'border-left-color:var(--accent);' : '')}">
+      <summary>${ix.icon || '⚡'} ${ix.title}</summary>
+      <div class="insight-body">
+        <div style="margin-bottom:10px;">${ix.summary}</div>
+        <div style="background:rgba(255,255,255,.04);border-left:2px solid var(--accent2);padding:8px 12px;border-radius:6px;margin-bottom:10px;">
+          <strong style="color:var(--accent2);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;">▸ The fix</strong><br>
+          <span style="font-size:13px;">${ix.fix}</span>
+        </div>
+        ${cites ? `<details style="margin-top:6px;"><summary style="cursor:pointer;color:var(--muted);font-size:11px;font-family:'Share Tech Mono',monospace;letter-spacing:.1em;text-transform:uppercase;list-style:none;">▾ Citations</summary><ul style="margin:6px 0 0 18px;font-size:11px;color:var(--muted);line-height:1.55;">${cites}</ul></details>` : ''}
+      </div>
+    </details>`);
+  });
+
   if (insightCards.length > 0) {
     const count = insightCards.length;
+    const hasHigh = fired.some(ix => ix.severity === 'high');
+    const toggleColor = hasHigh ? 'background:rgba(255,107,53,.1);border-color:rgba(255,107,53,.4);color:var(--orange);' : '';
     html += `<div class="insights-wrap">
-      <div class="insights-toggle" onclick="this.classList.toggle('open');document.getElementById('insights-list').style.display=this.classList.contains('open')?'block':'none';">💡 ${count} insight${count>1?'s':''} about your stack</div>
+      <div class="insights-toggle" style="${toggleColor}" onclick="this.classList.toggle('open');document.getElementById('insights-list').style.display=this.classList.contains('open')?'block':'none';">${hasHigh ? '⚠️ ' : '💡 '}${count} insight${count>1?'s':''} about your stack — tap to read</div>
       <div id="insights-list" style="display:none;">${insightCards.join('')}</div>
     </div>`;
   }

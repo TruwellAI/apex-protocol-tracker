@@ -15,9 +15,12 @@ const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
 const SRC  = path.join(ROOT, 'data', 'peptides.json');
+const INX  = path.join(ROOT, 'data', 'interactions.json');
 const OUT  = path.join(ROOT, 'data', 'peptide-data.js');
 
 const json = JSON.parse(fs.readFileSync(SRC, 'utf8'));
+let interactions = { interactions: [] };
+try { interactions = JSON.parse(fs.readFileSync(INX, 'utf8')); } catch(e) { console.warn('interactions.json not found, skipping'); }
 
 const stamp = new Date().toISOString();
 const banner = `/* AUTO-GENERATED — DO NOT EDIT.
@@ -27,9 +30,27 @@ const banner = `/* AUTO-GENERATED — DO NOT EDIT.
  */`;
 
 const body = `window.APEX_PEPTIDES = ${JSON.stringify(json, null, 2)};
+window.APEX_INTERACTIONS = ${JSON.stringify(interactions.interactions || [], null, 2)};
 
 // Helper accessors derived from APEX_PEPTIDES — every HTML page uses these.
 window.apexPeptide = function(slug) { return window.APEX_PEPTIDES[slug] || null; };
+
+// CORE: get all interactions that fire for a given stack of slugs.
+// An interaction fires when the user has at least one peptide from EACH group.
+window.apexInteractionsForStack = function(slugs) {
+  const set = new Set((slugs || []).map(s => String(s).toLowerCase()));
+  const matches = [];
+  for (const ix of (window.APEX_INTERACTIONS || [])) {
+    const allGroupsMatched = ix.groups.every(group =>
+      group.some(slug => set.has(slug.toLowerCase()))
+    );
+    if (allGroupsMatched) matches.push(ix);
+  }
+  // Sort: high severity first, then synergy, then medium
+  const order = { high: 0, medium: 1, synergy: 2 };
+  matches.sort((a, b) => (order[a.severity] ?? 9) - (order[b.severity] ?? 9));
+  return matches;
+};
 
 // Build the legacy maps the existing HTML pages expect, in one place.
 window.apexBuildLegacyMaps = function() {
