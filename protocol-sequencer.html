@@ -555,10 +555,15 @@ function render() {
 
   let html = '';
 
-  // Demo banner
+  // F-05: Demo banner — much more aggressive so users don't mistake it for their stack
   if (isDemo) {
-    html += `<div style="background:rgba(0,212,255,.08);border-left:3px solid var(--accent);padding:12px 14px;border-radius:8px;margin-bottom:18px;font-size:13px;">
-      <strong style="color:var(--accent);">📺 Demo view —</strong> showing a sample <strong>${GOAL_LABELS[activeGoal]}</strong> stack so you can see the schedule logic. Switch goal chips above to compare. <a href="compare.html" style="color:var(--accent2);text-decoration:none;font-weight:700;">Build your real stack →</a>
+    html += `<div style="background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#080c10;padding:14px 16px;border-radius:10px;margin-bottom:18px;font-size:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:0 4px 14px rgba(251,191,36,.3);">
+      <div style="font-size:24px;flex-shrink:0;">⚠️</div>
+      <div style="flex:1;min-width:200px;">
+        <strong style="display:block;margin-bottom:2px;">This is a SAMPLE — not your stack.</strong>
+        <span style="font-size:12px;opacity:.85;">Showing example <strong>${GOAL_LABELS[activeGoal]}</strong> sequencing so you can see the logic. Build your real one to see your numbers.</span>
+      </div>
+      <a href="compare.html" style="background:#080c10;color:#fbbf24;padding:10px 18px;text-decoration:none;border-radius:8px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;flex-shrink:0;">Build my stack →</a>
     </div>`;
   }
 
@@ -600,7 +605,21 @@ function render() {
   // Visual 52-week timeline
   html += `
     <div class="timeline-section">
-      <div class="timeline-title">📅 52-Week Visual Timeline</div>`;
+      <div class="timeline-title">📅 52-Week Visual Timeline</div>
+      ${(function(){
+        // F-19: Today's phase callout — orient the user immediately
+        const tpl = PHASE_TEMPLATES[activeGoal];
+        if (!tpl) return '';
+        // Use week 1 as "today" for first-time users (no cycle started)
+        const todayWeek = 1;
+        const phase = tpl.find(ph => todayWeek >= ph.weeks[0] && todayWeek <= ph.weeks[1]);
+        if (!phase) return '';
+        const phaseColor = {clear:'#a78bfa',reset:'#00D4FF',rebuild:'#00C48C',repair:'#10b981',maintain:'#7a8d99',titrate:'#fbbf24',active:'#00C48C',taper:'#FF6B35',recomp:'#a78bfa',ramp:'#fbbf24',cycle:'#00C48C',off:'#7a8d99',pulse:'#FF6B35',daily:'#10b981',asneeded:'#a78bfa',continuous:'#00D4FF'}[phase.key] || '#00D4FF';
+        return `<div style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px;font-size:13px;">
+          <div style="width:10px;height:10px;border-radius:50%;background:${phaseColor};box-shadow:0 0 12px ${phaseColor};"></div>
+          <div>Today's phase: <strong style="color:${phaseColor};">${phase.name}</strong> <span style="color:var(--muted);">· week ${phase.weeks[0]}–${phase.weeks[1]}</span></div>
+        </div>`;
+      })()}`;
 
   // Phase-band row at top of timeline
   html += '<div class="tl-phases"><div style="font-family:Share Tech Mono,monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;">PHASES</div><div class="tl-phases-bar">';

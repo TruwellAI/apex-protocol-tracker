@@ -568,6 +568,19 @@ body::before{
   function setDailyLog(log){
     try { localStorage.setItem('apex_daily_log', JSON.stringify(log)); } catch(e){}
   }
+  // F-09: streak counter for a peptide — counts consecutive days back from today inclusive
+  function computeStreak(pepId, log){
+    log = log || getDailyLog();
+    let streak = 0;
+    const d = new Date();
+    for (let i = 0; i < 365; i++) {
+      const k = d.toISOString().slice(0,10);
+      if (log[k] && log[k][pepId]) streak++;
+      else if (i > 0) break; // allow today to be unlogged when checking, but break on first miss in past
+      d.setDate(d.getDate() - 1);
+    }
+    return streak;
+  }
   function isWeekly(freq){ return freq && /weekly/i.test(freq); }
   function isAsNeeded(freq){ return freq && /(as needed|pre-event|when needed)/i.test(freq); }
 
@@ -1125,12 +1138,24 @@ body::before{
       </div>
     `;
 
-    tile.querySelector('[data-act="log"]').addEventListener('click', () => {
+    tile.querySelector('[data-act="log"]').addEventListener('click', (ev) => {
       const log = getDailyLog();
       const k = todayKey();
       log[k] = log[k] || {};
-      if (log[k][p.id]) delete log[k][p.id];
-      else { log[k][p.id] = new Date().toISOString(); try { if (navigator.vibrate) navigator.vibrate(20); } catch(_){} }
+      const wasLogged = !!log[k][p.id];
+      if (wasLogged) delete log[k][p.id];
+      else {
+        log[k][p.id] = new Date().toISOString();
+        try { if (navigator.vibrate) navigator.vibrate([15, 40, 15]); } catch(_){}
+        // F-08: dopamine moment — slide-down ✓ + streak count
+        const streak = computeStreak(p.id, log);
+        const fx = document.createElement('div');
+        fx.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.5);background:linear-gradient(135deg,#00ff9d,#10b981);color:#080c10;padding:24px 32px;border-radius:18px;font-family:Rajdhani,sans-serif;font-size:22px;font-weight:800;letter-spacing:.04em;box-shadow:0 12px 40px rgba(0,255,157,.5);z-index:99999;text-align:center;opacity:0;transition:transform .25s cubic-bezier(.2,.9,.3,1.4),opacity .2s;pointer-events:none;';
+        fx.innerHTML = `✓ Logged<div style="font-size:13px;font-family:'Share Tech Mono',monospace;letter-spacing:.16em;text-transform:uppercase;margin-top:6px;">${streak >= 2 ? '🔥 ' + streak + ' day streak' : 'Day ' + streak}</div>`;
+        document.body.appendChild(fx);
+        requestAnimationFrame(() => { fx.style.opacity = '1'; fx.style.transform = 'translate(-50%,-50%) scale(1)'; });
+        setTimeout(() => { fx.style.opacity = '0'; fx.style.transform = 'translate(-50%,-50%) scale(.85)'; setTimeout(() => fx.remove(), 250); }, 1100);
+      }
       setDailyLog(log);
       render();
     });
