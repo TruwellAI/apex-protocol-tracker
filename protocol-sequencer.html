@@ -215,6 +215,142 @@ const PEPS = {
 };
 
 // ============================================================
+// YEAR-LONG CURRICULUM — explicit start/end weeks per peptide per goal
+// "Take this peptide from week X to week Y." Drives the timeline bars.
+// If a peptide isn't in the schedule for a goal, falls back to cycleWeeks/offWeeks.
+// ============================================================
+const YEAR_SCHEDULE = {
+  longevity: {
+    // Q1: CLEAR
+    'fox04-dri':   [{start:1,  end:2,  label:'5-day pulse'}],
+    // Q2: RESET (after FOX04 has cleared damage)
+    'epitalon':    [{start:5,  end:7,  label:'10-20 day pulse'}],
+    'cartalax':    [{start:8,  end:9,  label:'10-day pulse'}],
+    // Q2-Q3: SUBSTRATE → BIOGENESIS
+    'nad-plus':    [{start:8,  end:12, label:'4wk loading'}, {start:13, end:52, label:'1x/wk maintenance'}],
+    // Q3: REBUILD (uses NAD+ substrate)
+    'motsc':       [{start:13, end:20, label:'8wk biogenesis'}],
+    // Q4: REPAIR (after MOTS-c built new mitos)
+    'ss31':        [{start:25, end:30, label:'6wk repair'}],
+    // Background
+    'ghkcu':       [{start:1,  end:12, label:'12wk continuous'}, {start:17, end:28}, {start:33, end:44}],
+    'glutathione': [{start:1,  end:52, label:'52wk foundation'}]
+  },
+  fatloss: {
+    // Q1: TITRATE
+    'tirzepatide': [{start:1,  end:4,  label:'titrate'},  {start:5,  end:20, label:'maintenance'}, {start:21, end:28, label:'taper'}],
+    'semaglutide': [{start:1,  end:4,  label:'titrate'},  {start:5,  end:20, label:'maintenance'}, {start:21, end:28, label:'taper'}],
+    'retatrutide': [{start:1,  end:4,  label:'titrate'},  {start:5,  end:20, label:'maintenance'}, {start:21, end:28, label:'taper'}],
+    // Q2 ACTIVE: layer in fat-loss peps once GLP-1 is dialed in
+    'aod9604':     [{start:5,  end:16, label:'12wk fasted morning'}],
+    '5amino1mq':   [{start:5,  end:16, label:'12wk daily oral'}],
+    'tesamorelin': [{start:5,  end:20, label:'visceral fat focus'}],
+    'slu-pp-322':  [{start:5,  end:12, label:'8wk daily'}],
+    'motsc':       [{start:5,  end:12, label:'metabolic boost'}],
+    // Foundation
+    'l-carnitine': [{start:1,  end:52, label:'pre-cardio daily'}]
+  },
+  'gh-axis': {
+    // Q1 RAMP
+    'cjc1295-dac': [{start:1,  end:2, label:'ramp 50%'}, {start:3,  end:12, label:'10wk full cycle'}, {start:17, end:28}, {start:33, end:44}],
+    'cjc-no-dac':  [{start:1,  end:2, label:'ramp 50%'}, {start:3,  end:12, label:'10wk full cycle'}, {start:17, end:28}, {start:33, end:44}],
+    'sermorelin':  [{start:1,  end:2, label:'ramp 50%'}, {start:3,  end:12, label:'10wk full cycle'}, {start:17, end:28}, {start:33, end:44}],
+    'cjc-ipa-blend':[{start:1, end:2, label:'ramp 50%'}, {start:3,  end:12, label:'10wk full cycle'}, {start:17, end:28}, {start:33, end:44}],
+    'ipamorelin':  [{start:1,  end:2, label:'ramp 50%'}, {start:3,  end:12, label:'10wk full cycle'}, {start:17, end:28}, {start:33, end:44}],
+    // IGF-1 added during peak GH cycle for amplification
+    'igf1-lr3':    [{start:5,  end:8, label:'4wk post-workout'}, {start:21, end:24}, {start:37, end:40}],
+    'tesamorelin': [{start:1,  end:12, label:'12wk visceral'}]
+  },
+  recovery: {
+    // BPC + TB-500 paired pulse
+    'bpc157':      [{start:1,  end:6,  label:'6wk active'}, {start:11, end:16}, {start:21, end:26}, {start:31, end:36}],
+    'tb500':       [{start:1,  end:6,  label:'6wk active'}, {start:11, end:16}, {start:21, end:26}, {start:31, end:36}],
+    'wolverine':   [{start:1,  end:6,  label:'paired pulse'}, {start:11, end:16}],
+    'glow':        [{start:1,  end:6,  label:'skin/collagen'}],
+    'klow':        [{start:1,  end:6,  label:'multi-stack'}],
+    'kpv':         [{start:1,  end:4,  label:'gut/inflam'}, {start:13, end:16}, {start:25, end:28}],
+    'll37':        [{start:7,  end:10, label:'antimicrobial'}],
+    'thymosin-alpha1':[{start:1, end:8, label:'8wk immune'}, {start:25, end:32}],
+    'ara290':      [{start:1,  end:4,  label:'4wk neuropathy'}, {start:13, end:16}],
+    'ghkcu':       [{start:1,  end:12, label:'continuous SubQ'}, {start:17, end:28}],
+    'glutamine':   [{start:1,  end:52, label:'gut foundation'}]
+  },
+  cognitive: {
+    // Selank + Semax alternated to avoid tolerance
+    'selank':      [{start:1,  end:4,  label:'pulse'}, {start:7,  end:10}, {start:13, end:16}, {start:19, end:22}, {start:25, end:28}, {start:31, end:34}, {start:37, end:40}, {start:43, end:46}],
+    'semax':       [{start:5,  end:8,  label:'alt pulse'}, {start:11, end:14}, {start:17, end:20}, {start:23, end:26}, {start:29, end:32}, {start:35, end:38}, {start:41, end:44}, {start:47, end:50}],
+    'dsip':        [{start:1,  end:52, label:'pre-bed nightly'}],
+    'dihexa':      [{start:1,  end:4}, {start:9,  end:12}, {start:17, end:20}, {start:25, end:28}, {start:33, end:36}, {start:41, end:44}],
+    'pe2228':      [{start:1,  end:4}, {start:9,  end:12}, {start:17, end:20}, {start:25, end:28}]
+  },
+  libido: {
+    'pt141':       [{start:1,  end:52, label:'as-needed (45 min before)'}],
+    'melanotan2':  [{start:1,  end:4,  label:'tan loading'}, {start:5,  end:52, label:'maintenance 2x/wk'}],
+    'melanotan1':  [{start:1,  end:4,  label:'tan loading'}, {start:5,  end:52, label:'maintenance 2x/wk'}]
+  },
+  trt: {
+    // Continuous Rx — lifelong with lab monitoring at 6wk, 12wk, then quarterly
+    'testosterone-cyp':  [{start:1, end:52, label:'2x weekly Mon+Thu'}],
+    'testosterone-enth': [{start:1, end:52, label:'2x weekly Mon+Thu'}],
+    'testosterone-prop': [{start:1, end:52, label:'every other day'}]
+  }
+};
+
+// ============================================================
+// CATEGORY EDUCATION CALLOUTS — appear above the timeline
+// when relevant peptides selected
+// ============================================================
+const CATEGORY_CALLOUTS = {
+  trt: [
+    {
+      icon:'⚠️',
+      title:'Get below ~15% body fat BEFORE TRT for full effect',
+      body:'Aromatase enzyme lives in fat tissue. Higher body fat = more testosterone converts to estradiol (E2) before it can do its job. You inject 200mg, but at 20%+ body fat, a meaningful chunk gets aromatized into estrogen — you don\'t feel the full lift in libido, energy, recovery, or muscle response. Cut to 15% or lower first, OR plan for an aromatase inhibitor (Rx) under your doctor\'s supervision. This is why "I started TRT and didn\'t feel anything" happens to a lot of overweight guys.'
+    },
+    {
+      icon:'🩺',
+      title:'Lab schedule: 6wk → 12wk → quarterly',
+      body:'Baseline labs before starting (total + free T, E2, SHBG, hematocrit, lipids, PSA). Re-check at 6 weeks (assess response), 12 weeks (steady-state), then quarterly. Your doctor adjusts dose based on labs, not how you feel.'
+    }
+  ],
+  longevity: [
+    {
+      icon:'🧬',
+      title:'Why this order matters',
+      body:'Each peptide sets up the next. Senolytic (FOX04) clears damaged cells FIRST so telomerase (Epitalon) works on a cleaner population. NAD+ fills the cofactor pool BEFORE MOTS-c uses it to build new mitochondria. SS-31 repairs the NEW mitos that biogenesis just produced — running it before MOTS-c wastes the protocol because there are no new mitos to repair yet.'
+    }
+  ],
+  fatloss: [
+    {
+      icon:'⚖️',
+      title:'GLP-1 first, then layer',
+      body:'Get the GLP-1 (Tirz/Sema/Reta) titrated and dialed in BEFORE adding AOD-9604, 5-Amino, or Tesamorelin. Layering everything at once makes it impossible to attribute side effects to the right peptide. Titrate the big lever, then layer the smaller ones in week 5+.'
+    }
+  ],
+  'gh-axis': [
+    {
+      icon:'🌙',
+      title:'Pulse timing > dose',
+      body:'GH peptides work in pulses. Inject empty-stomach + nighttime for the strongest natural-rhythm GH spike. Eating sugar within 90 min of the dose blunts the response.'
+    }
+  ],
+  recovery: [
+    {
+      icon:'🔁',
+      title:'BPC-157 + TB-500 = paired pulse',
+      body:'These two work better together than separately — angiogenesis (TB-500) + tissue protection (BPC-157). Run them as a 4-6 week pulse during active recovery, then OFF for at least 4 weeks. Continuous use loses effectiveness.'
+    }
+  ],
+  cognitive: [
+    {
+      icon:'🧠',
+      title:'Alternate Selank ↔ Semax',
+      body:'Both build tolerance fast. Pulse Selank weeks 1-4, switch to Semax weeks 5-8, back to Selank weeks 9-12. Or just run 4 weeks on / 2 weeks off. Daily continuous use of either flattens the response within a month.'
+    }
+  ]
+};
+
+// ============================================================
 // PHASE TEMPLATES per goal
 // ============================================================
 const PHASE_TEMPLATES = {
@@ -511,32 +647,56 @@ function render() {
       <div class="tl-cat-header">
         <div class="tl-cat-label">${catLabels[cat] || cat}</div>
         <div class="tl-cat-meta"><strong>${peps.length}</strong> peptide${peps.length>1?'s':''} · ${catSequenceHints[cat] || ''}</div>
-      </div>
-      <div class="tl-grid">`;
+      </div>`;
+
+    // Category education callouts (only if user is on this category as active goal)
+    if (cat === activeGoal && CATEGORY_CALLOUTS[cat]) {
+      CATEGORY_CALLOUTS[cat].forEach(c => {
+        html += `
+          <div style="background:rgba(0,212,255,.06);border-left:3px solid var(--accent);padding:12px 14px;border-radius:8px;margin-bottom:10px;font-size:13px;line-height:1.5;">
+            <div style="font-weight:700;color:var(--white);margin-bottom:4px;">${c.icon} ${c.title}</div>
+            <div style="color:var(--text);">${c.body}</div>
+          </div>`;
+      });
+    }
+
+    html += `<div class="tl-grid">`;
 
     peps.forEach((p, idx) => {
-      const cycleWk = p.cycleWeeks;
-      const offWk = p.offWeeks;
-      const total = cycleWk + offWk;
       let bars = '';
-      if (p.tier === 'foundation') {
-        bars = `<div class="tl-bar foundation" style="left:0%;right:0%;"></div>`;
-      } else if (p.tier === 'pulse') {
-        const order = p.sequenceOrder || 1;
-        const startWk = (order - 1) * 8 + 1;
-        const endWk = startWk + cycleWk;
-        const left = ((startWk-1)/52)*100;
-        const right = 100 - (endWk/52)*100;
-        bars = `<div class="tl-bar pulse" style="left:${left}%;right:${right}%;"></div>`;
+      // First check year-long curriculum schedule for this category
+      const goalSched = YEAR_SCHEDULE[activeGoal] || {};
+      const sched = goalSched[p.slug];
+      if (sched && sched.length > 0) {
+        sched.forEach(seg => {
+          const left = ((seg.start-1)/52)*100;
+          const right = 100 - (seg.end/52)*100;
+          bars += `<div class="tl-bar ${p.tier}" style="left:${left}%;right:${right}%;" title="${seg.label||''} (Wk ${seg.start}-${seg.end})"></div>`;
+        });
       } else {
-        let wk = 0;
-        while (wk < 52 && total > 0) {
-          const onStart = wk;
-          const onEnd = Math.min(wk + cycleWk, 52);
-          const left = (onStart/52)*100;
-          const right = 100 - (onEnd/52)*100;
-          bars += `<div class="tl-bar layer" style="left:${left}%;right:${right}%;"></div>`;
-          wk += total;
+        // Fall back to cycleWeeks/offWeeks pattern if not scheduled for this goal
+        const cycleWk = p.cycleWeeks;
+        const offWk = p.offWeeks;
+        const total = cycleWk + offWk;
+        if (p.tier === 'foundation') {
+          bars = `<div class="tl-bar foundation" style="left:0%;right:0%;"></div>`;
+        } else if (p.tier === 'pulse') {
+          const order = p.sequenceOrder || 1;
+          const startWk = (order - 1) * 8 + 1;
+          const endWk = startWk + cycleWk;
+          const left = ((startWk-1)/52)*100;
+          const right = 100 - (endWk/52)*100;
+          bars = `<div class="tl-bar pulse" style="left:${left}%;right:${right}%;"></div>`;
+        } else {
+          let wk = 0;
+          while (wk < 52 && total > 0) {
+            const onStart = wk;
+            const onEnd = Math.min(wk + cycleWk, 52);
+            const left = (onStart/52)*100;
+            const right = 100 - (onEnd/52)*100;
+            bars += `<div class="tl-bar layer" style="left:${left}%;right:${right}%;"></div>`;
+            wk += total;
+          }
         }
       }
 
