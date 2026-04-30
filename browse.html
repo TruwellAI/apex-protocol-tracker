@@ -962,24 +962,8 @@ if (!localStorage.getItem('apex_email_captured') && !sessionStorage.getItem('ape
 </footer>
 
 <!-- ═══════════════════ MOBILE BOTTOM NAV ══════════════════ -->
-<style>
-#wiki-bottom-nav{display:none;}
-@media(max-width:768px){
-  #wiki-bottom-nav{display:grid!important;}
-  body{padding-bottom:80px;}
-}
-</style>
-<div id="wiki-bottom-nav" style="position:fixed;bottom:0;left:0;right:0;z-index:10000;background:#0a0e14;border-top:1px solid rgba(0,196,140,.3);padding:6px 0 env(safe-area-inset-bottom);grid-template-columns:repeat(3,1fr);">
-  <a href="tracker-v2.html" style="background:none;border:none;color:#8899aa;font-family:'Rajdhani',sans-serif;font-size:9px;font-weight:700;letter-spacing:.06em;cursor:pointer;padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:3px;text-transform:uppercase;text-decoration:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation;min-height:44px;">
-    <span style="font-size:22px;">⚗️</span>TRACKER
-  </a>
-  <a href="tracker-v2.html" style="background:none;border:none;color:#8899aa;font-family:'Rajdhani',sans-serif;font-size:9px;font-weight:700;letter-spacing:.06em;cursor:pointer;padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:3px;text-transform:uppercase;text-decoration:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation;min-height:44px;">
-    <span style="font-size:22px;">🥗</span>MACROS
-  </a>
-  <a href="index.html" style="background:none;border:none;color:#00c48c;font-family:'Rajdhani',sans-serif;font-size:9px;font-weight:700;letter-spacing:.06em;cursor:pointer;padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:3px;text-transform:uppercase;text-decoration:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation;min-height:44px;">
-    <span style="font-size:22px;">📖</span>WIKI
-  </a>
-</div>
+<!-- Removed: TRACKER · MACROS · WIKI bottom nav. Was floating mid-screen on some mobile views and was redundant with the back arrow + home tiles. -->
+
 
 <!-- PERSISTENT WIZARD TRIGGER -->
 <a href="research-hub.html" id="apex-fab" style="position:fixed;bottom:20px;right:20px;background:#00ff9d;color:#080c10;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;padding:12px 18px;text-decoration:none;z-index:9999;box-shadow:0 6px 24px rgba(0,255,157,.35);display:flex;align-items:center;gap:8px;border-radius:2px;">🧪 Walk me through</a>
