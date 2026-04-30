@@ -549,9 +549,13 @@ body::before{
         const unitsLbl = doseToUnitsLabel(dose, slug, { userRecon });
         return `<div class="tit-row"><span class="tit-week">${t.w}</span><span class="tit-dose">${unitsLbl}</span></div>`;
       }).join('');
+      const unitContext = isSplit
+        ? `Units <strong>per dose</strong> · ${splitCfg.freqLabel}`
+        : `Units <strong>per WEEK</strong> · single weekly injection`;
       return `
         <div class="tit-table">
-          <div class="tit-title">⚡ Titration Schedule${isSplit ? ' (Split)' : ''} — Units on the Pen</div>
+          <div class="tit-title">⚡ Titration Schedule${isSplit ? ' (Split)' : ''}</div>
+          <div class="tit-subtitle" style="font-size:11px;color:var(--muted,#7a8d99);margin:-2px 0 8px;font-family:'Share Tech Mono',monospace;letter-spacing:.05em;">${unitContext}</div>
           <div class="tit-rows">${rows}</div>
         </div>`;
     }
