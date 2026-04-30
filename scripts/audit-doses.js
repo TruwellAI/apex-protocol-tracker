@@ -33,9 +33,22 @@ const REFERENCE = {
   'tesamorelin.html':  { min: 1.0,  max: 2.0,  route: 'sc',   freq: 'daily',     note: '1-2mg/day FDA' },
   'cjc-ipa-blend.html':{ min: 0.20, max: 0.40, route: 'sc',   freq: 'daily',     note: 'Blend, 200-400 mcg pre-bed' },
   'igf1-lr3.html':     { min: 0.02, max: 0.08, route: 'sc',   freq: 'daily',     note: '20-80 mcg post-workout' },
-  // Oral / non-injectable - flag if injection dose is set
-  '5amino1mq.html':    { min: 50,   max: 100,  route: 'oral', freq: 'daily',     note: 'ORAL 50-100mg/day; flag if injected' },
+  '5amino1mq.html':    { min: 1,    max: 5,    route: 'sc',   freq: 'daily',     note: 'NNMT inhibitor; SubQ injection 1-5mg/day' },
   'nad-plus.html':     { min: 50,   max: 200,  route: 'sc',   freq: 'weekly',    note: 'Loading 100mg 2x/wk × 4wk' },
+  // Round 2 — fill remaining warning items with research-backed ranges
+  'melanotan1.html':   { min: 0.25, max: 1.0,  route: 'sc',   freq: 'daily/2x wk',note: 'Loading 1mg/d × 10d, maint 0.5mg 2x/wk' },
+  'melanotan2.html':   { min: 0.25, max: 1.0,  route: 'sc',   freq: 'daily/2x wk',note: 'Loading 0.5-1mg/d, maint 0.5mg 2x/wk' },
+  'pt141.html':        { min: 1.0,  max: 2.0,  route: 'sc',   freq: 'as-needed', note: 'Bremelanotide; 45 min before activity' },
+  'sermorelin.html':   { min: 0.2,  max: 0.5,  route: 'sc',   freq: 'daily PM', note: 'GHRH analog; 200-500 mcg pre-bed' },
+  'dsip.html':         { min: 0.1,  max: 0.3,  route: 'sc',   freq: 'pre-bed',  note: 'Delta sleep-inducing; 100-300 mcg' },
+  'dihexa.html':       { min: 8,    max: 25,   route: 'sc',   freq: 'daily',    note: 'Hepatocyte-GF mimetic; 8-25 mg/day SubQ' },
+  'pe2228.html':       { min: 0.25, max: 0.5,  route: 'sc',   freq: 'daily',    note: 'BDNF-like neuropep; 250-500 mcg' },
+  'l-carnitine.html':  { min: 200,  max: 500,  route: 'sc',   freq: 'pre-cardio',note: 'Fat-oxidation cofactor; 200-500 mg pre-cardio' },
+  'glutamine.html':    { min: 200,  max: 500,  route: 'sc',   freq: 'daily',    note: 'Gut/recovery support; 200-500 mg/day' },
+  'glutathione.html':  { min: 200,  max: 600,  route: 'sc',   freq: '2-3x/wk',  note: 'Master antioxidant; 200-600 mg 2-3x/wk' },
+  'testosterone-cyp.html':  { min: 50, max: 100, route: 'sc/im', freq: '2x weekly', note: 'Rx · Cyp 200mg/mL pre-mixed; 50-100mg per inj × 2/wk = 100-200/wk' },
+  'testosterone-enth.html': { min: 50, max: 100, route: 'sc/im', freq: '2x weekly', note: 'Rx · Enth 200mg/mL pre-mixed; 50-100mg per inj × 2/wk' },
+  'testosterone-prop.html': { min: 25, max: 75,  route: 'sc/im', freq: 'EOD',      note: 'Rx · Prop 100mg/mL pre-mixed; 25-75mg every other day' },
 };
 
 const ROOT = path.resolve(__dirname, '..');
