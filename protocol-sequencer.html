@@ -70,10 +70,19 @@ h1 em{color:var(--accent2);font-style:normal;}
 .pep-cadence{color:var(--muted);font-size:12px;flex:1;}
 .pep-window{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--accent);text-transform:uppercase;flex-shrink:0;}
 
-.synergy-card{background:rgba(0,255,157,.06);border-left:3px solid var(--accent2);padding:12px 14px;border-radius:8px;margin-top:14px;font-size:13px;}
-.synergy-card strong{color:var(--accent2);}
-.warning-card{background:rgba(255,107,53,.08);border-left:3px solid var(--orange);padding:12px 14px;border-radius:8px;margin-top:14px;font-size:13px;}
-.warning-card strong{color:var(--orange);}
+/* Collapsible insight cards — closed by default, tap to expand */
+.insight-card{background:rgba(0,255,157,.06);border-left:3px solid var(--accent2);border-radius:8px;margin-top:8px;font-size:13px;overflow:hidden;}
+.insight-card.warning{background:rgba(255,107,53,.08);border-left-color:var(--orange);}
+.insight-card summary{padding:10px 14px;cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;font-weight:600;color:var(--accent2);user-select:none;-webkit-tap-highlight-color:transparent;}
+.insight-card.warning summary{color:var(--orange);}
+.insight-card summary::-webkit-details-marker{display:none;}
+.insight-card summary::after{content:'▾';margin-left:auto;font-size:12px;opacity:.6;transition:transform .2s;}
+.insight-card[open] summary::after{transform:rotate(180deg);}
+.insight-card .insight-body{padding:0 14px 12px;color:var(--text);line-height:1.55;}
+.insights-wrap{margin:14px 0 4px;}
+.insights-toggle{display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.25);border-radius:8px;cursor:pointer;color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;-webkit-tap-highlight-color:transparent;user-select:none;}
+.insights-toggle::after{content:'▾';margin-left:auto;transition:transform .2s;}
+.insights-toggle.open::after{transform:rotate(180deg);}
 
 .legend{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin:24px 0 12px;padding:14px;background:var(--panel);border:1px solid var(--border);border-radius:12px;font-size:12px;}
 .legend-item{display:flex;align-items:center;gap:6px;color:var(--muted);}
@@ -552,23 +561,38 @@ function render() {
   }
 
   // Pulse-conflict warning
+  // (Phase cards removed — go straight from 52-week timeline)
+  // Collapsible insight bundle — warnings + synergies hidden behind one tap
+  // so the timeline appears immediately below the goal chips.
+  const insightCards = [];
   if (pulseConflicts.length >= 2) {
     const order = pulseConflicts
       .map(p => ({slug:p, order:PEPS[p].sequenceOrder||99, name:PEPS[p].name}))
       .sort((a,b) => a.order - b.order)
       .map(p => p.name);
-    html += `<div class="warning-card">
-      <strong>⏳ Multiple pulse peptides selected.</strong> ${pulseConflicts.map(p=>PEPS[p].name).join(' + ')} are all 1-2× per year protocols. Running them simultaneously wastes the window. Suggested year-order: <strong>${order.join(' → ')}</strong>.
-    </div>`;
+    insightCards.push(`<details class="insight-card warning">
+      <summary>⏳ Multiple pulse peptides selected — tap for year-order</summary>
+      <div class="insight-body">${pulseConflicts.map(p=>PEPS[p].name).join(' + ')} are all 1-2× per year protocols. Running them simultaneously wastes the window. Suggested year-order: <strong>${order.join(' → ')}</strong>.</div>
+    </details>`);
   }
-
-  // (Phase cards removed — go straight from goal bar to the 52-week timeline)
-
-  // Synergy callouts
   if (synergies.length > 0) {
     synergies.forEach(s => {
-      html += `<div class="synergy-card">⚡ ${s.msg}</div>`;
+      // Extract first bold phrase as the summary; full message in body
+      const m = s.msg.match(/^<strong>(.+?)<\/strong>\s*—?\s*(.*)$/);
+      const title = m ? m[1] : s.msg.slice(0, 60);
+      const body  = m ? m[2] : s.msg;
+      insightCards.push(`<details class="insight-card">
+        <summary>⚡ ${title}</summary>
+        <div class="insight-body">${body}</div>
+      </details>`);
     });
+  }
+  if (insightCards.length > 0) {
+    const count = insightCards.length;
+    html += `<div class="insights-wrap">
+      <div class="insights-toggle" onclick="this.classList.toggle('open');document.getElementById('insights-list').style.display=this.classList.contains('open')?'block':'none';">💡 ${count} insight${count>1?'s':''} about your stack</div>
+      <div id="insights-list" style="display:none;">${insightCards.join('')}</div>
+    </div>`;
   }
 
   // Visual 52-week timeline
@@ -640,14 +664,17 @@ function render() {
         <div class="tl-cat-meta"><strong>${peps.length}</strong> peptide${peps.length>1?'s':''} · ${catSequenceHints[cat] || ''}</div>
       </div>`;
 
-    // Category education callouts (only if user is on this category as active goal)
+    // Category education callouts — COLLAPSED by default so timeline isn't buried
     if (cat === activeGoal && CATEGORY_CALLOUTS[cat]) {
       CATEGORY_CALLOUTS[cat].forEach(c => {
         html += `
-          <div style="background:rgba(0,212,255,.06);border-left:3px solid var(--accent);padding:12px 14px;border-radius:8px;margin-bottom:10px;font-size:13px;line-height:1.5;">
-            <div style="font-weight:700;color:var(--white);margin-bottom:4px;">${c.icon} ${c.title}</div>
-            <div style="color:var(--text);">${c.body}</div>
-          </div>`;
+          <details style="background:rgba(0,212,255,.06);border-left:3px solid var(--accent);border-radius:8px;margin-bottom:8px;overflow:hidden;">
+            <summary style="padding:10px 14px;cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;font-weight:700;color:var(--white);font-size:13px;-webkit-tap-highlight-color:transparent;user-select:none;">
+              ${c.icon} ${c.title}
+              <span style="margin-left:auto;font-size:11px;opacity:.6;color:var(--accent);">tap to read ▾</span>
+            </summary>
+            <div style="padding:0 14px 12px;color:var(--text);font-size:13px;line-height:1.55;">${c.body}</div>
+          </details>`;
       });
     }
 
