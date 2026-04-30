@@ -338,7 +338,7 @@ body::before{
 
   <div class="disclaim">⚠ Research use only · Not medical advice · Talk to a licensed provider</div>
 
-  <a href="protocol-sequencer.html" style="display:block;margin:14px 16px;padding:12px 16px;background:linear-gradient(135deg,#00D4FF,#00C48C);color:#080c10;font-family:'Rajdhani',sans-serif;font-weight:800;font-size:13px;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;border-radius:8px;text-align:center;box-shadow:0 4px 12px rgba(0,212,255,.2);">📅 View My 52-Week Plan →</a>
+  <!-- 52-Week button removed — the 52-Week tab below now goes to the same canonical sequencer page -->
 
   <!-- F-25: share my stack -->
   <button id="share-stack-btn" style="display:block;margin:0 16px 14px;padding:10px 16px;background:transparent;border:1px solid var(--border2);color:var(--text);font-family:'Rajdhani',sans-serif;font-weight:600;font-size:12px;letter-spacing:.08em;text-transform:uppercase;border-radius:8px;cursor:pointer;width:calc(100% - 32px);">📤 Share my stack</button>
@@ -1557,20 +1557,24 @@ body::before{
 
   // ── TAB SWITCHER ────────────────
   function switchTab(name){
+    // 52-Week tab is the SAME page as the "View my 52-week plan" button — single canonical view
+    if (name === 'timeline') {
+      window.location.href = 'protocol-sequencer.html';
+      return;
+    }
     document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
     document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.dataset.panel === name));
     try { localStorage.setItem('apex_active_tab', name); } catch(e){}
-    // Scroll to top of panel
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
   document.addEventListener('click', e => {
     const t = e.target.closest('.tab');
     if (t && t.dataset.tab) switchTab(t.dataset.tab);
   });
-  // Restore last viewed tab on load
+  // Restore last viewed tab on load — but never restore to 'timeline' (that's now a navigation, not a tab)
   try {
     const saved = localStorage.getItem('apex_active_tab');
-    if (saved && ['today','stack','timeline'].includes(saved)) switchTab(saved);
+    if (saved && ['today','stack'].includes(saved)) switchTab(saved);
   } catch(e){}
 
   // ── INIT ───────────────────────────────
