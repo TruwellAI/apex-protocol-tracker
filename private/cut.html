@@ -321,13 +321,15 @@ textarea{resize:vertical;min-height:60px;}
               <li><code>Find Health Samples</code> · type: <strong>Active Energy</strong> · today only · sum</li>
               <li><code>Find Health Samples</code> · type: <strong>Workout</strong> · today · sum Active Energy Burned</li>
               <li><code>Find Health Samples</code> · type: <strong>Step Count</strong> · today · sum</li>
-              <li><code>Find Health Samples</code> · type: <strong>Body Mass</strong> · most recent · 1 result <em style="color:var(--accent2);">(Yunmai writes here)</em></li>
-              <li><code>Find Health Samples</code> · type: <strong>Body Fat Percentage</strong> · most recent · 1 result <em style="color:var(--accent2);">(Yunmai writes here)</em></li>
-              <li><code>Find Health Samples</code> · type: <strong>Lean Body Mass</strong> · most recent · 1 result <em style="color:var(--accent2);">(Yunmai writes here)</em></li>
+              <li><code>Find Health Samples</code> · type: <strong>Body Mass</strong> · most recent · 1 result <em style="color:var(--accent2);">(Hume writes here)</em></li>
+              <li><code>Find Health Samples</code> · type: <strong>Body Fat Percentage</strong> · most recent · 1 result <em style="color:var(--accent2);">(Hume writes here)</em></li>
+              <li><code>Find Health Samples</code> · type: <strong>Lean Body Mass</strong> · most recent · 1 result <em style="color:var(--accent2);">(Hume writes here)</em></li>
+              <li><code>Find Health Samples</code> · type: <strong>Body Mass Index</strong> · most recent · 1 result <em style="color:var(--muted);">(Hume bonus)</em></li>
+              <li><code>Find Health Samples</code> · type: <strong>Basal Energy Burned</strong> · today · sum <em style="color:var(--muted);">(Hume measures BMR)</em></li>
               <li><code>Find Health Samples</code> · type: <strong>Resting Heart Rate</strong> · today · average</li>
               <li><code>Find Health Samples</code> · type: <strong>Heart Rate Variability SDNN</strong> · today · average</li>
               <li><code>Text</code> action — paste this template (drag the variables from above into each placeholder):
-                <pre style="background:var(--panel2);padding:10px;border-radius:6px;font-size:11px;margin-top:6px;overflow-x:auto;color:var(--accent2);font-family:'Share Tech Mono',monospace;">https://truwellai.github.io/apex-protocol-tracker/private/cut.html?ae=[ACTIVE]&amp;wc=[WORKOUT]&amp;steps=[STEPS]&amp;w=[WEIGHT]&amp;bf=[BODYFAT]&amp;lbm=[LEAN]&amp;rhr=[RHR]&amp;hrv=[HRV]</pre>
+                <pre style="background:var(--panel2);padding:10px;border-radius:6px;font-size:11px;margin-top:6px;overflow-x:auto;color:var(--accent2);font-family:'Share Tech Mono',monospace;">https://truwellai.github.io/apex-protocol-tracker/private/cut.html?ae=[ACTIVE]&amp;wc=[WORKOUT]&amp;steps=[STEPS]&amp;w=[WEIGHT]&amp;bf=[BODYFAT]&amp;lbm=[LEAN]&amp;bmr=[BASAL]&amp;rhr=[RHR]&amp;hrv=[HRV]</pre>
               </li>
               <li><code>Open URLs</code> — pass the Text from above</li>
             </ul>
@@ -344,7 +346,17 @@ textarea{resize:vertical;min-height:60px;}
 
         <strong style="color:var(--orange);">Pro tip:</strong> Add a second shortcut block to silently log everything to a Notes file with date stamp — instant audit trail.<br><br>
 
-        <strong style="color:var(--white);">Don't want to build the Shortcut?</strong> Open Apple Health every morning, read the 6 numbers off the dashboard, type them above, hit Apply. Takes 30 seconds.
+        <strong style="color:var(--white);">Don't want to build the Shortcut?</strong> Open Apple Health every morning, read the 6 numbers off the dashboard, type them above, hit Apply. Takes 30 seconds.<br><br>
+
+        <strong style="color:var(--accent2);">⚖️ Hume scale enable steps (one-time):</strong>
+        <ol style="margin-left:20px;color:var(--text);line-height:1.7;">
+          <li>Open the <strong>Hume Health</strong> app on your phone</li>
+          <li>Profile → <strong>Connections</strong> (or Settings → Integrations)</li>
+          <li>Tap <strong>Apple Health</strong> → enable ALL data types (weight, body fat %, lean mass, BMI, body water, BMR, visceral fat, bone mass)</li>
+          <li>Step on the scale once with bare feet — first sync takes ~30 sec</li>
+          <li>Open Apple Health → Body Measurements → confirm Hume readings appear</li>
+        </ol>
+        <strong style="color:var(--orange);">Hume-specific advantage:</strong> their BMR is bioelectrical-impedance derived (more accurate than Mifflin-St Jeor estimate). Once Hume is syncing, SHRED's Energy card will use the actual measured BMR instead of the calculation. Big win on cut accuracy.
       </div>
     </details>
   </div>
@@ -423,12 +435,16 @@ function jacksonPollock3(chest, abd, thigh, age){
 }
 
 function calcBmr(){
+  // 1st priority: measured BMR from Hume scale (synced via Shortcut as 'bmr' or stats.rmr)
+  const measuredBmr = parseFloat(stats.measuredBmr || stats.rmr);
+  if (measuredBmr > 0) return Math.round(measuredBmr);
+
   const w = parseFloat(stats.weight), bf = parseFloat(stats.bf), age = parseFloat(stats.age), h = parseFloat(stats.height);
   if (!w || !age || !h) return 0;
   const lbm = stats.lbm ? parseFloat(stats.lbm) : (bf ? w * (1 - bf/100) : 0);
-  // Prefer Katch-McArdle if LBM known (more accurate for cutting/lean folks)
+  // 2nd: Katch-McArdle if LBM known (more accurate for cutting/lean folks)
   if (lbm > 0) return Math.round(370 + 21.6 * lbToKg(lbm));
-  // Fallback: Mifflin-St Jeor (men): 10*kg + 6.25*cm - 5*age + 5
+  // 3rd: Mifflin-St Jeor (men): 10*kg + 6.25*cm - 5*age + 5
   return Math.round(10*lbToKg(w) + 6.25*inToCm(h) - 5*age + 5);
 }
 
@@ -733,14 +749,20 @@ function readUrlParamsToFields(){
       if (!isNaN(num)) { document.getElementById(id).value = num; any = true; }
     }
   }
-  // BF + LBM also flow into the Stats card
+  // BF + LBM + BMR also flow into the Stats card (BMR is the killer Hume feature)
   const bf = parseFloat(params.get('bf'));
   if (!isNaN(bf)) { document.getElementById('s-bf').value = bf; stats.bf = bf; }
   const lbm = parseFloat(params.get('lbm'));
   if (!isNaN(lbm)) { document.getElementById('s-lbm').value = lbm; stats.lbm = lbm; }
   const w = parseFloat(params.get('w'));
   if (!isNaN(w)) { document.getElementById('s-weight').value = w; stats.weight = w; }
-  if (any || !isNaN(bf) || !isNaN(lbm) || !isNaN(w)) {
+  const bmr = parseFloat(params.get('bmr'));
+  if (!isNaN(bmr) && bmr > 0) {
+    stats.measuredBmr = bmr;
+    document.getElementById('s-rmr').value = bmr;
+    stats.rmr = bmr;
+  }
+  if (any || !isNaN(bf) || !isNaN(lbm) || !isNaN(w) || !isNaN(bmr)) {
     put(KEYS.stats, stats);
     document.getElementById('watch-meta').textContent = '✅ Synced from Apple Watch';
     document.getElementById('watch-status').textContent = '⚡ Pre-filled from URL params. Tap Apply to commit.';
