@@ -1,11 +1,10 @@
-# Apex Dose Audit — 2026-04-30T15:23:40.049Z
+# Apex Dose Audit — 2026-04-30T15:24:25.193Z
 
 **Checked:** 37 peptides · **Reference:** 37
-**Status:** 🔴 FAIL · 2 issues · 0 warnings · 35 ok
+**Status:** 🟢 PASS · 0 issues · 0 warnings · 37 ok
 
 ## Issues
-❌ testosterone-cyp.html: 150mg HIGH (range 50-100) — Rx · Cyp 200mg/mL pre-mixed; 50-100mg per inj × 2/wk = 100-200/wk
-❌ testosterone-enth.html: 150mg HIGH (range 50-100) — Rx · Enth 200mg/mL pre-mixed; 50-100mg per inj × 2/wk
+_(none)_
 
 ## Warnings
 _(none)_
@@ -45,4 +44,6 @@ _(none)_
 ✅ pe2228.html: 0.375mg in range 0.25-0.5
 ✅ l-carnitine.html: 350mg in range 200-500
 ✅ glutamine.html: 350mg in range 200-500
-✅ testosterone-prop.html: 75mg in range 25-75
+✅ testosterone-cyp.html: 150mg in range 100-200
+✅ testosterone-enth.html: 150mg in range 100-200
+✅ testosterone-prop.html: 75mg in range 75-175

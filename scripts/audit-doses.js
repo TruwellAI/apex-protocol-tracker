@@ -46,9 +46,10 @@ const REFERENCE = {
   'l-carnitine.html':  { min: 200,  max: 500,  route: 'sc',   freq: 'pre-cardio',note: 'Fat-oxidation cofactor; 200-500 mg pre-cardio' },
   'glutamine.html':    { min: 200,  max: 500,  route: 'sc',   freq: 'daily',    note: 'Gut/recovery support; 200-500 mg/day' },
   'glutathione.html':  { min: 200,  max: 600,  route: 'sc',   freq: '2-3x/wk',  note: 'Master antioxidant; 200-600 mg 2-3x/wk' },
-  'testosterone-cyp.html':  { min: 50, max: 100, route: 'sc/im', freq: '2x weekly', note: 'Rx · Cyp 200mg/mL pre-mixed; 50-100mg per inj × 2/wk = 100-200/wk' },
-  'testosterone-enth.html': { min: 50, max: 100, route: 'sc/im', freq: '2x weekly', note: 'Rx · Enth 200mg/mL pre-mixed; 50-100mg per inj × 2/wk' },
-  'testosterone-prop.html': { min: 25, max: 75,  route: 'sc/im', freq: 'EOD',      note: 'Rx · Prop 100mg/mL pre-mixed; 25-75mg every other day' },
+  // Testosterone TYPICAL_DOSE_MG = WEEKLY TOTAL (not per-injection) — split across doses on tracker
+  'testosterone-cyp.html':  { min: 100, max: 200, route: 'sc/im', freq: '2x weekly', note: 'Rx · Cyp 200mg/mL pre-mixed · 100-200 mg/wk total (split 2x)' },
+  'testosterone-enth.html': { min: 100, max: 200, route: 'sc/im', freq: '2x weekly', note: 'Rx · Enth 200mg/mL pre-mixed · 100-200 mg/wk total (split 2x)' },
+  'testosterone-prop.html': { min: 75,  max: 175, route: 'sc/im', freq: 'EOD',       note: 'Rx · Prop 100mg/mL pre-mixed · 75-175 mg/wk total (split 3-4x)' },
 };
 
 const ROOT = path.resolve(__dirname, '..');
