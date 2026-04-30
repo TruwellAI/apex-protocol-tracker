@@ -447,6 +447,22 @@ body{padding-bottom:90px;}
   function persistSelection(){
     const arr = Array.from(selected).map(k => k + '.html');
     try { localStorage.setItem('apex_selection', JSON.stringify(arr)); } catch(e){}
+    showSavedToast();
+  }
+  // F-06: tiny saved-state toast
+  let _toastT = null;
+  function showSavedToast(){
+    let t = document.getElementById('saved-toast');
+    if (!t) {
+      t = document.createElement('div');
+      t.id = 'saved-toast';
+      t.style.cssText = 'position:fixed;bottom:96px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(0,255,157,.95);color:#080c10;padding:8px 18px;border-radius:20px;font-family:Rajdhani,sans-serif;font-size:13px;font-weight:700;letter-spacing:.05em;z-index:9999;opacity:0;transition:opacity .2s,transform .25s;pointer-events:none;box-shadow:0 6px 20px rgba(0,255,157,.4);';
+      document.body.appendChild(t);
+    }
+    t.textContent = '✓ Saved';
+    requestAnimationFrame(() => { t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(0)'; });
+    clearTimeout(_toastT);
+    _toastT = setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(20px)'; }, 1200);
   }
 
   const analysis = document.getElementById('analysis');

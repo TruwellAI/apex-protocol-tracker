@@ -379,7 +379,7 @@ body::before{
   <div class="empty-card" id="empty-card" style="display:none;">
     <div class="empty-icon">🧪</div>
     <div class="empty-title">No active protocols</div>
-    <div class="empty-sub">Build your first protocol — pick peptides, mix them, set your titration. We'll handle the math. 90 seconds.</div>
+    <div class="empty-sub">Your stack lives here. Build it once and we handle the math, the cycles, and the reorder timing — every day after that is one tap.</div>
     <a href="compare.html" class="empty-btn">＋ Add Protocol →</a>
   </div>
 
@@ -567,6 +567,25 @@ body::before{
   }
   function setDailyLog(log){
     try { localStorage.setItem('apex_daily_log', JSON.stringify(log)); } catch(e){}
+  }
+  // F-14: undo toast — pops a "✓ X · Undo" pill that reverses the action if tapped within 5s
+  let _undoT = null;
+  function showUndoToast(msg, onUndo){
+    let t = document.getElementById('undo-toast');
+    if (!t) {
+      t = document.createElement('div');
+      t.id = 'undo-toast';
+      t.style.cssText = 'position:fixed;bottom:96px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(13,19,24,.95);border:1px solid rgba(0,255,157,.35);color:#fff;padding:10px 14px 10px 18px;border-radius:24px;font-family:Barlow,sans-serif;font-size:13px;z-index:9999;opacity:0;transition:opacity .2s,transform .25s;display:flex;align-items:center;gap:12px;box-shadow:0 8px 26px rgba(0,0,0,.5);backdrop-filter:blur(8px);';
+      document.body.appendChild(t);
+    }
+    t.innerHTML = `<span>✓ ${msg}</span><button id="undo-btn" style="background:rgba(0,255,157,.18);border:1px solid rgba(0,255,157,.4);color:#00ff9d;font-family:Rajdhani,sans-serif;font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;border-radius:14px;cursor:pointer;-webkit-tap-highlight-color:transparent;">Undo</button>`;
+    requestAnimationFrame(() => { t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(0)'; });
+    document.getElementById('undo-btn').onclick = () => {
+      onUndo();
+      t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(20px)';
+    };
+    clearTimeout(_undoT);
+    _undoT = setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(20px)'; }, 5000);
   }
   // F-09: streak counter for a peptide — counts consecutive days back from today inclusive
   function computeStreak(pepId, log){
@@ -1131,10 +1150,13 @@ body::before{
         </div>
       </div>
 
-      <div class="tile-actions">
-        <button class="tile-btn primary ${isDone ? 'done' : ''}" data-act="log">${isDone ? '✓ Logged Today' : (sched.go ? "Log Today's Dose" : (isAsNeededCycle ? 'Log a Dose' : 'Log Anyway'))}</button>
+      <div class="tile-actions" style="position:relative;">
+        <button class="tile-btn primary ${isDone ? 'done' : ''}" data-act="log" ${(!units && !ORAL_SLUGS.has(p.slug) && !SPRAY_SLUGS.has(p.slug)) ? 'disabled style="opacity:.35;pointer-events:none;"' : ''}>${isDone ? '✓ Logged Today' : (sched.go ? "Log Today's Dose" : (isAsNeededCycle ? 'Log a Dose' : 'Log Anyway'))}</button>
         <button class="tile-btn" data-act="refill" title="Reset bottle countdown after mixing a fresh vial">🧪 Refilled</button>
-        <button class="tile-btn" data-act="end">End</button>
+        <button class="tile-btn" data-act="more" aria-label="More" style="padding:8px 12px;font-size:18px;line-height:1;">⋯</button>
+        <div data-menu="more" style="display:none;position:absolute;bottom:100%;right:0;margin-bottom:6px;background:var(--panel);border:1px solid var(--border2);border-radius:8px;padding:4px;box-shadow:0 8px 24px rgba(0,0,0,.5);z-index:10;min-width:140px;">
+          <button class="tile-btn" data-act="end" style="width:100%;text-align:left;padding:10px 14px;color:#ef4444;border:0;background:transparent;font-family:Rajdhani,sans-serif;font-weight:600;cursor:pointer;">End cycle</button>
+        </div>
       </div>
     `;
 
@@ -1147,6 +1169,13 @@ body::before{
       else {
         log[k][p.id] = new Date().toISOString();
         try { if (navigator.vibrate) navigator.vibrate([15, 40, 15]); } catch(_){}
+        // F-14: undo toast
+        showUndoToast(`Logged ${p.name}`, () => {
+          const lg = getDailyLog();
+          if (lg[k]) delete lg[k][p.id];
+          setDailyLog(lg);
+          render();
+        });
         // F-08: dopamine moment — slide-down ✓ + streak count
         const streak = computeStreak(p.id, log);
         const fx = document.createElement('div');
@@ -1186,6 +1215,17 @@ body::before{
       render();
     });
     tile.querySelector('[data-act="edit"]').addEventListener('click', () => openEditModal(p));
+    // F-07: more-menu toggle
+    const moreBtn = tile.querySelector('[data-act="more"]');
+    const moreMenu = tile.querySelector('[data-menu="more"]');
+    if (moreBtn && moreMenu) {
+      moreBtn.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        document.querySelectorAll('[data-menu="more"]').forEach(m => { if (m !== moreMenu) m.style.display='none'; });
+        moreMenu.style.display = moreMenu.style.display === 'block' ? 'none' : 'block';
+      });
+      document.addEventListener('click', () => moreMenu.style.display='none', { once: true });
+    }
 
     return tile;
   }
