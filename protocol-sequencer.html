@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>52-Week Protocol · Apex</title>
+<link rel="icon" type="image/png" href="assets/icons/icon-192.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#080C10">
+<style>
+:root{
+  --bg:#080C10; --panel:#0d1318; --panel2:#11181f;
+  --border:#1a2d3a; --border2:#243845;
+  --text:#E0E0E0; --muted:#7a8d99; --white:#fff;
+  --accent:#00D4FF; --accent2:#00ff9d; --green:#00C48C;
+  --orange:#FF6B35; --warn:#fbbf24; --bad:#ef4444;
+  --foundation:#10b981; --layer:#00D4FF; --pulse:#FF6B35;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Inter',sans-serif;
+  font-size:15px;line-height:1.5;padding:24px 16px 80px;min-height:100vh;
+}
+.wrap{max-width:920px;margin:0 auto;}
+.brand{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;letter-spacing:.06em;text-align:center;margin-bottom:8px;color:var(--accent2);}
+.brand span{color:var(--text);font-weight:500;}
+h1{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:32px;letter-spacing:-.5px;text-align:center;margin:18px 0 8px;color:var(--white);}
+h1 em{color:var(--accent2);font-style:normal;}
+.sub{text-align:center;color:var(--muted);font-size:14px;margin-bottom:28px;}
+.goal-bar{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:24px;}
+.goal-chip{background:var(--panel);border:1px solid var(--border);color:var(--muted);padding:8px 14px;border-radius:999px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;transition:all .15s;}
+.goal-chip:hover{border-color:var(--accent);color:var(--text);}
+.goal-chip.active{background:var(--accent2);border-color:var(--accent2);color:var(--bg);font-weight:700;}
+.empty{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:36px 22px;text-align:center;}
+.empty-icon{font-size:42px;margin-bottom:12px;}
+.empty-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:20px;color:var(--white);margin-bottom:6px;}
+.empty-sub{color:var(--muted);font-size:13px;margin-bottom:18px;}
+.empty a{display:inline-block;padding:12px 22px;background:linear-gradient(135deg,var(--accent2),var(--green));color:var(--bg);text-decoration:none;font-family:'Rajdhani',sans-serif;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:8px;}
+
+.phases{display:grid;gap:18px;margin-bottom:24px;}
+.phase{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px 16px;border-left:4px solid var(--accent);}
+.phase.p-clear{border-left-color:#a78bfa;}
+.phase.p-reset{border-left-color:#00D4FF;}
+.phase.p-rebuild{border-left-color:#00C48C;}
+.phase.p-repair{border-left-color:#10b981;}
+.phase.p-maintain{border-left-color:#7a8d99;}
+.phase.p-titrate{border-left-color:#fbbf24;}
+.phase.p-active{border-left-color:#00C48C;}
+.phase.p-taper{border-left-color:#FF6B35;}
+.phase.p-recomp{border-left-color:#a78bfa;}
+.phase.p-ramp{border-left-color:#fbbf24;}
+.phase.p-cycle{border-left-color:#00C48C;}
+.phase.p-off{border-left-color:#7a8d99;}
+.phase.p-pulse{border-left-color:#FF6B35;}
+.phase.p-daily{border-left-color:#10b981;}
+.phase.p-asneeded{border-left-color:#a78bfa;}
+.phase.p-continuous{border-left-color:#00D4FF;}
+.phase-head{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:6px;}
+.phase-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;letter-spacing:-.2px;color:var(--white);}
+.phase-weeks{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;}
+.phase-desc{color:var(--muted);font-size:13px;margin-bottom:14px;line-height:1.5;}
+.pep-rows{display:grid;gap:8px;}
+.pep-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--panel2);border:1px solid var(--border);border-radius:10px;}
+.tier-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.tier-dot.foundation{background:var(--foundation);}
+.tier-dot.layer{background:var(--layer);}
+.tier-dot.pulse{background:var(--pulse);}
+.pep-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:var(--white);flex:0 0 auto;}
+.pep-cadence{color:var(--muted);font-size:12px;flex:1;}
+.pep-window{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--accent);text-transform:uppercase;flex-shrink:0;}
+
+.synergy-card{background:rgba(0,255,157,.06);border-left:3px solid var(--accent2);padding:12px 14px;border-radius:8px;margin-top:14px;font-size:13px;}
+.synergy-card strong{color:var(--accent2);}
+.warning-card{background:rgba(255,107,53,.08);border-left:3px solid var(--orange);padding:12px 14px;border-radius:8px;margin-top:14px;font-size:13px;}
+.warning-card strong{color:var(--orange);}
+
+.legend{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin:24px 0 12px;padding:14px;background:var(--panel);border:1px solid var(--border);border-radius:12px;font-size:12px;}
+.legend-item{display:flex;align-items:center;gap:6px;color:var(--muted);}
+
+.timeline-section{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px 16px;margin-bottom:24px;}
+.timeline-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;color:var(--white);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.tl-grid{display:grid;gap:6px;}
+.tl-row{display:grid;grid-template-columns:120px 1fr;gap:10px;align-items:center;}
+.tl-row-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;color:var(--white);display:flex;align-items:center;gap:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.tl-track{position:relative;height:20px;background:var(--panel2);border-radius:4px;overflow:hidden;}
+.tl-bar{position:absolute;top:0;bottom:0;border-radius:3px;}
+.tl-bar.foundation{background:var(--foundation);opacity:.85;}
+.tl-bar.layer{background:var(--layer);opacity:.8;}
+.tl-bar.pulse{background:var(--pulse);}
+.tl-week-marks{display:grid;grid-template-columns:120px 1fr;gap:10px;margin-top:6px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;}
+.tl-week-marks-bar{display:flex;justify-content:space-between;}
+
+.actions{display:grid;gap:10px;margin-top:24px;}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:16px 22px;border-radius:10px;text-decoration:none;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border:0;}
+.btn-primary{background:linear-gradient(135deg,var(--accent2),var(--green));color:var(--bg);box-shadow:0 4px 16px rgba(0,255,157,.25);}
+.btn-secondary{background:transparent;border:1px solid var(--border2);color:var(--text);}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent);}
+
+.footer{text-align:center;color:var(--muted);font-size:11px;margin-top:30px;padding:14px;}
+.footer a{color:var(--accent);text-decoration:none;}
+
+@media (max-width:680px){
+  .tl-row{grid-template-columns:96px 1fr;}
+  .tl-week-marks{grid-template-columns:96px 1fr;}
+  h1{font-size:26px;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="brand">APEX <span>· PROTOCOL</span></div>
+  <h1>Your <em>52-week</em> protocol</h1>
+  <div class="sub">Phased schedule. Sequenced for synergy. Pulse peptides spread across the year so nothing gets wasted.</div>
+
+  <div class="goal-bar" id="goal-bar"></div>
+
+  <div id="content"></div>
+
+  <div class="footer">
+    Research-use only · Not medical advice ·
+    <a href="index.html">Home</a> ·
+    <a href="compare.html">Edit stack</a>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// PEPTIDE DATA — tier, cadence, sequence, cycle pattern
+// (Will move to /data/peptides.json when audit bot ships)
+// ============================================================
+const PEPS = {
+  // FAT LOSS
+  'retatrutide':{name:'Retatrutide',tier:'layer',cycleWeeks:24,offWeeks:0,freq:'weekly',titrate:true,phase:'titrate',category:'fatloss'},
+  'semaglutide':{name:'Semaglutide',tier:'layer',cycleWeeks:24,offWeeks:0,freq:'weekly',titrate:true,phase:'titrate',category:'fatloss'},
+  'tirzepatide':{name:'Tirzepatide',tier:'layer',cycleWeeks:24,offWeeks:0,freq:'weekly',titrate:true,phase:'titrate',category:'fatloss'},
+  'aod9604':{name:'AOD-9604',tier:'layer',cycleWeeks:12,offWeeks:4,freq:'daily fasted',phase:'active',category:'fatloss'},
+  '5amino1mq':{name:'5-Amino-1MQ',tier:'layer',cycleWeeks:12,offWeeks:4,freq:'daily oral',phase:'active',category:'fatloss',oral:true},
+  'tesamorelin':{name:'Tesamorelin',tier:'layer',cycleWeeks:12,offWeeks:4,freq:'evening',phase:'active',category:'fatloss'},
+  'l-carnitine':{name:'L-Carnitine',tier:'foundation',cycleWeeks:52,offWeeks:0,freq:'pre-cardio',phase:'continuous',category:'fatloss'},
+  'slu-pp-322':{name:'SLU-PP-332',tier:'layer',cycleWeeks:8,offWeeks:4,freq:'daily',phase:'active',category:'fatloss'},
+  'motsc':{name:'MOTS-c',tier:'layer',cycleWeeks:8,offWeeks:8,freq:'2-3x weekly',phase:'rebuild',category:'longevity',sequenceOrder:4,synergy:['nad-plus']},
+  // GH AXIS
+  'cjc1295-dac':{name:'CJC-1295 DAC',tier:'layer',cycleWeeks:12,offWeeks:4,freq:'2x weekly',phase:'cycle',category:'gh-axis'},
+  'cjc-no-dac':{name:'CJC-1295',tier:'layer',cycleWeeks:12,offWeeks:4,freq:'daily PM',phase:'cycle',category:'gh-axis'},
+  'sermorelin':{name:'Sermorelin',tier:'layer',cycleWeeks:12,offWeeks:4,freq:'daily PM',phase:'cycle',category:'gh-axis'},
+  'ipamorelin':{name:'Ipamorelin',tier:'layer',cycleWeeks:12,offWeeks:4,freq:'1-3x daily',phase:'cycle',category:'gh-axis'},
+  'cjc-ipa-blend':{name:'CJC + Ipa',tier:'layer',cycleWeeks:12,offWeeks:4,freq:'daily PM fasted',phase:'cycle',category:'gh-axis'},
+  'igf1-lr3':{name:'IGF-1 LR3',tier:'layer',cycleWeeks:4,offWeeks:4,freq:'post-workout',phase:'cycle',category:'gh-axis'},
+  // RECOVERY
+  'bpc157':{name:'BPC-157',tier:'layer',cycleWeeks:6,offWeeks:4,freq:'1-2x daily',phase:'pulse',category:'recovery'},
+  'tb500':{name:'TB-500',tier:'layer',cycleWeeks:6,offWeeks:4,freq:'2x weekly',phase:'pulse',category:'recovery'},
+  'kpv':{name:'KPV',tier:'layer',cycleWeeks:6,offWeeks:4,freq:'daily',phase:'pulse',category:'recovery'},
+  'll37':{name:'LL-37',tier:'layer',cycleWeeks:4,offWeeks:4,freq:'daily',phase:'pulse',category:'recovery'},
+  'thymosin-alpha1':{name:'Thymosin α1',tier:'layer',cycleWeeks:8,offWeeks:8,freq:'2x weekly',phase:'pulse',category:'recovery'},
+  'ara290':{name:'ARA-290',tier:'layer',cycleWeeks:4,offWeeks:8,freq:'daily',phase:'pulse',category:'recovery'},
+  'wolverine':{name:'Wolverine Stack',tier:'layer',cycleWeeks:6,offWeeks:4,freq:'daily',phase:'pulse',category:'recovery'},
+  'klow':{name:'KLOW Stack',tier:'layer',cycleWeeks:6,offWeeks:4,freq:'daily',phase:'pulse',category:'recovery'},
+  'glow':{name:'GLOW Stack',tier:'layer',cycleWeeks:6,offWeeks:4,freq:'daily',phase:'pulse',category:'recovery'},
+  // LONGEVITY
+  'fox04-dri':{name:'FOX04-DRI',tier:'pulse',cycleWeeks:1,offWeeks:24,freq:'5-day pulse',phase:'clear',category:'longevity',sequenceOrder:1,pulseInfo:'5-day pulse · 1-2x per year · clears senescent cells before rebuilding'},
+  'epitalon':{name:'Epitalon',tier:'pulse',cycleWeeks:2,offWeeks:24,freq:'daily PM × 10-20d',phase:'reset',category:'longevity',sequenceOrder:2,pulseInfo:'10-20 day pulse · 1-2x per year · telomerase reset'},
+  'cartalax':{name:'Cartalax',tier:'pulse',cycleWeeks:2,offWeeks:24,freq:'daily × 10d',phase:'reset',category:'longevity',sequenceOrder:2,pulseInfo:'10-day pulse · 1-2x per year · bioregulator'},
+  'nad-plus':{name:'NAD+',tier:'layer',cycleWeeks:4,offWeeks:0,freq:'3x weekly load',phase:'rebuild',category:'longevity',sequenceOrder:3,synergy:['motsc'],pulseInfo:'4 wk loading then 1x/wk maintenance'},
+  'ss31':{name:'SS-31',tier:'layer',cycleWeeks:6,offWeeks:6,freq:'daily',phase:'repair',category:'longevity',sequenceOrder:5,note:'Run AFTER MOTS-c — biogenesis first, then repair the new mitos'},
+  'glutathione':{name:'Glutathione',tier:'foundation',cycleWeeks:52,offWeeks:0,freq:'3x weekly',phase:'continuous',category:'longevity'},
+  'ghkcu':{name:'GHK-Cu',tier:'layer',cycleWeeks:12,offWeeks:4,freq:'daily SubQ',phase:'maintain',category:'longevity'},
+  // COGNITIVE
+  'selank':{name:'Selank',tier:'layer',cycleWeeks:4,offWeeks:2,freq:'daily intranasal',phase:'daily',category:'cognitive'},
+  'semax':{name:'Semax',tier:'layer',cycleWeeks:4,offWeeks:2,freq:'daily intranasal',phase:'daily',category:'cognitive'},
+  'dsip':{name:'DSIP',tier:'layer',cycleWeeks:4,offWeeks:2,freq:'pre-bed',phase:'daily',category:'cognitive'},
+  'dihexa':{name:'Dihexa',tier:'layer',cycleWeeks:4,offWeeks:4,freq:'daily',phase:'daily',category:'cognitive'},
+  'pe2228':{name:'PE-22-28',tier:'layer',cycleWeeks:4,offWeeks:4,freq:'intranasal',phase:'daily',category:'cognitive'},
+  // LIBIDO
+  'pt141':{name:'PT-141',tier:'layer',cycleWeeks:52,offWeeks:0,freq:'as needed',phase:'asneeded',category:'libido'},
+  'melanotan2':{name:'Melanotan II',tier:'layer',cycleWeeks:8,offWeeks:8,freq:'daily SubQ',phase:'asneeded',category:'libido'},
+  'melanotan1':{name:'Melanotan I',tier:'layer',cycleWeeks:8,offWeeks:8,freq:'daily SubQ',phase:'asneeded',category:'libido'},
+  // TRT
+  'testosterone-cyp':{name:'Testosterone Cypionate',tier:'layer',cycleWeeks:52,offWeeks:0,freq:'2x weekly',phase:'continuous',category:'trt',rx:true},
+  'testosterone-enth':{name:'Testosterone Enanthate',tier:'layer',cycleWeeks:52,offWeeks:0,freq:'2x weekly',phase:'continuous',category:'trt',rx:true},
+  'testosterone-prop':{name:'Testosterone Propionate',tier:'layer',cycleWeeks:52,offWeeks:0,freq:'every other day',phase:'continuous',category:'trt',rx:true},
+  // STACKS / MISC
+  'glutamine':{name:'Glutamine',tier:'foundation',cycleWeeks:52,offWeeks:0,freq:'daily',phase:'continuous',category:'recovery'},
+  'cardiac-stack':{name:'Cardiac Stack',tier:'layer',cycleWeeks:12,offWeeks:4,freq:'daily',phase:'continuous',category:'longevity'},
+  'longevity-stack':{name:'Longevity Stack',tier:'layer',cycleWeeks:12,offWeeks:4,freq:'daily',phase:'continuous',category:'longevity'},
+  'mito-reset':{name:'Mito Reset',tier:'layer',cycleWeeks:8,offWeeks:8,freq:'2-3x weekly',phase:'rebuild',category:'longevity'}
+};
+
+// ============================================================
+// PHASE TEMPLATES per goal
+// ============================================================
+const PHASE_TEMPLATES = {
+  longevity: [
+    {key:'clear',    name:'CLEAR',    weeks:[1,4],   desc:'Senolytic clears damaged "zombie" cells before rebuilding. Run pulse peptides FIRST to set the foundation for everything that follows.'},
+    {key:'reset',    name:'RESET',    weeks:[5,12],  desc:'Telomerase + bioregulator reset on cleaner cells. NAD+ loading begins to fill the cofactor pool.'},
+    {key:'rebuild',  name:'REBUILD',  weeks:[13,24], desc:'New mitochondria built with substrate available. MOTS-c + NAD+ maintenance work synergistically.'},
+    {key:'repair',   name:'REPAIR',   weeks:[25,36], desc:'SS-31 repairs the freshly-built mitos. Sequenced AFTER biogenesis — never simultaneous.'},
+    {key:'maintain', name:'MAINTAIN', weeks:[37,52], desc:'Background support continues. Plan next year\'s pulse window.'}
+  ],
+  fatloss: [
+    {key:'titrate',  name:'TITRATE',  weeks:[1,4],   desc:'Ramp GLP-1 dose weekly to find tolerance. Never start at maintenance dose.'},
+    {key:'active',   name:'ACTIVE',   weeks:[5,20],  desc:'Maintenance phase — full-dose GLP-1 + complementary fat-loss peptides.'},
+    {key:'taper',   name:'TAPER',    weeks:[21,28], desc:'Reduce GLP-1 dose gradually to lock in body composition without rebound hunger.'},
+    {key:'recomp',   name:'RECOMP',   weeks:[29,52], desc:'Off-cycle. Body composition focus — protein, training. Reassess for next cycle.'}
+  ],
+  'gh-axis': [
+    {key:'ramp',     name:'RAMP',     weeks:[1,2],   desc:'Start at low dose to assess tolerance. GH peptides can cause water retention initially.'},
+    {key:'cycle',    name:'CYCLE',    weeks:[3,12],  desc:'Full-dose cycle. Pulse timing matters — empty stomach + nighttime for max GH spike.'},
+    {key:'off',      name:'OFF',      weeks:[13,16], desc:'Off-cycle prevents pituitary downregulation. Run min 4 weeks off before next cycle.'}
+  ],
+  recovery: [
+    {key:'pulse',    name:'PULSE',    weeks:[1,6],   desc:'Acute injury or recovery focus. Run as needed for 4-6 weeks, then off.'},
+    {key:'off',      name:'OFF',      weeks:[7,10],  desc:'Off-period. Reassess — return to PULSE only when needed.'}
+  ],
+  cognitive: [
+    {key:'daily',    name:'DAILY',    weeks:[1,4],   desc:'Cognitive peptides run in 4-week pulses. Tolerance builds — pulse rather than continuous.'},
+    {key:'off',      name:'OFF',      weeks:[5,6],   desc:'2-week off period restores receptor sensitivity.'}
+  ],
+  libido: [
+    {key:'asneeded', name:'AS-NEEDED', weeks:[1,52], desc:'PT-141 is on-demand (45 min before activity). No daily cycling needed.'}
+  ],
+  trt: [
+    {key:'continuous', name:'CONTINUOUS (Rx)', weeks:[1,52], desc:'Hormone replacement is lifelong under physician supervision. No off-cycle. Lab monitoring at 6 wk, 12 wk, then quarterly.'}
+  ]
+};
+
+const GOAL_LABELS = {
+  longevity:'Longevity & Anti-Aging',
+  fatloss:'Fat Loss',
+  'gh-axis':'GH Axis',
+  recovery:'Healing & Recovery',
+  cognitive:'Cognitive & Mood',
+  libido:'Libido / Sexual Health',
+  trt:'TRT / Hormone (Rx)'
+};
+
+// Synergy callouts surface when 2+ specific peps are stacked
+const SYNERGIES = [
+  {peps:['motsc','nad-plus'],msg:'<strong>MOTS-c + NAD+ stack</strong> — substrate fuels biogenesis. NAD+ fills the cofactor pool, MOTS-c uses it to build new mitochondria.'},
+  {peps:['motsc','ss31'],msg:'<strong>MOTS-c → SS-31 sequence</strong> — biogenesis FIRST (Q3), repair SECOND (Q4). Running them together wastes the protocol.'},
+  {peps:['fox04-dri','epitalon'],msg:'<strong>FOX04 → Epitalon sequence</strong> — clear damaged cells first, then telomerase-reset on the cleaner population. Order matters.'},
+  {peps:['bpc157','tb500'],msg:'<strong>BPC-157 + TB-500</strong> — angiogenesis + tissue repair. Classic recovery stack.'},
+  {peps:['cjc1295-dac','ipamorelin'],msg:'<strong>CJC + Ipamorelin</strong> — GHRH + Ghrelin synergy creates a stronger GH pulse than either alone.'},
+  {peps:['cjc-no-dac','ipamorelin'],msg:'<strong>CJC (no DAC) + Ipamorelin</strong> — pulsatile GH release closer to natural rhythm.'},
+  {peps:['ghkcu','tb500'],msg:'<strong>GHK-Cu + TB-500</strong> — collagen synthesis + tissue repair. Skin and wound healing.'}
+];
+
+// ============================================================
+// LOAD STATE
+// ============================================================
+let activeGoal = 'longevity';
+let selection = [];
+try {
+  const params = new URLSearchParams(location.search);
+  if (params.get('goal') && PHASE_TEMPLATES[params.get('goal')]) activeGoal = params.get('goal');
+  else if (localStorage.getItem('apex_active_goal') && PHASE_TEMPLATES[localStorage.getItem('apex_active_goal')]) {
+    activeGoal = localStorage.getItem('apex_active_goal');
+  }
+} catch(e){}
+try {
+  const raw = JSON.parse(localStorage.getItem('apex_selection') || '[]');
+  selection = raw.map(s => s.replace('.html','')).filter(s => PEPS[s]);
+} catch(e){}
+
+// ============================================================
+// RENDER
+// ============================================================
+const goalBar = document.getElementById('goal-bar');
+Object.keys(PHASE_TEMPLATES).forEach(k => {
+  const chip = document.createElement('button');
+  chip.className = 'goal-chip' + (k === activeGoal ? ' active' : '');
+  chip.textContent = GOAL_LABELS[k];
+  chip.dataset.goal = k;
+  chip.addEventListener('click', () => {
+    activeGoal = k;
+    try { localStorage.setItem('apex_active_goal', k); } catch(e){}
+    document.querySelectorAll('.goal-chip').forEach(c => c.classList.toggle('active', c.dataset.goal === k));
+    render();
+  });
+  goalBar.appendChild(chip);
+});
+
+function bucketPepsByPhase(peps, template) {
+  const buckets = {};
+  template.forEach(p => buckets[p.key] = []);
+  peps.forEach(slug => {
+    const info = PEPS[slug];
+    if (!info) return;
+    // Find which phase this peptide belongs to. Default to first phase for goal.
+    let phaseKey = info.phase;
+    // If peptide's phase doesn't exist in this goal's template, bucket by tier
+    if (!buckets[phaseKey]) {
+      if (info.tier === 'foundation') {
+        // Find a "continuous" or "maintain" or last phase
+        phaseKey = template.find(p => /maintain|continuous|active|daily|cycle/.test(p.key))?.key || template[template.length-1].key;
+      } else {
+        phaseKey = template[0].key;
+      }
+    }
+    buckets[phaseKey].push({slug, ...info});
+  });
+  // Sort within bucket by sequenceOrder if present
+  Object.keys(buckets).forEach(k => {
+    buckets[k].sort((a,b) => (a.sequenceOrder||99) - (b.sequenceOrder||99));
+  });
+  return buckets;
+}
+
+function findSynergies(peps) {
+  return SYNERGIES.filter(s => s.peps.every(p => peps.includes(p)));
+}
+
+function findPulseConflicts(peps) {
+  const pulses = peps.filter(p => PEPS[p] && PEPS[p].tier === 'pulse');
+  return pulses.length >= 2 ? pulses : [];
+}
+
+function render() {
+  const content = document.getElementById('content');
+  if (selection.length === 0) {
+    content.innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">🧬</div>
+        <div class="empty-title">No peptides in your stack yet</div>
+        <div class="empty-sub">Build a stack first — then come back here to see your phased schedule.</div>
+        <a href="compare.html">Build my stack →</a>
+      </div>`;
+    return;
+  }
+
+  const template = PHASE_TEMPLATES[activeGoal];
+  const buckets = bucketPepsByPhase(selection, template);
+  const synergies = findSynergies(selection);
+  const pulseConflicts = findPulseConflicts(selection);
+
+  let html = '';
+
+  // Pulse-conflict warning
+  if (pulseConflicts.length >= 2) {
+    const order = pulseConflicts
+      .map(p => ({slug:p, order:PEPS[p].sequenceOrder||99, name:PEPS[p].name}))
+      .sort((a,b) => a.order - b.order)
+      .map(p => p.name);
+    html += `<div class="warning-card">
+      <strong>⏳ Multiple pulse peptides selected.</strong> ${pulseConflicts.map(p=>PEPS[p].name).join(' + ')} are all 1-2× per year protocols. Running them simultaneously wastes the window. Suggested year-order: <strong>${order.join(' → ')}</strong>.
+    </div>`;
+  }
+
+  // Phases
+  html += '<div class="phases">';
+  template.forEach(phase => {
+    const peps = buckets[phase.key] || [];
+    if (peps.length === 0 && template.length > 2) return; // hide empty phases when goal has many
+    html += `
+      <div class="phase p-${phase.key}">
+        <div class="phase-head">
+          <div class="phase-name">${phase.name}</div>
+          <div class="phase-weeks">Wk ${phase.weeks[0]}–${phase.weeks[1]}</div>
+        </div>
+        <div class="phase-desc">${phase.desc}</div>`;
+    if (peps.length === 0) {
+      html += `<div style="color:var(--muted);font-size:12px;font-style:italic;">No peptides scheduled in this phase from your selection.</div>`;
+    } else {
+      html += '<div class="pep-rows">';
+      peps.forEach(p => {
+        const tierLbl = p.tier.charAt(0).toUpperCase() + p.tier.slice(1);
+        html += `
+          <div class="pep-row">
+            <div class="tier-dot ${p.tier}" title="${tierLbl}"></div>
+            <div class="pep-name">${p.name}${p.rx?' <span style="color:var(--orange);font-size:10px;">⚠Rx</span>':''}</div>
+            <div class="pep-cadence">${p.freq}${p.note?' · '+p.note:''}</div>
+            <div class="pep-window">${p.cycleWeeks}wk ${p.offWeeks?'on / '+p.offWeeks+'wk off':''}</div>
+          </div>`;
+      });
+      html += '</div>';
+    }
+    html += '</div>';
+  });
+  html += '</div>';
+
+  // Synergy callouts
+  if (synergies.length > 0) {
+    synergies.forEach(s => {
+      html += `<div class="synergy-card">⚡ ${s.msg}</div>`;
+    });
+  }
+
+  // Visual 52-week timeline
+  html += `
+    <div class="timeline-section">
+      <div class="timeline-title">📅 52-Week Visual Timeline</div>
+      <div class="tl-grid">`;
+  selection.forEach(slug => {
+    const p = PEPS[slug];
+    if (!p) return;
+    const cycleWk = p.cycleWeeks;
+    const offWk = p.offWeeks;
+    const total = cycleWk + offWk;
+    let bars = '';
+    if (p.tier === 'foundation') {
+      bars = `<div class="tl-bar foundation" style="left:0%;right:0%;"></div>`;
+    } else if (p.tier === 'pulse') {
+      // Single pulse window based on sequenceOrder
+      const order = p.sequenceOrder || 1;
+      const startWk = (order - 1) * 8 + 1; // FOX04=wk1, Epitalon=wk9, Cartalax=wk17, etc.
+      const endWk = startWk + cycleWk;
+      const left = ((startWk-1)/52)*100;
+      const right = 100 - (endWk/52)*100;
+      bars = `<div class="tl-bar pulse" style="left:${left}%;right:${right}%;"></div>`;
+    } else {
+      // Layer — repeat ON/OFF cycles across 52 weeks
+      let wk = 0;
+      while (wk < 52 && total > 0) {
+        const onStart = wk;
+        const onEnd = Math.min(wk + cycleWk, 52);
+        const left = (onStart/52)*100;
+        const right = 100 - (onEnd/52)*100;
+        bars += `<div class="tl-bar layer" style="left:${left}%;right:${right}%;"></div>`;
+        wk += total;
+      }
+    }
+    html += `
+      <div class="tl-row">
+        <div class="tl-row-name"><span class="tier-dot ${p.tier}"></span>${p.name}</div>
+        <div class="tl-track">${bars}</div>
+      </div>`;
+  });
+  html += `</div>
+      <div class="tl-week-marks">
+        <div></div>
+        <div class="tl-week-marks-bar"><span>Wk 1</span><span>13</span><span>26</span><span>39</span><span>52</span></div>
+      </div>
+    </div>`;
+
+  // Legend
+  html += `
+    <div class="legend">
+      <div class="legend-item"><span class="tier-dot foundation"></span>Foundation · runs 52 weeks</div>
+      <div class="legend-item"><span class="tier-dot layer"></span>Layer · cycles on/off</div>
+      <div class="legend-item"><span class="tier-dot pulse"></span>Pulse · 1-2× per year</div>
+    </div>`;
+
+  // Actions
+  html += `
+    <div class="actions">
+      <a href="reconstitute.html" class="btn btn-primary">⚡ Continue to reconstitution →</a>
+      <a href="compare.html" class="btn btn-secondary">← Edit my stack</a>
+    </div>`;
+
+  content.innerHTML = html;
+}
+
+render();
+</script>
+</body>
+</html>
