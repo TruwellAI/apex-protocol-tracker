@@ -1,11 +1,10 @@
-# Apex Dose Audit — 2026-04-30T13:30:16.510Z
+# Apex Dose Audit — 2026-04-30T14:44:42.755Z
 
 **Checked:** 37 peptides · **Reference:** 24
-**Status:** 🔴 FAIL · 2 issues · 13 warnings · 22 ok
+**Status:** 🔴 FAIL · 1 issues · 13 warnings · 23 ok
 
 ## Issues
 ❌ 5amino1mq.html: 2mg as injection BUT route=oral — ORAL 50-100mg/day; flag if injected
-❌ fox04-dri.html: 7.5mg HIGH (range 1-5) — Senolytic; 3-day pulse 1-2x/yr
 
 ## Warnings
 ⚠️  melanotan1.html: 0.5mg — no reference range (add to REFERENCE)
@@ -44,4 +43,5 @@
 ✅ ss31.html: 5mg in range 3-7
 ✅ motsc.html: 3mg in range 2-5
 ✅ cartalax.html: 0.2mg in range 0.1-0.3
+✅ fox04-dri.html: 5mg in range 1-5
 ✅ nad-plus.html: 100mg in range 50-200
