@@ -289,8 +289,8 @@ body::before{
     'l-carnitine.html':  { name:'L-Carnitine',    mech:'Fat oxidation cofactor',    cycleWks:8,  dose:'200-500 mg', freq:'pre-workout SubQ' },
     'glutamine.html':    { name:'Glutamine',      mech:'Gut + immune amino',        cycleWks:8,  dose:'500-1000 mg', freq:'daily SubQ' },
     'wolverine.html':    { name:'Wolverine Stack',mech:'BPC 5mg + TB-500 5mg combined in ONE vial', cycleWks:6, dose:'see components', freq:'daily', combinedBottle:true },
-    'klow.html':         { name:'KLOW Stack',     mech:'KPV + TB + BPC + GHK',      cycleWks:6,  dose:'see components', freq:'daily' },
-    'glow.html':         { name:'GLOW Stack',     mech:'GHK + TB + BPC',            cycleWks:8,  dose:'see components', freq:'daily' },
+    'klow.html':         { name:'KLOW Stack',     mech:'KPV + TB-500 + BPC-157 + GHK-Cu — ALL combined in ONE vial', cycleWks:6, dose:'see components', freq:'daily', combinedBottle:true, copperWarning:true },
+    'glow.html':         { name:'GLOW Stack',     mech:'GHK-Cu + TB-500 + BPC-157 — ALL combined in ONE vial',       cycleWks:8, dose:'see components', freq:'daily', combinedBottle:true, copperWarning:true },
     'cardiac-stack.html':{ name:'Cardiac Stack',  mech:'Heart-focused stack',       cycleWks:12, dose:'see components', freq:'daily' },
     'longevity-stack.html':{name:'Longevity Stack',mech:'Multi-peptide longevity',  cycleWks:16, dose:'see components', freq:'pulsed' },
     'mito-reset.html':   { name:'Mito Reset',     mech:'Mitochondrial protocol',    cycleWks:12, dose:'see components', freq:'daily' },
@@ -813,12 +813,22 @@ body::before{
           </div>`;
       }).join('');
       const heading = isCombined
-        ? `🧪 Inside this ONE bottle <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0;">— each draw delivers BOTH peptides</span>`
+        ? `🧪 Inside this ONE bottle <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0;">— each draw delivers all peptides at once</span>`
         : `⊞ Stack Components <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0;">— separate bottles</span>`;
+      const copperWarn = p.copperWarning ? `
+        <div style="margin-top:10px;padding:11px 13px;background:rgba(239,68,68,.10);border:1px solid rgba(239,68,68,.45);border-radius:8px;color:#fca5a5;font-size:12px;line-height:1.5;">
+          <strong style="color:#ef4444;">⚠ Heads up — copper degrades TB-500.</strong>
+          GHK-<strong>Cu</strong> contains copper. When you combine GHK-Cu and TB-500 in the same vial,
+          the copper oxidizes the methionine residues in TB-500 and degrades it within days.
+          If you want both peptides, run them in <strong>separate bottles</strong> (or at least mix
+          fresh weekly and use within ~7 days). The "all-in-one" bottle is convenient but it's
+          chemically a bad idea for long-term storage.
+        </div>` : '';
       return `
         <div style="margin-top:14px;padding:12px;background:rgba(11,15,20,.4);border:1px solid var(--border);border-radius:10px;">
           <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">${heading}</div>
           ${rows}
+          ${copperWarn}
         </div>`;
     }
     function renderInner(){
