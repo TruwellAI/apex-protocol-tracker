@@ -1,7 +1,7 @@
 /* AUTO-GENERATED — DO NOT EDIT.
  * Source: /data/peptides.json
  * Regenerate: node scripts/build-peptide-data.js
- * Built: 2026-05-01T17:22:27.921Z
+ * Built: 2026-05-01T17:23:44.116Z
  */
 window.APEX_PEPTIDES = {
   "_meta": {

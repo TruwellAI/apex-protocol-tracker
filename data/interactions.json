@@ -8,7 +8,7 @@
       "groups": "[[slugs in group A], [slugs in group B]] — interaction triggers when user has at least one from EACH group",
       "type": "timing | sequencing | chemistry | synergy | dose | conflict",
       "severity": "high (orange) | medium (cyan) | synergy (green)",
-      "icon": "single emoji",
+      "icon": "⚡=SYNERGY (always) · 🔁=sequencing · ⚠️=generic warning · 🔥=appetite/fat-burn overlap · 📉=hormonal/metabolic risk · ⚗️=chemistry/vial conflict",
       "title": "1-line headline",
       "summary": "2-3 sentence mechanism explainer",
       "fix": "actionable workaround",
