@@ -893,6 +893,20 @@ body::before{
             <div class="proto-r-value">${(splitCfg && splitState[slug]) ? splitCfg.freqLabel : p.freq}</div>
           </div>
         </div>
+        <!-- TIMING NOTE — fasted/GLP-1 override pulled from SSOT timing_note -->
+        ${(function(){
+          const j = (window.APEX_PEPTIDES || {})[slug];
+          if (!j || !j.timing_note) return '';
+          // Detect if user also has any GLP-1 in their stack
+          const stackSlugs = (state.protocols || []).map(x => x.slug);
+          const hasGlp1 = stackSlugs.some(s => /retatrutide|semaglutide|tirzepatide/.test(s));
+          const isGhPep = /tesamorelin|cjc|ipamorelin|sermorelin/.test(slug);
+          // Highlight the GLP-1 override portion when relevant
+          const highlight = (hasGlp1 && isGhPep)
+            ? '<div style="margin-top:8px;padding:8px 10px;background:rgba(255,107,53,.10);border:1px solid rgba(255,107,53,.4);border-radius:6px;font-size:11px;color:#FF6B35;font-family:Share Tech Mono,monospace;letter-spacing:.06em;">⚠ Your stack has a GLP-1 — apply the AM-fasted override below.</div>'
+            : '';
+          return `<div style="margin-top:10px;padding:10px 12px;background:rgba(0,212,255,.05);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;font-size:12.5px;line-height:1.6;color:var(--text);">${j.timing_note}${highlight}</div>`;
+        })()}
         ${buildStackComponents()}
         ${buildTitHtml()}
         ${buildCycleAsk()}

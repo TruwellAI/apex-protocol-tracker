@@ -1,7 +1,7 @@
 /* AUTO-GENERATED — DO NOT EDIT.
  * Source: /data/peptides.json
  * Regenerate: node scripts/build-peptide-data.js
- * Built: 2026-05-01T18:24:12.490Z
+ * Built: 2026-05-01T18:31:57.785Z
  */
 window.APEX_PEPTIDES = {
   "_meta": {
@@ -49,7 +49,8 @@ window.APEX_PEPTIDES = {
     "cycle_weeks": 6,
     "off_weeks": 4,
     "research_note": "Sikiric et al; tendon/ligament/gut healing 250-500 mcg/day",
-    "recon_tip": "Inject <strong>fasted, 30+ min before food</strong> for systemic effect (oral BPC works locally for gut, but SubQ near the injury site beats both for tendons/joints)."
+    "recon_tip": "Inject <strong>fasted, 30+ min before food</strong> for systemic effect (oral BPC works locally for gut, but SubQ near the injury site beats both for tendons/joints).",
+    "timing_note": "⏰ Best <strong>30+ min before food</strong> for systemic effect. SubQ near injury site beats both oral + far-from-site for tendons/joints."
   },
   "tb500.html": {
     "name": "TB-500",
@@ -69,7 +70,8 @@ window.APEX_PEPTIDES = {
     "cycle_weeks": 6,
     "off_weeks": 4,
     "research_note": "Loading 5mg 2x/wk × 4-6wk, then maintenance",
-    "recon_tip": "TB-500 takes <strong>2-3 weeks</strong> to show effect — do NOT abandon it after week 1. Front-load with 5mg 2x/wk for the first 4 weeks (loading), then drop to 2.5mg 1-2x/wk maintenance."
+    "recon_tip": "TB-500 takes <strong>2-3 weeks</strong> to show effect — do NOT abandon it after week 1. Front-load with 5mg 2x/wk for the first 4 weeks (loading), then drop to 2.5mg 1-2x/wk maintenance.",
+    "timing_note": "⏰ <strong>2x weekly, time of day flexible.</strong> No fasting requirement. Spreads loading dose across the week (Mon + Thu typical)."
   },
   "ghkcu.html": {
     "name": "GHK-Cu",
@@ -89,7 +91,8 @@ window.APEX_PEPTIDES = {
     "cycle_weeks": 12,
     "off_weeks": 4,
     "research_note": "Pickart 1973; 1-3mg/day skin/recovery/wound healing",
-    "recon_tip": "GHK-Cu turns the solution <strong>blue</strong> — that is the copper, totally normal. Do NOT mix in the same vial as TB-500: copper oxidizes TB-500 methionine and degrades it within ~7 days. Run them in separate bottles."
+    "recon_tip": "GHK-Cu turns the solution <strong>blue</strong> — that is the copper, totally normal. Do NOT mix in the same vial as TB-500: copper oxidizes TB-500 methionine and degrades it within ~7 days. Run them in separate bottles.",
+    "timing_note": "⏰ <strong>Time of day flexible.</strong> SubQ near target tissue (face/scalp for skin, near joint for repair). NOT in same vial as TB-500 (copper degrades it)."
   },
   "kpv.html": {
     "name": "KPV",
@@ -108,7 +111,8 @@ window.APEX_PEPTIDES = {
     "freq": "daily",
     "cycle_weeks": 6,
     "off_weeks": 4,
-    "research_note": "250-1000 mcg/day; gut + dermal inflammation"
+    "research_note": "250-1000 mcg/day; gut + dermal inflammation",
+    "timing_note": "⏰ <strong>Daily, time flexible.</strong> Anti-inflammatory + gut-supportive — split AM/PM helps if you have GI symptoms."
   },
   "ll37.html": {
     "name": "LL-37",
@@ -146,7 +150,8 @@ window.APEX_PEPTIDES = {
     "freq": "2x weekly",
     "cycle_weeks": 8,
     "off_weeks": 8,
-    "research_note": "1.6mg 2x/wk standard immune protocol"
+    "research_note": "1.6mg 2x/wk standard immune protocol",
+    "timing_note": "⏰ <strong>2x weekly (Mon + Thu typical).</strong> Time of day flexible. Immune-modulating — best run Q1/Q4 during cold/flu season."
   },
   "ara290.html": {
     "name": "ARA-290",
@@ -185,7 +190,8 @@ window.APEX_PEPTIDES = {
     "cycle_weeks": 2,
     "off_weeks": 24,
     "research_note": "Khavinson; 5-10mg × 10-20d pulse, 1-2x/yr",
-    "recon_tip": "Best taken <strong>at night</strong> — Epitalon works through the pineal axis and pairs with melatonin. 5-10mg/night × 10-20 day pulse, 1-2x per year."
+    "recon_tip": "Best taken <strong>at night</strong> — Epitalon works through the pineal axis and pairs with melatonin. 5-10mg/night × 10-20 day pulse, 1-2x per year.",
+    "timing_note": "⏰ <strong>Pre-bed, every night × 10-20 days.</strong> Works through the pineal/melatonin axis — nighttime dosing is critical. 1-2x per year pulse."
   },
   "ss31.html": {
     "name": "SS-31",
@@ -204,7 +210,8 @@ window.APEX_PEPTIDES = {
     "freq": "daily",
     "cycle_weeks": 6,
     "off_weeks": 6,
-    "research_note": "Mitochondrial repair; 5mg typical, post-MOTS-c sequencing"
+    "research_note": "Mitochondrial repair; 5mg typical, post-MOTS-c sequencing",
+    "timing_note": "⏰ <strong>Morning, with food OK.</strong> Run AFTER MOTS-c (build new mitos first, then repair them). Order matters."
   },
   "motsc.html": {
     "name": "MOTS-c",
@@ -224,7 +231,8 @@ window.APEX_PEPTIDES = {
     "cycle_weeks": 8,
     "off_weeks": 8,
     "research_note": "Total weekly 5-10mg; substrate for biogenesis (run with NAD+)",
-    "recon_tip": "MOTS-c needs NAD+ as a substrate. Load NAD+ for 2-4 weeks BEFORE starting MOTS-c, then run MOTS-c with NAD+ maintenance 1x/wk."
+    "recon_tip": "MOTS-c needs NAD+ as a substrate. Load NAD+ for 2-4 weeks BEFORE starting MOTS-c, then run MOTS-c with NAD+ maintenance 1x/wk.",
+    "timing_note": "⏰ <strong>Morning, with light meal OK.</strong> Pairs with cardio + load NAD+ for 2-4 wks BEFORE starting MOTS-c."
   },
   "cartalax.html": {
     "name": "Cartalax",
@@ -263,7 +271,8 @@ window.APEX_PEPTIDES = {
     "cycle_weeks": 1,
     "off_weeks": 24,
     "research_note": "5-day pulse; clears senescent cells before rebuilding",
-    "recon_tip": "Senolytic — clears senescent cells. <strong>Run BEFORE Epitalon</strong> if you are stacking both. Order: FOX04 5-day pulse → 4-week wash → Epitalon. Otherwise you extend the lifespan of cells you should be clearing."
+    "recon_tip": "Senolytic — clears senescent cells. <strong>Run BEFORE Epitalon</strong> if you are stacking both. Order: FOX04 5-day pulse → 4-week wash → Epitalon. Otherwise you extend the lifespan of cells you should be clearing.",
+    "timing_note": "⏰ <strong>Time flexible · 5-day pulse only.</strong> Senolytic clears senescent cells. Run BEFORE Epitalon if stacking. 1-2x per year max."
   },
   "aod9604.html": {
     "name": "AOD-9604",
@@ -283,7 +292,8 @@ window.APEX_PEPTIDES = {
     "cycle_weeks": 12,
     "off_weeks": 4,
     "research_note": "300 mcg fasted morning; lipolysis-selective",
-    "recon_tip": "AOD-9604 reconstitutes with 1 mL of <strong>0.6% ACETIC ACID</strong>, NOT plain bacteriostatic water. The peptide is acid-stabilized — using BAC water alone causes faster degradation. Add the BAC water on top after the acetic acid for the rest of your volume."
+    "recon_tip": "AOD-9604 reconstitutes with 1 mL of <strong>0.6% ACETIC ACID</strong>, NOT plain bacteriostatic water. The peptide is acid-stabilized — using BAC water alone causes faster degradation. Add the BAC water on top after the acetic acid for the rest of your volume.",
+    "timing_note": "⏰ <strong>Fasted AM</strong> (within 30 min of waking, before workout). Insulin blocks lipolysis — keep fasted at least 1 hr after injection."
   },
   "retatrutide.html": {
     "name": "Retatrutide",
@@ -304,7 +314,8 @@ window.APEX_PEPTIDES = {
     "off_weeks": 0,
     "titration": true,
     "research_note": "Titrate 2→4→8→12mg weekly; Phase 2 trials weekly only",
-    "recon_tip": "<strong>Titrate slowly</strong> to avoid GI hammer. Reta is the most aggressive of the GLP-1s — start at 2mg/wk, hold each step 4 weeks before bumping. Skip a week if nausea is severe."
+    "recon_tip": "<strong>Titrate slowly</strong> to avoid GI hammer. Reta is the most aggressive of the GLP-1s — start at 2mg/wk, hold each step 4 weeks before bumping. Skip a week if nausea is severe.",
+    "timing_note": "⏰ <strong>Weekly, same day each week.</strong> Most users do Sunday PM with dinner. Skip a week if GI symptoms severe — restart at lower dose."
   },
   "semaglutide.html": {
     "name": "Semaglutide",
@@ -325,7 +336,8 @@ window.APEX_PEPTIDES = {
     "off_weeks": 0,
     "titration": true,
     "research_note": "STEP trials; titrate 0.25→2.4mg weekly",
-    "recon_tip": "Refrigerate after mixing. Reusing the same syringe across multiple injections from the same vial is fine — just keep the vial cold and the seal intact."
+    "recon_tip": "Refrigerate after mixing. Reusing the same syringe across multiple injections from the same vial is fine — just keep the vial cold and the seal intact.",
+    "timing_note": "⏰ <strong>Weekly, same day each week.</strong> Time of day flexible. Refrigerate after mixing."
   },
   "tirzepatide.html": {
     "name": "Tirzepatide",
@@ -346,7 +358,8 @@ window.APEX_PEPTIDES = {
     "off_weeks": 0,
     "titration": true,
     "research_note": "SURMOUNT trials; titrate 2.5→15mg weekly",
-    "recon_tip": "Tirz titration: 2.5 → 5 → 7.5 → 10 → 12.5 → 15 mg, hold each step 4 weeks. The GIP component reduces appetite faster than Sema — most users plateau at 10 mg."
+    "recon_tip": "Tirz titration: 2.5 → 5 → 7.5 → 10 → 12.5 → 15 mg, hold each step 4 weeks. The GIP component reduces appetite faster than Sema — most users plateau at 10 mg.",
+    "timing_note": "⏰ <strong>Weekly, same day each week.</strong> Time of day flexible. The GIP component reduces appetite faster than Sema."
   },
   "5amino1mq.html": {
     "name": "5-Amino-1MQ",
@@ -365,7 +378,8 @@ window.APEX_PEPTIDES = {
     "freq": "daily SubQ",
     "cycle_weeks": 12,
     "off_weeks": 4,
-    "research_note": "NNMT inhibitor; SubQ injection 1-5mg/day"
+    "research_note": "NNMT inhibitor; SubQ injection 1-5mg/day",
+    "timing_note": "⏰ <strong>Daily, with or without food.</strong> NNMT inhibitor — works best paired with caloric deficit + resistance training."
   },
   "tesamorelin.html": {
     "name": "Tesamorelin",
@@ -384,7 +398,8 @@ window.APEX_PEPTIDES = {
     "freq": "daily PM",
     "cycle_weeks": 12,
     "off_weeks": 4,
-    "research_note": "1-2mg/day FDA-approved for visceral fat (lipodystrophy)"
+    "research_note": "1-2mg/day FDA-approved for visceral fat (lipodystrophy)",
+    "timing_note": "⏰ <strong>Pre-bed, fasted 2+ hrs after dinner.</strong> Insulin blocks the GH pulse Tesa is trying to trigger. <strong style=\"color:#FF6B35;\">On a GLP-1?</strong> Switch to AM, fully fasted overnight, eat 30-60 min AFTER injection."
   },
   "cjc-no-dac.html": {
     "name": "CJC-1295 (no DAC)",
@@ -403,7 +418,8 @@ window.APEX_PEPTIDES = {
     "freq": "1-3x daily",
     "cycle_weeks": 12,
     "off_weeks": 4,
-    "research_note": "100mcg pre-bed; pairs with ipamorelin"
+    "research_note": "100mcg pre-bed; pairs with ipamorelin",
+    "timing_note": "⏰ <strong>Pre-bed, empty stomach.</strong> Most users add a 2nd shot pre-workout. <strong style=\"color:#FF6B35;\">On a GLP-1?</strong> AM only, fully fasted overnight."
   },
   "cjc1295-dac.html": {
     "name": "CJC-1295 (DAC)",
@@ -422,7 +438,8 @@ window.APEX_PEPTIDES = {
     "freq": "weekly",
     "cycle_weeks": 12,
     "off_weeks": 4,
-    "research_note": "1-2mg/wk; extended GHRH stimulation"
+    "research_note": "1-2mg/wk; extended GHRH stimulation",
+    "timing_note": "⏰ <strong>Pre-bed, empty stomach.</strong> Last meal 2+ hrs before. <strong style=\"color:#FF6B35;\">On a GLP-1?</strong> AM only, fully fasted, food 30-60 min after."
   },
   "ipamorelin.html": {
     "name": "Ipamorelin",
@@ -441,7 +458,8 @@ window.APEX_PEPTIDES = {
     "freq": "1-3x daily",
     "cycle_weeks": 12,
     "off_weeks": 4,
-    "research_note": "100-300 mcg pre-bed; selective ghrelin agonist"
+    "research_note": "100-300 mcg pre-bed; selective ghrelin agonist",
+    "timing_note": "⏰ <strong>Pre-bed, empty stomach.</strong> Pairs with CJC for synergy. <strong style=\"color:#FF6B35;\">On a GLP-1?</strong> AM only, fully fasted, food 30-60 min after."
   },
   "sermorelin.html": {
     "name": "Sermorelin",
@@ -460,7 +478,8 @@ window.APEX_PEPTIDES = {
     "freq": "daily PM",
     "cycle_weeks": 12,
     "off_weeks": 4,
-    "research_note": "GHRH; 200-500 mcg pre-bed"
+    "research_note": "GHRH; 200-500 mcg pre-bed",
+    "timing_note": "⏰ <strong>Pre-bed, empty stomach.</strong> Wait 2+ hrs after last meal. <strong style=\"color:#FF6B35;\">On a GLP-1?</strong> AM only, fully fasted overnight."
   },
   "cjc-ipa-blend.html": {
     "name": "CJC + Ipa Blend",
@@ -479,7 +498,8 @@ window.APEX_PEPTIDES = {
     "freq": "daily PM fasted",
     "cycle_weeks": 12,
     "off_weeks": 4,
-    "research_note": "Pre-blended dual; 200-400 mcg"
+    "research_note": "Pre-blended dual; 200-400 mcg",
+    "timing_note": "⏰ <strong>Pre-bed, empty stomach.</strong> One shot for both GHRH + GHRP synergy. <strong style=\"color:#FF6B35;\">On a GLP-1?</strong> AM only, fully fasted, food 30-60 min after."
   },
   "igf1-lr3.html": {
     "name": "IGF-1 LR3",
@@ -498,7 +518,8 @@ window.APEX_PEPTIDES = {
     "freq": "post-workout",
     "cycle_weeks": 4,
     "off_weeks": 4,
-    "research_note": "20-80 mcg post-workout; site-specific possible"
+    "research_note": "20-80 mcg post-workout; site-specific possible",
+    "timing_note": "⏰ <strong>Post-workout window (within 30 min).</strong> Some users add a 2nd dose pre-bed. Site-specific injection possible (research only)."
   },
   "nad-plus.html": {
     "name": "NAD+",
@@ -517,7 +538,8 @@ window.APEX_PEPTIDES = {
     "freq": "loading 2x/wk × 4wk, then weekly maint",
     "cycle_weeks": 4,
     "off_weeks": 0,
-    "research_note": "Loading 100mg 2x/wk × 4wk; substrate for MOTS-c biogenesis"
+    "research_note": "Loading 100mg 2x/wk × 4wk; substrate for MOTS-c biogenesis",
+    "timing_note": "⏰ <strong>Morning, with or without food.</strong> Loading 2-3x/wk × 4 wks then 1x/wk maintenance. Some users get flushing — split doses help."
   },
   "glutathione.html": {
     "name": "Glutathione",
@@ -536,7 +558,8 @@ window.APEX_PEPTIDES = {
     "freq": "2-3x weekly",
     "cycle_weeks": 52,
     "off_weeks": 0,
-    "research_note": "Master antioxidant; 200-600mg 2-3x/wk"
+    "research_note": "Master antioxidant; 200-600mg 2-3x/wk",
+    "timing_note": "⏰ <strong>2-3x weekly, morning preferred.</strong> Pairs with NAD+ as a longevity foundation. Push slowly — too fast can cause flushing."
   },
   "selank.html": {
     "name": "Selank",
@@ -645,7 +668,8 @@ window.APEX_PEPTIDES = {
     "cycle_weeks": 52,
     "off_weeks": 0,
     "research_note": "Bremelanotide; 45 min before activity",
-    "recon_tip": "Inject <strong>45 minutes before</strong> activity. PT-141 can cause flushing + nausea on first use — start at 1mg, scale to 2mg if tolerated. Do NOT take with stimulants."
+    "recon_tip": "Inject <strong>45 minutes before</strong> activity. PT-141 can cause flushing + nausea on first use — start at 1mg, scale to 2mg if tolerated. Do NOT take with stimulants.",
+    "timing_note": "⏰ <strong>45 min before activity.</strong> On-demand only — no daily cycling. Avoid stimulants same day. Start at 1mg, scale to 2mg if tolerated."
   },
   "melanotan1.html": {
     "name": "Melanotan I",
