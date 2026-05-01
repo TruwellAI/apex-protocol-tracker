@@ -882,7 +882,9 @@ body{padding-bottom:90px;}
       const sel = JSON.parse(localStorage.getItem('apex_selection') || '[]');
       hasStack = Array.isArray(sel) && sel.length > 0;
     } catch(e){}
-    if (chosen || hasStack) return;
+    // ?fork=1 query param forces the modal for testing
+    const forceFork = new URLSearchParams(window.location.search).get('fork') === '1';
+    if (!forceFork && (chosen || hasStack)) return;
     fork.style.display = 'flex';
     const dismiss = () => {
       fork.style.display = 'none';
