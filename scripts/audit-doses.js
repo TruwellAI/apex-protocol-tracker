@@ -143,11 +143,18 @@ for (const [slug, p] of Object.entries(peptides)) {
     }
   }
 
-  // Units sanity — pre-mixed (testosterone) skipped
+  // ── UNITS SANITY (hard-fail thresholds) ──
+  // Standard 1mL insulin pen / U-100 syringe holds 100 units. Anything
+  // >100 is more than one full draw — bad UX. <5 is hard to draw accurately.
+  // <100 mcg dose exempted from low-units check (truly microdose peptides).
   if (p.dose_mg_per_inj && p.vial_mg && p.bac_ml && !p.premixed) {
     const units = Math.round((p.dose_mg_per_inj / (p.vial_mg / p.bac_ml)) * 100);
     if (units > 200) {
-      issues.push(`❌ ${slug}: vial ${p.vial_mg}mg + ${p.bac_ml}mL BAC + ${p.dose_mg_per_inj}mg dose = ${units} units (>200 suggests math/default error)`);
+      issues.push(`❌ ${slug}: ${units} units (vial ${p.vial_mg}mg + ${p.bac_ml}mL + ${p.dose_mg_per_inj}mg dose) — math/default ERROR (>200u)`);
+    } else if (units > 100) {
+      issues.push(`❌ ${slug}: ${units} units (vial ${p.vial_mg}mg + ${p.bac_ml}mL + ${p.dose_mg_per_inj}mg dose) — exceeds 1mL pen capacity (>100u). Lower BAC or use larger vial.`);
+    } else if (units < 5 && p.dose_mg_per_inj >= 0.05) {
+      issues.push(`❌ ${slug}: ${units} units (vial ${p.vial_mg}mg + ${p.bac_ml}mL + ${p.dose_mg_per_inj}mg dose) — too small to draw accurately (<5u). Increase BAC or use smaller vial.`);
     } else {
       ok.push(`✅ ${slug}: ${units} units on the pen`);
     }

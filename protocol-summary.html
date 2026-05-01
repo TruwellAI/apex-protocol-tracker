@@ -983,7 +983,7 @@ body::before{
           const j = (window.APEX_PEPTIDES || {})[slug];
           if (!j || !j.timing_note) return '';
           // Detect if user also has any GLP-1 in their stack
-          const stackSlugs = (state.protocols || []).map(x => x.slug);
+          const stackSlugs = (selection || []);
           const hasGlp1 = stackSlugs.some(s => /retatrutide|semaglutide|tirzepatide/.test(s));
           const isGhPep = /tesamorelin|cjc|ipamorelin|sermorelin/.test(slug);
           // Highlight the GLP-1 override portion when relevant
