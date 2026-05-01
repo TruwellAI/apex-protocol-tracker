@@ -870,32 +870,32 @@ body{padding-bottom:90px;}
   renderPeptides();
   renderAnalysis();
 
-  // ═══ EXPERIENCE FORK — first-visit only ═══
+  // ═══ EXPERIENCE FORK ═══
+  // Shows whenever the user has an empty stack — every visit until they
+  // explicitly hit "Don't ask again" (sets apex_experience_skipped).
+  // ?fork=1 forces it open for testing.
   (function setupExperienceFork(){
     const fork = document.getElementById('experience-fork');
     if (!fork) return;
-    let chosen = false;
-    try { chosen = localStorage.getItem('apex_experience_chosen') === '1'; } catch(e){}
-    // Also skip if user already has a stack (returning user)
+    let permanentSkip = false;
+    try { permanentSkip = localStorage.getItem('apex_experience_skipped') === '1'; } catch(e){}
     let hasStack = false;
     try {
       const sel = JSON.parse(localStorage.getItem('apex_selection') || '[]');
       hasStack = Array.isArray(sel) && sel.length > 0;
     } catch(e){}
-    // ?fork=1 query param forces the modal for testing
     const forceFork = new URLSearchParams(window.location.search).get('fork') === '1';
-    if (!forceFork && (chosen || hasStack)) return;
+    if (!forceFork && (permanentSkip || hasStack)) return;
     fork.style.display = 'flex';
-    const dismiss = () => {
-      fork.style.display = 'none';
-      try { localStorage.setItem('apex_experience_chosen', '1'); } catch(e){}
-    };
+    const close = () => { fork.style.display = 'none'; };
     document.getElementById('ef-newbie').addEventListener('click', () => {
-      try { localStorage.setItem('apex_experience_chosen', '1'); } catch(e){}
       window.location.href = 'basics.html';
     });
-    document.getElementById('ef-pro').addEventListener('click', dismiss);
-    document.getElementById('ef-skip').addEventListener('click', dismiss);
+    document.getElementById('ef-pro').addEventListener('click', close);
+    document.getElementById('ef-skip').addEventListener('click', () => {
+      try { localStorage.setItem('apex_experience_skipped', '1'); } catch(e){}
+      close();
+    });
   })();
 })();
 </script>
