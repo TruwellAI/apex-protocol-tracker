@@ -331,40 +331,33 @@
     const acetic = recon.acetic || 0;
 
     // 2a. Combined-bottle stacks (Wolverine/KLOW/GLOW) — components share one bottle.
-    // Dose to draw = volume that delivers the LARGEST component's target. The other
-    // components come along proportionally based on their share of the vial.
+    // Reality: you can't hit all individual dose targets from one draw. The standard
+    // approach is a BALANCED DRAW — pick one volume (default 50u = 0.5 mL = pen sweet
+    // spot) and show what each component delivers. Users wanting precision use separate vials.
     if (p.combined_bottle && Array.isArray(p.components) && p.components.length) {
       if (!vial || !bac) {
         return { mg:null, units:null, dose_label:'see components', units_label:'⚠ set vial + BAC', warning:'no recon', route:p.route, source:'combined' };
       }
       const totalVol = bac + acetic;
-      const conc = vial / totalVol;        // total mg/mL
-      const concPerComp = conc / p.components.length;  // each component shares the bottle equally
-      // Limiting component = whose target requires the largest draw
-      let maxVol = 0, limitingName = '';
-      p.components.forEach(c => {
-        const v = c.dose_mg / concPerComp;
-        if (v > maxVol) { maxVol = v; limitingName = c.name; }
-      });
-      const u = Math.round(maxVol * 100);
+      const concPerComp = (vial / p.components.length) / totalVol;  // mg/mL per component
+      // Default draw = 0.5 mL (50u) — works for any 1 mL pen, dilute enough to draw accurately
+      const drawMl = 0.5;
+      const u = Math.round(drawMl * 100);
       const breakdown = p.components.map(c => {
-        const delivered = (concPerComp * maxVol).toFixed(2);
+        const delivered = (concPerComp * drawMl).toFixed(2);
         return c.name + ' ' + delivered + 'mg';
       }).join(' + ');
-      let warn = null;
-      if (u > 100) warn = 'over-pen';
-      else if (u < 5) warn = 'tiny-draw';
       return {
-        mg: maxVol * conc,
+        mg: drawMl * (vial / totalVol),
         units: u,
-        dose_label: 'combined draw',
+        dose_label: 'balanced draw',
         units_label: u + ' units',
-        conc_mg_per_ml: conc,
+        conc_mg_per_ml: vial / totalVol,
         route: p.route,
         source: 'combined',
         breakdown: breakdown,
-        limiting: limitingName,
-        warning: warn
+        note: 'Combined bottles can\'t hit all targets perfectly — this is a balanced draw',
+        warning: null
       };
     }
 
