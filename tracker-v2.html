@@ -984,6 +984,9 @@ body::before{
           doseDetail = sprayCount
             ? '<span style="color:var(--accent);font-weight:800;font-size:1.1em;">' + sprayCount + '</span> <span style="color:var(--muted);">spray' + (sprayCount>1?'s':'') + ' · intranasal</span>' + tierBadge
             : '<span style="color:var(--accent);font-weight:800;">intranasal</span>' + tierBadge;
+        } else if (apx && apx.source === 'combined' && apx.units != null) {
+          // Combined-bottle stack — show units + component breakdown
+          doseDetail = '<span style="color:var(--accent2);font-weight:800;font-size:1.1em;">' + apx.units + '</span> <span style="color:var(--muted);">units · </span><span style="color:var(--muted);font-size:.9em;">' + apx.breakdown + '</span>';
         } else if (units) {
           const num = units.range ? units.minUnits + '–' + units.maxUnits : units.units;
           doseDetail = '<span style="color:var(--accent2);font-weight:800;font-size:1.1em;">' + num + '</span> <span style="color:var(--muted);">units on the pen</span>' + tierBadge;
@@ -1160,6 +1163,9 @@ body::before{
                 ? '<span style="color:var(--accent);font-weight:800;font-size:1.05em;">' + sprayCount + '</span> <span class="units" style="color:var(--muted);">spray' + (sprayCount>1?'s':'') + '</span>' + tierTag
                 : '<span style="color:var(--accent);font-weight:800;">intranasal</span>' + tierTag;
             }
+            if (apx && apx.source === 'combined' && apx.units != null) {
+              return '<span style="color:var(--accent2);font-weight:800;font-size:1.05em;">' + apx.units + '</span> <span class="units" style="color:var(--muted);">units · ' + apx.breakdown + '</span>';
+            }
             if (units) {
               const num = units.range ? units.minUnits + '–' + units.maxUnits : units.units;
               return '<span style="color:var(--accent2);font-weight:800;font-size:1.05em;">' + num + '</span> <span class="units" style="color:var(--muted);">units</span>' + tierTag;
@@ -1192,7 +1198,7 @@ body::before{
       </div>
 
       <div class="tile-actions" style="position:relative;">
-        <button class="tile-btn primary ${isDone ? 'done' : ''}" data-act="log" ${(!units && !ORAL_SLUGS.has(p.slug) && !SPRAY_SLUGS.has(p.slug)) ? 'disabled style="opacity:.35;pointer-events:none;"' : ''}>${isDone ? '✓ Logged Today' : (sched.go ? "Log Today's Dose" : (isAsNeededCycle ? 'Log a Dose' : 'Log Anyway'))}</button>
+        <button class="tile-btn primary ${isDone ? 'done' : ''}" data-act="log" ${(!units && !(apx && apx.source==='combined' && apx.units!=null) && !ORAL_SLUGS.has(p.slug) && !SPRAY_SLUGS.has(p.slug)) ? 'disabled style="opacity:.35;pointer-events:none;"' : ''}>${isDone ? '✓ Logged Today' : (sched.go ? "Log Today's Dose" : (isAsNeededCycle ? 'Log a Dose' : 'Log Anyway'))}</button>
         <button class="tile-btn" data-act="refill" title="Reset bottle countdown after mixing a fresh vial">🧪 Refilled</button>
         <button class="tile-btn" data-act="more" aria-label="More" style="padding:8px 12px;font-size:18px;line-height:1;">⋯</button>
         <div data-menu="more" style="display:none;position:absolute;bottom:100%;right:0;margin-bottom:6px;background:var(--panel);border:1px solid var(--border2);border-radius:8px;padding:4px;box-shadow:0 8px 24px rgba(0,0,0,.5);z-index:10;min-width:140px;">
