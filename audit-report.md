@@ -1,4 +1,4 @@
-# Apex Dose Audit (v3 — single source of truth) — 2026-05-01T21:29:37.667Z
+# Apex Dose Audit (v3 — single source of truth) — 2026-05-01T21:47:11.503Z
 
 **Source of truth:** `/data/peptides.json` (46 peptides)
 **Files cross-checked:** reconstitute.html · protocol-summary.html · tracker-v2.html

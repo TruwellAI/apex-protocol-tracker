@@ -271,6 +271,121 @@
     return Math.round((doseMg / (vialMg / bacMl)) * 100);
   }
 
+  // ─── APEX UNITS — SINGLE SOURCE OF TRUTH for dose→units across ALL views ──
+  // Replaces the divergent doseToUnits / doseToUnitsLabel / inline-unitsFor
+  // implementations in tracker-v2, protocol-summary, and protocol-sequencer.
+  // Returns the SAME numbers everywhere given the same inputs.
+  //
+  // Inputs:
+  //   slug: 'retatrutide.html' (key in window.APEX_PEPTIDES)
+  //   opts: {
+  //     intensity: 'mild' | 'recommended' | 'aggressive'  (default 'recommended')
+  //     userRecon: { vial, bac, acetic }  (overrides SSOT vial/bac if set)
+  //     doseOverride: '500 mcg' | '8 mg' | null  (user typed value beats SSOT)
+  //   }
+  // Output: { mg, units, units_label, dose_label, conc_mg_per_ml, source, warning, route }
+  function pickFromRange(doseStr, intensity){
+    if (!doseStr) return doseStr;
+    const s = String(doseStr);
+    const tier = (intensity || 'recommended').toLowerCase();
+    const range = s.match(/(\d+(?:\.\d+)?)\s*[-–—]\s*(\d+(?:\.\d+)?)\s*(mg|mcg)/i);
+    if (range) {
+      const lo = parseFloat(range[1]);
+      const hi = parseFloat(range[2]);
+      const unit = range[3];
+      let val = tier==='mild' ? lo : tier==='aggressive' ? hi : (lo+hi)/2;
+      val = unit.toLowerCase()==='mcg' ? Math.round(val/5)*5 : Math.round(val*10)/10;
+      return s.replace(range[0], val + ' ' + unit);
+    }
+    const single = s.match(/(\d+(?:\.\d+)?)\s*(mg|mcg)/i);
+    if (single) {
+      const base = parseFloat(single[1]);
+      const unit = single[2];
+      let val = base;
+      if      (tier==='mild')       val = base * 0.75;
+      else if (tier==='aggressive') val = base * 1.25;
+      val = unit.toLowerCase()==='mcg' ? Math.round(val/5)*5 : Math.round(val*10)/10;
+      return s.replace(single[0], val + ' ' + unit);
+    }
+    return s;
+  }
+
+  function parseMg(doseStr){
+    if (!doseStr) return null;
+    const m = String(doseStr).match(/(\d+(?:\.\d+)?)\s*(mg|mcg)/i);
+    if (!m) return null;
+    const amt = parseFloat(m[1]);
+    return m[2].toLowerCase()==='mcg' ? amt/1000 : amt;
+  }
+
+  function computeUnits(slug, opts){
+    opts = opts || {};
+    const intensity = (opts.intensity || 'recommended').toLowerCase();
+    const peps = window.APEX_PEPTIDES || {};
+    const p = peps[slug] || {};
+
+    // 1. Resolve recon (user override > SSOT)
+    const recon = opts.userRecon || {};
+    const vial = (recon.vial != null) ? recon.vial : p.vial_mg;
+    const bac  = (recon.bac  != null) ? recon.bac  : p.bac_ml;
+    const acetic = recon.acetic || 0;
+
+    // 2. Resolve dose label
+    let doseLabel, doseMg, source;
+    if (opts.doseOverride) {
+      // User typed something in Edit modal — collapse via tier, then parse mg
+      doseLabel = pickFromRange(opts.doseOverride, intensity);
+      doseMg = parseMg(doseLabel);
+      source = 'user';
+    } else if (p.dose_mg_per_inj != null && intensity === 'recommended') {
+      // SSOT canonical (avoids midpoint inflation)
+      doseMg = p.dose_mg_per_inj;
+      doseLabel = doseMg < 1 ? Math.round(doseMg*1000)+' mcg' : doseMg+' mg';
+      source = 'ssot';
+    } else if (p.dose_label) {
+      doseLabel = pickFromRange(p.dose_label, intensity);
+      doseMg = parseMg(doseLabel);
+      source = 'label';
+    } else {
+      return { mg:null, units:null, dose_label:'—', warning:'no dose data', route:p.route };
+    }
+
+    // 3. Route-specific short-circuits
+    if (p.route === 'oral')  return { mg:doseMg, units:null, dose_label:doseLabel, units_label:'1 capsule', route:'oral', source };
+    if (p.route === 'spray') {
+      const sprays = doseMg ? Math.max(1, Math.round((doseMg*1000)/167)) : 1; // 167 mcg/spray @ 1.67 mg/mL
+      return { mg:doseMg, units:null, dose_label:doseLabel, units_label: sprays + ' spray' + (sprays>1?'s':''), route:'spray', source };
+    }
+    if (p.premixed) {
+      const concPre = parseFloat(p.premixed); // e.g. "200 mg/mL"
+      const u = doseMg && concPre ? Math.round((doseMg/concPre)*100) : null;
+      return { mg:doseMg, units:u, dose_label:doseLabel, units_label: u!=null ? u + ' units' : 'set vial', conc_mg_per_ml:concPre, route:p.route, source, premixed:true };
+    }
+
+    // 4. Standard injection: vial / (bac+acetic) = mg/mL
+    if (!vial || !bac) {
+      return { mg:doseMg, units:null, dose_label:doseLabel, units_label:'⚠ set vial + BAC', warning:'no recon', route:p.route, source };
+    }
+    const conc = vial / (bac + acetic);
+    const units = doseMg && conc ? Math.round((doseMg / conc) * 100) : null;
+    let warning = null;
+    if (units != null && units > 100) warning = 'over-pen';   // exceeds 1 mL pen
+    else if (units != null && units > 0 && units < 5) warning = 'tiny-draw';
+    return {
+      mg: doseMg,
+      units: units,
+      dose_label: doseLabel,
+      units_label: units != null ? units + ' units' : '—',
+      conc_mg_per_ml: conc,
+      route: p.route || 'sc',
+      source,
+      warning
+    };
+  }
+
+  // Public alias on window for non-module callers
+  window.ApexUnits = { compute: computeUnits, pickFromRange, parseMg, unitsForDose };
+
   // ── UNIFIED ALERT PANEL ───────────────────────────────────────
   // Takes BOTH pharmacological interactions (from JSON) AND mechanism-level
   // warnings (doorbell-rings, chemistry conflicts) and renders ONE consolidated

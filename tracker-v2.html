@@ -937,7 +937,15 @@ body::before{
         const reconKey = p.slug || '';
         const reconInfo = recon[reconKey] || {};
         const conc = reconInfo.vial && (reconInfo.bac || reconInfo.acetic) ? reconInfo.vial / ((reconInfo.bac||0) + (reconInfo.acetic||0)) : null;
-        const units = doseToUnits(effectiveDose, conc, p);
+        // ── SYNC: route through ApexUnits.compute() so today/stack/52-week ALL agree ──
+        // ApexUnits is the single source of truth: pulls SSOT dose_mg_per_inj for Optimal,
+        // collapses range for Conservative/Aggressive, applies user's apex_recon vial/BAC.
+        const apx = (window.ApexUnits && window.ApexUnits.compute)
+          ? window.ApexUnits.compute(p.slug, { intensity: p.intensity, userRecon: reconInfo, doseOverride: p.userEditedDose ? p.dose : null })
+          : null;
+        const units = apx && apx.units != null
+          ? { units: apx.units, range: false }
+          : doseToUnits(effectiveDose, conc, p);
 
         // Stats: bottle countdown (use mixDate, NOT cycle start), cycle progress, next titration
         const mixDateRow = p.mixDate ? new Date(p.mixDate) : start;
@@ -1082,7 +1090,13 @@ body::before{
     const reconInfo = recon[p.slug] || {};
     const totalVol = (reconInfo.bac || 0) + (reconInfo.acetic || 0);
     const conc = reconInfo.vial && totalVol > 0 ? reconInfo.vial / totalVol : null;
-    const units = doseToUnits(effectiveDose, conc, p);
+    // ── SYNC: Stack tab uses ApexUnits.compute() — same engine as Today + 52-Week ──
+    const apx = (window.ApexUnits && window.ApexUnits.compute)
+      ? window.ApexUnits.compute(p.slug, { intensity: p.intensity, userRecon: reconInfo, doseOverride: p.userEditedDose ? p.dose : null })
+      : null;
+    const units = apx && apx.units != null
+      ? { units: apx.units, range: false }
+      : doseToUnits(effectiveDose, conc, p);
 
     const sched = shouldDoToday(p, today);
     const isDone = !!todayDoses[p.id];
@@ -1471,7 +1485,13 @@ body::before{
     const bac  = parseFloat(document.getElementById('em-bac').value)  || reconNow.bac  || (RECON_DEFAULTS[(p&&p.slug)||'']||{}).bac;
     const acetic = reconNow.acetic || 0;
     const conc = (vial && (bac || acetic)) ? vial / (bac + acetic) : null;
-    const u = doseToUnits(picked, conc, p);
+    // Use ApexUnits.compute so edit-modal preview matches Today/Stack/52-Week exactly
+    const apxPrev = (window.ApexUnits && window.ApexUnits.compute)
+      ? window.ApexUnits.compute(p && p.slug, { intensity: editingIntensity, userRecon: { vial, bac, acetic }, doseOverride: dose })
+      : null;
+    const u = (apxPrev && apxPrev.units != null)
+      ? { units: apxPrev.units, range: false }
+      : doseToUnits(picked, conc, p);
     const previewEl = document.getElementById('em-intensity-preview');
     if (previewEl) {
       const overLimit = (u && !u.range && u.units > 100) || (u && u.range && u.maxUnits > 100);
@@ -1538,6 +1558,8 @@ body::before{
     // Pick the tier-collapsed dose (Conservative/Optimal/Aggressive) so the saved dose matches what user selected
     const rawDose = document.getElementById('em-dose').value.trim() || state.protocols[idx].dose;
     state.protocols[idx].dose = pickFromRange(rawDose, editingIntensity);
+    // Flag as user-edited so ApexUnits.compute uses this value as override instead of SSOT canonical
+    if (rawDose !== (editingDefaults && editingDefaults.dose)) state.protocols[idx].userEditedDose = true;
     state.protocols[idx].freq = document.getElementById('em-freq').value.trim() || state.protocols[idx].freq;
     const cw = parseInt(document.getElementById('em-cycle').value, 10);
     if (!isNaN(cw) && cw > 0) {
