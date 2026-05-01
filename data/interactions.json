@@ -81,7 +81,7 @@
       ],
       "type": "sequencing",
       "severity": "medium",
-      "icon": "🧬",
+      "icon": "🔁",
       "title": "Run FOX04 BEFORE Epitalon — order matters",
       "summary": "FOX04-DRI is a senolytic — clears damaged 'zombie' cells. Epitalon is a telomerase activator — extends telomeres on existing cells. If you run Epitalon first, you're extending the lifespan of the SAME senescent cells you'd be clearing later. Run FOX04 first to clean house, then Epitalon to rebuild.",
       "fix": "Schedule: FOX04 5-day pulse → 4-week wash-out → Epitalon 10-20 day pulse. Sequencer auto-orders this if both are in your stack.",

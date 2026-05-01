@@ -1,7 +1,7 @@
 /* AUTO-GENERATED — DO NOT EDIT.
  * Source: /data/peptides.json
  * Regenerate: node scripts/build-peptide-data.js
- * Built: 2026-04-30T22:36:50.563Z
+ * Built: 2026-05-01T17:21:00.337Z
  */
 window.APEX_PEPTIDES = {
   "_meta": {
@@ -1071,7 +1071,7 @@ window.APEX_INTERACTIONS = [
     ],
     "type": "sequencing",
     "severity": "medium",
-    "icon": "🧬",
+    "icon": "🔁",
     "title": "Run FOX04 BEFORE Epitalon — order matters",
     "summary": "FOX04-DRI is a senolytic — clears damaged 'zombie' cells. Epitalon is a telomerase activator — extends telomeres on existing cells. If you run Epitalon first, you're extending the lifespan of the SAME senescent cells you'd be clearing later. Run FOX04 first to clean house, then Epitalon to rebuild.",
     "fix": "Schedule: FOX04 5-day pulse → 4-week wash-out → Epitalon 10-20 day pulse. Sequencer auto-orders this if both are in your stack.",
