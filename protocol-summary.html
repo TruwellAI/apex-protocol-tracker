@@ -871,7 +871,22 @@ body::before{
         <div class="proto-rows">
           <div class="proto-row">
             <div class="proto-r-label">Dose</div>
-            <div class="proto-r-value">${(function(){const cs=cycleState[slug]||{};const userRecon=(cs.vialMg>0&&cs.bacMl>0)?{vial:cs.vialMg,bac:cs.bacMl}:null;return doseToUnitsLabel(p.dose,slug,{userRecon});})()}</div>
+            <div class="proto-r-value">${(function(){
+              const cs=cycleState[slug]||{};
+              const userRecon=(cs.vialMg>0&&cs.bacMl>0)?{vial:cs.vialMg,bac:cs.bacMl}:null;
+              // Titrating peptides: show range "20→120 units/wk over 6 phases" instead of just the final dose
+              if (p.titration && Array.isArray(p.titration) && p.titration.length >= 2) {
+                const firstStep = doseToUnitsLabel(p.titration[0].d, slug, { userRecon });
+                const lastStep = doseToUnitsLabel(p.titration[p.titration.length-1].d, slug, { userRecon });
+                const stripUnits = s => String(s).replace(/<[^>]+>/g, '').replace(/[^\d.]/g, '');
+                const firstNum = stripUnits(firstStep);
+                const lastNum = stripUnits(lastStep);
+                if (firstNum && lastNum && firstNum !== lastNum) {
+                  return `<span style="color:var(--accent2);font-weight:800;font-size:1.05em;">${firstNum}→${lastNum}</span> <span style="color:var(--muted);font-size:.85em;">units/wk · titrating ${p.titration.length} phases</span>`;
+                }
+              }
+              return doseToUnitsLabel(p.dose,slug,{userRecon});
+            })()}</div>
           </div>
           <div class="proto-row">
             <div class="proto-r-label">Frequency</div>
