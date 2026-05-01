@@ -236,7 +236,7 @@ body::before{
       <div class="tile-cta">Open my tracker <span class="arrow">→</span></div>
     </a>
 
-    <!-- TILE 2: BUILD A PROTOCOL -->
+    <!-- TILE 2: BUILD A PROTOCOL — intercepted by experience fork below -->
     <a href="compare.html" class="tile build" id="tile-build">
       <div id="first-time-eyebrow" style="display:none;position:absolute;top:14px;left:50%;transform:translateX(-50%);background:#ff6b35;color:#080c10;font-family:'Share Tech Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;padding:4px 10px;border-radius:11px;animation:firstTimePulse 1.8s ease-in-out infinite;">★ Start Here</div>
       <div class="tile-icon">🧬</div>
@@ -263,6 +263,34 @@ body::before{
     <div class="trust-item"><div class="trust-v">0</div><div class="trust-l">Accounts</div></div>
   </div>
 
+  <!-- ═══ EXPERIENCE FORK MODAL — fires on Build A Protocol tile click ═══ -->
+  <div id="experience-fork" style="display:none;position:fixed;inset:0;background:rgba(8,12,16,.92);backdrop-filter:blur(8px);z-index:1000;align-items:center;justify-content:center;padding:20px;">
+    <div style="max-width:480px;width:100%;background:var(--panel);border:1px solid rgba(0,212,255,.4);border-radius:16px;padding:32px 26px;box-shadow:0 20px 60px rgba(0,0,0,.6);animation:expSlideUp .3s cubic-bezier(.2,.8,.2,1);">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.28em;color:var(--accent);text-transform:uppercase;text-align:center;margin-bottom:8px;">Welcome to Apex</div>
+      <h2 style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:26px;color:var(--white);text-align:center;margin-bottom:8px;letter-spacing:-.3px;line-height:1.2;">Where do you want to start?</h2>
+      <p style="font-size:13px;color:var(--text);text-align:center;margin-bottom:24px;line-height:1.55;">We'll build your protocol either way. Pick the path that matches you.</p>
+
+      <button id="ef-newbie" style="display:flex;align-items:center;gap:14px;width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:12px;padding:18px 20px;cursor:pointer;text-align:left;margin-bottom:10px;-webkit-tap-highlight-color:transparent;color:var(--white);font-family:'Barlow',sans-serif;transition:border-color .15s,transform .15s;">
+        <span style="font-size:30px;line-height:1;flex-shrink:0;">🧪</span>
+        <div style="flex:1;">
+          <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;color:var(--white);letter-spacing:-.1px;">New to peptides</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px;line-height:1.4;">Walk me through the basics first — what they do, how to mix them, what's safe. ~5 min read.</div>
+        </div>
+      </button>
+
+      <button id="ef-pro" style="display:flex;align-items:center;gap:14px;width:100%;background:var(--panel2);border:1px solid rgba(0,255,157,.4);border-radius:12px;padding:18px 20px;cursor:pointer;text-align:left;-webkit-tap-highlight-color:transparent;color:var(--white);font-family:'Barlow',sans-serif;transition:border-color .15s,transform .15s;">
+        <span style="font-size:30px;line-height:1;flex-shrink:0;">💪</span>
+        <div style="flex:1;">
+          <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;color:var(--accent2);letter-spacing:-.1px;">I know what I'm doing</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px;line-height:1.4;">Skip the primer. Take me straight to the goal builder.</div>
+        </div>
+      </button>
+
+      <button id="ef-skip" style="display:block;width:100%;text-align:center;margin-top:18px;background:none;border:0;color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;cursor:pointer;padding:6px;">Don't ask again</button>
+      <button id="ef-close" style="position:absolute;top:14px;right:14px;background:none;border:0;color:var(--muted);font-size:22px;cursor:pointer;padding:6px 10px;line-height:1;">×</button>
+    </div>
+  </div>
+
   <!-- FOOT -->
   <div class="foot">
     <div>© Apex Protocol · Research use only · Not medical advice · 17+</div>
@@ -287,6 +315,50 @@ body::before{
       const el = document.getElementById('first-time-eyebrow');
       if (el) el.style.display = 'block';
     }
+  })();
+
+  // ═══ EXPERIENCE FORK ═══
+  // Intercepts the Build A Protocol tile click. Shows on every visit when
+  // user has no saved stack — unless permanently dismissed via "Don't ask again".
+  // ?fork=1 forces the modal for testing.
+  (function setupForkOnHome(){
+    const tile = document.getElementById('tile-build');
+    const fork = document.getElementById('experience-fork');
+    if (!tile || !fork) return;
+
+    function shouldShowFork() {
+      try {
+        if (localStorage.getItem('apex_experience_skipped') === '1') return false;
+        const sel = JSON.parse(localStorage.getItem('apex_selection') || '[]');
+        if (Array.isArray(sel) && sel.length > 0) return false;
+      } catch(e) {}
+      return true;
+    }
+
+    tile.addEventListener('click', (ev) => {
+      if (!shouldShowFork()) return; // returning user — go straight to compare.html
+      ev.preventDefault();
+      fork.style.display = 'flex';
+    });
+
+    // ?fork=1 force-shows for testing
+    if (new URLSearchParams(window.location.search).get('fork') === '1') {
+      fork.style.display = 'flex';
+    }
+
+    const close = () => { fork.style.display = 'none'; };
+    document.getElementById('ef-newbie').addEventListener('click', () => {
+      window.location.href = 'basics.html';
+    });
+    document.getElementById('ef-pro').addEventListener('click', () => {
+      window.location.href = 'compare.html';
+    });
+    document.getElementById('ef-skip').addEventListener('click', () => {
+      try { localStorage.setItem('apex_experience_skipped', '1'); } catch(e){}
+      window.location.href = 'compare.html';
+    });
+    document.getElementById('ef-close').addEventListener('click', close);
+    fork.addEventListener('click', (e) => { if (e.target === fork) close(); });
   })();
 </script>
 <script src="assets/apex-tracking.js"></script>
