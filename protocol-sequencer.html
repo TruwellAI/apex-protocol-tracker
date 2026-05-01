@@ -101,22 +101,11 @@ h1 em{color:var(--accent2);font-style:normal;}
 .tl-bar.layer{background:var(--layer);}
 .tl-bar.pulse{background:var(--pulse);}
 /* Phase-colored bars — match the phase band above */
-.tl-bar.p-clear{background:#a78bfa;}
-.tl-bar.p-reset{background:#00D4FF;}
-.tl-bar.p-rebuild{background:#00C48C;}
-.tl-bar.p-repair{background:#10b981;}
-.tl-bar.p-maintain{background:#7a8d99;}
-.tl-bar.p-titrate{background:#fbbf24;}
-.tl-bar.p-active{background:#00C48C;}
-.tl-bar.p-taper{background:#FF6B35;}
-.tl-bar.p-recomp{background:#a78bfa;}
-.tl-bar.p-ramp{background:#fbbf24;}
-.tl-bar.p-cycle{background:#00C48C;}
-.tl-bar.p-off{background:#7a8d99;}
-.tl-bar.p-pulse{background:#FF6B35;}
-.tl-bar.p-daily{background:#10b981;}
-.tl-bar.p-asneeded{background:#a78bfa;}
-.tl-bar.p-continuous{background:#00D4FF;}
+/* Simplified bar coloring — rainbow phase band stays at the TOP for narrative;
+   individual peptide bars use plain ON/TITRATE/TAPER/PULSE/FOUNDATION semantics. */
+.tl-bar.on{background:#00D4FF;}                                          /* solid cyan: cycling, steady dose */
+.tl-bar.titrate{background:linear-gradient(to right,#fbbf24,#00D4FF);}   /* yellow → cyan: dose ramping UP */
+.tl-bar.taper{background:linear-gradient(to right,#00D4FF,#FF6B35);}     /* cyan → orange: dose ramping DOWN */
 .tl-cat-header{display:grid;grid-template-columns:120px 1fr;gap:10px;align-items:center;margin:18px 0 8px 0;}
 .tl-cat-label{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;letter-spacing:.04em;color:var(--white);text-transform:uppercase;}
 .tl-cat-meta{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;}
@@ -727,18 +716,40 @@ function render() {
 
     peps.forEach((p, idx) => {
       let bars = '';
+      // SIMPLIFIED COLOR SCHEME:
+      //   on        = solid blue (cycling, steady dose)
+      //   titrate   = yellow → blue gradient (dose ramping UP, first segment of GLP-1s)
+      //   taper     = blue → orange gradient (dose ramping DOWN, final segment)
+      //   off cycle = NO bar (black gap shows through track background)
+      const isTitratable = !!p.titrate;
       // First check year-long curriculum schedule for this category
       const goalSched = YEAR_SCHEDULE[activeGoal] || {};
       const sched = goalSched[p.slug];
       if (sched && sched.length > 0) {
-        sched.forEach(seg => {
-          const left = ((seg.start-1)/52)*100;
-          const right = 100 - (seg.end/52)*100;
-          // Color by phase if peptide belongs to active goal, else fall back to tier color
-          const segMid = Math.floor((seg.start + seg.end) / 2);
-          const phaseKey = (p.category === activeGoal) ? phaseForWeek(segMid) : null;
-          const colorClass = phaseKey ? `p-${phaseKey}` : p.tier;
-          bars += `<div class="tl-bar ${colorClass}" style="left:${left}%;right:${right}%;" title="${seg.label||''} (Wk ${seg.start}-${seg.end})"></div>`;
+        sched.forEach((seg, segIdx) => {
+          // Titratable peptides split into 3 sub-bars when the segment is long enough:
+          //   titrate (4-wk ramp up) → on (steady) → taper (2-wk ramp down)
+          // Short segments stay as a single titrate or taper bar based on position.
+          const segLen = seg.end - seg.start + 1;
+          if (isTitratable && segLen >= 8) {
+            const titrateEnd = seg.start + 3;        // weeks 1-4 of the segment
+            const taperStart = seg.end - 1;          // last 2 weeks of the segment
+            // Titrate band
+            bars += `<div class="tl-bar titrate" style="left:${((seg.start-1)/52)*100}%;right:${100-(titrateEnd/52)*100}%;" title="Titrate up (wk ${seg.start}-${titrateEnd})"></div>`;
+            // Steady-on band
+            bars += `<div class="tl-bar on" style="left:${(titrateEnd/52)*100}%;right:${100-((taperStart-1)/52)*100}%;" title="Steady on (wk ${titrateEnd+1}-${taperStart-1})"></div>`;
+            // Taper band
+            bars += `<div class="tl-bar taper" style="left:${((taperStart-1)/52)*100}%;right:${100-(seg.end/52)*100}%;" title="Taper down (wk ${taperStart}-${seg.end})"></div>`;
+          } else {
+            const left = ((seg.start-1)/52)*100;
+            const right = 100 - (seg.end/52)*100;
+            let cls = 'on';
+            if (isTitratable) {
+              if (segIdx === 0) cls = 'titrate';
+              else if (segIdx === sched.length - 1) cls = 'taper';
+            }
+            bars += `<div class="tl-bar ${cls}" style="left:${left}%;right:${right}%;" title="${seg.label||''} (Wk ${seg.start}-${seg.end})"></div>`;
+          }
         });
       } else {
         // Fall back to cycleWeeks/offWeeks pattern if not scheduled for this goal
@@ -746,23 +757,31 @@ function render() {
         const offWk = p.offWeeks;
         const total = cycleWk + offWk;
         if (p.tier === 'foundation') {
-          bars = `<div class="tl-bar foundation" style="left:0%;right:0%;"></div>`;
+          bars = `<div class="tl-bar on" style="left:0%;right:0%;"></div>`;
         } else if (p.tier === 'pulse') {
           const order = p.sequenceOrder || 1;
           const startWk = (order - 1) * 8 + 1;
           const endWk = startWk + cycleWk;
           const left = ((startWk-1)/52)*100;
           const right = 100 - (endWk/52)*100;
-          bars = `<div class="tl-bar pulse" style="left:${left}%;right:${right}%;"></div>`;
+          bars = `<div class="tl-bar on" style="left:${left}%;right:${right}%;"></div>`;
         } else {
           let wk = 0;
+          let cycleIdx = 0;
+          const totalCycles = total > 0 ? Math.floor(52 / total) + 1 : 1;
           while (wk < 52 && total > 0) {
             const onStart = wk;
             const onEnd = Math.min(wk + cycleWk, 52);
             const left = (onStart/52)*100;
             const right = 100 - (onEnd/52)*100;
-            bars += `<div class="tl-bar layer" style="left:${left}%;right:${right}%;"></div>`;
+            let cls = 'on';
+            if (isTitratable) {
+              if (cycleIdx === 0) cls = 'titrate';
+              else if (cycleIdx === totalCycles - 1) cls = 'taper';
+            }
+            bars += `<div class="tl-bar ${cls}" style="left:${left}%;right:${right}%;"></div>`;
             wk += total;
+            cycleIdx++;
           }
         }
       }
@@ -811,9 +830,10 @@ function render() {
   // Legend
   html += `
     <div class="legend">
-      <div class="legend-item"><span class="tier-dot foundation"></span>Foundation · runs 52 weeks</div>
-      <div class="legend-item"><span class="tier-dot layer"></span>Layer · cycles on/off</div>
-      <div class="legend-item"><span class="tier-dot pulse"></span>Pulse · 1-2× per year</div>
+      <div class="legend-item"><span style="display:inline-block;width:24px;height:8px;border-radius:2px;background:#00D4FF;"></span>On cycle</div>
+      <div class="legend-item"><span style="display:inline-block;width:24px;height:8px;border-radius:2px;background:linear-gradient(to right,#fbbf24,#00D4FF);"></span>Titrating up</div>
+      <div class="legend-item"><span style="display:inline-block;width:24px;height:8px;border-radius:2px;background:linear-gradient(to right,#00D4FF,#FF6B35);"></span>Tapering down</div>
+      <div class="legend-item"><span style="display:inline-block;width:24px;height:8px;border-radius:2px;background:#0a1218;border:1px solid var(--border2);"></span>Off cycle</div>
     </div>`;
 
   // Actions
