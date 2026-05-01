@@ -1,7 +1,7 @@
 /* AUTO-GENERATED — DO NOT EDIT.
  * Source: /data/peptides.json
  * Regenerate: node scripts/build-peptide-data.js
- * Built: 2026-05-01T18:35:00.756Z
+ * Built: 2026-05-01T18:35:41.072Z
  */
 window.APEX_PEPTIDES = {
   "_meta": {
@@ -1293,22 +1293,18 @@ window.APEX_INTERACTIONS = [
     "id": "combined-bottle-dose-flaw",
     "groups": [
       [
-        "wolverine.html",
-        "klow.html",
-        "glow.html"
+        "wolverine.html"
       ],
       [
-        "wolverine.html",
-        "klow.html",
-        "glow.html"
+        "wolverine.html"
       ]
     ],
     "type": "dose",
-    "severity": "high",
+    "severity": "medium",
     "icon": "⚠️",
-    "title": "Combined-bottle pair has a pharmaceutical flaw — you can't independently dose",
-    "summary": "Wolverine, KLOW, and GLOW combined bottles lock multiple peptides at a fixed mg ratio in one vial. When you inject, every component scales together. BPC-157 wants 250 mcg / TB-500 wants 2.5 mg — that's a 10× difference. Whichever target you hit, the other peptide is dosed wrong (10× over OR 90% under). This is a fundamental design flaw of combined-bottle products, not a user error.",
-    "fix": "For convenience: target the smallest-dose component (usually BPC-157) and inject DAILY — other peptides will be sub-target but still active. For PROPER dosing of every peptide: run separate single-peptide vials. Combined bottles save 1 needle per day at the cost of optimal dosing — your call.",
+    "title": "Wolverine combined bottle — dose-ratio compromise (manageable)",
+    "summary": "Wolverine = 5mg BPC + 5mg TB-500 in one 3mL vial. The peptides are CHEMICALLY STABLE together (no copper to destroy TB), but the locked-ratio formulation means you can't independently dose them. BPC target is 0.25mg, TB target is 2.5mg — a 10× difference. Whichever you target by volume, the other is dosed wrong. This is a convenience-vs-optimal trade-off, not a chemistry disaster.",
+    "fix": "Practical play: target BPC-157 (0.25mg = ~15 units in standard recon) and inject DAILY. TB will be sub-target (~0.25mg/inj × 7 = 1.75mg/wk vs 5mg/wk target) but still active for systemic recovery. For full optimal TB dosing — run separate vials. The chemistry is fine either way.",
     "citations": [
       "Pharmaceutical formulation principle: components in fixed-ratio combinations cannot be independently titrated — see FDA guidance on combination drug products.",
       "BPC-157 effective dose: 200-500 mcg/day (Sikiric et al, Curr Pharm Des 2018)",
