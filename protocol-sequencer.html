@@ -8,8 +8,8 @@
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#080C10">
 <!-- SINGLE SOURCE OF TRUTH for peptide data — see /data/peptides.json -->
-<script src="data/peptide-data.js?v=20260501a"></script>
-<script src="assets/apex-stack-render.js?v=20260501a"></script>
+<script src="data/peptide-data.js?v=20260501b"></script>
+<script src="assets/apex-stack-render.js?v=20260501b"></script>
 <style>
 :root{
   --bg:#080C10; --panel:#0d1318; --panel2:#11181f;
@@ -634,7 +634,26 @@ function render() {
     const toggleColor = hasHigh ? 'background:rgba(255,107,53,.1);border-color:rgba(255,107,53,.4);color:var(--orange);' : '';
     html += `<div class="insights-wrap">
       <div class="insights-toggle" style="${toggleColor}" onclick="this.classList.toggle('open');document.getElementById('insights-list').style.display=this.classList.contains('open')?'block':'none';">${hasHigh ? '⚠️ ' : '💡 '}${count} insight${count>1?'s':''} about your stack — tap to read</div>
-      <div id="insights-list" style="display:none;">${insightCards.join('')}</div>
+      <div id="insights-list" style="display:none;">
+        <details style="background:rgba(255,255,255,.03);border:1px dashed var(--border2);border-radius:6px;margin-top:6px;">
+          <summary style="cursor:pointer;list-style:none;padding:8px 12px;color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;-webkit-tap-highlight-color:transparent;">ⓘ Icon + color key — tap to expand</summary>
+          <div style="padding:10px 14px;font-size:12px;line-height:1.7;color:var(--text);">
+            <div style="font-weight:700;color:var(--white);margin-bottom:4px;">Severity (left border color)</div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;"><span style="display:inline-block;width:14px;height:8px;background:#FF6B35;border-radius:2px;"></span><strong style="color:#FF6B35;">High</strong> — action required, mechanism harm</div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;"><span style="display:inline-block;width:14px;height:8px;background:#00D4FF;border-radius:2px;"></span><strong style="color:#00D4FF;">Medium</strong> — heads up, optimize timing/dose</div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;"><span style="display:inline-block;width:14px;height:8px;background:#00FF9D;border-radius:2px;"></span><strong style="color:#00FF9D;">Synergy</strong> — these compounds enhance each other</div>
+            <div style="font-weight:700;color:var(--white);margin-bottom:4px;">Icons (what kind of interaction)</div>
+            <div>⏳ &nbsp;Pulse-conflict — multiple 1-2x/yr peptides selected</div>
+            <div>⚠️ &nbsp;Generic warning — timing or dose risk</div>
+            <div>🔁 &nbsp;Sequencing — do A before B, order matters</div>
+            <div>🔥 &nbsp;Appetite / fat-burn overlap</div>
+            <div>📉 &nbsp;Hormonal / metabolic risk</div>
+            <div>⚗️ &nbsp;Chemistry / vial conflict</div>
+            <div>⚡ &nbsp;Synergy — pulse amplification, paired healing, substrate fueling</div>
+          </div>
+        </details>
+        ${insightCards.join('')}
+      </div>
     </div>`;
   }
 

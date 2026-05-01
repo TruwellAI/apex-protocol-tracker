@@ -323,6 +323,23 @@
           </div>
         </div>
         ${cards}
+        <details style="background:rgba(255,255,255,.03);border:1px dashed rgba(255,255,255,.12);border-radius:6px;margin-top:10px;">
+          <summary style="cursor:pointer;list-style:none;padding:7px 12px;color:#7a8d99;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;-webkit-tap-highlight-color:transparent;">ⓘ Icon + color key — tap to expand</summary>
+          <div style="padding:10px 14px;font-size:12px;line-height:1.7;color:#cbd5e1;">
+            <div style="font-weight:700;color:#fff;margin-bottom:4px;">Severity (left border color)</div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;"><span style="display:inline-block;width:14px;height:8px;background:#FF6B35;border-radius:2px;"></span><strong style="color:#FF6B35;">High</strong> — action required, mechanism harm</div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;"><span style="display:inline-block;width:14px;height:8px;background:#00D4FF;border-radius:2px;"></span><strong style="color:#00D4FF;">Medium</strong> — heads up, optimize timing/dose</div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;"><span style="display:inline-block;width:14px;height:8px;background:#00FF9D;border-radius:2px;"></span><strong style="color:#00FF9D;">Synergy</strong> — these compounds enhance each other</div>
+            <div style="font-weight:700;color:#fff;margin-bottom:4px;">Icons (what kind of interaction)</div>
+            <div>🔔 &nbsp;Doorbell — multiple peptides on same receptor (waste)</div>
+            <div>⚠️ &nbsp;Generic warning — timing or dose risk</div>
+            <div>🔁 &nbsp;Sequencing — do A before B, order matters</div>
+            <div>🔥 &nbsp;Appetite / fat-burn overlap</div>
+            <div>📉 &nbsp;Hormonal / metabolic risk</div>
+            <div>⚗️ &nbsp;🧪 Chemistry / vial conflict</div>
+            <div>⚡ &nbsp;Synergy — pulse amplification, paired healing, substrate fueling</div>
+          </div>
+        </details>
       </div>`;
     return { count: all.length, hasHigh };
   }
