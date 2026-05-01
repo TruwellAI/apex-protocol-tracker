@@ -968,11 +968,10 @@ body::before{
         ${rxBanner}
         <div class="proto-rows">
           <div class="proto-row">
-            <div class="proto-r-label">Dose</div>
-            <div class="proto-r-value">${(function(){
+            <div class="proto-r-label">Dose <span style="color:var(--accent2);font-size:9px;font-family:'Share Tech Mono',monospace;letter-spacing:.1em;margin-left:4px;">PER INJECTION</span></div>
+            <div class="proto-r-value" data-dose-cell="${slug}">${(function(){
               const cs=cycleState[slug]||{};
               const userRecon=(cs.vialMg>0&&cs.bacMl>0)?{vial:cs.vialMg,bac:cs.bacMl}:null;
-              // Titrating peptides: show range "20→120 units/wk over 6 phases" instead of just the final dose
               if (p.titration && Array.isArray(p.titration) && p.titration.length >= 2) {
                 const firstStep = doseToUnitsLabel(p.titration[0].d, slug, { userRecon });
                 const lastStep = doseToUnitsLabel(p.titration[p.titration.length-1].d, slug, { userRecon });
@@ -988,7 +987,7 @@ body::before{
           </div>
           <div class="proto-row">
             <div class="proto-r-label">Frequency</div>
-            <div class="proto-r-value">${(splitCfg && splitState[slug]) ? splitCfg.freqLabel : p.freq}</div>
+            <div class="proto-r-value" data-freq-cell="${slug}">${(splitCfg && splitState[slug]) ? splitCfg.freqLabel : p.freq}</div>
           </div>
         </div>
         <!-- TIMING NOTE — fasted/GLP-1 override pulled from SSOT timing_note -->
@@ -1003,21 +1002,35 @@ body::before{
             : '';
           return `<div style="margin-top:10px;padding:10px 12px;background:rgba(0,212,255,.05);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;font-size:12.5px;line-height:1.6;color:var(--text);">${j.timing_note}${highlight}</div>`;
         })()}
-        <!-- CADENCE FLEX — daily-vs-weekly schedule options when peptide allows it -->
+        <!-- CADENCE FLEX — clickable schedule options that update dose + freq live -->
         ${(function(){
           const j = (window.APEX_PEPTIDES || {})[slug];
           if (!j || !j.cadence_flex || !j.cadence_flex.options) return '';
           const opts = j.cadence_flex.options;
-          const optRows = opts.map(o => {
+          // Read user's saved cadence choice for this peptide; default = first option
+          let savedChoice = null;
+          try { savedChoice = (JSON.parse(localStorage.getItem('apex_cadence_choice')||'{}'))[slug]; } catch(e){}
+          const activeIdx = Math.max(0, opts.findIndex(o => o.pattern === savedChoice));
+          const optRows = opts.map((o, i) => {
             const doseLbl = o.per_dose_mg < 1 ? (o.per_dose_mg * 1000) + ' mcg' : o.per_dose_mg + ' mg';
-            return `<div style="display:flex;justify-content:space-between;gap:14px;padding:6px 0;border-bottom:1px dashed rgba(0,212,255,.12);font-size:12.5px;">
-              <span style="color:var(--white);font-weight:600;">${o.pattern}</span>
-              <span style="color:var(--muted);">${doseLbl}/dose · <strong style="color:var(--accent2);">${o.weekly_total_mg} mg/wk total</strong></span>
-            </div>`;
+            const isActive = i === activeIdx;
+            return `<button type="button"
+              data-cadence-opt
+              data-slug="${slug}"
+              data-pattern="${o.pattern}"
+              data-per-dose-mg="${o.per_dose_mg}"
+              data-weekly-total="${o.weekly_total_mg}"
+              style="display:flex;justify-content:space-between;align-items:center;gap:14px;width:100%;padding:10px 12px;border-radius:8px;font-family:'Barlow',sans-serif;font-size:12.5px;cursor:pointer;text-align:left;-webkit-tap-highlight-color:transparent;margin-bottom:4px;transition:all .15s;background:${isActive?'rgba(0,255,157,.10)':'rgba(255,255,255,.02)'};border:1px solid ${isActive?'rgba(0,255,157,.5)':'rgba(167,139,250,.15)'};color:#fff;">
+              <span style="display:flex;align-items:center;gap:8px;">
+                <span style="display:inline-block;width:14px;height:14px;border-radius:50%;border:2px solid ${isActive?'var(--accent2)':'rgba(167,139,250,.4)'};background:${isActive?'var(--accent2)':'transparent'};flex-shrink:0;"></span>
+                <span style="font-weight:600;">${o.pattern}</span>
+              </span>
+              <span style="color:var(--muted);font-size:11.5px;">${doseLbl}/dose · <strong style="color:${isActive?'var(--accent2)':'#a78bfa'};">${o.weekly_total_mg} mg/wk total</strong></span>
+            </button>`;
           }).join('');
-          return `<details style="margin-top:8px;background:rgba(167,139,250,.05);border:1px solid rgba(167,139,250,.3);border-radius:8px;overflow:hidden;">
+          return `<details style="margin-top:8px;background:rgba(167,139,250,.05);border:1px solid rgba(167,139,250,.3);border-radius:8px;overflow:hidden;" ${activeIdx > 0 ? 'open' : ''}>
             <summary style="cursor:pointer;list-style:none;padding:10px 14px;display:flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#a78bfa;-webkit-tap-highlight-color:transparent;user-select:none;">
-              📅 Dose schedule options · tap to expand
+              📅 Dose schedule options · pick yours
               <span style="margin-left:auto;font-size:10px;opacity:.6;">▾</span>
             </summary>
             <div style="padding:0 14px 12px;">
@@ -1195,6 +1208,58 @@ body::before{
       localStorage.removeItem('apex_selection');
     } catch(e){}
     location.href = 'tracker-v2.html?import=pending';
+  });
+
+  // ── CADENCE OPTION CLICK HANDLER ──
+  // Click any [data-cadence-opt] button → recompute units for that pattern's
+  // per-dose mg, update the dose + frequency cells, persist to localStorage.
+  document.addEventListener('click', (ev) => {
+    const btn = ev.target.closest('[data-cadence-opt]');
+    if (!btn) return;
+    const slug = btn.getAttribute('data-slug');
+    const pattern = btn.getAttribute('data-pattern');
+    const perDoseMg = parseFloat(btn.getAttribute('data-per-dose-mg'));
+    if (!slug || !pattern || !perDoseMg) return;
+
+    // Compute new units using current vial+BAC for this peptide
+    const cs = cycleState[slug] || {};
+    const userRecon = (cs.vialMg > 0 && cs.bacMl > 0) ? { vial: cs.vialMg, bac: cs.bacMl } : RECON_DEFAULTS[slug];
+    if (!userRecon || !userRecon.vial || !userRecon.bac) return;
+    const conc = userRecon.vial / userRecon.bac;
+    const newUnits = Math.round((perDoseMg / conc) * 100);
+
+    // Update dose cell
+    const doseCell = document.querySelector(`[data-dose-cell="${CSS.escape(slug)}"]`);
+    if (doseCell) {
+      doseCell.innerHTML = `<span style="color:var(--accent2);font-weight:800;font-size:1.1em;">${newUnits}</span> <span style="color:var(--muted);">units</span>`;
+    }
+    // Update frequency cell
+    const freqCell = document.querySelector(`[data-freq-cell="${CSS.escape(slug)}"]`);
+    if (freqCell) freqCell.textContent = pattern;
+
+    // Toggle active state on all options for this peptide
+    document.querySelectorAll(`[data-cadence-opt][data-slug="${CSS.escape(slug)}"]`).forEach(b => {
+      const isActive = b === btn;
+      b.style.background = isActive ? 'rgba(0,255,157,.10)' : 'rgba(255,255,255,.02)';
+      b.style.borderColor = isActive ? 'rgba(0,255,157,.5)' : 'rgba(167,139,250,.15)';
+      const dot = b.querySelector('span > span');
+      if (dot) {
+        dot.style.borderColor = isActive ? 'var(--accent2)' : 'rgba(167,139,250,.4)';
+        dot.style.background = isActive ? 'var(--accent2)' : 'transparent';
+      }
+      const totalSpan = b.querySelector('span:last-child strong');
+      if (totalSpan) totalSpan.style.color = isActive ? 'var(--accent2)' : '#a78bfa';
+    });
+
+    // Persist choice
+    try {
+      const all = JSON.parse(localStorage.getItem('apex_cadence_choice') || '{}');
+      all[slug] = pattern;
+      localStorage.setItem('apex_cadence_choice', JSON.stringify(all));
+    } catch(e){}
+
+    // Haptic on touch devices
+    try { if (navigator.vibrate) navigator.vibrate(8); } catch(_) {}
   });
 })();
 </script>
