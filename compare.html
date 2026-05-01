@@ -554,25 +554,8 @@ body{padding-bottom:90px;}
     const g = gradeCopy[grade];
     anGrade.innerHTML = `<div class="grade-badge ${g.cls}"><span class="g-letter">${g.letter}</span><span>${g.text}</span></div>`;
 
+    // ── COVERAGE CALLOUTS ONLY (warnings now flow to the unified top alert) ──
     anCallouts.innerHTML = '';
-    if (dupes.length > 0) {
-      dupes.forEach(c => {
-        anCallouts.innerHTML += `
-          <div class="callout callout-bad">
-            <span class="callout-icon">🔔</span>
-            <div><strong>You're ringing the doorbell twice.</strong> ${conflicts[c].join(' + ')} both hit the ${CONFLICT_LABELS[c] || c}. Pick one — the second is just spending money to hit the same receptor.</div>
-          </div>`;
-      });
-    }
-    if (chemConflicts.length > 0) {
-      chemConflicts.forEach(c => {
-        anCallouts.innerHTML += `
-          <div class="callout callout-bad">
-            <span class="callout-icon">🧪</span>
-            <div><strong>${c.label} — pre-mixed copper conflict.</strong> ${c.reason}</div>
-          </div>`;
-      });
-    }
     if (mechsHit.length === goal.mechs.length) {
       anCallouts.innerHTML += `<div class="callout callout-ok"><span class="callout-icon">🎯</span><div><strong>Full mechanism coverage.</strong> You're hitting every angle for ${goal.label.toLowerCase()}.</div></div>`;
     } else if (mechsHit.length >= goal.mechs.length / 2 && dupes.length === 0) {
@@ -791,10 +774,36 @@ body{padding-bottom:90px;}
       ovGoalBars.appendChild(row);
     });
 
-    // ── PHARMACOLOGICAL INTERACTIONS (central module) ──
+    // ── UNIFIED TOP ALERT (central module) ──
+    // Pharmacological interactions + mechanism doorbell-rings + chemistry
+    // conflicts all flow into ONE consolidated panel at the top, sorted by
+    // severity. No more "two warning systems in two cards."
     if (window.ApexStackRender) {
       const slugs = Array.from(selected).map(k => k + '.html');
-      window.ApexStackRender.renderInteractionsAlert(slugs, document.getElementById('ix-top-alert'), { mode:'top', expandHighSeverity:true });
+      // Build extra warnings from goal-conflict detection
+      const extras = [];
+      conflictPairs.forEach(c => {
+        extras.push({
+          severity: 'medium',
+          icon: '🔔',
+          title: `Doorbell rung twice — ${conflicts[c].join(' + ')} both hit the ${CONFLICT_LABELS[c] || c}`,
+          summary: `${conflicts[c].join(' + ')} all activate the same receptor (${CONFLICT_LABELS[c] || c}). Stacking them isn't additive — you're paying multiple times to hit the same biology.`,
+          fix: `Pick the most efficient one and drop the others. For example, if this is GLP-1 receptor, Retatrutide is the triple agonist — covers GLP-1 + GIP + glucagon all in one shot. For GHRH, CJC-1295 DAC gives the longest half-life.`,
+          citations: []
+        });
+      });
+      chemConflictsAll.forEach(rule => {
+        extras.push({
+          severity: 'high',
+          icon: '🧪',
+          title: `${rule.label} — chemistry conflict`,
+          summary: rule.reason,
+          fix: rule.fix || 'Use separate vials, mix fresh weekly, or alternate cycle pulses. Chemistry conflicts in a combo vial degrade product within days.',
+          citations: []
+        });
+      });
+      window.ApexStackRender.renderUnifiedAlerts(document.getElementById('ix-top-alert'), slugs, extras);
+      // Inline panel inside verdict card stays as a quiet recap (closed by default)
       window.ApexStackRender.renderInteractionsAlert(slugs, document.getElementById('ov-interactions'), { mode:'inline' });
     }
   }

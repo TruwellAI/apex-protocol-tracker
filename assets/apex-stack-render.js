@@ -271,9 +271,66 @@
     return Math.round((doseMg / (vialMg / bacMl)) * 100);
   }
 
+  // ── UNIFIED ALERT PANEL ───────────────────────────────────────
+  // Takes BOTH pharmacological interactions (from JSON) AND mechanism-level
+  // warnings (doorbell-rings, chemistry conflicts) and renders ONE consolidated
+  // panel at the top, sorted by severity. Replaces the old "two warning cards"
+  // pattern where pharm and doorbell lived in different places.
+  //
+  // @param {Element} el                      DOM container
+  // @param {string[]} slugs                  user's stack (slugs with .html)
+  // @param {Object[]} extraWarnings          [{severity, icon, title, summary, fix}, ...]
+  //                                          For doorbell-rings, chemistry conflicts, etc.
+  // @returns {Object} { count, hasHigh }
+  function renderUnifiedAlerts(el, slugs, extraWarnings) {
+    if (!el) return { count: 0, hasHigh: false };
+    const fired = (window.apexInteractionsForStack ? window.apexInteractionsForStack(slugs) : []);
+    const extras = (extraWarnings || []).map(w => Object.assign({}, w, { _isExtra: true }));
+    const all = fired.concat(extras);
+    if (all.length === 0) {
+      el.innerHTML = '';
+      el.style.display = 'none';
+      return { count: 0, hasHigh: false };
+    }
+    // Sort: high first, then medium, then synergy
+    const order = { high: 0, medium: 1, synergy: 2 };
+    all.sort((a, b) => (order[a.severity] ?? 9) - (order[b.severity] ?? 9));
+    const hasHigh = all.some(w => w.severity === 'high');
+    el.style.display = '';
+
+    const cards = all.map(w => {
+      const expanded = w.severity === 'high';
+      // Re-use the standard card markup so look is identical to JSON-driven interactions
+      return buildInteractionCard(w, expanded);
+    }).join('');
+
+    // Counts by severity for the headline
+    const counts = { high: 0, medium: 0, synergy: 0 };
+    all.forEach(w => { if (counts[w.severity] != null) counts[w.severity]++; });
+    const segments = [];
+    if (counts.high)    segments.push(`<span style="color:#FF6B35;font-weight:700;">${counts.high} HIGH</span>`);
+    if (counts.medium)  segments.push(`<span style="color:#00D4FF;font-weight:700;">${counts.medium} MED</span>`);
+    if (counts.synergy) segments.push(`<span style="color:#00FF9D;font-weight:700;">${counts.synergy} SYNERGY</span>`);
+    const headlineCount = segments.join(' &middot; ');
+
+    el.innerHTML = `
+      <div style="background:${hasHigh ? 'linear-gradient(135deg,rgba(255,107,53,.18),rgba(255,107,53,.06))' : 'linear-gradient(135deg,rgba(0,212,255,.14),rgba(0,212,255,.04))'};border:1px solid ${hasHigh ? 'rgba(255,107,53,.5)' : 'rgba(0,212,255,.4)'};border-radius:12px;padding:14px 16px;${hasHigh ? 'box-shadow:0 4px 18px rgba(255,107,53,.18);' : ''}">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+          <div style="font-size:22px;">${hasHigh ? '🚩' : '⚡'}</div>
+          <div style="flex:1;">
+            <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;color:${hasHigh ? '#FF6B35' : '#00D4FF'};letter-spacing:-.1px;line-height:1.2;">${all.length} issue${all.length>1?'s':''} with your stack — read these first</div>
+            <div style="font-size:11px;color:#7a8d99;margin-top:2px;font-family:'Share Tech Mono',monospace;letter-spacing:.06em;">${headlineCount}${hasHigh ? ' &middot; action required' : ' &middot; tap a card to read'}</div>
+          </div>
+        </div>
+        ${cards}
+      </div>`;
+    return { count: all.length, hasHigh };
+  }
+
   // ── EXPORT ────────────────────────────────────────────────────
   window.ApexStackRender = {
     renderInteractionsAlert,
+    renderUnifiedAlerts,
     buildInteractionCard,
     gradeTakeaway,
     unitsForDose,
