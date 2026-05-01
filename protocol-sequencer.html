@@ -8,8 +8,8 @@
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#080C10">
 <!-- SINGLE SOURCE OF TRUTH for peptide data — see /data/peptides.json -->
-<script src="data/peptide-data.js?v=20260501b"></script>
-<script src="assets/apex-stack-render.js?v=20260501b"></script>
+<script src="data/peptide-data.js?v=20260501c"></script>
+<script src="assets/apex-stack-render.js?v=20260501c"></script>
 <style>
 :root{
   --bg:#080C10; --panel:#0d1318; --panel2:#11181f;
@@ -786,40 +786,64 @@ function render() {
           if (/titrate|loading|ramp/.test(labelLower)) cls = 'titrate';
           else if (/taper/.test(labelLower)) cls = 'taper';
 
-          if (cls === 'titrate') {
-            // Special: a 4-week titrate segment renders as 4 DISTINCT solid blocks
-            // (one per week / dose level) so users see the dose ladder, not a smooth gradient.
+          // Titrate/loading and taper segments → ONE block per week with
+          // interpolated color along the ramp. Applies to ALL titratable peptides:
+          // GLP-1s (4-step ladder), NAD+ loading (4-step), Tesa ramp (2-step), etc.
+          if (cls === 'titrate' || cls === 'taper') {
             const segLen = seg.end - seg.start + 1;
-            if (segLen === 4 && /titrate|loading|ramp/.test(labelLower) && /retatrutide|semaglutide|tirzepatide/.test(p.slug)) {
-              for (let w = 0; w < 4; w++) {
-                const wkStart = seg.start + w;
-                const wkLeft = ((wkStart-1)/52)*100;
-                const wkRight = 100 - (wkStart/52)*100;
-                bars += `<div class="tl-bar t-step${w+1}" style="left:${wkLeft}%;right:${wkRight}%;" title="Week ${wkStart} — titration step ${w+1}/4"></div>`;
-              }
-              return;
+            // Color stops: titrate goes pale yellow → cyan, taper goes cyan → orange
+            const stops = (cls === 'titrate')
+              ? { sR:253, sG:230, sB:138, eR:0,   eG:212, eB:255 }   // #fde68a → #00D4FF
+              : { sR:0,   sG:212, sB:255, eR:255, eG:107, eB:53 };   // #00D4FF → #FF6B35
+            for (let w = 0; w < segLen; w++) {
+              const wkStart = seg.start + w;
+              const t = segLen === 1 ? 1 : w / (segLen - 1);
+              const r = Math.round(stops.sR + (stops.eR - stops.sR) * t);
+              const g = Math.round(stops.sG + (stops.eG - stops.sG) * t);
+              const b = Math.round(stops.sB + (stops.eB - stops.sB) * t);
+              const wkLeft = ((wkStart-1)/52)*100;
+              const wkRight = 100 - (wkStart/52)*100;
+              const stepLabel = cls === 'titrate' ? `titration step ${w+1}/${segLen}` : `taper step ${w+1}/${segLen}`;
+              bars += `<div class="tl-bar" style="left:${wkLeft}%;right:${wkRight}%;background:rgb(${r},${g},${b});" title="Week ${wkStart} — ${stepLabel}"></div>`;
             }
-            // Otherwise standard titrate gradient
-            const left = ((seg.start-1)/52)*100;
-            const right = 100 - (seg.end/52)*100;
-            bars += `<div class="tl-bar titrate" style="left:${left}%;right:${right}%;" title="${seg.label||''} (Wk ${seg.start}-${seg.end})"></div>`;
-            return;
-          }
-          if (cls === 'taper') {
-            const left = ((seg.start-1)/52)*100;
-            const right = 100 - (seg.end/52)*100;
-            bars += `<div class="tl-bar taper" style="left:${left}%;right:${right}%;" title="${seg.label||''} (Wk ${seg.start}-${seg.end})"></div>`;
             return;
           }
 
-          // PRIORITY 2: titratable peptide with a long single segment — auto-split into 3
+          // PRIORITY 2: titratable peptide with a long single segment — auto-split into
+          // titrate-step-block / steady on / taper-step-block (4-wk titrate, 2-wk taper)
           const segLen = seg.end - seg.start + 1;
           if (isTitratable && segLen >= 8) {
-            const titrateEnd = seg.start + 3;
-            const taperStart = seg.end - 1;
-            bars += `<div class="tl-bar titrate" style="left:${((seg.start-1)/52)*100}%;right:${100-(titrateEnd/52)*100}%;" title="Titrate up (wk ${seg.start}-${titrateEnd})"></div>`;
-            bars += `<div class="tl-bar on" style="left:${(titrateEnd/52)*100}%;right:${100-((taperStart-1)/52)*100}%;" title="Steady on (wk ${titrateEnd+1}-${taperStart-1})"></div>`;
-            bars += `<div class="tl-bar taper" style="left:${((taperStart-1)/52)*100}%;right:${100-(seg.end/52)*100}%;" title="Taper down (wk ${taperStart}-${seg.end})"></div>`;
+            const titrateLen = 4;
+            const taperLen = 2;
+            const titrateStart = seg.start;
+            const titrateEnd = titrateStart + titrateLen - 1;
+            const taperStart = seg.end - taperLen + 1;
+            const onStart = titrateEnd + 1;
+            const onEnd = taperStart - 1;
+            // 4 distinct titrate-step blocks (yellow → cyan)
+            const tStops = { sR:253, sG:230, sB:138, eR:0, eG:212, eB:255 };
+            for (let w = 0; w < titrateLen; w++) {
+              const wkStart = titrateStart + w;
+              const t = w / (titrateLen - 1);
+              const r = Math.round(tStops.sR + (tStops.eR - tStops.sR) * t);
+              const g = Math.round(tStops.sG + (tStops.eG - tStops.sG) * t);
+              const b = Math.round(tStops.sB + (tStops.eB - tStops.sB) * t);
+              bars += `<div class="tl-bar" style="left:${((wkStart-1)/52)*100}%;right:${100-(wkStart/52)*100}%;background:rgb(${r},${g},${b});" title="Week ${wkStart} — titration step ${w+1}/${titrateLen}"></div>`;
+            }
+            // Steady-on band
+            if (onEnd >= onStart) {
+              bars += `<div class="tl-bar on" style="left:${((onStart-1)/52)*100}%;right:${100-(onEnd/52)*100}%;" title="Steady on (wk ${onStart}-${onEnd})"></div>`;
+            }
+            // 2 distinct taper-step blocks (cyan → orange)
+            const tapStops = { sR:0, sG:212, sB:255, eR:255, eG:107, eB:53 };
+            for (let w = 0; w < taperLen; w++) {
+              const wkStart = taperStart + w;
+              const t = w / (taperLen - 1);
+              const r = Math.round(tapStops.sR + (tapStops.eR - tapStops.sR) * t);
+              const g = Math.round(tapStops.sG + (tapStops.eG - tapStops.sG) * t);
+              const b = Math.round(tapStops.sB + (tapStops.eB - tapStops.sB) * t);
+              bars += `<div class="tl-bar" style="left:${((wkStart-1)/52)*100}%;right:${100-(wkStart/52)*100}%;background:rgb(${r},${g},${b});" title="Week ${wkStart} — taper step ${w+1}/${taperLen}"></div>`;
+            }
           } else {
             // PRIORITY 3: position-based fallback for legacy data
             const left = ((seg.start-1)/52)*100;
