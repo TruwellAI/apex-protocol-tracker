@@ -982,15 +982,36 @@ body::before{
         ${(function(){
           const j = (window.APEX_PEPTIDES || {})[slug];
           if (!j || !j.timing_note) return '';
-          // Detect if user also has any GLP-1 in their stack
           const stackSlugs = (selection || []);
           const hasGlp1 = stackSlugs.some(s => /retatrutide|semaglutide|tirzepatide/.test(s));
           const isGhPep = /tesamorelin|cjc|ipamorelin|sermorelin/.test(slug);
-          // Highlight the GLP-1 override portion when relevant
           const highlight = (hasGlp1 && isGhPep)
             ? '<div style="margin-top:8px;padding:8px 10px;background:rgba(255,107,53,.10);border:1px solid rgba(255,107,53,.4);border-radius:6px;font-size:11px;color:#FF6B35;font-family:Share Tech Mono,monospace;letter-spacing:.06em;">⚠ Your stack has a GLP-1 — apply the AM-fasted override below.</div>'
             : '';
           return `<div style="margin-top:10px;padding:10px 12px;background:rgba(0,212,255,.05);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;font-size:12.5px;line-height:1.6;color:var(--text);">${j.timing_note}${highlight}</div>`;
+        })()}
+        <!-- CADENCE FLEX — daily-vs-weekly schedule options when peptide allows it -->
+        ${(function(){
+          const j = (window.APEX_PEPTIDES || {})[slug];
+          if (!j || !j.cadence_flex || !j.cadence_flex.options) return '';
+          const opts = j.cadence_flex.options;
+          const optRows = opts.map(o => {
+            const doseLbl = o.per_dose_mg < 1 ? (o.per_dose_mg * 1000) + ' mcg' : o.per_dose_mg + ' mg';
+            return `<div style="display:flex;justify-content:space-between;gap:14px;padding:6px 0;border-bottom:1px dashed rgba(0,212,255,.12);font-size:12.5px;">
+              <span style="color:var(--white);font-weight:600;">${o.pattern}</span>
+              <span style="color:var(--muted);">${doseLbl}/dose · <strong style="color:var(--accent2);">${o.weekly_total_mg} mg/wk total</strong></span>
+            </div>`;
+          }).join('');
+          return `<details style="margin-top:8px;background:rgba(167,139,250,.05);border:1px solid rgba(167,139,250,.3);border-radius:8px;overflow:hidden;">
+            <summary style="cursor:pointer;list-style:none;padding:10px 14px;display:flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#a78bfa;-webkit-tap-highlight-color:transparent;user-select:none;">
+              📅 Dose schedule options · tap to expand
+              <span style="margin-left:auto;font-size:10px;opacity:.6;">▾</span>
+            </summary>
+            <div style="padding:0 14px 12px;">
+              ${optRows}
+              <div style="margin-top:10px;padding:8px 10px;background:rgba(0,0,0,.2);border-radius:6px;font-size:12px;line-height:1.55;color:var(--text);">${j.cadence_flex.rule}</div>
+            </div>
+          </details>`;
         })()}
         ${buildStackComponents()}
         ${buildTitHtml()}

@@ -45,7 +45,22 @@
     "off_weeks": 4,
     "research_note": "Sikiric et al; tendon/ligament/gut healing 250-500 mcg/day",
     "recon_tip": "Inject <strong>fasted, 30+ min before food</strong> for systemic effect (oral BPC works locally for gut, but SubQ near the injury site beats both for tendons/joints).",
-    "timing_note": "\u23f0 Best <strong>30+ min before food</strong> for systemic effect. SubQ near injury site beats both oral + far-from-site for tendons/joints."
+    "timing_note": "\u23f0 Best <strong>30+ min before food</strong> for systemic effect. SubQ near injury site beats both oral + far-from-site for tendons/joints.",
+    "cadence_flex": {
+      "options": [
+        {
+          "pattern": "1x daily",
+          "per_dose_mg": 0.25,
+          "weekly_total_mg": 1.75
+        },
+        {
+          "pattern": "2x daily",
+          "per_dose_mg": 0.25,
+          "weekly_total_mg": 3.5
+        }
+      ],
+      "rule": "2x daily (AM + PM) doubles the area-under-curve and is preferred for acute injuries. 1x daily is fine for chronic/maintenance. Both well-tolerated."
+    }
   },
   "tb500.html": {
     "name": "TB-500",
@@ -66,7 +81,22 @@
     "off_weeks": 4,
     "research_note": "Loading 5mg 2x/wk \u00d7 4-6wk, then maintenance",
     "recon_tip": "TB-500 takes <strong>2-3 weeks</strong> to show effect \u2014 do NOT abandon it after week 1. Front-load with 5mg 2x/wk for the first 4 weeks (loading), then drop to 2.5mg 1-2x/wk maintenance.",
-    "timing_note": "\u23f0 <strong>2x weekly, time of day flexible.</strong> No fasting requirement. Spreads loading dose across the week (Mon + Thu typical)."
+    "timing_note": "\u23f0 <strong>2x weekly, time of day flexible.</strong> No fasting requirement. Spreads loading dose across the week (Mon + Thu typical).",
+    "cadence_flex": {
+      "options": [
+        {
+          "pattern": "2x weekly (loading wks 1-4)",
+          "per_dose_mg": 5,
+          "weekly_total_mg": 10
+        },
+        {
+          "pattern": "1x weekly (maintenance)",
+          "per_dose_mg": 2.5,
+          "weekly_total_mg": 2.5
+        }
+      ],
+      "rule": "TB-500 has a long half-life (~7 days) \u2014 daily is biologically redundant and wasteful. Standard: load 2x/wk for 4-6 weeks, then maintenance 1x/wk. Don't go daily."
+    }
   },
   "ghkcu.html": {
     "name": "GHK-Cu",
@@ -87,7 +117,22 @@
     "off_weeks": 4,
     "research_note": "Pickart 1973; 1-3mg/day skin/recovery/wound healing",
     "recon_tip": "GHK-Cu turns the solution <strong>blue</strong> \u2014 that is the copper, totally normal. Do NOT mix in the same vial as TB-500: copper oxidizes TB-500 methionine and degrades it within ~7 days. Run them in separate bottles.",
-    "timing_note": "\u23f0 <strong>Time of day flexible.</strong> SubQ near target tissue (face/scalp for skin, near joint for repair). NOT in same vial as TB-500 (copper degrades it)."
+    "timing_note": "\u23f0 <strong>Time of day flexible.</strong> SubQ near target tissue (face/scalp for skin, near joint for repair). NOT in same vial as TB-500 (copper degrades it).",
+    "cadence_flex": {
+      "options": [
+        {
+          "pattern": "1x daily",
+          "per_dose_mg": 2,
+          "weekly_total_mg": 14
+        },
+        {
+          "pattern": "3x weekly",
+          "per_dose_mg": 3,
+          "weekly_total_mg": 9
+        }
+      ],
+      "rule": "Daily preferred for skin/collagen results (steady copper-bound peptide signaling). 3x/wk works for systemic recovery. Either way: do NOT co-vial with TB-500 \u2014 copper degrades it."
+    }
   },
   "kpv.html": {
     "name": "KPV",
@@ -107,7 +152,22 @@
     "cycle_weeks": 6,
     "off_weeks": 4,
     "research_note": "250-1000 mcg/day; gut + dermal inflammation",
-    "timing_note": "\u23f0 <strong>Daily, time flexible.</strong> Anti-inflammatory + gut-supportive \u2014 split AM/PM helps if you have GI symptoms."
+    "timing_note": "\u23f0 <strong>Daily, time flexible.</strong> Anti-inflammatory + gut-supportive \u2014 split AM/PM helps if you have GI symptoms.",
+    "cadence_flex": {
+      "options": [
+        {
+          "pattern": "1x daily",
+          "per_dose_mg": 0.5,
+          "weekly_total_mg": 3.5
+        },
+        {
+          "pattern": "2x daily (gut focus)",
+          "per_dose_mg": 0.25,
+          "weekly_total_mg": 3.5
+        }
+      ],
+      "rule": "For systemic anti-inflammatory: 1x daily. For active gut/IBD focus: split 2x daily (AM/PM) at half the dose for steadier mucosal exposure. Same weekly total."
+    }
   },
   "ll37.html": {
     "name": "LL-37",
@@ -227,7 +287,27 @@
     "off_weeks": 8,
     "research_note": "Total weekly 5-10mg; substrate for biogenesis (run with NAD+)",
     "recon_tip": "MOTS-c needs NAD+ as a substrate. Load NAD+ for 2-4 weeks BEFORE starting MOTS-c, then run MOTS-c with NAD+ maintenance 1x/wk.",
-    "timing_note": "\u23f0 <strong>Morning, with light meal OK.</strong> Pairs with cardio + load NAD+ for 2-4 wks BEFORE starting MOTS-c."
+    "timing_note": "\u23f0 <strong>Morning, with light meal OK.</strong> Pairs well with cardio (potentiates exercise-induced AMPK signaling). Pairs with cardio + load NAD+ for 2-4 wks BEFORE starting MOTS-c.",
+    "cadence_flex": {
+      "options": [
+        {
+          "pattern": "2x weekly",
+          "per_dose_mg": 3,
+          "weekly_total_mg": 6
+        },
+        {
+          "pattern": "3x weekly",
+          "per_dose_mg": 3,
+          "weekly_total_mg": 9
+        },
+        {
+          "pattern": "daily",
+          "per_dose_mg": 1,
+          "weekly_total_mg": 7
+        }
+      ],
+      "rule": "MOTS-c is weekly-total dose-driven, not frequency-driven. Same weekly mg = same effect. Daily is fine at 1 mg/dose if you prefer smoother baseline or want to time it post-workout. \u274c NEVER daily at 3 mg \u2014 that's 21 mg/wk, 2-3\u00d7 over target."
+    }
   },
   "cartalax.html": {
     "name": "Cartalax",
@@ -454,7 +534,27 @@
     "cycle_weeks": 12,
     "off_weeks": 4,
     "research_note": "100-300 mcg pre-bed; selective ghrelin agonist",
-    "timing_note": "\u23f0 <strong>Pre-bed, empty stomach.</strong> Pairs with CJC for synergy. <strong style=\"color:#FF6B35;\">On a GLP-1?</strong> AM only, fully fasted, food 30-60 min after."
+    "timing_note": "\u23f0 <strong>Pre-bed, empty stomach.</strong> Pairs with CJC for synergy. <strong style=\"color:#FF6B35;\">On a GLP-1?</strong> AM only, fully fasted, food 30-60 min after.",
+    "cadence_flex": {
+      "options": [
+        {
+          "pattern": "1x daily (pre-bed)",
+          "per_dose_mg": 0.3,
+          "weekly_total_mg": 2.1
+        },
+        {
+          "pattern": "2x daily (AM+PM)",
+          "per_dose_mg": 0.3,
+          "weekly_total_mg": 4.2
+        },
+        {
+          "pattern": "3x daily",
+          "per_dose_mg": 0.2,
+          "weekly_total_mg": 4.2
+        }
+      ],
+      "rule": "Pulses GH each injection. More frequent = more pulses but higher tolerance build. 1x pre-bed is the cleanest signal. Add 2nd dose post-workout for hypertrophy phase. 3x is borderline overtraining the ghrelin receptor."
+    }
   },
   "sermorelin.html": {
     "name": "Sermorelin",
@@ -554,7 +654,27 @@
     "cycle_weeks": 52,
     "off_weeks": 0,
     "research_note": "Master antioxidant; 200-600mg 2-3x/wk",
-    "timing_note": "\u23f0 <strong>2-3x weekly, morning preferred.</strong> Pairs with NAD+ as a longevity foundation. Push slowly \u2014 too fast can cause flushing."
+    "timing_note": "\u23f0 <strong>2-3x weekly, morning preferred.</strong> Pairs with NAD+ as a longevity foundation. Push slowly \u2014 too fast can cause flushing.",
+    "cadence_flex": {
+      "options": [
+        {
+          "pattern": "2x weekly",
+          "per_dose_mg": 400,
+          "weekly_total_mg": 800
+        },
+        {
+          "pattern": "3x weekly",
+          "per_dose_mg": 400,
+          "weekly_total_mg": 1200
+        },
+        {
+          "pattern": "daily",
+          "per_dose_mg": 200,
+          "weekly_total_mg": 1400
+        }
+      ],
+      "rule": "Total weekly dose drives the antioxidant effect, not frequency. Daily at 200 mg/dose = same total as 2-3x/wk at 400 mg. Push slowly either way (too fast IV/SubQ = sulfur taste, mild flushing)."
+    }
   },
   "selank.html": {
     "name": "Selank",
