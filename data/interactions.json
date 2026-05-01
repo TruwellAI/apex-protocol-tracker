@@ -5,200 +5,308 @@
     "description": "Cross-compound pharmacological interactions. When the user stacks peptides from group A with group B, surface the matching interaction. Severity drives styling (high=orange/yellow, medium=cyan, synergy=green).",
     "schema": {
       "id": "stable kebab-case identifier",
-      "groups": "[[slugs in group A], [slugs in group B]] — interaction triggers when user has at least one from EACH group",
+      "groups": "[[slugs in group A], [slugs in group B]] \u2014 interaction triggers when user has at least one from EACH group",
       "type": "timing | sequencing | chemistry | synergy | dose | conflict",
       "severity": "high (orange) | medium (cyan) | synergy (green)",
-      "icon": "⚡=SYNERGY (always) · 🔁=sequencing · ⚠️=generic warning · 🔥=appetite/fat-burn overlap · 📉=hormonal/metabolic risk · ⚗️=chemistry/vial conflict",
+      "icon": "\u26a1=SYNERGY (always) \u00b7 \ud83d\udd01=sequencing \u00b7 \u26a0\ufe0f=generic warning \u00b7 \ud83d\udd25=appetite/fat-burn overlap \u00b7 \ud83d\udcc9=hormonal/metabolic risk \u00b7 \u2697\ufe0f=chemistry/vial conflict",
       "title": "1-line headline",
       "summary": "2-3 sentence mechanism explainer",
       "fix": "actionable workaround",
-      "citations": "[strings] — peer-reviewed evidence"
+      "citations": "[strings] \u2014 peer-reviewed evidence"
     }
   },
-
   "interactions": [
     {
       "id": "glp1-blunts-gh-pulse",
       "groups": [
-        ["retatrutide.html", "semaglutide.html", "tirzepatide.html"],
-        ["cjc-no-dac.html", "cjc1295-dac.html", "ipamorelin.html", "sermorelin.html", "tesamorelin.html", "cjc-ipa-blend.html"]
+        [
+          "retatrutide.html",
+          "semaglutide.html",
+          "tirzepatide.html"
+        ],
+        [
+          "cjc-no-dac.html",
+          "cjc1295-dac.html",
+          "ipamorelin.html",
+          "sermorelin.html",
+          "tesamorelin.html",
+          "cjc-ipa-blend.html"
+        ]
       ],
       "type": "timing",
       "severity": "high",
-      "icon": "⚠️",
-      "title": "Your GLP-1 is blunting your GH pulse — fix the timing",
-      "summary": "GLP-1s (Reta/Sema/Tirz) delay gastric emptying by ~35 minutes. The standard 'wait 2 hours after eating' rule for GH peptides BREAKS when you're on a GLP-1. Food sits in your stomach longer → insulin stays elevated → insulin binds somatotrophs in your pituitary and suppresses ~58% of GH mRNA. Every shot of CJC/Ipa/Tesa you take after a meal is hitting an actively-suppressed pituitary. You're paying for a GH pulse you're not getting.",
-      "fix": "Inject your GH peptides FIRST THING IN THE MORNING — fully fasted from overnight. Wait 30-60 min before your first meal. That gives the GH pulse time to peak BEFORE insulin rises. On evenings: skip the pre-bed dose, OR do it at least 4 hours after dinner instead of the standard 2.",
+      "icon": "\u26a0\ufe0f",
+      "title": "Your GLP-1 is blunting your GH pulse \u2014 fix the timing",
+      "summary": "GLP-1s (Reta/Sema/Tirz) delay gastric emptying by ~35 minutes. The standard 'wait 2 hours after eating' rule for GH peptides BREAKS when you're on a GLP-1. Food sits in your stomach longer \u2192 insulin stays elevated \u2192 insulin binds somatotrophs in your pituitary and suppresses ~58% of GH mRNA. Every shot of CJC/Ipa/Tesa you take after a meal is hitting an actively-suppressed pituitary. You're paying for a GH pulse you're not getting.",
+      "fix": "Inject your GH peptides FIRST THING IN THE MORNING \u2014 fully fasted from overnight. Wait 30-60 min before your first meal. That gives the GH pulse time to peak BEFORE insulin rises. On evenings: skip the pre-bed dose, OR do it at least 4 hours after dinner instead of the standard 2.",
       "citations": [
-        "JCEM 2025 — Gastric emptying T½ goes from 95 min → 138 min on GLP-1 RAs (meta-analysis)",
-        "ASA 2024 — High-risk GLP-1 patients now require 24-hr liquid-only diet pre-anesthesia",
-        "JBC — Insulin binds somatotroph receptor, suppresses GH mRNA ~58% via JAK2/STAT5B",
-        "Frontiers in Endocrinology 2024 — Intra-portal insulin upregulates hepatic GHR; fed state = liver pulls more GH = pituitary makes less"
+        "JCEM 2025 \u2014 Gastric emptying T\u00bd goes from 95 min \u2192 138 min on GLP-1 RAs (meta-analysis)",
+        "ASA 2024 \u2014 High-risk GLP-1 patients now require 24-hr liquid-only diet pre-anesthesia",
+        "JBC \u2014 Insulin binds somatotroph receptor, suppresses GH mRNA ~58% via JAK2/STAT5B",
+        "Frontiers in Endocrinology 2024 \u2014 Intra-portal insulin upregulates hepatic GHR; fed state = liver pulls more GH = pituitary makes less"
       ]
     },
-
     {
       "id": "glp1-tesa-overlap",
       "groups": [
-        ["retatrutide.html", "semaglutide.html", "tirzepatide.html"],
-        ["tesamorelin.html"]
+        [
+          "retatrutide.html",
+          "semaglutide.html",
+          "tirzepatide.html"
+        ],
+        [
+          "tesamorelin.html"
+        ]
       ],
       "type": "dose",
       "severity": "medium",
-      "icon": "📉",
+      "icon": "\ud83d\udcc9",
       "title": "Reta/Sema/Tirz + Tesamorelin = double visceral-fat hit",
-      "summary": "Both compounds drive visceral adiposity reduction by different mechanisms (GLP-1 = systemic appetite + insulin sensitivity, Tesa = direct lipolysis via GHRH). Stacking them can produce aggressive visceral fat loss in 8-12 weeks — sometimes uncomfortably fast (loose skin, lipid panel shifts).",
+      "summary": "Both compounds drive visceral adiposity reduction by different mechanisms (GLP-1 = systemic appetite + insulin sensitivity, Tesa = direct lipolysis via GHRH). Stacking them can produce aggressive visceral fat loss in 8-12 weeks \u2014 sometimes uncomfortably fast (loose skin, lipid panel shifts).",
       "fix": "If you're on a GLP-1 already, start Tesa at 0.5-1.0 mg (not the full 2 mg) for the first 4 weeks. Get baseline + 6-week labs (lipids, IGF-1, fasting glucose). If body comp is moving aggressively, drop Tesa frequency to 5 days/week.",
       "citations": [
-        "Falutz et al, NEJM 2007 — Tesamorelin reduces visceral fat 17% in 26 weeks (HIV-LD)",
-        "Wilding et al, NEJM 2021 STEP-1 — Semaglutide 2.4mg reduces visceral fat 22%"
+        "Falutz et al, NEJM 2007 \u2014 Tesamorelin reduces visceral fat 17% in 26 weeks (HIV-LD)",
+        "Wilding et al, NEJM 2021 STEP-1 \u2014 Semaglutide 2.4mg reduces visceral fat 22%"
       ]
     },
-
     {
       "id": "ghkcu-degrades-tb500",
       "groups": [
-        ["ghkcu.html"],
-        ["tb500.html"]
+        [
+          "ghkcu.html"
+        ],
+        [
+          "tb500.html"
+        ]
       ],
       "type": "chemistry",
       "severity": "high",
-      "icon": "⚗️",
+      "icon": "\u2697\ufe0f",
       "title": "GHK-Cu copper degrades TB-500 in the same vial",
       "summary": "GHK-Cu's copper ion oxidizes TB-500's methionine residues. In a combined vial (KLOW, GLOW), TB-500 is significantly degraded within ~7 days. Most user-reported 'TB-500 stopped working' issues trace to this.",
       "fix": "Run them in SEPARATE vials, not combined. If you must use a combo (KLOW/GLOW), mix fresh weekly and use within 7 days. Better: alternate 4-week pulses (TB-500 weeks 1-4, GHK-Cu weeks 5-8) so they're never in your system at high concentrations simultaneously.",
       "citations": [
-        "Methionine oxidation kinetics in copper-containing peptide formulations — well documented in pharmaceutical stability literature",
-        "Pickart 2018 — GHK-Cu peptide chemistry review"
+        "Methionine oxidation kinetics in copper-containing peptide formulations \u2014 well documented in pharmaceutical stability literature",
+        "Pickart 2018 \u2014 GHK-Cu peptide chemistry review"
       ]
     },
-
     {
       "id": "fox04-before-epitalon",
       "groups": [
-        ["fox04-dri.html"],
-        ["epitalon.html"]
+        [
+          "fox04-dri.html"
+        ],
+        [
+          "epitalon.html"
+        ]
       ],
       "type": "sequencing",
       "severity": "medium",
-      "icon": "🔁",
-      "title": "Run FOX04 BEFORE Epitalon — order matters",
-      "summary": "FOX04-DRI is a senolytic — clears damaged 'zombie' cells. Epitalon is a telomerase activator — extends telomeres on existing cells. If you run Epitalon first, you're extending the lifespan of the SAME senescent cells you'd be clearing later. Run FOX04 first to clean house, then Epitalon to rebuild.",
-      "fix": "Schedule: FOX04 5-day pulse → 4-week wash-out → Epitalon 10-20 day pulse. Sequencer auto-orders this if both are in your stack.",
+      "icon": "\ud83d\udd01",
+      "title": "Run FOX04 BEFORE Epitalon \u2014 order matters",
+      "summary": "FOX04-DRI is a senolytic \u2014 clears damaged 'zombie' cells. Epitalon is a telomerase activator \u2014 extends telomeres on existing cells. If you run Epitalon first, you're extending the lifespan of the SAME senescent cells you'd be clearing later. Run FOX04 first to clean house, then Epitalon to rebuild.",
+      "fix": "Schedule: FOX04 5-day pulse \u2192 4-week wash-out \u2192 Epitalon 10-20 day pulse. Sequencer auto-orders this if both are in your stack.",
       "citations": [
-        "Baar et al, Cell 2017 — FOX04-DRI clears senescent cells in vivo, restores tissue function",
-        "Khavinson 2014 — Epitalon telomerase activation in fibroblasts"
+        "Baar et al, Cell 2017 \u2014 FOX04-DRI clears senescent cells in vivo, restores tissue function",
+        "Khavinson 2014 \u2014 Epitalon telomerase activation in fibroblasts"
       ]
     },
-
     {
       "id": "motsc-needs-nad",
       "groups": [
-        ["motsc.html"],
-        ["nad-plus.html"]
+        [
+          "motsc.html"
+        ],
+        [
+          "nad-plus.html"
+        ]
       ],
       "type": "synergy",
       "severity": "synergy",
-      "icon": "⚡",
+      "icon": "\u26a1",
       "title": "MOTS-c + NAD+ = substrate-fueled biogenesis",
       "summary": "MOTS-c drives mitochondrial biogenesis through AMPK activation. The biogenesis machinery RUNS on NAD+ as a cofactor. Adding NAD+ before/during MOTS-c gives the biogenesis pathway the substrate it needs. This is the cleanest synergy in the longevity stack.",
       "fix": "Load NAD+ for 2-4 weeks BEFORE starting MOTS-c (100mg 2x/wk). Then run MOTS-c 8-week cycle with NAD+ maintenance dose 1x/wk. SS-31 comes AFTER (repairs the new mitos biogenesis just produced).",
       "citations": [
-        "Lee et al, Cell Metabolism 2015 — MOTS-c activates AMPK, NAD+/SIRT1 axis",
-        "Bonkowski & Sinclair, Nat Rev Mol Cell Biol 2016 — NAD+ precursors in mitochondrial biogenesis"
+        "Lee et al, Cell Metabolism 2015 \u2014 MOTS-c activates AMPK, NAD+/SIRT1 axis",
+        "Bonkowski & Sinclair, Nat Rev Mol Cell Biol 2016 \u2014 NAD+ precursors in mitochondrial biogenesis"
       ]
     },
-
     {
       "id": "motsc-then-ss31",
       "groups": [
-        ["motsc.html"],
-        ["ss31.html"]
+        [
+          "motsc.html"
+        ],
+        [
+          "ss31.html"
+        ]
       ],
       "type": "sequencing",
       "severity": "medium",
-      "icon": "🔁",
+      "icon": "\ud83d\udd01",
       "title": "MOTS-c FIRST (build new mitos), SS-31 SECOND (repair them)",
-      "summary": "MOTS-c builds new mitochondria via biogenesis. SS-31 stabilizes/repairs cardiolipin in EXISTING mitochondria. If you run SS-31 before MOTS-c, you're repairing old damaged mitos that are about to be replaced anyway — you waste the SS-31. Sequence wins.",
+      "summary": "MOTS-c builds new mitochondria via biogenesis. SS-31 stabilizes/repairs cardiolipin in EXISTING mitochondria. If you run SS-31 before MOTS-c, you're repairing old damaged mitos that are about to be replaced anyway \u2014 you waste the SS-31. Sequence wins.",
       "fix": "MOTS-c weeks 1-8 (biogenesis), then SS-31 weeks 9-14 (repair the new ones). Don't run them simultaneously.",
       "citations": [
-        "Birk et al, JASN 2013 — SS-31 cardiolipin protection",
-        "Lee et al, Cell Metabolism 2015 — MOTS-c biogenesis pathway"
+        "Birk et al, JASN 2013 \u2014 SS-31 cardiolipin protection",
+        "Lee et al, Cell Metabolism 2015 \u2014 MOTS-c biogenesis pathway"
       ]
     },
-
     {
       "id": "bpc-tb-paired-healing",
       "groups": [
-        ["bpc157.html"],
-        ["tb500.html"]
+        [
+          "bpc157.html"
+        ],
+        [
+          "tb500.html"
+        ]
       ],
       "type": "synergy",
       "severity": "synergy",
-      "icon": "⚡",
-      "title": "BPC-157 + TB-500 — paired healing protocol",
-      "summary": "BPC-157 = tissue protection + angiogenesis at the local site. TB-500 = systemic actin filament regulation + immune cell migration. They cover different mechanistic ground — BPC for the where, TB for the how. Pair beats either alone for serious tendon/ligament/gut healing.",
-      "fix": "Run as a 4-6 week pulse together for active recovery, then 4 weeks OFF. Continuous use loses effectiveness — both downregulate their own receptors over time.",
+      "icon": "\u26a1",
+      "title": "BPC-157 + TB-500 \u2014 paired healing protocol",
+      "summary": "BPC-157 = tissue protection + angiogenesis at the local site. TB-500 = systemic actin filament regulation + immune cell migration. They cover different mechanistic ground \u2014 BPC for the where, TB for the how. Pair beats either alone for serious tendon/ligament/gut healing.",
+      "fix": "Run as a 4-6 week pulse together for active recovery, then 4 weeks OFF. Continuous use loses effectiveness \u2014 both downregulate their own receptors over time.",
       "citations": [
-        "Sikiric et al, Curr Pharm Des 2018 — BPC-157 tendon meta-analysis",
-        "Goldstein et al, Ann NY Acad Sci 2012 — Thymosin β4 in tissue repair"
+        "Sikiric et al, Curr Pharm Des 2018 \u2014 BPC-157 tendon meta-analysis",
+        "Goldstein et al, Ann NY Acad Sci 2012 \u2014 Thymosin \u03b24 in tissue repair"
       ]
     },
-
     {
       "id": "cjc-ipa-synergy",
       "groups": [
-        ["cjc1295-dac.html", "cjc-no-dac.html", "sermorelin.html", "tesamorelin.html"],
-        ["ipamorelin.html"]
+        [
+          "cjc1295-dac.html",
+          "cjc-no-dac.html",
+          "sermorelin.html",
+          "tesamorelin.html"
+        ],
+        [
+          "ipamorelin.html"
+        ]
       ],
       "type": "synergy",
       "severity": "synergy",
-      "icon": "⚡",
+      "icon": "\u26a1",
       "title": "GHRH + GHRP = bigger GH pulse than either alone",
-      "summary": "CJC-1295 / Sermorelin / Tesamorelin are GHRH analogs (push GH from one direction). Ipamorelin is a ghrelin mimetic / GHRP (pulls GH from another). Stacking them produces a synergistic pulse that's larger than the sum of the two — 'amp + speaker' for the pituitary.",
-      "fix": "Inject together pre-bed (or AM if you're also on a GLP-1 — see the GLP-1 timing warning). Pre-blended CJC+Ipa formulations save you a needle. Selective for GH (Ipamorelin doesn't spike cortisol/prolactin like older GHRPs).",
+      "summary": "CJC-1295 / Sermorelin / Tesamorelin are GHRH analogs (push GH from one direction). Ipamorelin is a ghrelin mimetic / GHRP (pulls GH from another). Stacking them produces a synergistic pulse that's larger than the sum of the two \u2014 'amp + speaker' for the pituitary.",
+      "fix": "Inject together pre-bed (or AM if you're also on a GLP-1 \u2014 see the GLP-1 timing warning). Pre-blended CJC+Ipa formulations save you a needle. Selective for GH (Ipamorelin doesn't spike cortisol/prolactin like older GHRPs).",
       "citations": [
-        "Walker, J Endocrinol Invest 2006 — GHRH + GHRP synergy in healthy adults",
-        "Raun et al, Eur J Endocrinol 1998 — Ipamorelin selectivity profile"
+        "Walker, J Endocrinol Invest 2006 \u2014 GHRH + GHRP synergy in healthy adults",
+        "Raun et al, Eur J Endocrinol 1998 \u2014 Ipamorelin selectivity profile"
       ]
     },
-
     {
       "id": "trt-bodyfat-aromatase",
       "groups": [
-        ["testosterone-cyp.html", "testosterone-enth.html", "testosterone-prop.html"],
-        ["bpc157.html","tb500.html","ghkcu.html","kpv.html","ll37.html","thymosin-alpha1.html","ara290.html","epitalon.html","ss31.html","motsc.html","cartalax.html","fox04-dri.html","aod9604.html","retatrutide.html","semaglutide.html","tirzepatide.html","cjc-no-dac.html","cjc1295-dac.html","ipamorelin.html","tesamorelin.html","cjc-ipa-blend.html","igf1-lr3.html","5amino1mq.html","nad-plus.html","melanotan1.html","melanotan2.html","pt141.html","sermorelin.html","dsip.html","dihexa.html","pe2228.html","l-carnitine.html","glutamine.html","glutathione.html","selank.html","semax.html","slu-pp-322.html"]
+        [
+          "testosterone-cyp.html",
+          "testosterone-enth.html",
+          "testosterone-prop.html"
+        ],
+        [
+          "bpc157.html",
+          "tb500.html",
+          "ghkcu.html",
+          "kpv.html",
+          "ll37.html",
+          "thymosin-alpha1.html",
+          "ara290.html",
+          "epitalon.html",
+          "ss31.html",
+          "motsc.html",
+          "cartalax.html",
+          "fox04-dri.html",
+          "aod9604.html",
+          "retatrutide.html",
+          "semaglutide.html",
+          "tirzepatide.html",
+          "cjc-no-dac.html",
+          "cjc1295-dac.html",
+          "ipamorelin.html",
+          "tesamorelin.html",
+          "cjc-ipa-blend.html",
+          "igf1-lr3.html",
+          "5amino1mq.html",
+          "nad-plus.html",
+          "melanotan1.html",
+          "melanotan2.html",
+          "pt141.html",
+          "sermorelin.html",
+          "dsip.html",
+          "dihexa.html",
+          "pe2228.html",
+          "l-carnitine.html",
+          "glutamine.html",
+          "glutathione.html",
+          "selank.html",
+          "semax.html",
+          "slu-pp-322.html"
+        ]
       ],
       "type": "dose",
       "severity": "medium",
-      "icon": "⚠️",
-      "title": "TRT response is body-fat dependent — drop fat first if you can",
-      "summary": "Aromatase (CYP19A1) is concentrated in adipose tissue. Higher body fat = more testosterone converts to estradiol BEFORE it can do its job. Heavier guys routinely report 'I started TRT and didn't feel anything' — this is the mechanism. The relationship is continuous, not a 15% step.",
+      "icon": "\u26a0\ufe0f",
+      "title": "TRT response is body-fat dependent \u2014 drop fat first if you can",
+      "summary": "Aromatase (CYP19A1) is concentrated in adipose tissue. Higher body fat = more testosterone converts to estradiol BEFORE it can do its job. Heavier guys routinely report 'I started TRT and didn't feel anything' \u2014 this is the mechanism. The relationship is continuous, not a 15% step.",
       "fix": "If TRT is non-negotiable now, monitor E2 (sensitive assay) at 6 weeks and 12 weeks. Plan with your doctor on a possible aromatase inhibitor. If you can drop body fat first, your starting T:E2 ratio is better and you need less testosterone to feel it.",
       "citations": [
-        "Cohen, J Sex Med 2008 — aromatase mechanism in adipose",
-        "Tajar et al, JCEM 2010 — EMAS: obesity strongest predictor of secondary hypogonadism",
-        "Saboor Aftab et al, Clin Endocrinol 2013 — MOSH review",
-        "Hammoud et al, JCEM 2009 — weight loss raised T from 370 → 520 ng/dL with no T added",
-        "Camacho et al, Eur J Endocrinol 2013 — body comp correlates with T independent of age"
+        "Cohen, J Sex Med 2008 \u2014 aromatase mechanism in adipose",
+        "Tajar et al, JCEM 2010 \u2014 EMAS: obesity strongest predictor of secondary hypogonadism",
+        "Saboor Aftab et al, Clin Endocrinol 2013 \u2014 MOSH review",
+        "Hammoud et al, JCEM 2009 \u2014 weight loss raised T from 370 \u2192 520 ng/dL with no T added",
+        "Camacho et al, Eur J Endocrinol 2013 \u2014 body comp correlates with T independent of age"
       ]
     },
-
     {
       "id": "ghkcu-aod-fat-loss",
       "groups": [
-        ["aod9604.html"],
-        ["retatrutide.html", "semaglutide.html", "tirzepatide.html"]
+        [
+          "aod9604.html"
+        ],
+        [
+          "retatrutide.html",
+          "semaglutide.html",
+          "tirzepatide.html"
+        ]
       ],
       "type": "dose",
       "severity": "medium",
-      "icon": "🔥",
-      "title": "GLP-1 already crushing appetite — adding AOD might be overkill",
+      "icon": "\ud83d\udd25",
+      "title": "GLP-1 already crushing appetite \u2014 adding AOD might be overkill",
       "summary": "AOD-9604 is a GH fragment that drives lipolysis. On top of a GLP-1 you're already in significant deficit (appetite-driven). Adding AOD pushes the deficit further and accelerates LBM loss if protein/training don't keep up.",
       "fix": "If body comp is moving on the GLP-1 alone, hold AOD until you taper off. If you're stalling on GLP-1 alone (rare but happens), add AOD at 0.3 mg fasted AM and check body comp at 4 weeks. Always bump protein to 1.2 g/lb LBM and prioritize lifting.",
       "citations": [
-        "Heffernan et al, Endocrinology 2001 — AOD-9604 lipolytic activity, no diabetogenic effect",
-        "Wilding et al, NEJM 2021 — STEP-1 semaglutide weight loss profile"
+        "Heffernan et al, Endocrinology 2001 \u2014 AOD-9604 lipolytic activity, no diabetogenic effect",
+        "Wilding et al, NEJM 2021 \u2014 STEP-1 semaglutide weight loss profile"
+      ]
+    },
+    {
+      "id": "combined-bottle-dose-flaw",
+      "groups": [
+        [
+          "wolverine.html",
+          "klow.html",
+          "glow.html"
+        ],
+        [
+          "wolverine.html",
+          "klow.html",
+          "glow.html"
+        ]
+      ],
+      "type": "dose",
+      "severity": "high",
+      "icon": "\u26a0\ufe0f",
+      "title": "Combined-bottle pair has a pharmaceutical flaw \u2014 you can't independently dose",
+      "summary": "Wolverine, KLOW, and GLOW combined bottles lock multiple peptides at a fixed mg ratio in one vial. When you inject, every component scales together. BPC-157 wants 250 mcg / TB-500 wants 2.5 mg \u2014 that's a 10\u00d7 difference. Whichever target you hit, the other peptide is dosed wrong (10\u00d7 over OR 90% under). This is a fundamental design flaw of combined-bottle products, not a user error.",
+      "fix": "For convenience: target the smallest-dose component (usually BPC-157) and inject DAILY \u2014 other peptides will be sub-target but still active. For PROPER dosing of every peptide: run separate single-peptide vials. Combined bottles save 1 needle per day at the cost of optimal dosing \u2014 your call.",
+      "citations": [
+        "Pharmaceutical formulation principle: components in fixed-ratio combinations cannot be independently titrated \u2014 see FDA guidance on combination drug products.",
+        "BPC-157 effective dose: 200-500 mcg/day (Sikiric et al, Curr Pharm Des 2018)",
+        "TB-500 effective dose: 2.0-5.0 mg 2x weekly (Goldstein et al, Ann NY Acad Sci 2012) \u2014 10\u00d7 the BPC dose"
       ]
     }
   ]

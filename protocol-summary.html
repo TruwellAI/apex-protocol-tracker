@@ -815,26 +815,50 @@ body::before{
       const comps = STACK_COMPONENTS[slug];
       if (!comps) return '';
       const isCombined = !!p.combinedBottle;
+      // For COMBINED bottles, pull component_mg from SSOT (peptides.json components[]).
+      // Each component's concentration = its mg / total BAC. NOT the same as standalone math.
+      const ssotComps = (window.APEX_PEPTIDES || {})[slug]?.components || [];
+      const cs = cycleState[slug] || {};
+      const totalBac = (isCombined && cs.bacMl > 0) ? cs.bacMl : ((window.APEX_PEPTIDES||{})[slug]?.bac_ml || 3);
       const rows = comps.map(c => {
-        // For combined-bottle stacks, components share the user-entered vial+BAC.
-        // For multi-bottle stacks, each component has its own recon defaults.
-        const cs = cycleState[slug] || {};
-        const userRecon = (isCombined && cs.vialMg > 0 && cs.bacMl > 0)
-          ? { vial: cs.vialMg, bac: cs.bacMl }
-          : (isCombined ? null : RECON_DEFAULTS[c.slug]);
-        const unitsLbl = doseToUnitsLabel(c.dose, c.slug, { userRecon });
+        let unitsLbl;
+        if (isCombined) {
+          // Find this component's mg-in-vial from the SSOT entry
+          const ssotC = ssotComps.find(x => x.name === c.name) || ssotComps.find(x => c.slug.includes(x.name.toLowerCase().replace(/[^a-z0-9]/g,'')));
+          const componentMg = ssotC ? ssotC.dose_mg : null;
+          // ssotC.dose_mg in the SSOT components[] is actually the per-injection dose, NOT mg-in-vial.
+          // For combined bottles, the vial typically contains equal weight of each component (e.g.
+          // 5mg BPC + 5mg TB in a 10mg Wolverine vial). So component_mg_in_vial = totalVial / N components.
+          const totalVialMg = (cs.vialMg > 0) ? cs.vialMg : ((window.APEX_PEPTIDES||{})[slug]?.vial_mg || 10);
+          const componentMgInVial = totalVialMg / comps.length;
+          // Pass to doseToUnitsLabel as if THIS component's vial = its mg-share of the combined vial
+          const userRecon = { vial: componentMgInVial, bac: totalBac };
+          unitsLbl = doseToUnitsLabel(c.dose, c.slug, { userRecon });
+        } else {
+          // Multi-bottle stack — each component has its own recon defaults
+          const userRecon = RECON_DEFAULTS[c.slug];
+          unitsLbl = doseToUnitsLabel(c.dose, c.slug, { userRecon });
+        }
         return `
           <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;background:rgba(0,212,255,.04);border:1px solid rgba(0,212,255,.15);border-radius:8px;margin-top:6px;">
             <div style="display:flex;flex-direction:column;gap:2px;min-width:0;">
               <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:#fff;letter-spacing:-.2px;">${c.name}</div>
               <div style="font-size:11px;color:var(--muted);">${c.freq}</div>
             </div>
-            <div style="text-align:right;font-size:13px;font-weight:700;flex-shrink:0;">${unitsLbl}</div>
+            <div style="text-align:right;font-size:13px;font-weight:700;flex-shrink:0;">${unitsLbl} <span style="color:var(--muted);font-size:10px;">at proper dose</span></div>
           </div>`;
       }).join('');
       const heading = isCombined
         ? `🧪 Inside this ONE bottle <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0;">— each draw delivers all peptides at once</span>`
         : `⊞ Stack Components <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0;">— separate bottles</span>`;
+      // ── COMBINED-BOTTLE COMPROMISE WARNING ──────────────────────────
+      // Combined bottles can't independently dose each peptide. Tell the truth.
+      const combinedCompromise = isCombined ? `
+        <div style="margin-top:10px;padding:11px 13px;background:rgba(251,191,36,.10);border:1px solid rgba(251,191,36,.45);border-radius:8px;color:#fbbf24;font-size:12px;line-height:1.55;">
+          <strong style="color:#fbbf24;">⚠ The combined-bottle compromise.</strong>
+          One vial = locked dose ratio. You can't independently dose each peptide. Each component's "units" above shows what's needed AT ITS PROPER DOSE — but injecting that volume changes the dose of every other peptide in the bottle.<br><br>
+          <strong>Practical rule:</strong> target the <strong>smallest-dose component</strong> (usually BPC-157 at 0.25mg). Inject that volume <strong>daily</strong>. The other peptides will be sub-target but still active. For full optimal dosing of every peptide — <strong>run separate vials.</strong>
+        </div>` : '';
       const copperWarn = p.copperWarning ? `
         <div style="margin-top:10px;padding:11px 13px;background:rgba(239,68,68,.10);border:1px solid rgba(239,68,68,.45);border-radius:8px;color:#fca5a5;font-size:12px;line-height:1.5;">
           <strong style="color:#ef4444;">⚠ Heads up — copper degrades TB-500.</strong>
