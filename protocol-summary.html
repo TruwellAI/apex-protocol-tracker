@@ -474,7 +474,20 @@ body::before{
     if (!doseStr) return '—';
     const s = String(doseStr);
     const intensity = (opts && opts.intensity) || 'recommended';
-    // Collapse range to single value based on intensity tier
+    // ── PREFER SSOT canonical dose_mg_per_inj over range parsing ──
+    // When dose_label is a range like "2-5 mg" the old logic used the midpoint
+    // (3.5mg) instead of the SSOT canonical value (3mg). Now we use the SSOT
+    // value for 'recommended' intensity, fall back to range parsing for mild/aggressive.
+    const ssot = (window.APEX_PEPTIDES || {})[slug];
+    if (ssot && ssot.dose_mg_per_inj != null && intensity === 'recommended') {
+      const recon = (opts && opts.userRecon) || RECON_DEFAULTS[slug];
+      if (recon && recon.vial && recon.bac) {
+        const conc = recon.vial / recon.bac;
+        const units = Math.round((ssot.dose_mg_per_inj / conc) * 100);
+        return '<span style="color:var(--accent2);font-weight:800;font-size:1.1em;">' + units + '</span> <span style="color:var(--muted);">units</span>';
+      }
+    }
+    // Collapse range to single value based on intensity tier (mild/aggressive only — recommended uses SSOT above)
     function collapseRange(str){
       const r = str.match(/(\d+(?:\.\d+)?)\s*[-–—]\s*(\d+(?:\.\d+)?)\s*(mg|mcg)/i);
       if (!r) return str;
