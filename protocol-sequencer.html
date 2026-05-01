@@ -207,7 +207,7 @@ const PEPS = {
   'fox04-dri':{name:'FOX04-DRI',tier:'pulse',cycleWeeks:1,offWeeks:24,freq:'5-day pulse',phase:'clear',category:'longevity',sequenceOrder:1,pulseInfo:'5-day pulse · 1-2x per year · clears senescent cells before rebuilding'},
   'epitalon':{name:'Epitalon',tier:'pulse',cycleWeeks:2,offWeeks:24,freq:'daily PM × 10-20d',phase:'reset',category:'longevity',sequenceOrder:2,pulseInfo:'10-20 day pulse · 1-2x per year · telomerase reset'},
   'cartalax':{name:'Cartalax',tier:'pulse',cycleWeeks:2,offWeeks:24,freq:'daily × 10d',phase:'reset',category:'longevity',sequenceOrder:2,pulseInfo:'10-day pulse · 1-2x per year · bioregulator'},
-  'nad-plus':{name:'NAD+',tier:'layer',cycleWeeks:4,offWeeks:0,freq:'3x weekly load',phase:'rebuild',category:'longevity',sequenceOrder:3,synergy:['motsc'],pulseInfo:'4 wk loading then 1x/wk maintenance'},
+  'nad-plus':{name:'NAD+',tier:'layer',cycleWeeks:4,offWeeks:0,freq:'3x weekly load',titrate:true,phase:'rebuild',category:'longevity',sequenceOrder:3,synergy:['motsc'],pulseInfo:'4 wk loading then 1x/wk maintenance'},
   'ss31':{name:'SS-31',tier:'layer',cycleWeeks:6,offWeeks:6,freq:'daily',phase:'repair',category:'longevity',sequenceOrder:5,note:'Run AFTER MOTS-c — biogenesis first, then repair the new mitos'},
   'glutathione':{name:'Glutathione',tier:'foundation',cycleWeeks:52,offWeeks:0,freq:'3x weekly',phase:'continuous',category:'longevity'},
   'ghkcu':{name:'GHK-Cu',tier:'layer',cycleWeeks:12,offWeeks:4,freq:'daily SubQ',phase:'maintain',category:'longevity'},
@@ -245,7 +245,7 @@ const YEAR_SCHEDULE = {
     'epitalon':    [{start:5,  end:7,  label:'10-20 day pulse'}],
     'cartalax':    [{start:8,  end:9,  label:'10-day pulse'}],
     // Q2-Q3: SUBSTRATE → BIOGENESIS
-    'nad-plus':    [{start:8,  end:12, label:'4wk loading'}, {start:13, end:52, label:'1x/wk maintenance'}],
+    'nad-plus':    [{start:8,  end:12, label:'4wk loading (titrate)'}, {start:13, end:46, label:'1x/wk maintenance'}, {start:47, end:52, label:'taper down'}],
     // Q3: REBUILD (uses NAD+ substrate)
     'motsc':       [{start:13, end:20, label:'8wk biogenesis'}],
     // Q4: REPAIR (after MOTS-c built new mitos)
@@ -727,28 +727,38 @@ function render() {
       const sched = goalSched[p.slug];
       if (sched && sched.length > 0) {
         sched.forEach((seg, segIdx) => {
-          // Titratable peptides split into 3 sub-bars when the segment is long enough:
-          //   titrate (4-wk ramp up) → on (steady) → taper (2-wk ramp down)
-          // Short segments stay as a single titrate or taper bar based on position.
-          const segLen = seg.end - seg.start + 1;
-          if (isTitratable && segLen >= 8) {
-            const titrateEnd = seg.start + 3;        // weeks 1-4 of the segment
-            const taperStart = seg.end - 1;          // last 2 weeks of the segment
-            // Titrate band
-            bars += `<div class="tl-bar titrate" style="left:${((seg.start-1)/52)*100}%;right:${100-(titrateEnd/52)*100}%;" title="Titrate up (wk ${seg.start}-${titrateEnd})"></div>`;
-            // Steady-on band
-            bars += `<div class="tl-bar on" style="left:${(titrateEnd/52)*100}%;right:${100-((taperStart-1)/52)*100}%;" title="Steady on (wk ${titrateEnd+1}-${taperStart-1})"></div>`;
-            // Taper band
-            bars += `<div class="tl-bar taper" style="left:${((taperStart-1)/52)*100}%;right:${100-(seg.end/52)*100}%;" title="Taper down (wk ${taperStart}-${seg.end})"></div>`;
-          } else {
+          // PRIORITY 1: explicit label — if the segment label says 'titrate' or 'taper', use it.
+          //             Lets us tag NAD+ loading as 'titrate' even when there's no titrate flag.
+          const labelLower = String(seg.label || '').toLowerCase();
+          let cls = null;
+          if (/titrate|loading|ramp/.test(labelLower)) cls = 'titrate';
+          else if (/taper/.test(labelLower)) cls = 'taper';
+
+          if (cls) {
             const left = ((seg.start-1)/52)*100;
             const right = 100 - (seg.end/52)*100;
-            let cls = 'on';
-            if (isTitratable) {
-              if (segIdx === 0) cls = 'titrate';
-              else if (segIdx === sched.length - 1) cls = 'taper';
-            }
             bars += `<div class="tl-bar ${cls}" style="left:${left}%;right:${right}%;" title="${seg.label||''} (Wk ${seg.start}-${seg.end})"></div>`;
+            return;
+          }
+
+          // PRIORITY 2: titratable peptide with a long single segment — auto-split into 3
+          const segLen = seg.end - seg.start + 1;
+          if (isTitratable && segLen >= 8) {
+            const titrateEnd = seg.start + 3;
+            const taperStart = seg.end - 1;
+            bars += `<div class="tl-bar titrate" style="left:${((seg.start-1)/52)*100}%;right:${100-(titrateEnd/52)*100}%;" title="Titrate up (wk ${seg.start}-${titrateEnd})"></div>`;
+            bars += `<div class="tl-bar on" style="left:${(titrateEnd/52)*100}%;right:${100-((taperStart-1)/52)*100}%;" title="Steady on (wk ${titrateEnd+1}-${taperStart-1})"></div>`;
+            bars += `<div class="tl-bar taper" style="left:${((taperStart-1)/52)*100}%;right:${100-(seg.end/52)*100}%;" title="Taper down (wk ${taperStart}-${seg.end})"></div>`;
+          } else {
+            // PRIORITY 3: position-based fallback for legacy data
+            const left = ((seg.start-1)/52)*100;
+            const right = 100 - (seg.end/52)*100;
+            let posCls = 'on';
+            if (isTitratable) {
+              if (segIdx === 0) posCls = 'titrate';
+              else if (segIdx === sched.length - 1) posCls = 'taper';
+            }
+            bars += `<div class="tl-bar ${posCls}" style="left:${left}%;right:${right}%;" title="${seg.label||''} (Wk ${seg.start}-${seg.end})"></div>`;
           }
         });
       } else {
