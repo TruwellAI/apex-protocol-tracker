@@ -403,7 +403,7 @@
     "mech": "GHRH analog \u2014 short half-life pulse",
     "route": "sc",
     "vial_mg": 5,
-    "bac_ml": 2,
+    "bac_ml": 3,
     "dose_mg_per_inj": 0.1,
     "dose_label": "100 mcg",
     "dose_range_mg": [
@@ -543,7 +543,7 @@
     "mech": "Master antioxidant",
     "route": "sc",
     "vial_mg": 1000,
-    "bac_ml": 3,
+    "bac_ml": 2,
     "dose_mg_per_inj": 400,
     "dose_label": "200-600 mg",
     "dose_range_mg": [
@@ -711,7 +711,7 @@
     "mech": "Fatty-acid \u03b2-oxidation cofactor",
     "route": "sc",
     "vial_mg": 1000,
-    "bac_ml": 3,
+    "bac_ml": 2,
     "dose_mg_per_inj": 350,
     "dose_label": "200-500 mg",
     "dose_range_mg": [
@@ -730,7 +730,7 @@
     "mech": "Conditionally-essential amino \u2014 gut + immune",
     "route": "sc",
     "vial_mg": 1000,
-    "bac_ml": 3,
+    "bac_ml": 2,
     "dose_mg_per_inj": 350,
     "dose_label": "200-500 mg",
     "dose_range_mg": [

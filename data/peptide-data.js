@@ -1,7 +1,7 @@
 /* AUTO-GENERATED — DO NOT EDIT.
  * Source: /data/peptides.json
  * Regenerate: node scripts/build-peptide-data.js
- * Built: 2026-05-01T18:48:26.820Z
+ * Built: 2026-05-01T18:51:18.437Z
  */
 window.APEX_PEPTIDES = {
   "_meta": {
@@ -408,7 +408,7 @@ window.APEX_PEPTIDES = {
     "mech": "GHRH analog — short half-life pulse",
     "route": "sc",
     "vial_mg": 5,
-    "bac_ml": 2,
+    "bac_ml": 3,
     "dose_mg_per_inj": 0.1,
     "dose_label": "100 mcg",
     "dose_range_mg": [
@@ -548,7 +548,7 @@ window.APEX_PEPTIDES = {
     "mech": "Master antioxidant",
     "route": "sc",
     "vial_mg": 1000,
-    "bac_ml": 3,
+    "bac_ml": 2,
     "dose_mg_per_inj": 400,
     "dose_label": "200-600 mg",
     "dose_range_mg": [
@@ -716,7 +716,7 @@ window.APEX_PEPTIDES = {
     "mech": "Fatty-acid β-oxidation cofactor",
     "route": "sc",
     "vial_mg": 1000,
-    "bac_ml": 3,
+    "bac_ml": 2,
     "dose_mg_per_inj": 350,
     "dose_label": "200-500 mg",
     "dose_range_mg": [
@@ -735,7 +735,7 @@ window.APEX_PEPTIDES = {
     "mech": "Conditionally-essential amino — gut + immune",
     "route": "sc",
     "vial_mg": 1000,
-    "bac_ml": 3,
+    "bac_ml": 2,
     "dose_mg_per_inj": 350,
     "dose_label": "200-500 mg",
     "dose_range_mg": [

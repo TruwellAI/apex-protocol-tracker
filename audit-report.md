@@ -1,4 +1,4 @@
-# Apex Dose Audit (v3 — single source of truth) — 2026-05-01T18:49:04.197Z
+# Apex Dose Audit (v3 — single source of truth) — 2026-05-01T18:51:47.354Z
 
 **Source of truth:** `/data/peptides.json` (46 peptides)
 **Files cross-checked:** reconstitute.html · protocol-summary.html · tracker-v2.html
@@ -32,14 +32,14 @@ _(none)_
 ✅ tirzepatide.html: 25 units on the pen
 ✅ 5amino1mq.html: 40 units on the pen
 ✅ tesamorelin.html: 30 units on the pen
-✅ cjc-no-dac.html: 4 units on the pen
+✅ cjc-no-dac.html: 6 units on the pen
 ✅ cjc1295-dac.html: 60 units on the pen
 ✅ ipamorelin.html: 18 units on the pen
 ✅ sermorelin.html: 12 units on the pen
 ✅ cjc-ipa-blend.html: 5 units on the pen
 ✅ igf1-lr3.html: 12 units on the pen
 ✅ nad-plus.html: 100 units on the pen
-✅ glutathione.html: 120 units on the pen
+✅ glutathione.html: 80 units on the pen
 ✅ selank.html: spray (no injection units to validate)
 ✅ semax.html: spray (no injection units to validate)
 ✅ dsip.html: 12 units on the pen
@@ -48,8 +48,8 @@ _(none)_
 ✅ pt141.html: 45 units on the pen
 ✅ melanotan1.html: 15 units on the pen
 ✅ melanotan2.html: 15 units on the pen
-✅ l-carnitine.html: 105 units on the pen
-✅ glutamine.html: 105 units on the pen
+✅ l-carnitine.html: 70 units on the pen
+✅ glutamine.html: 70 units on the pen
 ✅ slu-pp-322.html: oral (no injection units to validate)
 ✅ testosterone-cyp.html: premixed 200 mg/mL
 ✅ testosterone-enth.html: premixed 200 mg/mL
