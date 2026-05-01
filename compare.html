@@ -498,8 +498,19 @@ body{padding-bottom:90px;}
     analysis.classList.remove('empty');
     anTitle.textContent = 'Your ' + GOALS[activeGoal].label + ' stack';
 
+    const goal = GOALS[activeGoal];
+
+    // ── PER-GOAL SCOPE ─────────────────────────────────────────
+    // Per-goal grade only considers peptides that BELONG to this goal.
+    // Conflicts in other goals (e.g. GHRH redundancy from GH Axis selections)
+    // shouldn't drag down the Healing & Recovery grade. Cross-goal warnings
+    // surface in the unified top alert, not in this card.
+    const goalPeptides = new Set(goal.peptides || []);
+    const selectedThisGoal = new Set();
+    selected.forEach(k => { if (goalPeptides.has(k)) selectedThisGoal.add(k); });
+
     const conflicts = {};
-    selected.forEach(key => {
+    selectedThisGoal.forEach(key => {
       const info = PEP_INFO[key];
       if (!info || !info.conflict) return;
       conflicts[info.conflict] = conflicts[info.conflict] || [];
@@ -507,16 +518,14 @@ body{padding-bottom:90px;}
     });
     const dupes = Object.keys(conflicts).filter(c => conflicts[c].length > 1);
 
-    // CHEMISTRY CONFLICTS — only fires for pre-mixed stacks (one vial = degradation).
-    // Separate vials of the same peptides → no warning, plasma dilution handles it.
+    // CHEMISTRY CONFLICTS — pre-mixed stacks (one vial = degradation).
+    // Scoped to this goal too — KLOW selected for Healing shouldn't bleed into other goals.
     const chemConflicts = [];
     CHEM_CONFLICTS.forEach(rule => {
-      if (selected.has(rule.slug)) {
+      if (selectedThisGoal.has(rule.slug)) {
         chemConflicts.push({ label: rule.label, reason: rule.reason });
       }
     });
-
-    const goal = GOALS[activeGoal];
     // A mechanism is HIT if either:
     //   1. Any peptide in m.by[] is selected, OR
     //   2. It has m.synergyOf=[[groupA],[groupB]] AND ANY peptide from each group is selected
