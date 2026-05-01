@@ -1,7 +1,7 @@
 /* AUTO-GENERATED — DO NOT EDIT.
  * Source: /data/peptides.json
  * Regenerate: node scripts/build-peptide-data.js
- * Built: 2026-05-01T18:41:52.395Z
+ * Built: 2026-05-01T18:48:26.820Z
  */
 window.APEX_PEPTIDES = {
   "_meta": {
@@ -199,8 +199,8 @@ window.APEX_PEPTIDES = {
     "tier": "layer",
     "mech": "Cardiolipin-targeted mitochondrial peptide",
     "route": "sc",
-    "vial_mg": 10,
-    "bac_ml": 3,
+    "vial_mg": 50,
+    "bac_ml": 2,
     "dose_mg_per_inj": 5,
     "dose_label": "3-7 mg",
     "dose_range_mg": [

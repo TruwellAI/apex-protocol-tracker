@@ -194,8 +194,8 @@
     "tier": "layer",
     "mech": "Cardiolipin-targeted mitochondrial peptide",
     "route": "sc",
-    "vial_mg": 10,
-    "bac_ml": 3,
+    "vial_mg": 50,
+    "bac_ml": 2,
     "dose_mg_per_inj": 5,
     "dose_label": "3-7 mg",
     "dose_range_mg": [
