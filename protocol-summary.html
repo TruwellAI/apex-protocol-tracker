@@ -249,7 +249,7 @@ body::before{
   const PROTO = {
     'aod9604.html':      { name:'AOD-9604',       mech:'GH fragment lipolysis',     cycleWks:12, dose:'300 mcg', freq:'daily, fasted AM' },
     '5amino1mq.html':    { name:'5-Amino-1MQ',    mech:'NNMT inhibitor',            cycleWks:12, dose:'1-2 mg', freq:'daily SubQ' },
-    'slu-pp-322.html':   { name:'SLU-PP-332',     mech:'ERRα agonist',              cycleWks:8,  dose:'experimental', freq:'preclinical only' },
+    'slu-pp-322.html':   { name:'SLU-PP-332',     mech:'ERRα agonist',              cycleWks:8,  dose:'500 mcg-1 mg', freq:'3-5x weekly SubQ' },
     'retatrutide.html':  { name:'Retatrutide',    mech:'Triple G agonist',          cycleWks:24, dose:'titrated', freq:'weekly',
       titration:[{w:'Wk 1-4',d:'2 mg/wk'},{w:'Wk 5-8',d:'4 mg/wk'},{w:'Wk 9-12',d:'6 mg/wk'},{w:'Wk 13-16',d:'8 mg/wk'},{w:'Wk 17-20',d:'10 mg/wk'},{w:'Wk 21+',d:'12 mg/wk (max)'}] },
     'semaglutide.html':  { name:'Semaglutide',    mech:'GLP-1 agonist',             cycleWks:24, dose:'titrated', freq:'weekly',
@@ -362,7 +362,7 @@ body::before{
   const RECON_DEFAULTS = {
     'aod9604.html':       { vial:10,  bac:2, acetic:1 },
     '5amino1mq.html':     { vial:10,  bac:2 },
-    'slu-pp-322.html':    { vial:10,  bac:3 },
+    'slu-pp-322.html':    { vial:5,   bac:2 },
     'retatrutide.html':   { vial:30,  bac:3 },
     'semaglutide.html':   { vial:10,  bac:3 },
     'tirzepatide.html':   { vial:30,  bac:1.5 },
@@ -426,7 +426,7 @@ body::before{
   }
 
   // Only SLU-PP-332 is pill form. Selank + Semax are nasal spray. Everything else is injection (units).
-  const ORAL_SLUGS  = new Set(['slu-pp-322.html']);
+  const ORAL_SLUGS  = new Set();
   const SPRAY_SLUGS = new Set(['selank.html','semax.html']);
   // Stacks have no single numeric dose — keep "see components" label.
   const COMPONENT_RX = /see components/i;
