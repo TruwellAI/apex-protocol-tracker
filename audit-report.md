@@ -1,17 +1,18 @@
-# Apex Dose Audit (v3 — single source of truth) — 2026-05-01T19:25:23.620Z
+# Apex Dose Audit (v3 — single source of truth) — 2026-05-01T21:09:57.537Z
 
 **Source of truth:** `/data/peptides.json` (46 peptides)
 **Files cross-checked:** reconstitute.html · protocol-summary.html · tracker-v2.html
-**Status:** 🟢 PASS · 0 dose issues · 0 drift issues · 0 warnings · 46 ok
+**Status:** 🔴 FAIL · 0 dose issues · 2 drift issues · 1 warnings · 45 ok
 
 ## Dose Issues
 _(none — peptides.json is internally consistent)_
 
 ## Drift (HTML files diverge from peptides.json)
-_(none — all HTML files match the source of truth)_
+🔀 slu-pp-322.html: BAC drift — peptides.json (SOURCE OF TRUTH)=2mL · protocol-summary.html=3mL · tracker-v2.html=3mL
+🔀 slu-pp-322.html: vial drift — peptides.json (SOURCE OF TRUTH)=5mg · protocol-summary.html=10mg · tracker-v2.html=10mg
 
 ## Warnings
-_(none)_
+⚠️  slu-pp-322.html: no RESEARCH entry — add to scripts/audit-doses.js
 
 ## Pass
 ✅ bpc157.html: 15 units on the pen
@@ -50,7 +51,6 @@ _(none)_
 ✅ melanotan2.html: 15 units on the pen
 ✅ l-carnitine.html: 70 units on the pen
 ✅ glutamine.html: 70 units on the pen
-✅ slu-pp-322.html: oral (no injection units to validate)
 ✅ testosterone-cyp.html: premixed 200 mg/mL
 ✅ testosterone-enth.html: premixed 200 mg/mL
 ✅ testosterone-prop.html: premixed 100 mg/mL

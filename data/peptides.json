@@ -867,16 +867,25 @@
     "category": "fatloss",
     "tier": "layer",
     "mech": "ERR\u03b1 agonist \u2014 exercise-mimetic",
-    "route": "oral",
-    "vial_mg": null,
-    "bac_ml": null,
-    "dose_mg_per_inj": 0.375,
-    "dose_label": "experimental \u00b7 oral",
-    "dose_range_mg": null,
-    "freq": "daily oral",
+    "route": "sc",
+    "vial_mg": 5,
+    "bac_ml": 2,
+    "dose_mg_per_inj": 0.5,
+    "dose_label": "500 mcg\u20131 mg",
+    "dose_range_mg": [
+      0.5,
+      1.0
+    ],
+    "freq": "3-5x weekly",
+    "weekly_total_mg": [
+      1.5,
+      3.0
+    ],
     "cycle_weeks": 8,
     "off_weeks": 4,
-    "research_note": "ERR\u03b1 agonist; oral exercise-mimetic"
+    "shelf_life_days": 28,
+    "recon_tip": "5 mg vial + 2 mL BAC \u2192 2,500 mcg/mL \u00b7 500 mcg = 20u on U-100 \u00b7 refrigerate 2-8\u00b0C, light-protected. NOTE: Published murine studies used IP route only; SubQ in humans is not formally validated \u2014 research compound.",
+    "research_note": "ERR\u03b1 agonist exercise-mimetic \u00b7 injectable research compound \u00b7 500mcg-1mg 3-5x/wk \u00b7 SubQ not formally validated"
   },
   "testosterone-cyp.html": {
     "name": "Testosterone Cypionate",

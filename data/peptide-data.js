@@ -1,7 +1,7 @@
 /* AUTO-GENERATED — DO NOT EDIT.
  * Source: /data/peptides.json
  * Regenerate: node scripts/build-peptide-data.js
- * Built: 2026-05-01T19:25:23.533Z
+ * Built: 2026-05-01T21:09:57.491Z
  */
 window.APEX_PEPTIDES = {
   "_meta": {
@@ -872,16 +872,25 @@ window.APEX_PEPTIDES = {
     "category": "fatloss",
     "tier": "layer",
     "mech": "ERRα agonist — exercise-mimetic",
-    "route": "oral",
-    "vial_mg": null,
-    "bac_ml": null,
-    "dose_mg_per_inj": 0.375,
-    "dose_label": "experimental · oral",
-    "dose_range_mg": null,
-    "freq": "daily oral",
+    "route": "sc",
+    "vial_mg": 5,
+    "bac_ml": 2,
+    "dose_mg_per_inj": 0.5,
+    "dose_label": "500 mcg–1 mg",
+    "dose_range_mg": [
+      0.5,
+      1
+    ],
+    "freq": "3-5x weekly",
+    "weekly_total_mg": [
+      1.5,
+      3
+    ],
     "cycle_weeks": 8,
     "off_weeks": 4,
-    "research_note": "ERRα agonist; oral exercise-mimetic"
+    "shelf_life_days": 28,
+    "recon_tip": "5 mg vial + 2 mL BAC → 2,500 mcg/mL · 500 mcg = 20u on U-100 · refrigerate 2-8°C, light-protected. NOTE: Published murine studies used IP route only; SubQ in humans is not formally validated — research compound.",
+    "research_note": "ERRα agonist exercise-mimetic · injectable research compound · 500mcg-1mg 3-5x/wk · SubQ not formally validated"
   },
   "testosterone-cyp.html": {
     "name": "Testosterone Cypionate",
