@@ -1,7 +1,7 @@
 /* AUTO-GENERATED — DO NOT EDIT.
  * Source: /data/peptides.json
  * Regenerate: node scripts/build-peptide-data.js
- * Built: 2026-05-01T17:21:00.337Z
+ * Built: 2026-05-01T17:22:27.921Z
  */
 window.APEX_PEPTIDES = {
   "_meta": {
@@ -1134,7 +1134,7 @@ window.APEX_INTERACTIONS = [
     ],
     "type": "synergy",
     "severity": "synergy",
-    "icon": "🩹",
+    "icon": "⚡",
     "title": "BPC-157 + TB-500 — paired healing protocol",
     "summary": "BPC-157 = tissue protection + angiogenesis at the local site. TB-500 = systemic actin filament regulation + immune cell migration. They cover different mechanistic ground — BPC for the where, TB for the how. Pair beats either alone for serious tendon/ligament/gut healing.",
     "fix": "Run as a 4-6 week pulse together for active recovery, then 4 weeks OFF. Continuous use loses effectiveness — both downregulate their own receptors over time.",
@@ -1158,7 +1158,7 @@ window.APEX_INTERACTIONS = [
     ],
     "type": "synergy",
     "severity": "synergy",
-    "icon": "📈",
+    "icon": "⚡",
     "title": "GHRH + GHRP = bigger GH pulse than either alone",
     "summary": "CJC-1295 / Sermorelin / Tesamorelin are GHRH analogs (push GH from one direction). Ipamorelin is a ghrelin mimetic / GHRP (pulls GH from another). Stacking them produces a synergistic pulse that's larger than the sum of the two — 'amp + speaker' for the pituitary.",
     "fix": "Inject together pre-bed (or AM if you're also on a GLP-1 — see the GLP-1 timing warning). Pre-blended CJC+Ipa formulations save you a needle. Selective for GH (Ipamorelin doesn't spike cortisol/prolactin like older GHRPs).",
