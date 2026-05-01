@@ -416,14 +416,14 @@ body::before{
       <div class="em-label">Dose</div>
       <input type="text" class="em-input" id="em-dose" placeholder="e.g. 500 mcg" inputmode="decimal" autocapitalize="off" autocorrect="off">
     </div>
-    <div class="em-field" id="em-intensity-wrap" style="display:none;">
-      <div class="em-label">Intensity (collapses range to one dose)</div>
+    <div class="em-field" id="em-intensity-wrap">
+      <div class="em-label">Intensity</div>
       <div id="em-intensity" style="display:flex;gap:6px;flex-wrap:wrap;">
-        <button type="button" class="em-int-btn" data-int="mild"        style="flex:1;min-width:90px;padding:10px 8px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase;border-radius:6px;cursor:pointer;-webkit-tap-highlight-color:transparent;">⬇ Mild</button>
-        <button type="button" class="em-int-btn" data-int="recommended" style="flex:1;min-width:90px;padding:10px 8px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase;border-radius:6px;cursor:pointer;-webkit-tap-highlight-color:transparent;">★ Recommended</button>
+        <button type="button" class="em-int-btn" data-int="mild"        style="flex:1;min-width:90px;padding:10px 8px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase;border-radius:6px;cursor:pointer;-webkit-tap-highlight-color:transparent;">⬇ Conservative</button>
+        <button type="button" class="em-int-btn" data-int="recommended" style="flex:1;min-width:90px;padding:10px 8px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase;border-radius:6px;cursor:pointer;-webkit-tap-highlight-color:transparent;">★ Optimal</button>
         <button type="button" class="em-int-btn" data-int="aggressive"  style="flex:1;min-width:90px;padding:10px 8px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase;border-radius:6px;cursor:pointer;-webkit-tap-highlight-color:transparent;">⬆ Aggressive</button>
       </div>
-      <div id="em-intensity-preview" style="font-size:11px;color:var(--muted);margin-top:6px;"></div>
+      <div id="em-intensity-preview" style="font-size:13px;color:var(--accent2);margin-top:8px;font-weight:700;letter-spacing:.04em;"></div>
     </div>
     <div class="em-field">
       <div class="em-label">Frequency</div>
@@ -755,19 +755,32 @@ body::before{
   function pickFromRange(doseStr, intensity){
     if (!doseStr) return doseStr;
     const s = String(doseStr);
-    const range = s.match(/(\d+(?:\.\d+)?)\s*[-–—]\s*(\d+(?:\.\d+)?)\s*(mg|mcg)/i);
-    if (!range) return s;
-    const lo = parseFloat(range[1]);
-    const hi = parseFloat(range[2]);
-    const unit = range[3];
     const tier = (intensity || 'recommended').toLowerCase();
-    let val;
-    if      (tier === 'mild')       val = lo;
-    else if (tier === 'aggressive') val = hi;
-    else                            val = (lo + hi) / 2;
-    // Round mcg to nearest 5; round mg to 1 decimal
-    val = unit.toLowerCase() === 'mcg' ? Math.round(val/5)*5 : Math.round(val*10)/10;
-    return s.replace(range[0], val + ' ' + unit);
+    // Ranged dose: "1-3 mg" / "250-500 mcg"
+    const range = s.match(/(\d+(?:\.\d+)?)\s*[-–—]\s*(\d+(?:\.\d+)?)\s*(mg|mcg)/i);
+    if (range) {
+      const lo = parseFloat(range[1]);
+      const hi = parseFloat(range[2]);
+      const unit = range[3];
+      let val;
+      if      (tier === 'mild')       val = lo;
+      else if (tier === 'aggressive') val = hi;
+      else                            val = (lo + hi) / 2;
+      val = unit.toLowerCase() === 'mcg' ? Math.round(val/5)*5 : Math.round(val*10)/10;
+      return s.replace(range[0], val + ' ' + unit);
+    }
+    // Single dose: "300 mcg" / "500 mcg" → scale ±25% for tiers
+    const single = s.match(/(\d+(?:\.\d+)?)\s*(mg|mcg)/i);
+    if (single) {
+      const base = parseFloat(single[1]);
+      const unit = single[2];
+      let val = base;
+      if      (tier === 'mild')       val = base * 0.75;
+      else if (tier === 'aggressive') val = base * 1.25;
+      val = unit.toLowerCase() === 'mcg' ? Math.round(val/5)*5 : Math.round(val*10)/10;
+      return s.replace(single[0], val + ' ' + unit);
+    }
+    return s;
   }
   function doseToUnits(doseStr, concentrationMgPerMl, p){
     if (!doseStr || !concentrationMgPerMl) return null;
@@ -1461,9 +1474,9 @@ body::before{
     const u = doseToUnits(picked, conc, p);
     const previewEl = document.getElementById('em-intensity-preview');
     if (previewEl) {
-      if (u && !u.range) previewEl.innerHTML = '→ <strong style="color:var(--accent2);">' + u.units + ' units on the pen</strong>';
-      else if (u && u.range) previewEl.innerHTML = '→ <strong style="color:var(--accent2);">' + u.minUnits + '–' + u.maxUnits + ' units</strong>';
-      else previewEl.innerHTML = '<span style="color:var(--warn,#fbbf24);">⚠ Set vial size to see units</span>';
+      if (u && !u.range) previewEl.innerHTML = '→ <strong style="font-size:18px;">' + u.units + ' units</strong> on the pen <span style="color:var(--muted);font-weight:500;">(' + picked + ')</span>';
+      else if (u && u.range) previewEl.innerHTML = '→ <strong style="font-size:18px;">' + u.minUnits + '–' + u.maxUnits + ' units</strong> on the pen <span style="color:var(--muted);font-weight:500;">(' + picked + ')</span>';
+      else previewEl.innerHTML = '<span style="color:#fbbf24;">⚠ Set vial size + BAC to see units</span>';
     }
   }
   document.getElementById('em-intensity').addEventListener('click', e => {
@@ -1474,21 +1487,25 @@ body::before{
     const p = (state.protocols || []).find(x => x.id === editingId);
     if (p) updateIntensityPreview(p);
   });
+  // Live recompute units preview whenever user touches dose / vial / BAC
+  ['em-dose','em-vial','em-bac'].forEach(id => {
+    document.getElementById(id).addEventListener('input', () => {
+      const state = getState();
+      const p = (state.protocols || []).find(x => x.id === editingId);
+      if (p) updateIntensityPreview(p);
+    });
+  });
   function openEditModal(p){
     editingId = p.id;
     const reconNow = (function(){ try { return JSON.parse(localStorage.getItem('apex_recon')||'{}')[p.slug] || {}; } catch(e){ return {}; } })();
     editingDefaults = { dose: p.dose, freq: p.freq, cycleWeeks: p.cycleWeeks, cycleWks: p.cycleWks, startDate: p.startDate, mixDate: p.mixDate, vial: reconNow.vial, bac: reconNow.bac, intensity: p.intensity || 'recommended' };
     document.getElementById('em-title').textContent = p.name;
     document.getElementById('em-dose').value = p.dose || '';
-    // Intensity selector — only show if dose has a range (e.g. "1-3 mg" / "250-500 mcg")
-    const isRangedDose = /\d+(?:\.\d+)?\s*[-–—]\s*\d+(?:\.\d+)?\s*(mg|mcg)/i.test(p.dose || '');
-    const intensityWrap = document.getElementById('em-intensity-wrap');
-    intensityWrap.style.display = isRangedDose ? 'block' : 'none';
-    if (isRangedDose) {
-      const currentTier = (p.intensity || 'recommended').toLowerCase();
-      paintIntensityButtons(currentTier);
-      updateIntensityPreview(p);
-    }
+    // Intensity selector — ALWAYS shown. Conservative / Optimal / Aggressive applies to every peptide.
+    // Ranged doses snap to lo/mid/hi. Single doses scale ±25%.
+    const currentTier = (p.intensity || 'recommended').toLowerCase();
+    paintIntensityButtons(currentTier);
+    updateIntensityPreview(p);
     document.getElementById('em-freq').value = p.freq || '';
     document.getElementById('em-cycle').value = (typeof p.cycleWeeks === 'number' ? p.cycleWeeks : 8);
     document.getElementById('em-start').value = p.startDate || (new Date().toISOString().slice(0,10));
@@ -1507,7 +1524,9 @@ body::before{
     const state = getState();
     const idx = (state.protocols || []).findIndex(x => x.id === editingId);
     if (idx < 0) { closeEditModal(); return; }
-    state.protocols[idx].dose = document.getElementById('em-dose').value.trim() || state.protocols[idx].dose;
+    // Pick the tier-collapsed dose (Conservative/Optimal/Aggressive) so the saved dose matches what user selected
+    const rawDose = document.getElementById('em-dose').value.trim() || state.protocols[idx].dose;
+    state.protocols[idx].dose = pickFromRange(rawDose, editingIntensity);
     state.protocols[idx].freq = document.getElementById('em-freq').value.trim() || state.protocols[idx].freq;
     const cw = parseInt(document.getElementById('em-cycle').value, 10);
     if (!isNaN(cw) && cw > 0) {
