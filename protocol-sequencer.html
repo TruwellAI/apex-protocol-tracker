@@ -93,8 +93,9 @@ h1 em{color:var(--accent2);font-style:normal;}
 .timeline-section{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px 16px;margin-bottom:24px;}
 .timeline-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;color:var(--white);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
 .tl-grid{display:grid;gap:6px;}
-.tl-row{display:grid;grid-template-columns:120px 1fr;gap:10px;align-items:center;}
+.tl-row{display:grid;grid-template-columns:140px 1fr;gap:10px;align-items:center;margin-bottom:4px;}
 .tl-row-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;color:var(--white);display:flex;align-items:center;gap:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.tl-row-cadence{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.05em;line-height:1.3;margin-top:2px;}
 .tl-track{position:relative;height:20px;background:var(--panel2);border-radius:4px;overflow:hidden;}
 .tl-bar{position:absolute;top:0;bottom:0;border-radius:3px;opacity:.85;}
 .tl-bar.foundation{background:var(--foundation);}
@@ -104,16 +105,22 @@ h1 em{color:var(--accent2);font-style:normal;}
 /* Simplified bar coloring — rainbow phase band stays at the TOP for narrative;
    individual peptide bars use plain ON/TITRATE/TAPER/PULSE/FOUNDATION semantics. */
 .tl-bar.on{background:#00D4FF;}                                          /* solid cyan: cycling, steady dose */
-.tl-bar.titrate{background:linear-gradient(to right,#fbbf24,#00D4FF);}   /* yellow → cyan: dose ramping UP */
-.tl-bar.taper{background:linear-gradient(to right,#00D4FF,#FF6B35);}     /* cyan → orange: dose ramping DOWN */
-.tl-cat-header{display:grid;grid-template-columns:120px 1fr;gap:10px;align-items:center;margin:18px 0 8px 0;}
+.tl-bar.titrate{background:linear-gradient(to right,#fbbf24,#00D4FF);}   /* yellow → cyan: dose ramping UP (single bar fallback) */
+.tl-bar.taper{background:linear-gradient(to right,#00D4FF,#FF6B35);}     /* cyan → orange: dose ramping DOWN (single bar fallback) */
+/* Distinct per-week titration steps — for GLP-1s (Reta/Sema/Tirz) where each
+   week is a different dose: 2mg → 4mg → 8mg → 12mg. Solid blocks, hard borders. */
+.tl-bar.t-step1{background:#fde68a;}  /* week 1 — pale yellow (lowest dose) */
+.tl-bar.t-step2{background:#fbbf24;}  /* week 2 — yellow */
+.tl-bar.t-step3{background:#5eead4;}  /* week 3 — teal (transition) */
+.tl-bar.t-step4{background:#00D4FF;}  /* week 4 — solid cyan (full dose, blends into 'on') */
+.tl-cat-header{display:grid;grid-template-columns:140px 1fr;gap:10px;align-items:center;margin:18px 0 8px 0;}
 .tl-cat-label{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;letter-spacing:.04em;color:var(--white);text-transform:uppercase;}
 .tl-cat-meta{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;}
 .tl-cat-meta strong{color:var(--accent);}
 .seq-badge{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:var(--accent);color:var(--bg);font-family:'Rajdhani',sans-serif;font-weight:800;font-size:11px;margin-right:4px;}
-.tl-week-marks{display:grid;grid-template-columns:120px 1fr;gap:10px;margin-top:6px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;}
+.tl-week-marks{display:grid;grid-template-columns:140px 1fr;gap:10px;margin-top:6px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;}
 .tl-week-marks-bar{display:flex;justify-content:space-between;}
-.tl-phases{display:grid;grid-template-columns:120px 1fr;gap:10px;margin-bottom:8px;align-items:center;}
+.tl-phases{display:grid;grid-template-columns:140px 1fr;gap:10px;margin-bottom:8px;align-items:center;}
 .tl-phases-bar{position:relative;height:24px;background:var(--panel2);border-radius:4px;overflow:hidden;}
 .tl-phase-band{position:absolute;top:0;bottom:0;display:flex;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--white);font-weight:700;text-transform:uppercase;opacity:.85;}
 .tl-phase-band.p-clear{background:#a78bfa;}
@@ -670,14 +677,16 @@ function render() {
     trt:'⚠️ TRT / Hormone (Rx)',
     other:'Other'
   };
+  // Each category states EXACTLY when you're on / off / titrating / tapering.
+  // That's the whole point of the timeline — cycle clarity at a glance.
   const catSequenceHints = {
-    longevity:'Clear → Reset → Rebuild → Repair → Maintain',
-    fatloss:'Titrate → Active → Taper → Recomp',
-    'gh-axis':'Ramp → Cycle → Off',
-    recovery:'Pulse 4-6wk on / 4wk off, repeat as needed',
-    cognitive:'4-week pulse / 2-week off',
-    libido:'As-needed (PT-141)',
-    trt:'Continuous under physician supervision'
+    longevity:'Mixed cadence · pulses (1-2 wk, 1-2x/yr) + layers (8-12 wk on / 4-8 wk off) + foundation (52 wk continuous)',
+    fatloss:'Titrate 4 wk ↑ → on 16 wk → taper 8 wk ↓ (24 wk total cycle)',
+    'gh-axis':'Ramp 4 wk → on 12 wk → off 4 wk, repeat',
+    recovery:'Pulse 4-6 wk on → 4 wk off → repeat as needed',
+    cognitive:'4 wk on → 2 wk off, alternate Selank ↔ Semax to avoid tolerance',
+    libido:'PT-141 as-needed · Melanotan II 8 wk on → 8 wk off',
+    trt:'52 wk continuous · physician-supervised · re-test labs every 6-12 wk'
   };
 
   catOrder.forEach(cat => {
@@ -734,10 +743,29 @@ function render() {
           if (/titrate|loading|ramp/.test(labelLower)) cls = 'titrate';
           else if (/taper/.test(labelLower)) cls = 'taper';
 
-          if (cls) {
+          if (cls === 'titrate') {
+            // Special: a 4-week titrate segment renders as 4 DISTINCT solid blocks
+            // (one per week / dose level) so users see the dose ladder, not a smooth gradient.
+            const segLen = seg.end - seg.start + 1;
+            if (segLen === 4 && /titrate|loading|ramp/.test(labelLower) && /retatrutide|semaglutide|tirzepatide/.test(p.slug)) {
+              for (let w = 0; w < 4; w++) {
+                const wkStart = seg.start + w;
+                const wkLeft = ((wkStart-1)/52)*100;
+                const wkRight = 100 - (wkStart/52)*100;
+                bars += `<div class="tl-bar t-step${w+1}" style="left:${wkLeft}%;right:${wkRight}%;" title="Week ${wkStart} — titration step ${w+1}/4"></div>`;
+              }
+              return;
+            }
+            // Otherwise standard titrate gradient
             const left = ((seg.start-1)/52)*100;
             const right = 100 - (seg.end/52)*100;
-            bars += `<div class="tl-bar ${cls}" style="left:${left}%;right:${right}%;" title="${seg.label||''} (Wk ${seg.start}-${seg.end})"></div>`;
+            bars += `<div class="tl-bar titrate" style="left:${left}%;right:${right}%;" title="${seg.label||''} (Wk ${seg.start}-${seg.end})"></div>`;
+            return;
+          }
+          if (cls === 'taper') {
+            const left = ((seg.start-1)/52)*100;
+            const right = 100 - (seg.end/52)*100;
+            bars += `<div class="tl-bar taper" style="left:${left}%;right:${right}%;" title="${seg.label||''} (Wk ${seg.start}-${seg.end})"></div>`;
             return;
           }
 
@@ -804,15 +832,49 @@ function render() {
         seqBadge = `<span class="seq-badge" style="background:var(--muted);">${idx+1}</span>`;
       }
 
+      // ── CADENCE STRING — exactly how long this peptide is on/off/titrate/taper ──
+      let cadence = '';
+      if (sched && sched.length > 0) {
+        let titWk = 0, onWk2 = 0, tapWk = 0;
+        sched.forEach(seg => {
+          const len = seg.end - seg.start + 1;
+          const lbl = String(seg.label || '').toLowerCase();
+          if (/titrate|loading|ramp/.test(lbl)) titWk += len;
+          else if (/taper/.test(lbl)) tapWk += len;
+          else onWk2 += len;
+        });
+        const offWk2 = 52 - (titWk + onWk2 + tapWk);
+        const parts = [];
+        if (titWk > 0) parts.push(`↑ ${titWk}w`);
+        if (onWk2 > 0) parts.push(`on ${onWk2}w`);
+        if (tapWk > 0) parts.push(`↓ ${tapWk}w`);
+        if (offWk2 > 0) parts.push(`off ${offWk2}w`);
+        cadence = parts.join(' · ');
+      } else if (p.tier === 'foundation') {
+        cadence = '52w continuous';
+      } else if (p.tier === 'pulse') {
+        cadence = `${p.cycleWeeks}w pulse · 1-2x/yr`;
+      } else if (p.cycleWeeks) {
+        cadence = `${p.cycleWeeks}w on${p.offWeeks ? ' / ' + p.offWeeks + 'w off' : ''}${p.offWeeks ? ' · repeat' : ''}`;
+      }
+
       html += `
         <div class="tl-row" data-slug="${p.slug}" style="cursor:pointer;transition:background .15s;" title="Tap for dose">
-          <div class="tl-row-name">${seqBadge}<span class="tier-dot ${p.tier}"></span>${p.name}<span style="opacity:.5;font-size:11px;margin-left:6px;color:var(--accent);">▾ tap for dose</span></div>
+          <div>
+            <div class="tl-row-name">${seqBadge}<span class="tier-dot ${p.tier}"></span>${p.name}</div>
+            ${cadence ? `<div class="tl-row-cadence">${cadence}</div>` : ''}
+          </div>
           <div class="tl-track">${bars}<div class="tl-today tl-today-row" style="left:0%;top:0;"></div></div>
         </div>
         <div class="tl-detail" id="detail-${p.slug}" style="display:none;grid-column:1/-1;background:rgba(0,212,255,.05);border-left:3px solid var(--accent);padding:10px 14px;margin:-2px 0 8px;font-size:12px;line-height:1.55;border-radius:0 6px 6px 0;"></div>`;
     });
 
     html += `</div>`;
+    // Month markers at the BOTTOM of every category — saves scrolling
+    html += `<div class="tl-week-marks" style="margin-bottom:14px;opacity:.6;">
+      <div></div>
+      <div class="tl-week-marks-bar tl-month-bar"></div>
+    </div>`;
   });
 
   html += `
@@ -822,26 +884,29 @@ function render() {
       </div>
     </div>`;
 
-  // Build month labels dynamically based on today
+  // Build month labels dynamically based on today — populates the timeline-bottom
+  // bar AND every per-category month bar (.tl-month-bar) so the user always
+  // has a calendar reference next to the bars they're looking at.
   setTimeout(() => {
-    const monthMarks = document.getElementById('month-marks');
-    if (monthMarks) {
-      const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
-      const today = new Date();
-      const startMonth = today.getMonth();
-      let labels = '';
-      for (let i = 0; i < 12; i += 2) {
-        labels += `<span>${months[(startMonth + i) % 12]}</span>`;
-      }
-      monthMarks.innerHTML = labels;
+    const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+    const today = new Date();
+    const startMonth = today.getMonth();
+    let labels = '';
+    for (let i = 0; i < 12; i += 2) {
+      labels += `<span>${months[(startMonth + i) % 12]}</span>`;
     }
+    const monthMarks = document.getElementById('month-marks');
+    if (monthMarks) monthMarks.innerHTML = labels;
+    // Populate every per-category month bar
+    document.querySelectorAll('.tl-month-bar').forEach(el => { el.innerHTML = labels; });
   }, 0);
 
   // Legend
   html += `
     <div class="legend">
       <div class="legend-item"><span style="display:inline-block;width:24px;height:8px;border-radius:2px;background:#00D4FF;"></span>On cycle</div>
-      <div class="legend-item"><span style="display:inline-block;width:24px;height:8px;border-radius:2px;background:linear-gradient(to right,#fbbf24,#00D4FF);"></span>Titrating up</div>
+      <div class="legend-item"><span style="display:inline-flex;width:32px;height:8px;border-radius:2px;overflow:hidden;"><span style="flex:1;background:#fde68a;"></span><span style="flex:1;background:#fbbf24;"></span><span style="flex:1;background:#5eead4;"></span><span style="flex:1;background:#00D4FF;"></span></span>Titrating up (GLP-1 4-step ladder)</div>
+      <div class="legend-item"><span style="display:inline-block;width:24px;height:8px;border-radius:2px;background:linear-gradient(to right,#fbbf24,#00D4FF);"></span>Loading (NAD+ etc.)</div>
       <div class="legend-item"><span style="display:inline-block;width:24px;height:8px;border-radius:2px;background:linear-gradient(to right,#00D4FF,#FF6B35);"></span>Tapering down</div>
       <div class="legend-item"><span style="display:inline-block;width:24px;height:8px;border-radius:2px;background:#0a1218;border:1px solid var(--border2);"></span>Off cycle</div>
     </div>`;
