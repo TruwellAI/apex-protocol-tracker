@@ -570,65 +570,11 @@ function render() {
 
   let html = '';
 
-  // ── 📍 THIS WEEK CALLOUT — what you should be doing right now ──
-  // Computes per-peptide status for the current week of the cycle (week 1
-  // = today). Renders a prominent banner at the top so users see actionable
-  // dosing info before scrolling anywhere.
-  if (!isDemo) {
-    const currentWk = 1; // Week 1 = today; future iterations could compute from a real cycle-start date
-    const todayMonth = new Date().toLocaleDateString('en-US', { month: 'long' });
-    const todayDate = new Date().getDate();
-    const goalSchedNow = YEAR_SCHEDULE[activeGoal] || {};
-    const statuses = [];
-    selection.forEach(slug => {
-      const p = PEPS[slug.replace('.html','')];
-      if (!p) return;
-      const sched = goalSchedNow[slug];
-      let status = '';
-      if (sched && sched.length > 0) {
-        // Find current segment for week 1
-        const seg = sched.find(s => currentWk >= s.start && currentWk <= s.end);
-        if (seg) {
-          const lbl = String(seg.label || '').toLowerCase();
-          if (/titrate|loading|ramp/.test(lbl)) {
-            const stepNum = currentWk - seg.start + 1;
-            const totalSteps = seg.end - seg.start + 1;
-            status = `<strong style="color:#fbbf24;">titrating step ${stepNum}/${totalSteps}</strong>`;
-          } else if (/taper/.test(lbl)) {
-            status = `<strong style="color:#FF6B35;">tapering down (wk ${currentWk - seg.start + 1}/${seg.end - seg.start + 1})</strong>`;
-          } else {
-            status = `<strong style="color:var(--accent2);">on cycle (wk ${currentWk - seg.start + 1}/${seg.end - seg.start + 1})</strong>`;
-          }
-        } else {
-          // Find next segment
-          const next = sched.find(s => s.start > currentWk);
-          if (next) {
-            status = `<span style="color:var(--muted);">starts wk ${next.start} (${Math.ceil((next.start - currentWk) / 4.33)} mo away)</span>`;
-          } else {
-            status = `<span style="color:var(--muted);">cycle complete</span>`;
-          }
-        }
-      } else if (p.tier === 'foundation') {
-        status = `<strong style="color:var(--accent2);">on (continuous)</strong>`;
-      } else if (p.cycleWeeks) {
-        status = `<strong style="color:var(--accent2);">on cycle (wk 1/${p.cycleWeeks})</strong>`;
-      }
-      if (status) statuses.push({ name: p.name, status });
-    });
-    if (statuses.length > 0) {
-      const rows = statuses.map(s => `<div style="display:flex;justify-content:space-between;gap:14px;padding:6px 0;border-bottom:1px dashed rgba(0,212,255,.12);font-size:13px;"><span style="color:var(--white);font-weight:600;">${s.name}</span><span style="text-align:right;">${s.status}</span></div>`).join('');
-      html += `<div style="background:linear-gradient(135deg,rgba(0,212,255,.10),rgba(0,255,157,.04));border:1px solid rgba(0,212,255,.4);border-radius:12px;padding:14px 16px;margin-bottom:14px;">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-          <div style="font-size:22px;">📍</div>
-          <div style="flex:1;">
-            <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;color:#00D4FF;letter-spacing:-.1px;">This week — ${todayMonth} ${todayDate}</div>
-            <div style="font-size:11px;color:var(--muted);margin-top:2px;font-family:'Share Tech Mono',monospace;letter-spacing:.06em;">What you should be doing RIGHT NOW</div>
-          </div>
-        </div>
-        ${rows}
-      </div>`;
-    }
-  }
+  // (Removed: 'This Week' per-peptide status block — became visual noise rather
+  //  than action-driving info. The cadence chips on each row already convey
+  //  on/titrate/taper/off, and the row-tap reveals dose. We'll re-introduce
+  //  a focused 'this week' summary later only if it answers a single sharp
+  //  question the user can act on in 5 seconds.)
 
   // F-05: Demo banner — much more aggressive so users don't mistake it for their stack
   if (isDemo) {
