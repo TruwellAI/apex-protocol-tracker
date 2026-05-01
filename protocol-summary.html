@@ -815,39 +815,100 @@ body::before{
       const comps = STACK_COMPONENTS[slug];
       if (!comps) return '';
       const isCombined = !!p.combinedBottle;
-      // For COMBINED bottles, pull component_mg from SSOT (peptides.json components[]).
-      // Each component's concentration = its mg / total BAC. NOT the same as standalone math.
-      const ssotComps = (window.APEX_PEPTIDES || {})[slug]?.components || [];
+      const ssotEntry = (window.APEX_PEPTIDES || {})[slug] || {};
+      const ssotComps = ssotEntry.components || [];
       const cs = cycleState[slug] || {};
-      const totalBac = (isCombined && cs.bacMl > 0) ? cs.bacMl : ((window.APEX_PEPTIDES||{})[slug]?.bac_ml || 3);
-      const rows = comps.map(c => {
-        let unitsLbl;
-        if (isCombined) {
-          // Find this component's mg-in-vial from the SSOT entry
-          const ssotC = ssotComps.find(x => x.name === c.name) || ssotComps.find(x => c.slug.includes(x.name.toLowerCase().replace(/[^a-z0-9]/g,'')));
-          const componentMg = ssotC ? ssotC.dose_mg : null;
-          // ssotC.dose_mg in the SSOT components[] is actually the per-injection dose, NOT mg-in-vial.
-          // For combined bottles, the vial typically contains equal weight of each component (e.g.
-          // 5mg BPC + 5mg TB in a 10mg Wolverine vial). So component_mg_in_vial = totalVial / N components.
-          const totalVialMg = (cs.vialMg > 0) ? cs.vialMg : ((window.APEX_PEPTIDES||{})[slug]?.vial_mg || 10);
-          const componentMgInVial = totalVialMg / comps.length;
-          // Pass to doseToUnitsLabel as if THIS component's vial = its mg-share of the combined vial
-          const userRecon = { vial: componentMgInVial, bac: totalBac };
-          unitsLbl = doseToUnitsLabel(c.dose, c.slug, { userRecon });
-        } else {
-          // Multi-bottle stack — each component has its own recon defaults
+      const totalBac = (isCombined && cs.bacMl > 0) ? cs.bacMl : (ssotEntry.bac_ml || 3);
+      const totalVialMg = (cs.vialMg > 0) ? cs.vialMg : (ssotEntry.vial_mg || 10);
+
+      let rows;
+      let recommendedVolumeMl = 0;
+      let targetComponentName = '';
+
+      if (isCombined) {
+        // ── COMBINED BOTTLE: target SMALLEST-DOSE component, show what every other peptide
+        // ── ACTUALLY gets at that injection volume. Honest about the trade-off.
+        const componentMgInVial = totalVialMg / comps.length;
+        const concPerComponent = componentMgInVial / totalBac; // mg/mL of each component in the bottle
+        // Parse target dose for each component and compute volume needed for that target
+        const parseDoseMg = (doseStr) => {
+          const m = String(doseStr).match(/(\d+(?:\.\d+)?)\s*(mg|mcg)/i);
+          if (!m) return null;
+          const v = parseFloat(m[1]);
+          return m[2].toLowerCase() === 'mcg' ? v / 1000 : v;
+        };
+        const compsWithMath = comps.map(c => {
+          const ssotC = ssotComps.find(x => x.name === c.name);
+          const targetMg = (ssotC && ssotC.dose_mg) || parseDoseMg(c.dose);
+          const volumeForTarget = (targetMg && concPerComponent > 0) ? targetMg / concPerComponent : 0;
+          return { ...c, targetMg, volumeForTarget };
+        });
+        // Recommended volume = the smallest of all target volumes (limits the over-dose risk)
+        const candidates = compsWithMath.filter(x => x.volumeForTarget > 0);
+        const smallest = candidates.reduce((acc, x) => (!acc || x.volumeForTarget < acc.volumeForTarget) ? x : acc, null);
+        recommendedVolumeMl = smallest ? smallest.volumeForTarget : 0;
+        targetComponentName = smallest ? smallest.name : '';
+        const recommendedUnits = Math.round(recommendedVolumeMl * 100);
+
+        rows = compsWithMath.map(c => {
+          // What dose this component ACTUALLY receives at the recommended volume
+          const deliveredMg = recommendedVolumeMl * concPerComponent;
+          const deliveredLabel = deliveredMg < 1 ? (deliveredMg * 1000).toFixed(0) + ' mcg' : deliveredMg.toFixed(2) + ' mg';
+          const isTarget = c.name === targetComponentName;
+          const targetMgLabel = c.targetMg < 1 ? (c.targetMg * 1000).toFixed(0) + ' mcg' : c.targetMg + ' mg';
+          const ratio = c.targetMg ? deliveredMg / c.targetMg : 0;
+          let statusBadge, statusColor;
+          if (isTarget) {
+            statusBadge = '✅ TARGET HIT';
+            statusColor = 'var(--accent2)';
+          } else if (ratio < 0.5) {
+            const pctUnder = Math.round((1 - ratio) * 100);
+            statusBadge = `⚠ ${pctUnder}% UNDER (microdose)`;
+            statusColor = '#fbbf24';
+          } else if (ratio > 1.5) {
+            const xOver = ratio.toFixed(1);
+            statusBadge = `🚨 ${xOver}× OVERDOSE`;
+            statusColor = '#FF6B35';
+          } else {
+            statusBadge = 'sub-target';
+            statusColor = 'var(--muted)';
+          }
+          return `
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;background:rgba(0,212,255,.04);border:1px solid ${isTarget ? 'rgba(0,255,157,.4)' : 'rgba(0,212,255,.15)'};border-radius:8px;margin-top:6px;">
+              <div style="display:flex;flex-direction:column;gap:2px;min-width:0;">
+                <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:#fff;letter-spacing:-.2px;">${c.name}</div>
+                <div style="font-size:11px;color:var(--muted);">target ${targetMgLabel} · ${c.freq}</div>
+              </div>
+              <div style="text-align:right;flex-shrink:0;">
+                <div style="font-size:13px;font-weight:700;color:#fff;">${deliveredLabel} <span style="color:var(--muted);font-size:10px;">delivered</span></div>
+                <div style="font-size:9px;color:${statusColor};font-family:'Share Tech Mono',monospace;letter-spacing:.08em;margin-top:2px;">${statusBadge}</div>
+              </div>
+            </div>`;
+        }).join('');
+
+        // Recommended volume callout
+        const recommendedCallout = recommendedUnits > 0 ? `
+          <div style="margin-top:8px;padding:12px 14px;background:rgba(0,255,157,.08);border:1px solid rgba(0,255,157,.4);border-radius:8px;">
+            <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent2);margin-bottom:4px;">⚡ Recommended injection volume (targets ${targetComponentName})</div>
+            <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:24px;color:var(--accent2);">${recommendedUnits} units <span style="font-size:13px;color:var(--muted);font-weight:500;">on the pen · daily</span></div>
+            <div style="font-size:11px;color:var(--text);margin-top:6px;line-height:1.5;">This volume hits ${targetComponentName} at its proper dose. Every other peptide in the bottle is sub-target (see below) — they're still active but underdosed. <strong>For full optimal dosing of every peptide, run separate vials.</strong></div>
+          </div>` : '';
+        rows = recommendedCallout + rows;
+      } else {
+        // Multi-bottle stack — each component has its own recon, no compromise
+        rows = comps.map(c => {
           const userRecon = RECON_DEFAULTS[c.slug];
-          unitsLbl = doseToUnitsLabel(c.dose, c.slug, { userRecon });
-        }
-        return `
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;background:rgba(0,212,255,.04);border:1px solid rgba(0,212,255,.15);border-radius:8px;margin-top:6px;">
-            <div style="display:flex;flex-direction:column;gap:2px;min-width:0;">
-              <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:#fff;letter-spacing:-.2px;">${c.name}</div>
-              <div style="font-size:11px;color:var(--muted);">${c.freq}</div>
-            </div>
-            <div style="text-align:right;font-size:13px;font-weight:700;flex-shrink:0;">${unitsLbl} <span style="color:var(--muted);font-size:10px;">at proper dose</span></div>
-          </div>`;
-      }).join('');
+          const unitsLbl = doseToUnitsLabel(c.dose, c.slug, { userRecon });
+          return `
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;background:rgba(0,212,255,.04);border:1px solid rgba(0,212,255,.15);border-radius:8px;margin-top:6px;">
+              <div style="display:flex;flex-direction:column;gap:2px;min-width:0;">
+                <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:#fff;letter-spacing:-.2px;">${c.name}</div>
+                <div style="font-size:11px;color:var(--muted);">${c.freq}</div>
+              </div>
+              <div style="text-align:right;font-size:13px;font-weight:700;flex-shrink:0;">${unitsLbl}</div>
+            </div>`;
+        }).join('');
+      }
       const heading = isCombined
         ? `🧪 Inside this ONE bottle <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0;">— each draw delivers all peptides at once</span>`
         : `⊞ Stack Components <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0;">— separate bottles</span>`;
