@@ -589,12 +589,6 @@ body{padding-bottom:90px;}
         </div>` : ''}
       </div>
       <div class="rc-result">
-        <!-- FINAL CONCENTRATION — what the user gets after mixing -->
-        <div class="rc-r-item" style="grid-column:1/-1;background:rgba(0,212,255,.06);border-color:rgba(0,212,255,.3);">
-          <div class="rc-r-label" style="color:var(--accent);">🧪 Final concentration after mixing</div>
-          <div class="rc-r-value" data-result="conc" style="color:var(--accent);font-size:28px;">${concMgPerMl.toFixed(2)} <span style="font-size:13px;color:var(--muted);font-weight:600;">mg/mL</span></div>
-          <div style="font-size:11px;color:var(--muted);margin-top:4px;">${p.vial} mg powder + ${p.bac + (p.acetic||0)} mL water · swirl don't shake · should dissolve clear in ~30 sec</div>
-        </div>
         <!-- HOW OFTEN — frequency from SSOT -->
         <div class="rc-r-item" style="grid-column:1/-1;background:rgba(0,255,157,.06);border-color:rgba(0,255,157,.3);">
           <div class="rc-r-label" style="color:var(--accent2);">📅 How often you inject</div>
@@ -644,10 +638,8 @@ body{padding-bottom:90px;}
         const doses = vial > 0 ? Math.max(1, Math.floor(vial / mgPerDose)) : 0;
         const concNow = total > 0 ? vial / total : 0;
         const liveUnits = concNow > 0 ? Math.round((typMg / concNow) * 100) : 0;
-        // Live-refresh: concentration + doses-per-vial. Units math now lives on the next page.
+        // Live-refresh: doses-per-vial only. Units math + concentration moved off this page.
         card.querySelector('[data-result="doses"]').textContent = '~' + doses;
-        const concEl = card.querySelector('[data-result="conc"]');
-        if (concEl) concEl.innerHTML = concNow.toFixed(2) + ' <span style="font-size:13px;color:var(--muted);font-weight:600;">mg/mL</span>';
         reconState[slug] = { vial, bac, acetic };
       });
     });
