@@ -332,7 +332,11 @@
 
     // 2. Resolve dose label
     let doseLabel, doseMg, source;
-    if (opts.doseOverride) {
+    // Detect "titrated" / "titration" / arrow-style strings (e.g. "titrated 2→12 mg")
+    // These can't be range-parsed reliably — they describe a ladder, not a single dose.
+    // Always fall through to SSOT dose_mg_per_inj for these.
+    const isTitrationString = opts.doseOverride && /titrat|→|->|\bramp\b/i.test(String(opts.doseOverride));
+    if (opts.doseOverride && !isTitrationString) {
       // User typed something in Edit modal — collapse via tier, then parse mg
       doseLabel = pickFromRange(opts.doseOverride, intensity);
       doseMg = parseMg(doseLabel);

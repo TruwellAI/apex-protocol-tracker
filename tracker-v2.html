@@ -1531,7 +1531,19 @@ body::before{
     const reconNow = (function(){ try { return JSON.parse(localStorage.getItem('apex_recon')||'{}')[p.slug] || {}; } catch(e){ return {}; } })();
     editingDefaults = { dose: p.dose, freq: p.freq, cycleWeeks: p.cycleWeeks, cycleWks: p.cycleWks, startDate: p.startDate, mixDate: p.mixDate, vial: reconNow.vial, bac: reconNow.bac, intensity: p.intensity || 'recommended' };
     document.getElementById('em-title').textContent = p.name;
-    document.getElementById('em-dose').value = p.dose || '';
+    // Pre-fill with resolved dose from SSOT (avoid raw titration strings like "titrated 2→12 mg"
+    // which break range parsing). User can still type a custom value to override.
+    let prefillDose = p.dose || '';
+    const isTitrationStr = /titrat|→|->|\bramp\b/i.test(String(prefillDose));
+    if (isTitrationStr || !p.userEditedDose) {
+      const ssotPep = (window.APEX_PEPTIDES || {})[p.slug];
+      if (ssotPep && ssotPep.dose_mg_per_inj != null) {
+        prefillDose = ssotPep.dose_mg_per_inj < 1 ? Math.round(ssotPep.dose_mg_per_inj*1000)+' mcg' : ssotPep.dose_mg_per_inj+' mg';
+      } else if (ssotPep && ssotPep.dose_label) {
+        prefillDose = ssotPep.dose_label;
+      }
+    }
+    document.getElementById('em-dose').value = prefillDose;
     // Intensity selector — ALWAYS shown. Conservative / Optimal / Aggressive applies to every peptide.
     // Ranged doses snap to lo/mid/hi. Single doses scale ±25%.
     const currentTier = (p.intensity || 'recommended').toLowerCase();
