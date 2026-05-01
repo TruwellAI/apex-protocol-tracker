@@ -9,6 +9,7 @@
 <meta name="theme-color" content="#080C10">
 <!-- SINGLE SOURCE OF TRUTH for peptide data — see /data/peptides.json -->
 <script src="data/peptide-data.js"></script>
+<script src="assets/apex-stack-render.js"></script>
 <style>
 :root{
   --bg:#080C10; --panel:#0d1318; --panel2:#11181f;
@@ -594,27 +595,18 @@ function render() {
       </details>`);
     });
   }
-  // ── PHARMACOLOGICAL INTERACTIONS — the differentiator ──
-  // Surface every cross-compound interaction the user's stack triggers.
-  // GLP-1 + GH timing, GHK-Cu+TB-500 chemistry, MOTS-c sequencing, etc.
+  // ── PHARMACOLOGICAL INTERACTIONS (central module) ──
+  // Cards are built by ApexStackRender.buildInteractionCard so compare.html and
+  // sequencer use identical markup. Edit the renderer in assets/apex-stack-render.js
+  // to update both pages in one shot.
   const stackSlugs = selection.map(s => s.replace(/^\//, ''));
   const fired = (window.apexInteractionsForStack ? window.apexInteractionsForStack(stackSlugs) : []);
-  fired.forEach(ix => {
-    const sevColor = ix.severity === 'high' ? 'warning' : (ix.severity === 'synergy' ? '' : '');
-    const cardClass = ix.severity === 'high' ? 'insight-card warning' : (ix.severity === 'synergy' ? 'insight-card' : 'insight-card');
-    const cites = (ix.citations || []).map(c => `<li style="margin-bottom:3px;">${c}</li>`).join('');
-    insightCards.unshift(`<details class="${cardClass}" style="${ix.severity === 'synergy' ? 'border-left-color:var(--accent2);' : (ix.severity === 'medium' ? 'border-left-color:var(--accent);' : '')}">
-      <summary>${ix.icon || '⚡'} ${ix.title}</summary>
-      <div class="insight-body">
-        <div style="margin-bottom:10px;">${ix.summary}</div>
-        <div style="background:rgba(255,255,255,.04);border-left:2px solid var(--accent2);padding:8px 12px;border-radius:6px;margin-bottom:10px;">
-          <strong style="color:var(--accent2);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;">▸ The fix</strong><br>
-          <span style="font-size:13px;">${ix.fix}</span>
-        </div>
-        ${cites ? `<details style="margin-top:6px;"><summary style="cursor:pointer;color:var(--muted);font-size:11px;font-family:'Share Tech Mono',monospace;letter-spacing:.1em;text-transform:uppercase;list-style:none;">▾ Citations</summary><ul style="margin:6px 0 0 18px;font-size:11px;color:var(--muted);line-height:1.55;">${cites}</ul></details>` : ''}
-      </div>
-    </details>`);
-  });
+  if (window.ApexStackRender && window.ApexStackRender.buildInteractionCard) {
+    fired.forEach(ix => {
+      // High-severity stays open inside the insights panel so users see the fix without an extra tap
+      insightCards.unshift(window.ApexStackRender.buildInteractionCard(ix, ix.severity === 'high'));
+    });
+  }
 
   if (insightCards.length > 0) {
     const count = insightCards.length;
