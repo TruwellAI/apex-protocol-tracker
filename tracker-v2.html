@@ -560,8 +560,8 @@ body::before{
 
   // Slugs flagged as Rx-only — render warning badge on tracker tile
   const RX_SLUGS = new Set(['testosterone-cyp.html','testosterone-enth.html','testosterone-prop.html']);
-  // SLU-PP-332 is the only pill. Selank + Semax are intranasal. Everything else = injection.
-  const ORAL_SLUGS  = new Set(['slu-pp-322.html']);
+  // SLU-PP-332 now offered as injectable (5mg vial / 2mL BAC = 20u dose). Selank + Semax are intranasal. Everything else = injection.
+  const ORAL_SLUGS  = new Set();
   const SPRAY_SLUGS = new Set(['selank.html','semax.html']);
 
   function getRecon(){
