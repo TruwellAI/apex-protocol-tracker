@@ -558,7 +558,7 @@ body{padding-bottom:90px;}
           <div class="rc-r-value" data-result="units" style="color:var(--accent2);font-size:28px;">${unitsPerDose} <span style="font-size:13px;color:var(--muted);font-weight:600;">units on the pen</span></div>
           <div style="font-size:11px;color:var(--muted);margin-top:4px;">Mild / Aggressive tiers selectable on the next screen.</div>
           <details style="margin-top:8px;">
-            <summary style="cursor:pointer;color:var(--accent);font-size:10px;font-family:'Share Tech Mono',monospace;letter-spacing:.12em;text-transform:uppercase;list-style:none;">▾ 🧮 How we got ${unitsPerDose}</summary>
+            <summary data-result="math-summary" style="cursor:pointer;color:var(--accent);font-size:10px;font-family:'Share Tech Mono',monospace;letter-spacing:.12em;text-transform:uppercase;list-style:none;">▾ 🧮 How we got ${unitsPerDose}</summary>
             <div data-result="math" style="margin-top:6px;padding:8px 10px;background:rgba(0,0,0,.25);border-radius:6px;font-family:'Share Tech Mono',monospace;font-size:11px;line-height:1.7;color:var(--muted);">
               ${p.vial} mg vial ÷ ${(p.bac + (p.acetic||0))} mL water = <strong style="color:var(--white);">${(concMgPerMl).toFixed(2)} mg/mL</strong><br>
               Dose: <strong style="color:var(--white);">${typMg < 1 ? (typMg*1000)+' mcg' : typMg+' mg'}</strong> ÷ ${(concMgPerMl).toFixed(2)} mg/mL = <strong style="color:var(--white);">${((typMg/concMgPerMl)).toFixed(3)} mL</strong><br>
@@ -589,6 +589,18 @@ body{padding-bottom:90px;}
         card.querySelector('[data-result="doses"]').textContent = '~' + doses;
         const unitsEl = card.querySelector('[data-result="units"]');
         if (unitsEl) unitsEl.innerHTML = liveUnits + ' <span style="font-size:13px;color:var(--muted);font-weight:600;">units on the pen</span>';
+        // Keep the "▾ How we got X" summary + math body in sync with the live unit number
+        const summaryEl = card.querySelector('[data-result="math-summary"]');
+        if (summaryEl) summaryEl.innerHTML = `▾ 🧮 How we got ${liveUnits}`;
+        const mathEl = card.querySelector('[data-result="math"]');
+        if (mathEl) {
+          const mlPerDose = concNow > 0 ? (typMg / concNow) : 0;
+          const doseLbl = typMg < 1 ? (typMg*1000)+' mcg' : typMg+' mg';
+          mathEl.innerHTML =
+            `${vial} mg vial ÷ ${total} mL water = <strong style="color:var(--white);">${concNow.toFixed(2)} mg/mL</strong><br>` +
+            `Dose: <strong style="color:var(--white);">${doseLbl}</strong> ÷ ${concNow.toFixed(2)} mg/mL = <strong style="color:var(--white);">${mlPerDose.toFixed(3)} mL</strong><br>` +
+            `On a 100u/mL insulin pen: ${mlPerDose.toFixed(3)} mL × 100 = <strong style="color:var(--accent2);">${liveUnits} units</strong>`;
+        }
         reconState[slug] = { vial, bac, acetic };
       });
     });
