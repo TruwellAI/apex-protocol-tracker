@@ -589,29 +589,45 @@ body{padding-bottom:90px;}
         </div>` : ''}
       </div>
       <div class="rc-result">
-        <div class="rc-r-item" style="grid-column:1/-1;background:rgba(0,255,157,.06);border-color:rgba(0,255,157,.3);">
-          <div class="rc-r-label" style="color:var(--accent2);">⚡ Units per dose (recommended)</div>
-          <div class="rc-r-value" data-result="units" style="color:var(--accent2);font-size:28px;">${unitsPerDose} <span style="font-size:13px;color:var(--muted);font-weight:600;">units on the pen</span></div>
-          <!-- Per-injection vs per-week disambiguation — auto-fills from SSOT freq -->
-          <div data-result="freq-context" style="font-size:11px;color:var(--accent);margin-top:6px;font-family:'Share Tech Mono',monospace;letter-spacing:.06em;">${(function(){
-            const j = (window.APEX_PEPTIDES || {})[slug];
-            if (!j || !j.freq) return '';
-            return buildFreqContext(j.freq, unitsPerDose);
-          })()}</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:4px;">Mild / Aggressive tiers selectable on the next screen.</div>
-          <details style="margin-top:8px;">
-            <summary data-result="math-summary" style="cursor:pointer;color:var(--accent);font-size:10px;font-family:'Share Tech Mono',monospace;letter-spacing:.12em;text-transform:uppercase;list-style:none;">▾ 🧮 How we got ${unitsPerDose}</summary>
-            <div data-result="math" style="margin-top:6px;padding:8px 10px;background:rgba(0,0,0,.25);border-radius:6px;font-family:'Share Tech Mono',monospace;font-size:11px;line-height:1.7;color:var(--muted);">
-              ${p.vial} mg vial ÷ ${(p.bac + (p.acetic||0))} mL water = <strong style="color:var(--white);">${(concMgPerMl).toFixed(2)} mg/mL</strong><br>
-              Dose: <strong style="color:var(--white);">${typMg < 1 ? (typMg*1000)+' mcg' : typMg+' mg'}</strong> ÷ ${(concMgPerMl).toFixed(2)} mg/mL = <strong style="color:var(--white);">${((typMg/concMgPerMl)).toFixed(3)} mL</strong><br>
-              On a 100u/mL insulin pen: ${((typMg/concMgPerMl)).toFixed(3)} mL × 100 = <strong style="color:var(--accent2);">${unitsPerDose} units</strong>
-            </div>
-          </details>
+        <!-- FINAL CONCENTRATION — what the user gets after mixing -->
+        <div class="rc-r-item" style="grid-column:1/-1;background:rgba(0,212,255,.06);border-color:rgba(0,212,255,.3);">
+          <div class="rc-r-label" style="color:var(--accent);">🧪 Final concentration after mixing</div>
+          <div class="rc-r-value" data-result="conc" style="color:var(--accent);font-size:28px;">${concMgPerMl.toFixed(2)} <span style="font-size:13px;color:var(--muted);font-weight:600;">mg/mL</span></div>
+          <div style="font-size:11px;color:var(--muted);margin-top:4px;">${p.vial} mg powder + ${p.bac + (p.acetic||0)} mL water · swirl don't shake · should dissolve clear in ~30 sec</div>
         </div>
+        <!-- HOW OFTEN — frequency from SSOT -->
+        <div class="rc-r-item" style="grid-column:1/-1;background:rgba(0,255,157,.06);border-color:rgba(0,255,157,.3);">
+          <div class="rc-r-label" style="color:var(--accent2);">📅 How often you inject</div>
+          <div class="rc-r-value" data-result="freq" style="color:var(--accent2);font-size:20px;">${(function(){
+            const j = (window.APEX_PEPTIDES || {})[slug];
+            return j && j.freq ? j.freq : 'as scheduled';
+          })()}</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:4px;">Per-injection units come on the next page once you confirm vial + BAC.</div>
+        </div>
+        <!-- BOTTLE SHELF LIFE — how long mixed bottle stays good -->
         <div class="rc-r-item" style="grid-column:1/-1;">
-          <div class="rc-r-label">~ Doses per vial</div>
+          <div class="rc-r-label">⏳ Mixed bottle shelf life</div>
+          <div class="rc-r-value">${(function(){
+            const j = (window.APEX_PEPTIDES || {})[slug];
+            const days = (j && j.shelf_life_days) || 30;
+            return `<strong style="color:var(--white);font-size:22px;">${days}</strong> <span style="font-size:12px;color:var(--muted);">days refrigerated</span>`;
+          })()}</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:4px;">Store at 36-46°F (2-8°C) · keep upright · away from light · do NOT freeze the reconstituted vial</div>
+        </div>
+        <!-- DOSES PER VIAL -->
+        <div class="rc-r-item" style="grid-column:1/-1;">
+          <div class="rc-r-label">~ Doses per vial (at recommended dose)</div>
           <div class="rc-r-value" data-result="doses">~${dosesPerVial}</div>
         </div>
+        <!-- PRO-TIP — pulled from SSOT recon_tip when present -->
+        ${(function(){
+          const j = (window.APEX_PEPTIDES || {})[slug];
+          if (!j || !j.recon_tip) return '';
+          return `<div class="rc-r-item" style="grid-column:1/-1;background:rgba(255,107,53,.06);border-color:rgba(255,107,53,.35);">
+            <div class="rc-r-label" style="color:var(--accent3);">💡 Pro-tip — common mistake</div>
+            <div style="color:var(--text);font-size:13px;line-height:1.55;margin-top:4px;">${j.recon_tip}</div>
+          </div>`;
+        })()}
       </div>
       ${p.special ? '<div class="rc-note"><strong>AOD-9604 is hydrophobic.</strong> Mix 1 mL bacteriostatic water + 1 mL acetic acid water (or as labeled). Most other peptides use 3 mL BAC water alone.</div>' : ''}
       ${p.titration ? '<div class="rc-note" style="border-left-color:var(--accent2);background:rgba(0,255,157,.08);"><strong>Titration required.</strong> Your protocol screen will set up the week-by-week dose ramp.</div>' : ''}
@@ -628,27 +644,10 @@ body{padding-bottom:90px;}
         const doses = vial > 0 ? Math.max(1, Math.floor(vial / mgPerDose)) : 0;
         const concNow = total > 0 ? vial / total : 0;
         const liveUnits = concNow > 0 ? Math.round((typMg / concNow) * 100) : 0;
+        // Live-refresh: concentration + doses-per-vial. Units math now lives on the next page.
         card.querySelector('[data-result="doses"]').textContent = '~' + doses;
-        const unitsEl = card.querySelector('[data-result="units"]');
-        if (unitsEl) unitsEl.innerHTML = liveUnits + ' <span style="font-size:13px;color:var(--muted);font-weight:600;">units on the pen</span>';
-        // Live-refresh the per-injection / per-week disambiguator
-        const freqCtxEl = card.querySelector('[data-result="freq-context"]');
-        if (freqCtxEl) {
-          const ssotEntry = (window.APEX_PEPTIDES || {})[slug];
-          freqCtxEl.innerHTML = ssotEntry && ssotEntry.freq ? buildFreqContext(ssotEntry.freq, liveUnits) : '';
-        }
-        // Keep the "▾ How we got X" summary + math body in sync with the live unit number
-        const summaryEl = card.querySelector('[data-result="math-summary"]');
-        if (summaryEl) summaryEl.innerHTML = `▾ 🧮 How we got ${liveUnits}`;
-        const mathEl = card.querySelector('[data-result="math"]');
-        if (mathEl) {
-          const mlPerDose = concNow > 0 ? (typMg / concNow) : 0;
-          const doseLbl = typMg < 1 ? (typMg*1000)+' mcg' : typMg+' mg';
-          mathEl.innerHTML =
-            `${vial} mg vial ÷ ${total} mL water = <strong style="color:var(--white);">${concNow.toFixed(2)} mg/mL</strong><br>` +
-            `Dose: <strong style="color:var(--white);">${doseLbl}</strong> ÷ ${concNow.toFixed(2)} mg/mL = <strong style="color:var(--white);">${mlPerDose.toFixed(3)} mL</strong><br>` +
-            `On a 100u/mL insulin pen: ${mlPerDose.toFixed(3)} mL × 100 = <strong style="color:var(--accent2);">${liveUnits} units</strong>`;
-        }
+        const concEl = card.querySelector('[data-result="conc"]');
+        if (concEl) concEl.innerHTML = concNow.toFixed(2) + ' <span style="font-size:13px;color:var(--muted);font-weight:600;">mg/mL</span>';
         reconState[slug] = { vial, bac, acetic };
       });
     });

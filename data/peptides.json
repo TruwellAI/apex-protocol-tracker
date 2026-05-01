@@ -2,7 +2,7 @@
   "_meta": {
     "version": "1.0.0",
     "lastUpdated": "2026-04-30",
-    "description": "SINGLE SOURCE OF TRUTH for every peptide in Apex. Every HTML page + the audit bot reads from here. Update this file ONLY — never duplicate data into individual HTML files.",
+    "description": "SINGLE SOURCE OF TRUTH for every peptide in Apex. Every HTML page + the audit bot reads from here. Update this file ONLY \u2014 never duplicate data into individual HTML files.",
     "schema": {
       "slug": "filename .html (matches the page slug)",
       "name": "display name",
@@ -30,7 +30,7 @@
     "name": "BPC-157",
     "category": "recovery",
     "tier": "layer",
-    "mech": "Body protective compound — gut-derived peptide for tissue repair",
+    "mech": "Body protective compound \u2014 gut-derived peptide for tissue repair",
     "route": "sc",
     "vial_mg": 5,
     "bac_ml": 3,
@@ -43,13 +43,14 @@
     "freq": "1-2x daily",
     "cycle_weeks": 6,
     "off_weeks": 4,
-    "research_note": "Sikiric et al; tendon/ligament/gut healing 250-500 mcg/day"
+    "research_note": "Sikiric et al; tendon/ligament/gut healing 250-500 mcg/day",
+    "recon_tip": "Inject <strong>fasted, 30+ min before food</strong> for systemic effect (oral BPC works locally for gut, but SubQ near the injury site beats both for tendons/joints)."
   },
   "tb500.html": {
     "name": "TB-500",
     "category": "recovery",
     "tier": "layer",
-    "mech": "Thymosin Beta-4 — angiogenesis + cell migration",
+    "mech": "Thymosin Beta-4 \u2014 angiogenesis + cell migration",
     "route": "sc",
     "vial_mg": 10,
     "bac_ml": 2,
@@ -62,13 +63,14 @@
     "freq": "2x weekly",
     "cycle_weeks": 6,
     "off_weeks": 4,
-    "research_note": "Loading 5mg 2x/wk × 4-6wk, then maintenance"
+    "research_note": "Loading 5mg 2x/wk \u00d7 4-6wk, then maintenance",
+    "recon_tip": "TB-500 takes <strong>2-3 weeks</strong> to show effect \u2014 do NOT abandon it after week 1. Front-load with 5mg 2x/wk for the first 4 weeks (loading), then drop to 2.5mg 1-2x/wk maintenance."
   },
   "ghkcu.html": {
     "name": "GHK-Cu",
     "category": "longevity",
     "tier": "layer",
-    "mech": "Copper-binding peptide — collagen + skin remodeling",
+    "mech": "Copper-binding peptide \u2014 collagen + skin remodeling",
     "route": "sc",
     "vial_mg": 50,
     "bac_ml": 3,
@@ -81,13 +83,14 @@
     "freq": "daily SubQ",
     "cycle_weeks": 12,
     "off_weeks": 4,
-    "research_note": "Pickart 1973; 1-3mg/day skin/recovery/wound healing"
+    "research_note": "Pickart 1973; 1-3mg/day skin/recovery/wound healing",
+    "recon_tip": "GHK-Cu turns the solution <strong>blue</strong> \u2014 that is the copper, totally normal. Do NOT mix in the same vial as TB-500: copper oxidizes TB-500 methionine and degrades it within ~7 days. Run them in separate bottles."
   },
   "kpv.html": {
     "name": "KPV",
     "category": "recovery",
     "tier": "layer",
-    "mech": "α-MSH C-terminus — anti-inflammatory + gut",
+    "mech": "\u03b1-MSH C-terminus \u2014 anti-inflammatory + gut",
     "route": "sc",
     "vial_mg": 5,
     "bac_ml": 3,
@@ -122,7 +125,7 @@
     "research_note": "Microdose 50-200 mcg; antimicrobial + immune modulator"
   },
   "thymosin-alpha1.html": {
-    "name": "Thymosin α1",
+    "name": "Thymosin \u03b11",
     "category": "recovery",
     "tier": "layer",
     "mech": "Immune modulator (thymic origin)",
@@ -163,7 +166,7 @@
     "name": "Epitalon",
     "category": "longevity",
     "tier": "pulse",
-    "mech": "Pineal bioregulator — telomerase activator",
+    "mech": "Pineal bioregulator \u2014 telomerase activator",
     "route": "sc",
     "vial_mg": 50,
     "bac_ml": 3,
@@ -173,10 +176,11 @@
       5,
       10
     ],
-    "freq": "daily PM × 10-20 days",
+    "freq": "daily PM \u00d7 10-20 days",
     "cycle_weeks": 2,
     "off_weeks": 24,
-    "research_note": "Khavinson; 5-10mg × 10-20d pulse, 1-2x/yr"
+    "research_note": "Khavinson; 5-10mg \u00d7 10-20d pulse, 1-2x/yr",
+    "recon_tip": "Best taken <strong>at night</strong> \u2014 Epitalon works through the pineal axis and pairs with melatonin. 5-10mg/night \u00d7 10-20 day pulse, 1-2x per year."
   },
   "ss31.html": {
     "name": "SS-31",
@@ -201,7 +205,7 @@
     "name": "MOTS-c",
     "category": "longevity",
     "tier": "layer",
-    "mech": "Mitokine — AMPK activator + biogenesis",
+    "mech": "Mitokine \u2014 AMPK activator + biogenesis",
     "route": "sc",
     "vial_mg": 10,
     "bac_ml": 2,
@@ -214,13 +218,14 @@
     "freq": "2-3x weekly",
     "cycle_weeks": 8,
     "off_weeks": 8,
-    "research_note": "Total weekly 5-10mg; substrate for biogenesis (run with NAD+)"
+    "research_note": "Total weekly 5-10mg; substrate for biogenesis (run with NAD+)",
+    "recon_tip": "MOTS-c needs NAD+ as a substrate. Load NAD+ for 2-4 weeks BEFORE starting MOTS-c, then run MOTS-c with NAD+ maintenance 1x/wk."
   },
   "cartalax.html": {
     "name": "Cartalax",
     "category": "longevity",
     "tier": "pulse",
-    "mech": "Bioregulator — cartilage focus",
+    "mech": "Bioregulator \u2014 cartilage focus",
     "route": "sc",
     "vial_mg": 5,
     "bac_ml": 3,
@@ -230,16 +235,16 @@
       0.1,
       0.3
     ],
-    "freq": "daily × 10 days",
+    "freq": "daily \u00d7 10 days",
     "cycle_weeks": 2,
     "off_weeks": 24,
-    "research_note": "100-300 mcg × 10-20d pulse, 1-2x/yr"
+    "research_note": "100-300 mcg \u00d7 10-20d pulse, 1-2x/yr"
   },
   "fox04-dri.html": {
     "name": "FOX04-DRI",
     "category": "longevity",
     "tier": "pulse",
-    "mech": "Senolytic — clears p53/FOXO4 senescent cells",
+    "mech": "Senolytic \u2014 clears p53/FOXO4 senescent cells",
     "route": "sc",
     "vial_mg": 10,
     "bac_ml": 2,
@@ -252,13 +257,14 @@
     "freq": "5-day pulse, 1-2x/yr",
     "cycle_weeks": 1,
     "off_weeks": 24,
-    "research_note": "5-day pulse; clears senescent cells before rebuilding"
+    "research_note": "5-day pulse; clears senescent cells before rebuilding",
+    "recon_tip": "Senolytic \u2014 clears senescent cells. <strong>Run BEFORE Epitalon</strong> if you are stacking both. Order: FOX04 5-day pulse \u2192 4-week wash \u2192 Epitalon. Otherwise you extend the lifespan of cells you should be clearing."
   },
   "aod9604.html": {
     "name": "AOD-9604",
     "category": "fatloss",
     "tier": "layer",
-    "mech": "GH fragment 176-191 — lipolysis without GH effects",
+    "mech": "GH fragment 176-191 \u2014 lipolysis without GH effects",
     "route": "sc",
     "vial_mg": 10,
     "bac_ml": 2,
@@ -271,7 +277,8 @@
     "freq": "daily fasted AM",
     "cycle_weeks": 12,
     "off_weeks": 4,
-    "research_note": "300 mcg fasted morning; lipolysis-selective"
+    "research_note": "300 mcg fasted morning; lipolysis-selective",
+    "recon_tip": "AOD-9604 reconstitutes with 1 mL of <strong>0.6% ACETIC ACID</strong>, NOT plain bacteriostatic water. The peptide is acid-stabilized \u2014 using BAC water alone causes faster degradation. Add the BAC water on top after the acetic acid for the rest of your volume."
   },
   "retatrutide.html": {
     "name": "Retatrutide",
@@ -282,7 +289,7 @@
     "vial_mg": 30,
     "bac_ml": 3,
     "dose_mg_per_inj": 4,
-    "dose_label": "titrated 2→12 mg",
+    "dose_label": "titrated 2\u219212 mg",
     "dose_range_mg": [
       2,
       12
@@ -291,7 +298,8 @@
     "cycle_weeks": 24,
     "off_weeks": 0,
     "titration": true,
-    "research_note": "Titrate 2→4→8→12mg weekly; Phase 2 trials weekly only"
+    "research_note": "Titrate 2\u21924\u21928\u219212mg weekly; Phase 2 trials weekly only",
+    "recon_tip": "<strong>Titrate slowly</strong> to avoid GI hammer. Reta is the most aggressive of the GLP-1s \u2014 start at 2mg/wk, hold each step 4 weeks before bumping. Skip a week if nausea is severe."
   },
   "semaglutide.html": {
     "name": "Semaglutide",
@@ -302,7 +310,7 @@
     "vial_mg": 10,
     "bac_ml": 3,
     "dose_mg_per_inj": 1,
-    "dose_label": "titrated 0.25→2.4 mg",
+    "dose_label": "titrated 0.25\u21922.4 mg",
     "dose_range_mg": [
       0.25,
       2.4
@@ -311,7 +319,8 @@
     "cycle_weeks": 24,
     "off_weeks": 0,
     "titration": true,
-    "research_note": "STEP trials; titrate 0.25→2.4mg weekly"
+    "research_note": "STEP trials; titrate 0.25\u21922.4mg weekly",
+    "recon_tip": "Refrigerate after mixing. Reusing the same syringe across multiple injections from the same vial is fine \u2014 just keep the vial cold and the seal intact."
   },
   "tirzepatide.html": {
     "name": "Tirzepatide",
@@ -322,7 +331,7 @@
     "vial_mg": 30,
     "bac_ml": 1.5,
     "dose_mg_per_inj": 5,
-    "dose_label": "titrated 2.5→15 mg",
+    "dose_label": "titrated 2.5\u219215 mg",
     "dose_range_mg": [
       2.5,
       15
@@ -331,13 +340,14 @@
     "cycle_weeks": 24,
     "off_weeks": 0,
     "titration": true,
-    "research_note": "SURMOUNT trials; titrate 2.5→15mg weekly"
+    "research_note": "SURMOUNT trials; titrate 2.5\u219215mg weekly",
+    "recon_tip": "Tirz titration: 2.5 \u2192 5 \u2192 7.5 \u2192 10 \u2192 12.5 \u2192 15 mg, hold each step 4 weeks. The GIP component reduces appetite faster than Sema \u2014 most users plateau at 10 mg."
   },
   "5amino1mq.html": {
     "name": "5-Amino-1MQ",
     "category": "fatloss",
     "tier": "layer",
-    "mech": "NNMT inhibitor — restores NAD+ + reduces methyl trap",
+    "mech": "NNMT inhibitor \u2014 restores NAD+ + reduces methyl trap",
     "route": "sc",
     "vial_mg": 10,
     "bac_ml": 2,
@@ -356,7 +366,7 @@
     "name": "Tesamorelin",
     "category": "fatloss",
     "tier": "layer",
-    "mech": "Stabilized GHRH analog — visceral fat reduction (FDA-approved HIV-LD)",
+    "mech": "Stabilized GHRH analog \u2014 visceral fat reduction (FDA-approved HIV-LD)",
     "route": "sc",
     "vial_mg": 10,
     "bac_ml": 2,
@@ -375,7 +385,7 @@
     "name": "CJC-1295 (no DAC)",
     "category": "gh-axis",
     "tier": "layer",
-    "mech": "GHRH analog — short half-life pulse",
+    "mech": "GHRH analog \u2014 short half-life pulse",
     "route": "sc",
     "vial_mg": 5,
     "bac_ml": 2,
@@ -394,7 +404,7 @@
     "name": "CJC-1295 (DAC)",
     "category": "gh-axis",
     "tier": "layer",
-    "mech": "GHRH analog with DAC — extended half-life",
+    "mech": "GHRH analog with DAC \u2014 extended half-life",
     "route": "sc",
     "vial_mg": 5,
     "bac_ml": 2,
@@ -413,7 +423,7 @@
     "name": "Ipamorelin",
     "category": "gh-axis",
     "tier": "layer",
-    "mech": "Ghrelin mimetic — selective GH release",
+    "mech": "Ghrelin mimetic \u2014 selective GH release",
     "route": "sc",
     "vial_mg": 5,
     "bac_ml": 3,
@@ -470,7 +480,7 @@
     "name": "IGF-1 LR3",
     "category": "gh-axis",
     "tier": "layer",
-    "mech": "Long-R3 IGF-1 — extended half-life",
+    "mech": "Long-R3 IGF-1 \u2014 extended half-life",
     "route": "sc",
     "vial_mg": 1,
     "bac_ml": 3,
@@ -499,10 +509,10 @@
       50,
       200
     ],
-    "freq": "loading 2x/wk × 4wk, then weekly maint",
+    "freq": "loading 2x/wk \u00d7 4wk, then weekly maint",
     "cycle_weeks": 4,
     "off_weeks": 0,
-    "research_note": "Loading 100mg 2x/wk × 4wk; substrate for MOTS-c biogenesis"
+    "research_note": "Loading 100mg 2x/wk \u00d7 4wk; substrate for MOTS-c biogenesis"
   },
   "glutathione.html": {
     "name": "Glutathione",
@@ -578,7 +588,7 @@
     "name": "Dihexa",
     "category": "cognitive",
     "tier": "layer",
-    "mech": "HGF mimetic — synaptogenesis",
+    "mech": "HGF mimetic \u2014 synaptogenesis",
     "route": "sc",
     "vial_mg": 50,
     "bac_ml": 1,
@@ -616,7 +626,7 @@
     "name": "PT-141",
     "category": "libido",
     "tier": "layer",
-    "mech": "Bremelanotide — melanocortin receptor agonist",
+    "mech": "Bremelanotide \u2014 melanocortin receptor agonist",
     "route": "sc",
     "vial_mg": 10,
     "bac_ml": 3,
@@ -629,13 +639,14 @@
     "freq": "as-needed (45 min before)",
     "cycle_weeks": 52,
     "off_weeks": 0,
-    "research_note": "Bremelanotide; 45 min before activity"
+    "research_note": "Bremelanotide; 45 min before activity",
+    "recon_tip": "Inject <strong>45 minutes before</strong> activity. PT-141 can cause flushing + nausea on first use \u2014 start at 1mg, scale to 2mg if tolerated. Do NOT take with stimulants."
   },
   "melanotan1.html": {
     "name": "Melanotan I",
     "category": "libido",
     "tier": "layer",
-    "mech": "α-MSH analog — melanin stimulation",
+    "mech": "\u03b1-MSH analog \u2014 melanin stimulation",
     "route": "sc",
     "vial_mg": 10,
     "bac_ml": 3,
@@ -648,13 +659,13 @@
     "freq": "daily/2x weekly",
     "cycle_weeks": 8,
     "off_weeks": 8,
-    "research_note": "Loading 1mg/d × 10d, maint 0.5mg 2x/wk"
+    "research_note": "Loading 1mg/d \u00d7 10d, maint 0.5mg 2x/wk"
   },
   "melanotan2.html": {
     "name": "Melanotan II",
     "category": "libido",
     "tier": "layer",
-    "mech": "α-MSH analog — melanin + sexual response",
+    "mech": "\u03b1-MSH analog \u2014 melanin + sexual response",
     "route": "sc",
     "vial_mg": 10,
     "bac_ml": 3,
@@ -673,7 +684,7 @@
     "name": "L-Carnitine",
     "category": "fatloss",
     "tier": "foundation",
-    "mech": "Fatty-acid β-oxidation cofactor",
+    "mech": "Fatty-acid \u03b2-oxidation cofactor",
     "route": "sc",
     "vial_mg": 1000,
     "bac_ml": 3,
@@ -692,7 +703,7 @@
     "name": "Glutamine",
     "category": "recovery",
     "tier": "foundation",
-    "mech": "Conditionally-essential amino — gut + immune",
+    "mech": "Conditionally-essential amino \u2014 gut + immune",
     "route": "sc",
     "vial_mg": 1000,
     "bac_ml": 3,
@@ -711,28 +722,28 @@
     "name": "SLU-PP-332",
     "category": "fatloss",
     "tier": "layer",
-    "mech": "ERRα agonist — exercise-mimetic",
+    "mech": "ERR\u03b1 agonist \u2014 exercise-mimetic",
     "route": "oral",
     "vial_mg": null,
     "bac_ml": null,
     "dose_mg_per_inj": 0.375,
-    "dose_label": "experimental · oral",
+    "dose_label": "experimental \u00b7 oral",
     "dose_range_mg": null,
     "freq": "daily oral",
     "cycle_weeks": 8,
     "off_weeks": 4,
-    "research_note": "ERRα agonist; oral exercise-mimetic"
+    "research_note": "ERR\u03b1 agonist; oral exercise-mimetic"
   },
   "testosterone-cyp.html": {
     "name": "Testosterone Cypionate",
     "category": "trt",
     "tier": "layer",
-    "mech": "Long-ester androgen (8-day half-life) · Rx",
+    "mech": "Long-ester androgen (8-day half-life) \u00b7 Rx",
     "route": "sc/im",
     "vial_mg": 2000,
     "bac_ml": 10,
     "dose_mg_per_inj": 100,
-    "dose_label": "100-200 mg/wk total · 50-100 mg/inj 2x weekly",
+    "dose_label": "100-200 mg/wk total \u00b7 50-100 mg/inj 2x weekly",
     "dose_range_mg": [
       50,
       100
@@ -746,18 +757,18 @@
     "off_weeks": 0,
     "rx": true,
     "premixed": "200 mg/mL",
-    "research_note": "Rx · pre-mixed 200mg/mL · 100-200mg/wk total split 2x"
+    "research_note": "Rx \u00b7 pre-mixed 200mg/mL \u00b7 100-200mg/wk total split 2x"
   },
   "testosterone-enth.html": {
     "name": "Testosterone Enanthate",
     "category": "trt",
     "tier": "layer",
-    "mech": "Long-ester androgen (7-day half-life) · Rx",
+    "mech": "Long-ester androgen (7-day half-life) \u00b7 Rx",
     "route": "sc/im",
     "vial_mg": 2000,
     "bac_ml": 10,
     "dose_mg_per_inj": 100,
-    "dose_label": "100-200 mg/wk total · 50-100 mg/inj 2x weekly",
+    "dose_label": "100-200 mg/wk total \u00b7 50-100 mg/inj 2x weekly",
     "dose_range_mg": [
       50,
       100
@@ -771,18 +782,18 @@
     "off_weeks": 0,
     "rx": true,
     "premixed": "200 mg/mL",
-    "research_note": "Rx · pre-mixed 200mg/mL · 100-200mg/wk total split 2x"
+    "research_note": "Rx \u00b7 pre-mixed 200mg/mL \u00b7 100-200mg/wk total split 2x"
   },
   "testosterone-prop.html": {
     "name": "Testosterone Propionate",
     "category": "trt",
     "tier": "layer",
-    "mech": "Short-ester androgen (3-day half-life) · Rx",
+    "mech": "Short-ester androgen (3-day half-life) \u00b7 Rx",
     "route": "sc/im",
     "vial_mg": 1000,
     "bac_ml": 10,
     "dose_mg_per_inj": 50,
-    "dose_label": "75-175 mg/wk total · 25-75 mg/inj EOD",
+    "dose_label": "75-175 mg/wk total \u00b7 25-75 mg/inj EOD",
     "dose_range_mg": [
       25,
       75
@@ -796,7 +807,7 @@
     "off_weeks": 0,
     "rx": true,
     "premixed": "100 mg/mL",
-    "research_note": "Rx · pre-mixed 100mg/mL · 75-175mg/wk total EOD"
+    "research_note": "Rx \u00b7 pre-mixed 100mg/mL \u00b7 75-175mg/wk total EOD"
   },
   "wolverine.html": {
     "name": "Wolverine Stack",
@@ -821,7 +832,7 @@
         "dose_mg": 2.5
       }
     ],
-    "research_note": "No copper conflict — chemically stable combined"
+    "research_note": "No copper conflict \u2014 chemically stable combined"
   },
   "klow.html": {
     "name": "KLOW Stack",
@@ -854,7 +865,8 @@
         "dose_mg": 2
       }
     ],
-    "warning": "GHK-Cu copper degrades TB-500 — mix fresh weekly or run separate bottles"
+    "warning": "GHK-Cu copper degrades TB-500 \u2014 mix fresh weekly or run separate bottles",
+    "recon_tip": "\u26a0\ufe0f KLOW combo bottle has GHK-Cu copper degrading TB-500. Mix fresh weekly and use within 7 days, OR run as separate vials."
   },
   "glow.html": {
     "name": "GLOW Stack",
@@ -883,7 +895,8 @@
         "dose_mg": 0.25
       }
     ],
-    "warning": "GHK-Cu copper degrades TB-500 — mix fresh weekly or run separate bottles"
+    "warning": "GHK-Cu copper degrades TB-500 \u2014 mix fresh weekly or run separate bottles",
+    "recon_tip": "\u26a0\ufe0f GLOW combo bottle has GHK-Cu copper degrading TB-500. Mix fresh weekly and use within 7 days, OR run as separate vials."
   },
   "cardiac-stack.html": {
     "name": "Cardiac Stack",
@@ -914,7 +927,7 @@
         "dose_mg": 5
       }
     ],
-    "research_note": "Multi-bottle — separate vials"
+    "research_note": "Multi-bottle \u2014 separate vials"
   },
   "longevity-stack.html": {
     "name": "Longevity Stack",
@@ -945,7 +958,7 @@
         "dose_mg": 100
       }
     ],
-    "research_note": "Multi-bottle — separate vials"
+    "research_note": "Multi-bottle \u2014 separate vials"
   },
   "mito-reset.html": {
     "name": "Mito Reset",
@@ -976,6 +989,6 @@
         "dose_mg": 400
       }
     ],
-    "research_note": "Multi-bottle — separate vials. Sequence: NAD+ → MOTS-c → SS-31"
+    "research_note": "Multi-bottle \u2014 separate vials. Sequence: NAD+ \u2192 MOTS-c \u2192 SS-31"
   }
 }
