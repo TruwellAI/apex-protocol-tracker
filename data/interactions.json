@@ -276,8 +276,8 @@
       "severity": "medium",
       "icon": "\ud83d\udd25",
       "title": "GLP-1 already crushing appetite \u2014 adding AOD might be overkill",
-      "summary": "AOD-9604 is a GH fragment that drives lipolysis. On top of a GLP-1 you're already in significant deficit (appetite-driven). Adding AOD pushes the deficit further and accelerates LBM loss if protein/training don't keep up.",
-      "fix": "If body comp is moving on the GLP-1 alone, hold AOD until you taper off. If you're stalling on GLP-1 alone (rare but happens), add AOD at 0.3 mg fasted AM and check body comp at 4 weeks. Always bump protein to 1.2 g/lb LBM and prioritize lifting.",
+      "summary": "GLP-1s already crush appetite; you're running a meaningful caloric deficit. Adding AOD-9604 on top pushes the deficit harder and accelerates lean-mass loss if protein intake + resistance training don't hold up. Most users don't need both.",
+      "fix": "If body comp is moving on the GLP-1 alone, hold AOD until you taper off. If you've plateaued (rare), add AOD 0.3 mg fasted AM and reassess at 4 weeks. Either way: bump protein to 1.2 g/lb LBM and prioritize 3+ lifting sessions per week to protect muscle.",
       "citations": [
         "Heffernan et al, Endocrinology 2001 \u2014 AOD-9604 lipolytic activity, no diabetogenic effect",
         "Wilding et al, NEJM 2021 \u2014 STEP-1 semaglutide weight loss profile"
@@ -303,6 +303,126 @@
         "Pharmaceutical formulation principle: components in fixed-ratio combinations cannot be independently titrated \u2014 see FDA guidance on combination drug products.",
         "BPC-157 effective dose: 200-500 mcg/day (Sikiric et al, Curr Pharm Des 2018)",
         "TB-500 effective dose: 2.0-5.0 mg 2x weekly (Goldstein et al, Ann NY Acad Sci 2012) \u2014 10\u00d7 the BPC dose"
+      ]
+    },
+    {
+      "id": "bpc-protects-glp1-gut",
+      "groups": [
+        [
+          "bpc157.html"
+        ],
+        [
+          "retatrutide.html",
+          "semaglutide.html",
+          "tirzepatide.html"
+        ]
+      ],
+      "type": "synergy",
+      "severity": "synergy",
+      "icon": "\u26a1",
+      "title": "BPC-157 + GLP-1 \u2014 gut protection synergy",
+      "summary": "GLP-1s delay gastric emptying and routinely cause nausea, bloating, gastroparesis-like symptoms \u2014 that's the #1 reason users quit. BPC-157 is gut-mucosa protective; it accelerates healing of the GI lining stressed by slowed transit. Many users report nausea drops within 7-10 days of adding daily BPC.",
+      "fix": "If you're starting a GLP-1 OR you've been on one and have GI symptoms \u2014 add BPC-157 250 mcg/day, fasted morning, SubQ near the abdomen. Continue for at least 4 weeks. Doesn't reduce GLP-1 effectiveness \u2014 just makes the side effects bearable.",
+      "citations": [
+        "Sikiric et al, Curr Pharm Des 2018 \u2014 BPC-157 GI mucosal protection meta",
+        "Wettergren et al, Dig Dis Sci 1993 \u2014 GLP-1 delays gastric emptying mechanism",
+        "Anecdotal: r/Peptides + r/Semaglutide threads consistently report BPC reducing GLP-1 GI side effects"
+      ]
+    },
+    {
+      "id": "selank-semax-tolerance",
+      "groups": [
+        [
+          "selank.html"
+        ],
+        [
+          "semax.html"
+        ]
+      ],
+      "type": "dose",
+      "severity": "medium",
+      "icon": "\ud83d\udd01",
+      "title": "Selank + Semax build tolerance fast \u2014 alternate them",
+      "summary": "Both Selank (anxiolytic) and Semax (nootropic) produce strong week-1 effects but tolerance flattens the response within 3-4 weeks of daily use. Running them simultaneously every day = double tolerance build, half the benefit by week 4.",
+      "fix": "Alternate by week. Selank weeks 1-4 \u2192 switch to Semax weeks 5-8 \u2192 back to Selank weeks 9-12. Or run one at a time, never both daily. 2-week off-period at the end of each 4-week pulse keeps the response sharp.",
+      "citations": [
+        "Kozlovskii et al, Eksp Klin Farmakol 2002 \u2014 Selank tolerance kinetics in repeated dosing",
+        "Kaplan et al, Vestn Ross Akad Med Nauk 2007 \u2014 Semax neurochemistry + tolerance window"
+      ]
+    },
+    {
+      "id": "pt141-melanotan-bp-risk",
+      "groups": [
+        [
+          "pt141.html",
+          "melanotan2.html",
+          "melanotan1.html"
+        ],
+        [
+          "pt141.html",
+          "melanotan2.html",
+          "melanotan1.html"
+        ]
+      ],
+      "type": "dose",
+      "severity": "high",
+      "icon": "\u26a0\ufe0f",
+      "title": "Melanocortin agonists raise BP \u2014 skip stimulants the same day",
+      "summary": "PT-141 (bremelanotide) and Melanotan I/II are melanocortin receptor agonists. Common side effect: transient blood-pressure spike of 5-15 mmHg systolic in the 2-4 hours post-injection. Stacking with caffeine, pseudoephedrine, ADHD stimulants (Adderall/Vyvanse), or pre-workout powders compounds the effect \u2014 can hit hypertensive-urgency territory in sensitive users.",
+      "fix": "On days you inject PT-141 or Melanotan: skip stimulants for 4+ hours before AND after. If you're on chronic ADHD meds, time the injection 6-8 hr after your last dose. If you have ANY history of hypertension or cardiovascular disease \u2014 talk to a licensed provider before using.",
+      "citations": [
+        "Diamond et al, J Sex Med 2006 \u2014 Bremelanotide BP profile, healthy adults",
+        "Dorr et al, Life Sci 1996 \u2014 Melanotan II cardiovascular effects",
+        "Rev. of melanocortin receptor signaling in cardiovascular tissue (multiple)"
+      ]
+    },
+    {
+      "id": "trt-aod-recomp-synergy",
+      "groups": [
+        [
+          "testosterone-cyp.html",
+          "testosterone-enth.html",
+          "testosterone-prop.html"
+        ],
+        [
+          "aod9604.html"
+        ]
+      ],
+      "type": "synergy",
+      "severity": "synergy",
+      "icon": "\u26a1",
+      "title": "TRT + AOD-9604 \u2014 clean recomposition synergy",
+      "summary": "TRT drives lean mass + nitrogen retention. AOD-9604 drives lipolysis without affecting blood sugar or IGF-1 (unlike full GH). Together: muscle preservation + fat loss with minimal systemic GH downstream. Cleaner than TRT + full GH stack and avoids the IGF-1 elevation that bothers some lifters.",
+      "fix": "Inject AOD 250-300 mcg fasted AM (45 min before cardio if possible). Continue TRT on its standard schedule. Watch body comp at 6/12 weeks \u2014 combination usually moves visceral fat fast in months 1-2 then plateaus.",
+      "citations": [
+        "Heffernan et al, Endocrinology 2001 \u2014 AOD-9604 lipolysis without GH side effects",
+        "Bhasin et al, J Clin Endocrinol Metab 1996 \u2014 Testosterone dose-response on lean mass"
+      ]
+    },
+    {
+      "id": "multiple-pulse-spread",
+      "groups": [
+        [
+          "fox04-dri.html",
+          "epitalon.html",
+          "cartalax.html"
+        ],
+        [
+          "fox04-dri.html",
+          "epitalon.html",
+          "cartalax.html"
+        ]
+      ],
+      "type": "sequencing",
+      "severity": "medium",
+      "icon": "\ud83d\udd01",
+      "title": "Multiple pulse peptides \u2014 spread them across the year",
+      "summary": "FOX04-DRI, Epitalon, and Cartalax are all 1-2x per year pulse protocols. Running them simultaneously wastes the year's pulse window \u2014 you only get one shot at each per cycle. They also hit different mechanisms (senolytic / telomerase / cartilage bioregulation) so doing them stacked muddies the signal of what's working.",
+      "fix": "Schedule across 4 quarters: FOX04 in Q1 (clears senescent cells first) \u2192 Epitalon in Q2 (telomerase reset on cleaner population) \u2192 Cartalax in Q3-Q4 if joint focus. The sequencer auto-spreads them when all three are in your stack.",
+      "citations": [
+        "Baar et al, Cell 2017 \u2014 FOX04-DRI senolytic timing in murine models",
+        "Khavinson 2014 \u2014 Epitalon telomerase pulse protocol",
+        "Khavinson + Anisimov peptide bioregulator review"
       ]
     }
   ]
