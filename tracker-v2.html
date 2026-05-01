@@ -1474,9 +1474,20 @@ body::before{
     const u = doseToUnits(picked, conc, p);
     const previewEl = document.getElementById('em-intensity-preview');
     if (previewEl) {
-      if (u && !u.range) previewEl.innerHTML = '→ <strong style="font-size:18px;">' + u.units + ' units</strong> on the pen <span style="color:var(--muted);font-weight:500;">(' + picked + ')</span>';
-      else if (u && u.range) previewEl.innerHTML = '→ <strong style="font-size:18px;">' + u.minUnits + '–' + u.maxUnits + ' units</strong> on the pen <span style="color:var(--muted);font-weight:500;">(' + picked + ')</span>';
-      else previewEl.innerHTML = '<span style="color:#fbbf24;">⚠ Set vial size + BAC to see units</span>';
+      const overLimit = (u && !u.range && u.units > 100) || (u && u.range && u.maxUnits > 100);
+      const tinyDose  = (u && !u.range && u.units > 0 && u.units < 5) || (u && u.range && u.minUnits > 0 && u.minUnits < 5);
+      if (u && !u.range) previewEl.innerHTML = '→ <strong style="font-size:18px;color:' + (overLimit?'#ff6b35':'var(--accent2)') + ';">' + u.units + ' units</strong> on the pen <span style="color:var(--muted);font-weight:500;">(' + picked + ')</span>';
+      else if (u && u.range) previewEl.innerHTML = '→ <strong style="font-size:18px;color:' + (overLimit?'#ff6b35':'var(--accent2)') + ';">' + u.minUnits + '–' + u.maxUnits + ' units</strong> on the pen <span style="color:var(--muted);font-weight:500;">(' + picked + ')</span>';
+      else { previewEl.innerHTML = '<span style="color:#fbbf24;">⚠ Set vial size + BAC to see units</span>'; return; }
+      if (overLimit) {
+        // Suggest a tighter mix that fits the 1mL pen
+        const targetU = 60; // aim for 60u sweet spot
+        const newBac = bac && conc ? +(((u.units || u.maxUnits) / targetU) * (bac + acetic) / 1).toFixed(1) : null;
+        const fixHint = (vial && newBac && newBac > 0.4) ? ' <br><span style="color:#fbbf24;font-weight:600;">⚠ Exceeds 1 mL pen. Try ' + vial + ' mg + ' + (Math.max(0.5, +(bac / ((u.units||u.maxUnits)/100)).toFixed(1))) + ' mL BAC, or split into 2 shots.</span>' : ' <br><span style="color:#fbbf24;font-weight:600;">⚠ Exceeds 1 mL pen — use less BAC or split the dose.</span>';
+        previewEl.innerHTML += fixHint;
+      } else if (tinyDose) {
+        previewEl.innerHTML += ' <br><span style="color:#fbbf24;font-weight:600;">⚠ Under 5u — too small to draw accurately. Use more BAC for a bigger draw.</span>';
+      }
     }
   }
   document.getElementById('em-intensity').addEventListener('click', e => {
