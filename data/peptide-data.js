@@ -1,7 +1,7 @@
 /* AUTO-GENERATED — DO NOT EDIT.
  * Source: /data/peptides.json
  * Regenerate: node scripts/build-peptide-data.js
- * Built: 2026-05-01T21:09:57.491Z
+ * Built: 2026-05-01T21:29:02.174Z
  */
 window.APEX_PEPTIDES = {
   "_meta": {
@@ -687,14 +687,16 @@ window.APEX_PEPTIDES = {
     "tier": "layer",
     "mech": "Anxiolytic neuropeptide (intranasal)",
     "route": "spray",
-    "vial_mg": null,
-    "bac_ml": null,
+    "vial_mg": 10,
+    "bac_ml": 6,
     "dose_mg_per_inj": null,
-    "dose_label": "2-3x daily intranasal",
+    "dose_label": "1 spray per nostril, 2-3x daily (~300 mcg/spray)",
     "dose_range_mg": null,
     "freq": "2-3x daily intranasal",
     "cycle_weeks": 4,
     "off_weeks": 2,
+    "shelf_life_days": 21,
+    "recon_tip": "INTRANASAL — do NOT inject. 10 mg vial + 6 mL BAC → reconstitute directly into a nasal spray bottle (not a vial). Pumps deliver ~100 µL = ~167 mcg/spray. Standard dose: 1 spray per nostril, 2-3x daily. Refrigerate 2-8°C, light-protected, 14-21 day shelf.",
     "research_note": "Intranasal; alternate with Semax to avoid tolerance"
   },
   "semax.html": {
@@ -703,14 +705,16 @@ window.APEX_PEPTIDES = {
     "tier": "layer",
     "mech": "ACTH-derived nootropic (intranasal)",
     "route": "spray",
-    "vial_mg": null,
-    "bac_ml": null,
+    "vial_mg": 10,
+    "bac_ml": 6,
     "dose_mg_per_inj": null,
-    "dose_label": "2-3x daily intranasal",
+    "dose_label": "1-2 sprays per nostril, 1-2x daily (~300-600 mcg/dose)",
     "dose_range_mg": null,
-    "freq": "2-3x daily intranasal",
+    "freq": "1-2x daily intranasal",
     "cycle_weeks": 4,
     "off_weeks": 2,
+    "shelf_life_days": 21,
+    "recon_tip": "INTRANASAL — do NOT inject. 10 mg vial + 6 mL BAC → reconstitute directly into a nasal spray bottle (not a vial). Pumps deliver ~100 µL = ~167 mcg/spray. Standard dose: 1-2 sprays per nostril, 1-2x daily (morning + early afternoon — avoid late-day, can be stimulating). Refrigerate 2-8°C, light-protected, 14-21 day shelf.",
     "research_note": "Intranasal; alternate with Selank"
   },
   "dsip.html": {
