@@ -157,6 +157,24 @@ h1 em{color:var(--accent2);font-style:normal;}
   .tl-week-marks{grid-template-columns:96px 1fr;}
   h1{font-size:26px;}
 }
+
+/* PRINT OPTIMIZATION — clean white bg, dark text, hide buttons + nav */
+@media print {
+  body { background:#fff !important; color:#000 !important; padding:0 !important; }
+  body::before { display:none !important; }
+  .wrap { max-width:100% !important; padding:0 12px !important; }
+  .brand, .footer, .actions, .no-print { display:none !important; }
+  .insights-wrap, details { page-break-inside:avoid; }
+  .tl-cat-header, .tl-row, .tl-week-marks { color:#000 !important; }
+  .tl-row-name, .tl-cat-label { color:#000 !important; }
+  .tl-row-cadence, .tl-cat-meta, .legend-item { color:#444 !important; }
+  .tl-track { background:#eee !important; border:1px solid #ccc !important; }
+  .tl-bar.on { background:#0077AA !important; }
+  .tl-bar.titrate { background:linear-gradient(to right,#cc9900,#0077AA) !important; }
+  .tl-bar.taper { background:linear-gradient(to right,#0077AA,#CC4400) !important; }
+  .insight-card, .insight-card.warning { background:#fafafa !important; color:#000 !important; border-color:#ccc !important; }
+  h1, h1 em { color:#000 !important; }
+}
 </style>
 </head>
 <body>
@@ -552,6 +570,66 @@ function render() {
 
   let html = '';
 
+  // ── 📍 THIS WEEK CALLOUT — what you should be doing right now ──
+  // Computes per-peptide status for the current week of the cycle (week 1
+  // = today). Renders a prominent banner at the top so users see actionable
+  // dosing info before scrolling anywhere.
+  if (!isDemo) {
+    const currentWk = 1; // Week 1 = today; future iterations could compute from a real cycle-start date
+    const todayMonth = new Date().toLocaleDateString('en-US', { month: 'long' });
+    const todayDate = new Date().getDate();
+    const goalSchedNow = YEAR_SCHEDULE[activeGoal] || {};
+    const statuses = [];
+    selection.forEach(slug => {
+      const p = PEPS[slug.replace('.html','')];
+      if (!p) return;
+      const sched = goalSchedNow[slug];
+      let status = '';
+      if (sched && sched.length > 0) {
+        // Find current segment for week 1
+        const seg = sched.find(s => currentWk >= s.start && currentWk <= s.end);
+        if (seg) {
+          const lbl = String(seg.label || '').toLowerCase();
+          if (/titrate|loading|ramp/.test(lbl)) {
+            const stepNum = currentWk - seg.start + 1;
+            const totalSteps = seg.end - seg.start + 1;
+            status = `<strong style="color:#fbbf24;">titrating step ${stepNum}/${totalSteps}</strong>`;
+          } else if (/taper/.test(lbl)) {
+            status = `<strong style="color:#FF6B35;">tapering down (wk ${currentWk - seg.start + 1}/${seg.end - seg.start + 1})</strong>`;
+          } else {
+            status = `<strong style="color:var(--accent2);">on cycle (wk ${currentWk - seg.start + 1}/${seg.end - seg.start + 1})</strong>`;
+          }
+        } else {
+          // Find next segment
+          const next = sched.find(s => s.start > currentWk);
+          if (next) {
+            status = `<span style="color:var(--muted);">starts wk ${next.start} (${Math.ceil((next.start - currentWk) / 4.33)} mo away)</span>`;
+          } else {
+            status = `<span style="color:var(--muted);">cycle complete</span>`;
+          }
+        }
+      } else if (p.tier === 'foundation') {
+        status = `<strong style="color:var(--accent2);">on (continuous)</strong>`;
+      } else if (p.cycleWeeks) {
+        status = `<strong style="color:var(--accent2);">on cycle (wk 1/${p.cycleWeeks})</strong>`;
+      }
+      if (status) statuses.push({ name: p.name, status });
+    });
+    if (statuses.length > 0) {
+      const rows = statuses.map(s => `<div style="display:flex;justify-content:space-between;gap:14px;padding:6px 0;border-bottom:1px dashed rgba(0,212,255,.12);font-size:13px;"><span style="color:var(--white);font-weight:600;">${s.name}</span><span style="text-align:right;">${s.status}</span></div>`).join('');
+      html += `<div style="background:linear-gradient(135deg,rgba(0,212,255,.10),rgba(0,255,157,.04));border:1px solid rgba(0,212,255,.4);border-radius:12px;padding:14px 16px;margin-bottom:14px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+          <div style="font-size:22px;">📍</div>
+          <div style="flex:1;">
+            <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;color:#00D4FF;letter-spacing:-.1px;">This week — ${todayMonth} ${todayDate}</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:2px;font-family:'Share Tech Mono',monospace;letter-spacing:.06em;">What you should be doing RIGHT NOW</div>
+          </div>
+        </div>
+        ${rows}
+      </div>`;
+    }
+  }
+
   // F-05: Demo banner — much more aggressive so users don't mistake it for their stack
   if (isDemo) {
     html += `<div style="background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#080c10;padding:14px 16px;border-radius:10px;margin-bottom:18px;font-size:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:0 4px 14px rgba(251,191,36,.3);">
@@ -916,10 +994,89 @@ function render() {
     <div class="actions">
       <a href="reconstitute.html" class="btn btn-primary">⚡ Continue to reconstitution →</a>
       <a href="compare.html" class="btn btn-secondary">← Edit my stack</a>
+      <button type="button" class="btn btn-secondary no-print" onclick="window.print()">🖨 Print my year</button>
+      <button type="button" class="btn btn-secondary no-print" onclick="exportToCalendar()">📅 Add to my calendar</button>
     </div>`;
 
   content.innerHTML = html;
   wireRowClicks();
+}
+
+// ── 📅 ICS CALENDAR EXPORT ──────────────────────────────────────
+// Generates an iCalendar (.ics) file with one event per peptide phase.
+// User downloads → opens in Apple Calendar / Google Calendar → year is real.
+function exportToCalendar() {
+  const goalSched = YEAR_SCHEDULE[activeGoal] || {};
+  if (!selection || selection.length === 0) {
+    alert('No peptides in your stack — nothing to export yet.');
+    return;
+  }
+  const today = new Date();
+  const formatICS = (d) => {
+    const pad = (n) => String(n).padStart(2,'0');
+    return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}T${pad(d.getHours())}${pad(d.getMinutes())}00`;
+  };
+  const escapeICS = (s) => String(s||'').replace(/[\\;,]/g, '\\$&').replace(/\n/g, '\\n');
+  let ics = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Apex Protocol//Peptide Sequencer//EN','CALSCALE:GREGORIAN','METHOD:PUBLISH'];
+  let eventCount = 0;
+  selection.forEach(slug => {
+    const p = PEPS[slug.replace('.html','')];
+    if (!p) return;
+    const sched = goalSched[slug];
+    if (sched && sched.length > 0) {
+      sched.forEach(seg => {
+        const startDate = new Date(today);
+        startDate.setDate(startDate.getDate() + (seg.start - 1) * 7);
+        startDate.setHours(8, 0, 0, 0);
+        const endDate = new Date(today);
+        endDate.setDate(endDate.getDate() + seg.end * 7 - 1);
+        endDate.setHours(18, 0, 0, 0);
+        const lbl = String(seg.label || 'cycle').toLowerCase();
+        let kind = 'on cycle';
+        if (/titrate|loading|ramp/.test(lbl)) kind = 'TITRATE / LOAD';
+        else if (/taper/.test(lbl)) kind = 'TAPER DOWN';
+        else if (/maint/.test(lbl)) kind = 'maintenance';
+        const summary = `${p.name} — ${kind}`;
+        const desc = `${p.name}${seg.label?' · '+seg.label:''}\\nWeek ${seg.start}-${seg.end}\\nFrequency: ${p.freq||'as scheduled'}\\n\\nFrom your Apex Protocol — apexdosing.com`;
+        ics.push('BEGIN:VEVENT');
+        ics.push('UID:' + slug + '-' + seg.start + '-' + Date.now() + '@apexdosing.com');
+        ics.push('DTSTAMP:' + formatICS(today));
+        ics.push('DTSTART:' + formatICS(startDate));
+        ics.push('DTEND:' + formatICS(endDate));
+        ics.push('SUMMARY:' + escapeICS(summary));
+        ics.push('DESCRIPTION:' + escapeICS(desc));
+        ics.push('CATEGORIES:Apex,Peptide,' + (p.category||''));
+        ics.push('END:VEVENT');
+        eventCount++;
+      });
+    } else if (p.tier === 'foundation') {
+      const startDate = new Date(today); startDate.setHours(8,0,0,0);
+      const endDate = new Date(today); endDate.setDate(endDate.getDate() + 365); endDate.setHours(18,0,0,0);
+      ics.push('BEGIN:VEVENT');
+      ics.push('UID:' + slug + '-foundation-' + Date.now() + '@apexdosing.com');
+      ics.push('DTSTAMP:' + formatICS(today));
+      ics.push('DTSTART:' + formatICS(startDate));
+      ics.push('DTEND:' + formatICS(endDate));
+      ics.push('SUMMARY:' + escapeICS(p.name + ' — continuous foundation'));
+      ics.push('DESCRIPTION:' + escapeICS(p.name + '\\n52-week foundation peptide\\nFrequency: ' + (p.freq||'daily') + '\\n\\nFrom your Apex Protocol — apexdosing.com'));
+      ics.push('CATEGORIES:Apex,Peptide,Foundation');
+      ics.push('END:VEVENT');
+      eventCount++;
+    }
+  });
+  ics.push('END:VCALENDAR');
+  if (eventCount === 0) {
+    alert('No scheduled events to export.');
+    return;
+  }
+  const blob = new Blob([ics.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `apex-protocol-${activeGoal}.ics`;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
 }
 
 // SSOT: per-injection dose math derived from /data/peptides.json (APEX_PEPTIDES).
