@@ -154,6 +154,33 @@ body{padding-bottom:90px;}
 </head>
 <body>
 
+<!-- ═══ EXPERIENCE FORK — fires on first visit only ═══ -->
+<div id="experience-fork" style="display:none;position:fixed;inset:0;background:rgba(8,12,16,.92);backdrop-filter:blur(8px);z-index:1000;align-items:center;justify-content:center;padding:20px;">
+  <div style="max-width:480px;width:100%;background:var(--panel,#0d1318);border:1px solid rgba(0,212,255,.4);border-radius:16px;padding:32px 26px;box-shadow:0 20px 60px rgba(0,0,0,.6);">
+    <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.28em;color:var(--accent,#00d4ff);text-transform:uppercase;text-align:center;margin-bottom:8px;">Welcome to Apex</div>
+    <h2 style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:26px;color:#fff;text-align:center;margin-bottom:8px;letter-spacing:-.3px;line-height:1.2;">Where do you want to start?</h2>
+    <p style="font-size:13px;color:var(--text,#cbd5e1);text-align:center;margin-bottom:24px;line-height:1.55;">We'll build your protocol either way. Pick the path that matches you.</p>
+
+    <button id="ef-newbie" style="display:flex;align-items:center;gap:14px;width:100%;background:var(--panel2,#121a22);border:1px solid var(--border,#1a2d3a);border-radius:12px;padding:18px 20px;cursor:pointer;text-align:left;margin-bottom:10px;-webkit-tap-highlight-color:transparent;color:#fff;font-family:'Barlow',sans-serif;transition:border-color .15s,transform .15s;">
+      <span style="font-size:30px;line-height:1;flex-shrink:0;">🧪</span>
+      <div style="flex:1;">
+        <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;color:#fff;letter-spacing:-.1px;">New to peptides</div>
+        <div style="font-size:12px;color:var(--muted,#7a8d99);margin-top:2px;line-height:1.4;">Walk me through the basics first — what they do, how to mix them, what's safe. ~5 min read.</div>
+      </div>
+    </button>
+
+    <button id="ef-pro" style="display:flex;align-items:center;gap:14px;width:100%;background:var(--panel2,#121a22);border:1px solid rgba(0,255,157,.4);border-radius:12px;padding:18px 20px;cursor:pointer;text-align:left;-webkit-tap-highlight-color:transparent;color:#fff;font-family:'Barlow',sans-serif;transition:border-color .15s,transform .15s;">
+      <span style="font-size:30px;line-height:1;flex-shrink:0;">💪</span>
+      <div style="flex:1;">
+        <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;color:var(--accent2,#00ff9d);letter-spacing:-.1px;">I know what I'm doing</div>
+        <div style="font-size:12px;color:var(--muted,#7a8d99);margin-top:2px;line-height:1.4;">Skip the primer. Take me straight to the goal builder.</div>
+      </div>
+    </button>
+
+    <button id="ef-skip" style="display:block;width:100%;text-align:center;margin-top:18px;background:none;border:0;color:var(--muted,#7a8d99);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;cursor:pointer;padding:6px;">Don't ask again</button>
+  </div>
+</div>
+
 <div class="wrap">
 
   <div class="top">
@@ -842,6 +869,32 @@ body{padding-bottom:90px;}
   renderHero();
   renderPeptides();
   renderAnalysis();
+
+  // ═══ EXPERIENCE FORK — first-visit only ═══
+  (function setupExperienceFork(){
+    const fork = document.getElementById('experience-fork');
+    if (!fork) return;
+    let chosen = false;
+    try { chosen = localStorage.getItem('apex_experience_chosen') === '1'; } catch(e){}
+    // Also skip if user already has a stack (returning user)
+    let hasStack = false;
+    try {
+      const sel = JSON.parse(localStorage.getItem('apex_selection') || '[]');
+      hasStack = Array.isArray(sel) && sel.length > 0;
+    } catch(e){}
+    if (chosen || hasStack) return;
+    fork.style.display = 'flex';
+    const dismiss = () => {
+      fork.style.display = 'none';
+      try { localStorage.setItem('apex_experience_chosen', '1'); } catch(e){}
+    };
+    document.getElementById('ef-newbie').addEventListener('click', () => {
+      try { localStorage.setItem('apex_experience_chosen', '1'); } catch(e){}
+      window.location.href = 'basics.html';
+    });
+    document.getElementById('ef-pro').addEventListener('click', dismiss);
+    document.getElementById('ef-skip').addEventListener('click', dismiss);
+  })();
 })();
 </script>
 
