@@ -1010,6 +1010,16 @@ body::before{
             <div class="proto-r-value" data-dose-cell="${slug}">${(function(){
               const cs=cycleState[slug]||{};
               const userRecon=(cs.vialMg>0&&cs.bacMl>0)?{vial:cs.vialMg,bac:cs.bacMl}:null;
+              // ── Cadence override: if user picked a cadence option, render its per-dose mg ──
+              try {
+                const choice = (JSON.parse(localStorage.getItem('apex_cadence_choice')||'{}'))[slug];
+                const ssotPep = (window.APEX_PEPTIDES || {})[slug];
+                const opt = choice && ssotPep && ssotPep.cadence_flex && ssotPep.cadence_flex.options.find(o => o.pattern === choice);
+                if (opt) {
+                  const lbl = opt.per_dose_mg < 1 ? Math.round(opt.per_dose_mg*1000)+' mcg' : opt.per_dose_mg+' mg';
+                  return doseToUnitsLabel(lbl, slug, { userRecon });
+                }
+              } catch(_){}
               if (p.titration && Array.isArray(p.titration) && p.titration.length >= 2) {
                 const firstStep = doseToUnitsLabel(p.titration[0].d, slug, { userRecon });
                 const lastStep = doseToUnitsLabel(p.titration[p.titration.length-1].d, slug, { userRecon });
@@ -1025,7 +1035,13 @@ body::before{
           </div>
           <div class="proto-row">
             <div class="proto-r-label">Frequency</div>
-            <div class="proto-r-value" data-freq-cell="${slug}">${(splitCfg && splitState[slug]) ? splitCfg.freqLabel : p.freq}</div>
+            <div class="proto-r-value" data-freq-cell="${slug}">${(function(){
+              try {
+                const choice = (JSON.parse(localStorage.getItem('apex_cadence_choice')||'{}'))[slug];
+                if (choice) return choice;
+              } catch(_){}
+              return (splitCfg && splitState[slug]) ? splitCfg.freqLabel : p.freq;
+            })()}</div>
           </div>
         </div>
         <!-- TIMING NOTE — fasted/GLP-1 override pulled from SSOT timing_note -->
