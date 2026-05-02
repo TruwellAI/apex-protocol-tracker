@@ -265,6 +265,21 @@ body { padding-bottom: 90px; }
 }
 .ct-icon { font-size: 24px; line-height: 1; }
 .ct-label { font-size: 11px; font-weight: 700; letter-spacing: .04em; }
+
+/* Activity cards (walk/workout) — expandable with steps + cal burned inputs */
+.activity-card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.activity-card.on { background: rgba(0,255,157,.06); border-color: var(--accent2); }
+.ac-head { display: flex; align-items: center; gap: 10px; padding: 12px 14px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.ac-check { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; color: transparent; transition: all .15s; }
+.activity-card.on .ac-check { background: var(--accent2); border-color: var(--accent2); color: #000; }
+.ac-icon { font-size: 22px; flex-shrink: 0; }
+.ac-title { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 16px; color: var(--text); flex: 1; min-width: 0; }
+.ac-summary { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: .04em; flex-shrink: 0; }
+.ac-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 0 14px 12px; }
+.ac-field { display: flex; flex-direction: column; gap: 4px; }
+.ac-field label { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--muted); letter-spacing: .12em; text-transform: uppercase; font-weight: 700; }
+.ac-field input { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: 8px 10px; font-size: 14px; font-family: inherit; -webkit-appearance: none; }
+.ac-field input:focus { outline: none; border-color: var(--accent2); }
 </style>
 </head>
 <body>
@@ -334,17 +349,76 @@ body { padding-bottom: 90px; }
       </div>
     </div>
 
-    <!-- ACTIVITY CHECK-OFFS: walks + workout -->
-    <div style="margin:0 16px 14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
-      <button class="check-tile" data-act="walk-am" onclick="toggleCheck('walkAM')">
-        <div class="ct-icon">🚶‍♂️</div><div class="ct-label">Walk AM</div>
-      </button>
-      <button class="check-tile" data-act="workout" onclick="toggleCheck('workout')">
-        <div class="ct-icon">🏋︎</div><div class="ct-label" id="ct-workout-label">Workout</div>
-      </button>
-      <button class="check-tile" data-act="walk-pm" onclick="toggleCheck('walkPM')">
-        <div class="ct-icon">🚶‍♂️</div><div class="ct-label">Walk PM</div>
-      </button>
+    <!-- ACTIVITY LOG CARDS: walks + workout with steps + calories burned -->
+    <div style="margin:0 16px 14px;display:flex;flex-direction:column;gap:10px;">
+      <div class="activity-card" id="ac-walkAM">
+        <div class="ac-head" onclick="toggleCheck('walkAM')">
+          <div class="ac-check">✓</div>
+          <div class="ac-icon">🚶‍♂️</div>
+          <div class="ac-title">Walk AM</div>
+          <div class="ac-summary" id="sum-walkAM"></div>
+        </div>
+        <div class="ac-fields">
+          <div class="ac-field">
+            <label>Steps</label>
+            <input type="number" id="in-walkAM-steps" placeholder="0" inputmode="numeric" oninput="saveActivity('walkAM')">
+          </div>
+          <div class="ac-field">
+            <label>Cal burned</label>
+            <input type="number" id="in-walkAM-kcal" placeholder="0" inputmode="numeric" oninput="saveActivity('walkAM')">
+          </div>
+        </div>
+      </div>
+
+      <div class="activity-card" id="ac-workout">
+        <div class="ac-head" onclick="toggleCheck('workout')">
+          <div class="ac-check">✓</div>
+          <div class="ac-icon">🏋︎</div>
+          <div class="ac-title" id="ct-workout-label">Workout</div>
+          <div class="ac-summary" id="sum-workout"></div>
+        </div>
+        <div class="ac-fields">
+          <div class="ac-field">
+            <label>Cal burned</label>
+            <input type="number" id="in-workout-kcal" placeholder="0" inputmode="numeric" oninput="saveActivity('workout')">
+          </div>
+          <div class="ac-field">
+            <label>Duration (min)</label>
+            <input type="number" id="in-workout-min" placeholder="0" inputmode="numeric" oninput="saveActivity('workout')">
+          </div>
+        </div>
+      </div>
+
+      <div class="activity-card" id="ac-walkPM">
+        <div class="ac-head" onclick="toggleCheck('walkPM')">
+          <div class="ac-check">✓</div>
+          <div class="ac-icon">🚶‍♂️</div>
+          <div class="ac-title">Walk PM</div>
+          <div class="ac-summary" id="sum-walkPM"></div>
+        </div>
+        <div class="ac-fields">
+          <div class="ac-field">
+            <label>Steps</label>
+            <input type="number" id="in-walkPM-steps" placeholder="0" inputmode="numeric" oninput="saveActivity('walkPM')">
+          </div>
+          <div class="ac-field">
+            <label>Cal burned</label>
+            <input type="number" id="in-walkPM-kcal" placeholder="0" inputmode="numeric" oninput="saveActivity('walkPM')">
+          </div>
+        </div>
+      </div>
+
+      <!-- Daily totals from the 3 activities -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px;">
+        <div style="background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.16em;color:var(--muted);font-weight:700;">TOTAL STEPS</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:22px;color:var(--accent);"><span id="day-total-steps">0</span></div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.16em;color:var(--muted);font-weight:700;">TOTAL CAL BURNED</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:22px;color:var(--accent2);"><span id="day-total-kcal">0</span></div>
+        </div>
+      </div>
     </div>
 
     <!-- WATER -->
@@ -360,18 +434,6 @@ body { padding-bottom: 90px; }
       </div>
     </div>
 
-    <!-- STEPS -->
-    <div class="steps-card">
-      <div style="font-size:10px;color:var(--muted);letter-spacing:.18em;text-transform:uppercase;font-weight:700;">👟 Steps Today</div>
-      <div class="steps-num"><span id="steps-now">0</span><span class="target"> / 10,000</span></div>
-      <div class="steps-bar"><div class="steps-bar-fill" id="steps-bar" style="width:0%"></div></div>
-      <div style="display:flex;gap:8px;margin-top:12px;">
-        <button class="btn btn-ghost" style="flex:1;" onclick="addSteps(1000)">+1k</button>
-        <button class="btn btn-ghost" style="flex:1;" onclick="addSteps(2500)">+2.5k</button>
-        <button class="btn btn-ghost" style="flex:1;" onclick="addSteps(5000)">+5k</button>
-        <button class="btn btn-ghost" style="flex:1;font-size:11px;padding:10px 6px;" onclick="resetSteps()">Reset</button>
-      </div>
-    </div>
 
     <!-- TODAY'S PEPTIDE QUICK CHECKLIST -->
     <div class="section-h">
@@ -936,9 +998,12 @@ function renderPeptides(){
 }
 
 function renderSteps(){
+  // Steps card removed — total now derived from walk activity logs (renderChecks handles it).
+  const el = document.getElementById('steps-now'); if (!el) return;
   const t = today();
-  document.getElementById('steps-now').textContent = (t.steps||0).toLocaleString();
-  document.getElementById('steps-bar').style.width = Math.min(100, ((t.steps||0)/10000)*100) + '%';
+  el.textContent = (t.steps||0).toLocaleString();
+  const bar = document.getElementById('steps-bar');
+  if (bar) bar.style.width = Math.min(100, ((t.steps||0)/10000)*100) + '%';
 }
 
 function renderTrain(){
@@ -1073,25 +1138,63 @@ function togglePep(id){
 }
 function toggleCheck(key){
   const s = load();
-  s.daily = s.daily || {}; s.daily[todayKey()] = s.daily[todayKey()] || { food:[], peptides:{}, steps:0, water:0, checks:{} };
+  s.daily = s.daily || {}; s.daily[todayKey()] = s.daily[todayKey()] || { food:[], peptides:{}, steps:0, water:0, checks:{}, activity:{} };
   if (!s.daily[todayKey()].checks) s.daily[todayKey()].checks = {};
   s.daily[todayKey()].checks[key] = !s.daily[todayKey()].checks[key];
   save(s); haptic(); renderChecks();
 }
+function saveActivity(key){
+  const s = load();
+  s.daily = s.daily || {}; s.daily[todayKey()] = s.daily[todayKey()] || { food:[], peptides:{}, steps:0, water:0, checks:{}, activity:{} };
+  if (!s.daily[todayKey()].activity) s.daily[todayKey()].activity = {};
+  const stepsEl = document.getElementById('in-'+key+'-steps');
+  const kcalEl  = document.getElementById('in-'+key+'-kcal');
+  const minEl   = document.getElementById('in-'+key+'-min');
+  s.daily[todayKey()].activity[key] = {
+    steps: stepsEl ? parseInt(stepsEl.value)||0 : 0,
+    kcal:  kcalEl  ? parseInt(kcalEl.value) ||0 : 0,
+    min:   minEl   ? parseInt(minEl.value)  ||0 : 0,
+  };
+  save(s);
+  renderChecks();
+}
 function renderChecks(){
   const t = today();
   const c = t.checks || {};
-  const map = { 'walkAM':'walk-am', 'walkPM':'walk-pm', 'workout':'workout' };
-  Object.entries(map).forEach(([k, sel]) => {
-    const el = document.querySelector(`[data-act="${sel}"]`);
-    if (el) el.classList.toggle('on', !!c[k]);
+  const a = t.activity || {};
+  ['walkAM','workout','walkPM'].forEach(k => {
+    const card = document.getElementById('ac-'+k);
+    if (!card) return;
+    card.classList.toggle('on', !!c[k]);
+    const v = a[k] || {};
+    // Restore inputs from state (don't clobber if user is mid-typing)
+    const stepsEl = document.getElementById('in-'+k+'-steps');
+    const kcalEl  = document.getElementById('in-'+k+'-kcal');
+    const minEl   = document.getElementById('in-'+k+'-min');
+    if (stepsEl && document.activeElement !== stepsEl && v.steps) stepsEl.value = v.steps;
+    if (kcalEl  && document.activeElement !== kcalEl  && v.kcal)  kcalEl.value  = v.kcal;
+    if (minEl   && document.activeElement !== minEl   && v.min)   minEl.value   = v.min;
+    // Summary line
+    const sumEl = document.getElementById('sum-'+k);
+    if (sumEl) {
+      const bits = [];
+      if (v.steps) bits.push(v.steps.toLocaleString()+' steps');
+      if (v.kcal) bits.push(v.kcal+' cal');
+      if (v.min) bits.push(v.min+' min');
+      sumEl.textContent = bits.join(' · ');
+    }
   });
-  // Workout label = today's split day
+  // Workout label = today's split
   const workoutLbl = document.getElementById('ct-workout-label');
   if (workoutLbl) {
     const d = TRAIN.find(x => x.d === dayOfWeek());
     workoutLbl.textContent = d ? d.name : 'Workout';
   }
+  // Daily totals
+  const totalSteps = (a.walkAM?.steps||0) + (a.walkPM?.steps||0);
+  const totalKcal  = (a.walkAM?.kcal||0) + (a.workout?.kcal||0) + (a.walkPM?.kcal||0);
+  const ts = document.getElementById('day-total-steps'); if (ts) ts.textContent = totalSteps.toLocaleString();
+  const tk = document.getElementById('day-total-kcal');  if (tk) tk.textContent = totalKcal.toLocaleString();
 }
 function addWater(n){
   const s = load();
