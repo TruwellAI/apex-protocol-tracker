@@ -233,6 +233,30 @@ body { padding-bottom: 90px; }
 /* Scratch */
 .note { background: rgba(0,212,255,.06); border: 1px solid rgba(0,212,255,.25); padding: 10px 12px; margin: 0 16px 14px; border-radius: 10px; font-size: 12px; color: var(--text); line-height: 1.5; }
 .note strong { color: var(--accent); }
+
+/* Check-tiles for walks/workout */
+.check-tile {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--muted);
+  transition: all .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.check-tile.on {
+  background: rgba(0,255,157,.10);
+  border-color: var(--accent2);
+  color: var(--accent2);
+}
+.ct-icon { font-size: 24px; line-height: 1; }
+.ct-label { font-size: 11px; font-weight: 700; letter-spacing: .04em; }
 </style>
 </head>
 <body>
@@ -302,9 +326,35 @@ body { padding-bottom: 90px; }
       </div>
     </div>
 
+    <!-- ACTIVITY CHECK-OFFS: walks + workout -->
+    <div style="margin:0 16px 14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+      <button class="check-tile" data-act="walk-am" onclick="toggleCheck('walkAM')">
+        <div class="ct-icon">🚶‍♂️</div><div class="ct-label">Walk AM</div>
+      </button>
+      <button class="check-tile" data-act="workout" onclick="toggleCheck('workout')">
+        <div class="ct-icon">🏋︎</div><div class="ct-label" id="ct-workout-label">Workout</div>
+      </button>
+      <button class="check-tile" data-act="walk-pm" onclick="toggleCheck('walkPM')">
+        <div class="ct-icon">🚶‍♂️</div><div class="ct-label">Walk PM</div>
+      </button>
+    </div>
+
+    <!-- WATER -->
+    <div class="steps-card" style="padding:14px;">
+      <div style="font-size:10px;color:var(--muted);letter-spacing:.18em;text-transform:uppercase;font-weight:700;">💧 Water</div>
+      <div class="steps-num" style="font-size:32px;"><span id="water-now">0</span><span class="target"> / 16 cups (1 gal)</span></div>
+      <div class="steps-bar"><div class="steps-bar-fill" id="water-bar" style="width:0%;background:linear-gradient(90deg,#00D4FF,#00FF9D);"></div></div>
+      <div style="display:flex;gap:6px;margin-top:10px;">
+        <button class="btn btn-ghost" style="flex:1;font-size:11px;padding:10px 6px;" onclick="addWater(1)">+1 cup</button>
+        <button class="btn btn-ghost" style="flex:1;font-size:11px;padding:10px 6px;" onclick="addWater(2)">+2 cup</button>
+        <button class="btn btn-ghost" style="flex:1;font-size:11px;padding:10px 6px;" onclick="addWater(4)">+32oz</button>
+        <button class="btn btn-ghost" style="flex:1;font-size:11px;padding:10px 6px;" onclick="resetWater()">Reset</button>
+      </div>
+    </div>
+
     <!-- STEPS -->
     <div class="steps-card">
-      <div style="font-size:10px;color:var(--muted);letter-spacing:.18em;text-transform:uppercase;font-weight:700;">Steps Today</div>
+      <div style="font-size:10px;color:var(--muted);letter-spacing:.18em;text-transform:uppercase;font-weight:700;">👟 Steps Today</div>
       <div class="steps-num"><span id="steps-now">0</span><span class="target"> / 10,000</span></div>
       <div class="steps-bar"><div class="steps-bar-fill" id="steps-bar" style="width:0%"></div></div>
       <div style="display:flex;gap:8px;margin-top:12px;">
@@ -529,13 +579,13 @@ const PEPTIDES = [
 ];
 
 const TRAIN = [
-  { d:1, name:'Push',         body:'Chest · Shoulders · Triceps',   sets:'5×5 · 3×8 · 3×12' },
-  { d:2, name:'Pull',         body:'Back · Biceps · Rear delts',     sets:'5×5 · 3×8 · 3×12' },
-  { d:3, name:'Legs',         body:'Quad · Glute · Calf',            sets:'5×5 squat · 4×8 · 3×15' },
-  { d:4, name:'Push',         body:'Chest · Shoulders · Triceps',   sets:'4×6 · 3×10 · 3×12' },
-  { d:5, name:'Pull',         body:'Back · Biceps · Forearms',       sets:'4×6 · 3×10 · 3×12' },
-  { d:6, name:'Legs · Cardio',body:'Hamstring · Glute · Posterior', sets:'4×8 RDL · 3×10 · zone 2 cardio 30min' },
-  { d:0, name:'Rest + Walk',  body:'Active recovery · 10k steps',    sets:'mobility · sauna · stretch' },
+  { d:1, name:'Chest',        body:'Bench · Incline · Fly · Press',           sets:'5×5 · 4×8 · 3×12 · drop set finisher' },
+  { d:2, name:'Triceps',      body:'Close-grip · Skull · Pushdown · Dip',     sets:'4×6 · 4×10 · 3×12 · 3×12' },
+  { d:3, name:'Back',         body:'Deadlift · Row · Pull-up · Lat pull',     sets:'5×5 · 4×8 · 3×AMRAP · 3×12' },
+  { d:4, name:'Biceps · CHEAT NIGHT', body:'Curl · Hammer · Preacher · Concentration', sets:'4×8 · 3×10 · 3×12 · 3×12' },
+  { d:5, name:'Legs',         body:'Squat · RDL · Leg press · Calf raise',    sets:'5×5 · 4×8 · 3×12 · 4×15' },
+  { d:6, name:'Off',          body:'Active recovery · walks · sauna · stretch', sets:'No lift · 10k×2 walks still happen' },
+  { d:0, name:'Off',          body:'Active recovery · walks · sauna · meal prep', sets:'No lift · 10k×2 walks still happen' },
 ];
 
 // ─────────────────────────────────────────────
@@ -570,7 +620,9 @@ function get(){
 
 function today(){
   const s = get();
-  s.daily[todayKey()] = s.daily[todayKey()] || { food: [], peptides: {}, steps: 0 };
+  s.daily[todayKey()] = s.daily[todayKey()] || { food: [], peptides: {}, steps: 0, water: 0, checks: {} };
+  if (!s.daily[todayKey()].checks) s.daily[todayKey()].checks = {};
+  if (typeof s.daily[todayKey()].water !== 'number') s.daily[todayKey()].water = 0;
   return s.daily[todayKey()];
 }
 
@@ -953,6 +1005,46 @@ function togglePep(id){
   haptic();
   renderPeptides();
 }
+function toggleCheck(key){
+  const s = load();
+  s.daily = s.daily || {}; s.daily[todayKey()] = s.daily[todayKey()] || { food:[], peptides:{}, steps:0, water:0, checks:{} };
+  if (!s.daily[todayKey()].checks) s.daily[todayKey()].checks = {};
+  s.daily[todayKey()].checks[key] = !s.daily[todayKey()].checks[key];
+  save(s); haptic(); renderChecks();
+}
+function renderChecks(){
+  const t = today();
+  const c = t.checks || {};
+  const map = { 'walkAM':'walk-am', 'walkPM':'walk-pm', 'workout':'workout' };
+  Object.entries(map).forEach(([k, sel]) => {
+    const el = document.querySelector(`[data-act="${sel}"]`);
+    if (el) el.classList.toggle('on', !!c[k]);
+  });
+  // Workout label = today's split day
+  const workoutLbl = document.getElementById('ct-workout-label');
+  if (workoutLbl) {
+    const d = TRAIN.find(x => x.d === dayOfWeek());
+    workoutLbl.textContent = d ? d.name : 'Workout';
+  }
+}
+function addWater(n){
+  const s = load();
+  s.daily = s.daily || {}; s.daily[todayKey()] = s.daily[todayKey()] || { food:[], peptides:{}, steps:0, water:0, checks:{} };
+  s.daily[todayKey()].water = (s.daily[todayKey()].water||0) + n;
+  save(s); haptic(); renderWater();
+}
+function resetWater(){
+  const s = load();
+  if (s.daily && s.daily[todayKey()]) s.daily[todayKey()].water = 0;
+  save(s); renderWater();
+}
+function renderWater(){
+  const t = today();
+  const w = t.water || 0;
+  document.getElementById('water-now').textContent = w;
+  document.getElementById('water-bar').style.width = Math.min(100, (w/16)*100) + '%';
+}
+
 function addSteps(n){
   const s = load();
   s.daily = s.daily || {}; s.daily[todayKey()] = s.daily[todayKey()] || { food:[], peptides:{}, steps:0 };
@@ -1099,6 +1191,8 @@ function renderAll(){
   renderStackIntel();
   renderPeptides();
   renderSteps();
+  renderWater();
+  renderChecks();
   renderTrain();
   renderProgress();
 }
