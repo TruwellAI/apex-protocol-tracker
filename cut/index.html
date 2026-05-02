@@ -468,13 +468,34 @@ body { padding-bottom: 90px; }
     </div>
     <div class="section-h"><h2>Log today's body comp</h2></div>
     <div class="field">
-      <label>Weight (lb)</label>
-      <input type="number" step="0.1" id="log-weight" placeholder="239.0">
+      <label>Total weight (lb)</label>
+      <input type="number" step="0.1" id="log-weight" placeholder="239.0" oninput="recalcLbs()">
     </div>
-    <div class="field">
-      <label>Body fat %</label>
-      <input type="number" step="0.1" id="log-bf" placeholder="13.0">
+
+    <div style="padding:0 16px;margin-bottom:14px;">
+      <div style="font-size:11px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;font-weight:700;margin-bottom:6px;font-family:'Share Tech Mono',monospace;">🔥 Body fat</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <input type="number" step="0.1" id="log-bf"    placeholder="% (e.g. 13.0)" oninput="recalcLbs('bf')" style="background:var(--panel);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:12px;font-size:16px;font-family:inherit;-webkit-appearance:none;">
+        <input type="number" step="0.1" id="log-bflb"  placeholder="lb (e.g. 31.0)" oninput="recalcPct('bf')" style="background:var(--panel);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:12px;font-size:16px;font-family:inherit;-webkit-appearance:none;">
+      </div>
     </div>
+
+    <div style="padding:0 16px;margin-bottom:14px;">
+      <div style="font-size:11px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;font-weight:700;margin-bottom:6px;font-family:'Share Tech Mono',monospace;">💪 Lean muscle mass</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <input type="number" step="0.1" id="log-lbm"   placeholder="% (e.g. 87.0)" oninput="recalcLbs('lbm')" style="background:var(--panel);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:12px;font-size:16px;font-family:inherit;-webkit-appearance:none;">
+        <input type="number" step="0.1" id="log-lbmlb" placeholder="lb (e.g. 208.0)" oninput="recalcPct('lbm')" style="background:var(--panel);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:12px;font-size:16px;font-family:inherit;-webkit-appearance:none;">
+      </div>
+    </div>
+
+    <div style="padding:0 16px;margin-bottom:14px;">
+      <div style="font-size:11px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;font-weight:700;margin-bottom:6px;font-family:'Share Tech Mono',monospace;">💧 Water weight</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <input type="number" step="0.1" id="log-water"   placeholder="% (e.g. 62.0)" oninput="recalcLbs('water')" style="background:var(--panel);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:12px;font-size:16px;font-family:inherit;-webkit-appearance:none;">
+        <input type="number" step="0.1" id="log-waterlb" placeholder="lb (e.g. 148.2)" oninput="recalcPct('water')" style="background:var(--panel);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:12px;font-size:16px;font-family:inherit;-webkit-appearance:none;">
+      </div>
+    </div>
+
     <div class="field">
       <label>Subcutaneous fat % (optional · InBody)</label>
       <input type="number" step="0.1" id="log-sub" placeholder="9.5">
@@ -482,14 +503,6 @@ body { padding-bottom: 90px; }
     <div class="field">
       <label>Visceral fat level (optional · InBody 1-30)</label>
       <input type="number" step="0.1" id="log-visc" placeholder="8">
-    </div>
-    <div class="field">
-      <label>Lean muscle mass % (optional · LBM/total)</label>
-      <input type="number" step="0.1" id="log-lbm" placeholder="87.0">
-    </div>
-    <div class="field">
-      <label>Water % (optional · TBW)</label>
-      <input type="number" step="0.1" id="log-water" placeholder="62.0">
     </div>
     <div class="field">
       <label>Waist (in, optional)</label>
@@ -947,17 +960,21 @@ function renderProgress(){
   if (!w.length) { histList.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:13px;padding:14px;">No weigh-ins yet — log one above.</div>'; }
   else {
     histList.innerHTML = w.slice().reverse().map((e) => {
+      // derive lb from % if pounds not stored
+      const bflb = e.bflb || (e.bf ? e.weight * e.bf/100 : null);
+      const lbmlb = e.lbmlb || (e.lbm ? e.weight * e.lbm/100 : null);
+      const waterlb = e.waterlb || (e.water ? e.weight * e.water/100 : null);
       const meta = [];
-      if (e.bf) meta.push(`${e.bf.toFixed(1)}% BF`);
-      if (e.sub) meta.push(`${e.sub.toFixed(1)}% sub`);
+      if (e.bf || bflb) meta.push(`🔥 ${e.bf?e.bf.toFixed(1)+'%':''}${bflb?' · '+bflb.toFixed(1)+' lb':''} fat`);
+      if (e.lbm || lbmlb) meta.push(`💪 ${e.lbm?e.lbm.toFixed(1)+'%':''}${lbmlb?' · '+lbmlb.toFixed(1)+' lb':''} LBM`);
+      if (e.water || waterlb) meta.push(`💧 ${e.water?e.water.toFixed(1)+'%':''}${waterlb?' · '+waterlb.toFixed(1)+' lb':''} H₂O`);
+      if (e.sub) meta.push(`sub ${e.sub.toFixed(1)}%`);
       if (e.visc) meta.push(`visc ${e.visc}`);
-      if (e.lbm) meta.push(`${e.lbm.toFixed(1)}% LBM`);
-      if (e.water) meta.push(`${e.water.toFixed(1)}% H₂O`);
       if (e.waist) meta.push(`waist ${e.waist}"`);
       return `<div class="card" style="cursor:default;align-items:flex-start;">
         <div class="card-body">
           <div class="card-name">${e.weight.toFixed(1)} lb · ${e.date}</div>
-          ${meta.length ? `<div class="card-meta">${meta.join(' · ')}</div>` : ''}
+          ${meta.length ? `<div class="card-meta" style="line-height:1.6;">${meta.join('<br>')}</div>` : ''}
         </div>
       </div>`;
     }).join('');
@@ -1105,26 +1122,59 @@ function resetSteps(){
   save(s);
   renderSteps();
 }
+// Auto-calc lb from % when user enters %, vice versa. Either field updates the other live.
+function recalcLbs(which){
+  const w = parseFloat(document.getElementById('log-weight').value);
+  if (!w || w <= 0) return;
+  const pairs = which ? [which] : ['bf','lbm','water'];
+  pairs.forEach(p => {
+    const pctEl = document.getElementById('log-'+p);
+    const lbEl  = document.getElementById('log-'+p+'lb');
+    if (!pctEl || !lbEl) return;
+    const pct = parseFloat(pctEl.value);
+    if (!isNaN(pct) && pct > 0) lbEl.value = (w * pct/100).toFixed(1);
+  });
+}
+function recalcPct(which){
+  const w = parseFloat(document.getElementById('log-weight').value);
+  if (!w || w <= 0) return;
+  const pctEl = document.getElementById('log-'+which);
+  const lbEl  = document.getElementById('log-'+which+'lb');
+  if (!pctEl || !lbEl) return;
+  const lb = parseFloat(lbEl.value);
+  if (!isNaN(lb) && lb > 0) pctEl.value = (lb / w * 100).toFixed(1);
+}
+
 function logWeight(){
   const w = parseFloat(document.getElementById('log-weight').value);
   const bf = parseFloat(document.getElementById('log-bf').value);
+  const bflb = parseFloat(document.getElementById('log-bflb').value);
   const sub = parseFloat(document.getElementById('log-sub').value);
   const visc = parseFloat(document.getElementById('log-visc').value);
   const lbm = parseFloat(document.getElementById('log-lbm').value);
+  const lbmlb = parseFloat(document.getElementById('log-lbmlb').value);
   const water = parseFloat(document.getElementById('log-water').value);
+  const waterlb = parseFloat(document.getElementById('log-waterlb').value);
   const waist = parseFloat(document.getElementById('log-waist').value);
   if (!w || w < 100 || w > 500) { alert('Enter a weight between 100-500 lb'); return; }
   const s = load();
   s.weights = s.weights || [];
   const k = todayKey();
   s.weights = s.weights.filter(e => e.date !== k);
-  s.weights.push({ date: k, weight: w, bf: bf||null, sub: sub||null, visc: visc||null, lbm: lbm||null, water: water||null, waist: waist||null });
+  s.weights.push({
+    date: k, weight: w,
+    bf: bf||null, bflb: bflb||null,
+    sub: sub||null, visc: visc||null,
+    lbm: lbm||null, lbmlb: lbmlb||null,
+    water: water||null, waterlb: waterlb||null,
+    waist: waist||null
+  });
   s.weights.sort((a,b) => a.date.localeCompare(b.date));
   save(s);
-  ['log-weight','log-bf','log-sub','log-visc','log-lbm','log-water','log-waist'].forEach(id => document.getElementById(id).value = '');
+  ['log-weight','log-bf','log-bflb','log-sub','log-visc','log-lbm','log-lbmlb','log-water','log-waterlb','log-waist'].forEach(id => { const el=document.getElementById(id); if (el) el.value = ''; });
   haptic();
   renderAll();
-  alert('✓ Logged · '+w.toFixed(1)+' lb'+(bf?' · '+bf+'% BF':''));
+  alert('✓ Logged · '+w.toFixed(1)+' lb'+(bf?' · '+bf+'% BF':'')+(bflb?' · '+bflb+' lb fat':''));
 }
 function saveSettings(){
   const s = load();
