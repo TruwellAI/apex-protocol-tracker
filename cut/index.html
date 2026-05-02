@@ -327,11 +327,7 @@ body { padding-bottom: 90px; }
 
   <!-- ═══ PLAN PANEL ═══ -->
   <div class="panel" data-panel="plan">
-    <div style="display:flex;gap:6px;padding:14px 16px 6px;">
-      <button id="mode-cut" class="btn" style="flex:1;font-size:12px;padding:10px;" onclick="setPlanMode('cut')">🔥 CUT DAY</button>
-      <button id="mode-refeed" class="btn btn-ghost" style="flex:1;font-size:12px;padding:10px;" onclick="setPlanMode('refeed')">🍕 REFEED</button>
-    </div>
-    <div class="hero" style="margin-top:6px;">
+    <div class="hero" style="margin-top:14px;">
       <div class="hero-eyebrow"><span id="plan-mode-label">Daily meal plan · 1000 cal deficit</span></div>
       <div class="hero-num"><span id="plan-cal-total">2300</span><span class="unit">cal</span></div>
       <div style="font-size:12px;color:var(--muted);margin-top:4px;"><strong id="plan-p-total">240</strong>P · <strong id="plan-c-total">220</strong>C · <strong id="plan-f-total">50</strong>F · <span id="plan-meal-count">6</span> meals</div>
@@ -468,7 +464,6 @@ const FOODS = [
   { id:'rice',     name:'White rice (cooked)',         serving:'1 cup',           cal:205, p:4,  c:45, f:0  },
   { id:'potato',   name:'Potato (baked, medium)',      serving:'1 medium 173g',   cal:161, p:4,  c:37, f:0  },
   { id:'avo',      name:'Avocado',                     serving:'1/2 medium ~70g', cal:120, p:1.5,c:6,  f:11 },
-  { id:'papa',     name:'Papa Johns NY pepperoni',     serving:'1 slice (1/8 large)', cal:340, p:13, c:38, f:14 },
 ];
 
 // ─────────────────────────────────────────────
@@ -504,26 +499,6 @@ const MEAL_PLAN = [
   ]},
 ];
 
-// REFEED DAY — once per week (default Sunday). Glycogen refill + leptin reset + sanity break.
-// Replaces dinner with Papa Johns NY pepperoni × 4 slices; everything else unchanged.
-// Net day: ~3,086 cal · 238P · 304C · 90F (still ~214 cal under maintenance, just controlled overshoot of carbs)
-const REFEED_PLAN = [
-  { id:'r1', time:'☀️ BREAKFAST',     when:'~7:30am · same as cut day',  items:[
-    { id:'dkb',     qty:2 }, { id:'eggw', qty:1 }, { id:'avo', qty:1 },
-  ]},
-  { id:'r2', time:'🏋︎ PRE-GYM',       when:'~11am · same as cut day',  items:[
-    { id:'oats',    qty:1 }, { id:'premier', qty:1 },
-  ]},
-  { id:'r3', time:'⚡ POST-GYM',       when:'~1pm · same as cut day',  items:[
-    { id:'chobani', qty:1 }, { id:'blue', qty:1 }, { id:'premier', qty:1 },
-  ]},
-  { id:'r4', time:'🍗 LATE LUNCH',     when:'~3-4pm · same as cut day',  items:[
-    { id:'chicken', qty:1.5 }, { id:'rice', qty:1 },
-  ]},
-  { id:'r5', time:'🍕 PIZZA NIGHT',    when:'~6-7pm · refeed dinner',  items:[
-    { id:'papa', qty:4 },
-  ]},
-];
 
 // ─────────────────────────────────────────────
 // PEPTIDE STACK — Neil's daily + weekly schedule
@@ -1048,33 +1023,12 @@ function mealMacros(meal){
   });
   return r;
 }
-// Plan mode: 'cut' (default) or 'refeed'. Defaults to refeed on Sunday automatically.
-function getPlanMode(){
-  const stored = localStorage.getItem('cut_plan_mode_'+todayKey());
-  if (stored) return stored;
-  return dayOfWeek() === 0 ? 'refeed' : 'cut';
-}
-function setPlanMode(mode){
-  localStorage.setItem('cut_plan_mode_'+todayKey(), mode);
-  haptic();
-  renderPlan();
-}
-function activePlan(){ return getPlanMode() === 'refeed' ? REFEED_PLAN : MEAL_PLAN; }
+function activePlan(){ return MEAL_PLAN; }
 
 function renderPlan(){
   const list = document.getElementById('plan-list'); if (!list) return;
-  const mode = getPlanMode();
-  const plan = activePlan();
-  // Toggle button styling
-  const cutBtn = document.getElementById('mode-cut');
-  const reBtn = document.getElementById('mode-refeed');
-  if (cutBtn && reBtn) {
-    cutBtn.className = mode === 'cut' ? 'btn' : 'btn btn-ghost';
-    reBtn.className = mode === 'refeed' ? 'btn' : 'btn btn-ghost';
-  }
-  document.getElementById('plan-mode-label').textContent = mode === 'refeed'
-    ? 'Refeed day · controlled glycogen refill · pizza night'
-    : 'Cut day · 1000 cal deficit · 6 meals';
+  const plan = MEAL_PLAN;
+  document.getElementById('plan-mode-label').textContent = 'Cut day · 1000 cal deficit · 6 meals';
   document.getElementById('plan-meal-count').textContent = plan.length;
 
   // Total cell
