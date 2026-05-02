@@ -1032,6 +1032,25 @@ body::before{
             <div class="proto-r-value" data-dose-cell="${slug}">${(function(){
               const cs=cycleState[slug]||{};
               const userRecon=(cs.vialMg>0&&cs.bacMl>0)?{vial:cs.vialMg,bac:cs.bacMl}:null;
+              // ── Combined-bottle: render limiting-component-targeting volume ──
+              const ssotPepCB = (window.APEX_PEPTIDES || {})[slug];
+              if (ssotPepCB && ssotPepCB.combined_bottle && Array.isArray(ssotPepCB.components) && ssotPepCB.components.length) {
+                const vialMg = (userRecon && userRecon.vial) || ssotPepCB.vial_mg;
+                const bacMl  = (userRecon && userRecon.bac)  || ssotPepCB.bac_ml;
+                if (vialMg && bacMl) {
+                  const concPerComp = (vialMg / ssotPepCB.components.length) / bacMl; // mg/mL each
+                  // Smallest target volume = component that hits its dose at the lowest draw
+                  let smallestVol = Infinity, targetName = '';
+                  ssotPepCB.components.forEach(c => {
+                    const v = c.dose_mg / concPerComp;
+                    if (v > 0 && v < smallestVol) { smallestVol = v; targetName = c.name; }
+                  });
+                  if (isFinite(smallestVol)) {
+                    const u = Math.round(smallestVol * 100);
+                    return `<span style="color:var(--accent2);font-weight:800;font-size:1.05em;">${u}</span> <span style="color:var(--muted);">units</span> <span style="color:var(--muted);font-size:.78em;font-family:'Share Tech Mono',monospace;letter-spacing:.06em;">· targets ${targetName}</span>`;
+                  }
+                }
+              }
               // ── If titrated, show CURRENT week's dose (Wk1 if brand new; else current week) ──
               if (p.titration && Array.isArray(p.titration) && p.titration.length >= 2) {
                 const currentWeek = (cs.mode === 'mid' && cs.currentWeek) ? cs.currentWeek : 1;
