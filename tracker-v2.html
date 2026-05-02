@@ -1800,6 +1800,47 @@ body::before{
     if (saved && ['today','stack','week','month'].includes(saved)) switchTab(saved);
   } catch(e){}
 
+  // ── SHARED: compact protocol-receipt row (Week/Month detail panels) ──
+  function buildReceiptRow(p, recon){
+    const reconInfo = recon[p.slug] || {};
+    const apx = (window.ApexUnits && window.ApexUnits.compute) ? window.ApexUnits.compute(p.slug, { intensity: p.intensity, userRecon: reconInfo, doseOverride: p.userEditedDose ? p.dose : null }) : null;
+    const u = apx && apx.units != null ? apx.units : null;
+    const tier = (p.intensity || 'recommended').toLowerCase();
+    const tierLbl = tier === 'mild' ? '⬇ Conservative' : tier === 'aggressive' ? '⬆ Aggressive' : '★ Optimal';
+    const tierColor = tier === 'mild' ? '#fbbf24' : tier === 'aggressive' ? '#ff6b35' : 'var(--accent2)';
+    const cadence = (function(){
+      try { return (JSON.parse(localStorage.getItem('apex_cadence_choice')||'{}'))[p.slug] || p.freq || 'daily'; } catch(_) { return p.freq || 'daily'; }
+    })();
+    const ssot = (window.APEX_PEPTIDES || {})[p.slug] || {};
+    const note = String(ssot.timing_note || ssot.recon_tip || '').toLowerCase();
+    const timing = /fasted|before food|empty stomach/.test(note) ? '🌅 Fasted'
+      : /morning|am\b|pre-cardio|pre-workout/.test(note) ? '☀️ Morning'
+      : /evening|pm\b|pre-bed|bedtime|night/.test(note) ? '🌙 Evening'
+      : /post-workout|post workout/.test(note) ? '💪 Post-workout'
+      : '⏰ Anytime';
+    const totalVol = (reconInfo.bac || 0) + (reconInfo.acetic || 0);
+    const reconLine = reconInfo.vial && totalVol > 0
+      ? `${reconInfo.vial} mg vial · ${reconInfo.bac} mL BAC · ${(reconInfo.vial/totalVol).toFixed(2)} mg/mL`
+      : '⚠ recon not set';
+    return `<div style="padding:12px;background:linear-gradient(135deg,rgba(0,212,255,.04),rgba(0,255,157,.02));border:1px solid var(--border);border-radius:10px;margin-bottom:8px;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px;">
+        <div style="min-width:0;flex:1;">
+          <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.name}</div>
+          <div style="font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.mech||''}</div>
+        </div>
+        <div style="display:inline-flex;padding:2px 8px;background:rgba(0,255,157,.08);border:1px solid ${tierColor};border-radius:4px;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.14em;color:${tierColor};font-weight:700;flex-shrink:0;">${tierLbl}</div>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:6px;">
+        <strong style="color:var(--accent2);font-size:1.6em;font-family:'Rajdhani',sans-serif;">${u!=null?u:'—'}</strong>
+        <span style="color:var(--muted);font-size:13px;">${u!=null?'units · ':''}${cadence}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:11px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:.04em;padding-top:8px;border-top:1px solid var(--border);">
+        <span>🧪 ${reconLine}</span>
+        <span>${timing}</span>
+      </div>
+    </div>`;
+  }
+
   // ── WEEK VIEW ─────────────────────────────
   function renderWeek(){
     const state = getState();
@@ -1846,15 +1887,7 @@ body::before{
         return;
       }
       const recon = getRecon();
-      const rows = dayDoses.map(p => {
-        const reconInfo = recon[p.slug] || {};
-        const apx = (window.ApexUnits && window.ApexUnits.compute) ? window.ApexUnits.compute(p.slug, { intensity: p.intensity, userRecon: reconInfo }) : null;
-        const u = apx && apx.units != null ? apx.units : null;
-        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:rgba(0,212,255,.04);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;">
-          <div><div style="font-weight:700;color:var(--text);">${p.name}</div><div style="font-size:11px;color:var(--muted);">${p.freq||'daily'}</div></div>
-          <div style="text-align:right;"><strong style="color:var(--accent2);font-size:1.05em;">${u!=null?u+' units':'—'}</strong></div>
-        </div>`;
-      }).join('');
+      const rows = dayDoses.map(p => buildReceiptRow(p, recon)).join('');
       detail.innerHTML = `<div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">${d.toLocaleDateString(undefined,{weekday:'long', month:'short', day:'numeric'})}</div>${rows}`;
     }
   }
@@ -1899,15 +1932,7 @@ body::before{
         const dayDoses = (state.protocols || []).filter(p => shouldDoToday(p, d).go);
         if (!dayDoses.length) { detail.innerHTML = `<div style="padding:14px;background:var(--panel);border:1px solid var(--border);border-radius:10px;color:var(--muted);text-align:center;">No injections scheduled for ${d.toLocaleDateString(undefined,{weekday:'long', month:'short', day:'numeric'})}.</div>`; return; }
         const recon = getRecon();
-        const rows = dayDoses.map(p => {
-          const reconInfo = recon[p.slug] || {};
-          const apx = (window.ApexUnits && window.ApexUnits.compute) ? window.ApexUnits.compute(p.slug, { intensity: p.intensity, userRecon: reconInfo }) : null;
-          const u = apx && apx.units != null ? apx.units : null;
-          return `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:rgba(0,212,255,.04);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;">
-            <div><div style="font-weight:700;color:var(--text);">${p.name}</div><div style="font-size:11px;color:var(--muted);">${p.freq||'daily'}</div></div>
-            <div style="text-align:right;"><strong style="color:var(--accent2);font-size:1.05em;">${u!=null?u+' units':'—'}</strong></div>
-          </div>`;
-        }).join('');
+        const rows = dayDoses.map(p => buildReceiptRow(p, recon)).join('');
         detail.innerHTML = `<div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">${d.toLocaleDateString(undefined,{weekday:'long', month:'short', day:'numeric'})}</div>${rows}`;
       });
     });
