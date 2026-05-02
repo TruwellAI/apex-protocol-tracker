@@ -1,0 +1,13 @@
+{
+  "name": "Neil's Cut",
+  "short_name": "Cut",
+  "description": "239 → 9% BF · peptide-stacked cut tracker",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0A0A0A",
+  "theme_color": "#00FF9D",
+  "icons": [
+    { "src": "icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
