@@ -866,6 +866,13 @@ body::before{
       const comps = STACK_COMPONENTS[slug];
       if (!comps) return '';
       const isCombined = !!p.combinedBottle;
+      // ── ONE-TIME EDUCATION: show full breakdown only on first view per peptide ──
+      // After user acks it, collapse to a compact summary. Frequency + units stay
+      // in the main proto-rows above; this block becomes a "ⓘ See composition" link.
+      let acked = false;
+      try { acked = !!(JSON.parse(localStorage.getItem('apex_combined_acked')||'{}'))[slug]; } catch(_){}
+      // Capture wrapper-mode flag — if acked, we'll wrap output in a <details>
+      var __combinedAcked = isCombined && acked;
       const ssotEntry = (window.APEX_PEPTIDES || {})[slug] || {};
       const ssotComps = ssotEntry.components || [];
       const cs = cycleState[slug] || {};
@@ -980,11 +987,26 @@ body::before{
           fresh weekly and use within ~7 days). The "all-in-one" bottle is convenient but it's
           chemically a bad idea for long-term storage.
         </div>` : '';
+      const ackBtn = (isCombined && !__combinedAcked) ? `
+        <button type="button" data-combined-ack="${slug}" style="margin-top:12px;width:100%;padding:11px 14px;background:linear-gradient(135deg,var(--accent2),var(--accent));color:#080c10;border:0;border-radius:8px;font-family:'Rajdhani',sans-serif;font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;-webkit-tap-highlight-color:transparent;">✓ Got it — collapse this</button>
+      ` : '';
+      const fullBlock = `
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">${heading}</div>
+        ${rows}
+        ${copperWarn}
+        ${ackBtn}`;
+      if (__combinedAcked) {
+        return `
+          <details style="margin-top:14px;padding:10px 12px;background:rgba(11,15,20,.4);border:1px solid var(--border);border-radius:10px;">
+            <summary style="cursor:pointer;list-style:none;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:8px;-webkit-tap-highlight-color:transparent;">
+              ℹ Bottle composition + chemistry warning <span style="margin-left:auto;font-size:10px;opacity:.6;">▾ tap to review</span>
+            </summary>
+            <div style="margin-top:10px;">${fullBlock}</div>
+          </details>`;
+      }
       return `
         <div style="margin-top:14px;padding:12px;background:rgba(11,15,20,.4);border:1px solid var(--border);border-radius:10px;">
-          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">${heading}</div>
-          ${rows}
-          ${copperWarn}
+          ${fullBlock}
         </div>`;
     }
     function renderInner(){
@@ -1357,6 +1379,21 @@ body::before{
     const card = document.querySelector(`[data-peptide-card="${CSS.escape(slug)}"]`);
     if (card && typeof card._rerender === 'function') card._rerender();
     else { try { render(); } catch(_){} }
+  });
+
+  // Combined-bottle "Got it" — persist ack, re-render so card collapses to simple view
+  document.addEventListener('click', (ev) => {
+    const btn = ev.target.closest('[data-combined-ack]');
+    if (!btn) return;
+    const slug = btn.getAttribute('data-combined-ack');
+    try {
+      const all = JSON.parse(localStorage.getItem('apex_combined_acked') || '{}');
+      all[slug] = true;
+      localStorage.setItem('apex_combined_acked', JSON.stringify(all));
+    } catch(_){}
+    const card = document.querySelector(`[data-peptide-card="${CSS.escape(slug)}"]`);
+    if (card && typeof card._rerender === 'function') card._rerender();
+    try { if (navigator.vibrate) navigator.vibrate(15); } catch(_){}
   });
 })();
 </script>
