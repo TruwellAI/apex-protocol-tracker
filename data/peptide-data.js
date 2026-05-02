@@ -1,7 +1,7 @@
 /* AUTO-GENERATED — DO NOT EDIT.
  * Source: /data/peptides.json
  * Regenerate: node scripts/build-peptide-data.js
- * Built: 2026-05-02T04:24:48.246Z
+ * Built: 2026-05-02T04:28:35.287Z
  */
 window.APEX_PEPTIDES = {
   "_meta": {
@@ -1032,7 +1032,7 @@ window.APEX_PEPTIDES = {
     "tier": "layer",
     "mech": "KPV + TB-500 + BPC-157 + GHK-Cu combined in ONE vial",
     "route": "sc",
-    "vial_mg": 10,
+    "vial_mg": 80,
     "bac_ml": 3,
     "dose_label": "see components",
     "freq": "daily",

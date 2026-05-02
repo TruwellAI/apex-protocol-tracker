@@ -398,7 +398,7 @@ body::before{
     'l-carnitine.html':   { vial: 1000,bac: 2 },
     'glutamine.html':     { vial: 1000,bac: 2 },
     'wolverine.html':     { vial:10,  bac:3 },
-    'klow.html':          { vial:10,  bac:3 },
+    'klow.html':          { vial:80,  bac:3 },
     'glow.html':          { vial:10,  bac:3 },
     // Testosterone: pre-mixed in oil. We use vial:bac math to keep one code path,
     // even though there's no actual reconstitution. T-Cyp/Enth = 200 mg/mL,
@@ -572,23 +572,57 @@ body::before{
     const card = document.createElement('div');
     card.className = 'proto-card' + (p.titration ? ' titration' : '');
     card.dataset.slug = slug;
+    card.setAttribute('data-peptide-card', slug);
 
     const splitCfg = SPLIT_ELIGIBLE[slug];
     const isSplit = !!splitState[slug];
 
     function buildTitHtml(){
       if (!p.titration) return '';
-      // Use user's recon if they entered one in the cycle-ask, else defaults.
       const cs = cycleState[slug] || {};
       const userRecon = (cs.vialMg > 0 && cs.bacMl > 0) ? { vial: cs.vialMg, bac: cs.bacMl } : null;
+      // ── SYNC WITH CADENCE: scale titration to user's chosen per-dose mg ──
+      // The raw titration array is authored at the canonical 1x/wk per-injection dose
+      // (e.g., NAD+ Wk1=25mg, Wk5+=100mg). When user picks 3x/wk @ 67mg, the ladder
+      // must ramp to 67mg at "full dose", not 100. We treat the ladder as percent of
+      // its own peak: each step's mg / peak mg = percent → scale to user's per-dose.
+      let chosenPerDoseMg = null;
+      let chosenPattern = null;
+      try {
+        const choice = (JSON.parse(localStorage.getItem('apex_cadence_choice')||'{}'))[slug];
+        if (choice) {
+          const ssotPep = (window.APEX_PEPTIDES || {})[slug];
+          const opt = ssotPep && ssotPep.cadence_flex && ssotPep.cadence_flex.options.find(o => o.pattern === choice);
+          if (opt) { chosenPerDoseMg = opt.per_dose_mg; chosenPattern = opt.pattern; }
+        }
+      } catch(_){}
+      // Find ladder peak in mg (assumes "X mg" parseable in titration steps)
+      function parseStepMg(s){
+        const m = String(s).match(/(\d+(?:\.\d+)?)\s*(mg|mcg)/i);
+        if (!m) return null;
+        const v = parseFloat(m[1]);
+        return m[2].toLowerCase()==='mcg' ? v/1000 : v;
+      }
+      const peakMg = Math.max(...p.titration.map(t => parseStepMg(t.d) || 0));
       const rows = p.titration.map(t => {
-        const dose = (splitCfg && isSplit) ? splitDoseString(t.d, splitCfg.factor) : t.d;
-        const unitsLbl = doseToUnitsLabel(dose, slug, { userRecon });
+        let stepDose = (splitCfg && isSplit) ? splitDoseString(t.d, splitCfg.factor) : t.d;
+        // If user picked a cadence with a different per-dose, scale this step proportionally
+        if (chosenPerDoseMg != null && peakMg > 0) {
+          const stepMg = parseStepMg(stepDose);
+          if (stepMg != null) {
+            const scaledMg = (stepMg / peakMg) * chosenPerDoseMg;
+            const scaledLbl = scaledMg < 1 ? Math.round(scaledMg*1000)+' mcg' : (Math.round(scaledMg*10)/10) + ' mg';
+            stepDose = stepDose.replace(/\d+(?:\.\d+)?\s*(mg|mcg)/i, scaledLbl);
+          }
+        }
+        const unitsLbl = doseToUnitsLabel(stepDose, slug, { userRecon });
         return `<div class="tit-row"><span class="tit-week">${t.w}</span><span class="tit-dose">${unitsLbl}</span></div>`;
       }).join('');
       const unitContext = isSplit
         ? `Units <strong>per dose</strong> · ${splitCfg.freqLabel}`
-        : `Units <strong>per WEEK</strong> · single weekly injection`;
+        : (chosenPattern
+            ? `Units <strong>per dose</strong> · ${chosenPattern}`
+            : `Units <strong>per WEEK</strong> · single weekly injection`);
       return `
         <div class="tit-table">
           <div class="tit-title">⚡ Titration Schedule${isSplit ? ' (Split)' : ''}</div>
@@ -1134,6 +1168,7 @@ body::before{
     }
 
     renderInner();
+    card._rerender = renderInner;  // exposed so cadence-change events can rebuild this card
     return card;
   }
 
@@ -1262,8 +1297,23 @@ body::before{
       localStorage.setItem('apex_cadence_choice', JSON.stringify(all));
     } catch(e){}
 
+    // Trigger a soft re-render of THIS card so titration ladder rescales to new per-dose
+    try {
+      const evt = new CustomEvent('apex-cadence-changed', { detail: { slug, pattern, perDoseMg } });
+      document.dispatchEvent(evt);
+    } catch(_) {}
+
     // Haptic on touch devices
     try { if (navigator.vibrate) navigator.vibrate(8); } catch(_) {}
+  });
+
+  // Listener: rebuild this peptide's card so the titration ladder reflects new per-dose
+  document.addEventListener('apex-cadence-changed', (e) => {
+    const slug = e.detail && e.detail.slug;
+    if (!slug) return;
+    const card = document.querySelector(`[data-peptide-card="${CSS.escape(slug)}"]`);
+    if (card && typeof card._rerender === 'function') card._rerender();
+    else { try { render(); } catch(_){} }
   });
 })();
 </script>
