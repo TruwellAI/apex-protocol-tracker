@@ -1,4 +1,4 @@
-# Apex Dose Audit (v3 — single source of truth) — 2026-05-02T04:28:35.365Z
+# Apex Dose Audit (v3 — single source of truth) — 2026-05-02T04:29:05.638Z
 
 **Source of truth:** `/data/peptides.json` (46 peptides)
 **Files cross-checked:** reconstitute.html · protocol-summary.html · tracker-v2.html
@@ -19,7 +19,7 @@ _(none — all HTML files match the source of truth)_
 ✅ ghkcu.html: 12 units on the pen
 ✅ kpv.html: 30 units on the pen
 ✅ ll37.html: 6 units on the pen
-✅ thymosin-alpha1.html: 64 units on the pen
+✅ thymosin-alpha1.html: 48 units on the pen
 ✅ ara290.html: 40 units on the pen
 ✅ epitalon.html: 45 units on the pen
 ✅ ss31.html: 20 units on the pen

@@ -1,7 +1,7 @@
 /* AUTO-GENERATED — DO NOT EDIT.
  * Source: /data/peptides.json
  * Regenerate: node scripts/build-peptide-data.js
- * Built: 2026-05-02T04:28:35.287Z
+ * Built: 2026-05-02T04:29:05.586Z
  */
 window.APEX_PEPTIDES = {
   "_meta": {
@@ -199,8 +199,8 @@ window.APEX_PEPTIDES = {
     "tier": "layer",
     "mech": "Immune modulator (thymic origin)",
     "route": "sc",
-    "vial_mg": 5,
-    "bac_ml": 2,
+    "vial_mg": 10,
+    "bac_ml": 3,
     "dose_mg_per_inj": 1.6,
     "dose_label": "1.6 mg",
     "dose_range_mg": [

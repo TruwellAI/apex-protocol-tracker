@@ -194,8 +194,8 @@
     "tier": "layer",
     "mech": "Immune modulator (thymic origin)",
     "route": "sc",
-    "vial_mg": 5,
-    "bac_ml": 2,
+    "vial_mg": 10,
+    "bac_ml": 3,
     "dose_mg_per_inj": 1.6,
     "dose_label": "1.6 mg",
     "dose_range_mg": [
