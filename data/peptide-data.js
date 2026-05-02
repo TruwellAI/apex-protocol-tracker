@@ -1,7 +1,7 @@
 /* AUTO-GENERATED — DO NOT EDIT.
  * Source: /data/peptides.json
  * Regenerate: node scripts/build-peptide-data.js
- * Built: 2026-05-02T05:00:16.354Z
+ * Built: 2026-05-02T19:28:24.375Z
  */
 window.APEX_PEPTIDES = {
   "_meta": {
@@ -86,7 +86,7 @@ window.APEX_PEPTIDES = {
     "off_weeks": 4,
     "research_note": "Loading 5mg 2x/wk × 4-6wk, then maintenance",
     "recon_tip": "TB-500 takes <strong>2-3 weeks</strong> to show effect — do NOT abandon it after week 1. Front-load with 5mg 2x/wk for the first 4 weeks (loading), then drop to 2.5mg 1-2x/wk maintenance.",
-    "timing_note": "⏰ <strong>2x weekly, time of day flexible.</strong> No fasting requirement. Spreads loading dose across the week (Mon + Thu typical).",
+    "timing_note": "⏰ <strong>Time of day flexible.</strong> No fasting requirement.",
     "cadence_flex": {
       "options": [
         {
@@ -157,7 +157,7 @@ window.APEX_PEPTIDES = {
     "cycle_weeks": 6,
     "off_weeks": 4,
     "research_note": "250-1000 mcg/day; gut + dermal inflammation",
-    "timing_note": "⏰ <strong>Daily, time flexible.</strong> Anti-inflammatory + gut-supportive — split AM/PM helps if you have GI symptoms.",
+    "timing_note": "⏰ <strong>Time flexible.</strong> Anti-inflammatory + gut-supportive — split AM/PM helps if you have GI symptoms.",
     "cadence_flex": {
       "options": [
         {
@@ -420,7 +420,7 @@ window.APEX_PEPTIDES = {
     "titration": true,
     "research_note": "Titrate 2→4→8→12mg weekly; Phase 2 trials weekly only",
     "recon_tip": "<strong>Titrate slowly</strong> to avoid GI hammer. Reta is the most aggressive of the GLP-1s — start at 2mg/wk, hold each step 4 weeks before bumping. Skip a week if nausea is severe.",
-    "timing_note": "⏰ <strong>Weekly, same day each week.</strong> Most users do Sunday PM with dinner. Skip a week if GI symptoms severe — restart at lower dose."
+    "timing_note": "⏰ <strong>Same day each week, time flexible.</strong> Most users do Sunday PM with dinner. Skip a dose if GI symptoms severe — restart at lower step."
   },
   "semaglutide.html": {
     "name": "Semaglutide",
@@ -442,7 +442,7 @@ window.APEX_PEPTIDES = {
     "titration": true,
     "research_note": "STEP trials; titrate 0.25→2.4mg weekly",
     "recon_tip": "Refrigerate after mixing. Reusing the same syringe across multiple injections from the same vial is fine — just keep the vial cold and the seal intact.",
-    "timing_note": "⏰ <strong>Weekly, same day each week.</strong> Time of day flexible. Refrigerate after mixing."
+    "timing_note": "⏰ <strong>Same day each week, time flexible.</strong> Refrigerate after mixing."
   },
   "tirzepatide.html": {
     "name": "Tirzepatide",
@@ -464,7 +464,7 @@ window.APEX_PEPTIDES = {
     "titration": true,
     "research_note": "SURMOUNT trials; titrate 2.5→15mg weekly",
     "recon_tip": "Tirz titration: 2.5 → 5 → 7.5 → 10 → 12.5 → 15 mg, hold each step 4 weeks. The GIP component reduces appetite faster than Sema — most users plateau at 10 mg.",
-    "timing_note": "⏰ <strong>Weekly, same day each week.</strong> Time of day flexible. The GIP component reduces appetite faster than Sema."
+    "timing_note": "⏰ <strong>Same day each week, time flexible.</strong> The GIP component reduces appetite faster than Sema."
   },
   "5amino1mq.html": {
     "name": "5-Amino-1MQ",
@@ -484,7 +484,7 @@ window.APEX_PEPTIDES = {
     "cycle_weeks": 12,
     "off_weeks": 4,
     "research_note": "NNMT inhibitor; SubQ injection 1-5mg/day",
-    "timing_note": "⏰ <strong>Daily, with or without food.</strong> NNMT inhibitor — works best paired with caloric deficit + resistance training."
+    "timing_note": "⏰ <strong>With or without food.</strong> NNMT inhibitor — works best paired with caloric deficit + resistance training."
   },
   "tesamorelin.html": {
     "name": "Tesamorelin",
@@ -664,7 +664,7 @@ window.APEX_PEPTIDES = {
     "cycle_weeks": 4,
     "off_weeks": 0,
     "research_note": "Loading 100mg 2x/wk × 4wk; substrate for MOTS-c biogenesis",
-    "timing_note": "⏰ <strong>Morning, with or without food.</strong> Loading 2-3x/wk × 4 wks then 1x/wk maintenance. Some users get flushing — split doses help.",
+    "timing_note": "⏰ <strong>Morning, with or without food.</strong> Some users get flushing — split doses help.",
     "titration": [
       {
         "w": "Wk 1 tolerance",
@@ -732,7 +732,7 @@ window.APEX_PEPTIDES = {
     "cycle_weeks": 52,
     "off_weeks": 0,
     "research_note": "Master antioxidant; 200-600mg 2-3x/wk",
-    "timing_note": "⏰ <strong>2-3x weekly, morning preferred.</strong> Pairs with NAD+ as a longevity foundation. Push slowly — too fast can cause flushing.",
+    "timing_note": "⏰ <strong>Morning preferred.</strong> Pairs with NAD+ as a longevity foundation. Push slowly — too fast can cause flushing.",
     "cadence_flex": {
       "options": [
         {
