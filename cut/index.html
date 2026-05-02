@@ -327,10 +327,14 @@ body { padding-bottom: 90px; }
 
   <!-- ═══ PLAN PANEL ═══ -->
   <div class="panel" data-panel="plan">
-    <div class="hero" style="margin-top:14px;">
-      <div class="hero-eyebrow">Daily meal plan · 1000 cal deficit</div>
+    <div style="display:flex;gap:6px;padding:14px 16px 6px;">
+      <button id="mode-cut" class="btn" style="flex:1;font-size:12px;padding:10px;" onclick="setPlanMode('cut')">🔥 CUT DAY</button>
+      <button id="mode-refeed" class="btn btn-ghost" style="flex:1;font-size:12px;padding:10px;" onclick="setPlanMode('refeed')">🍕 REFEED</button>
+    </div>
+    <div class="hero" style="margin-top:6px;">
+      <div class="hero-eyebrow"><span id="plan-mode-label">Daily meal plan · 1000 cal deficit</span></div>
       <div class="hero-num"><span id="plan-cal-total">2300</span><span class="unit">cal</span></div>
-      <div style="font-size:12px;color:var(--muted);margin-top:4px;">Hits <strong id="plan-p-total">240</strong>P · <strong id="plan-c-total">220</strong>C · <strong id="plan-f-total">50</strong>F · 6 meals</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:4px;"><strong id="plan-p-total">240</strong>P · <strong id="plan-c-total">220</strong>C · <strong id="plan-f-total">50</strong>F · <span id="plan-meal-count">6</span> meals</div>
     </div>
     <div style="padding:0 16px 14px;">
       <button class="btn btn-block" onclick="autoLogAllMeals()">📋 Log entire day's plan</button>
@@ -464,6 +468,7 @@ const FOODS = [
   { id:'rice',     name:'White rice (cooked)',         serving:'1 cup',           cal:205, p:4,  c:45, f:0  },
   { id:'potato',   name:'Potato (baked, medium)',      serving:'1 medium 173g',   cal:161, p:4,  c:37, f:0  },
   { id:'avo',      name:'Avocado',                     serving:'1/2 medium ~70g', cal:120, p:1.5,c:6,  f:11 },
+  { id:'papa',     name:'Papa Johns NY pepperoni',     serving:'1 slice (1/8 large)', cal:340, p:13, c:38, f:14 },
 ];
 
 // ─────────────────────────────────────────────
@@ -496,6 +501,27 @@ const MEAL_PLAN = [
   ]},
   { id:'m6', time:'🌙 BEDTIME',        when:'~9-10pm · slow casein for overnight (optional)',  items:[
     { id:'chobani', qty:1 },
+  ]},
+];
+
+// REFEED DAY — once per week (default Sunday). Glycogen refill + leptin reset + sanity break.
+// Replaces dinner with Papa Johns NY pepperoni × 4 slices; everything else unchanged.
+// Net day: ~3,086 cal · 238P · 304C · 90F (still ~214 cal under maintenance, just controlled overshoot of carbs)
+const REFEED_PLAN = [
+  { id:'r1', time:'☀️ BREAKFAST',     when:'~7:30am · same as cut day',  items:[
+    { id:'dkb',     qty:2 }, { id:'eggw', qty:1 }, { id:'avo', qty:1 },
+  ]},
+  { id:'r2', time:'🏋︎ PRE-GYM',       when:'~11am · same as cut day',  items:[
+    { id:'oats',    qty:1 }, { id:'premier', qty:1 },
+  ]},
+  { id:'r3', time:'⚡ POST-GYM',       when:'~1pm · same as cut day',  items:[
+    { id:'chobani', qty:1 }, { id:'blue', qty:1 }, { id:'premier', qty:1 },
+  ]},
+  { id:'r4', time:'🍗 LATE LUNCH',     when:'~3-4pm · same as cut day',  items:[
+    { id:'chicken', qty:1.5 }, { id:'rice', qty:1 },
+  ]},
+  { id:'r5', time:'🍕 PIZZA NIGHT',    when:'~6-7pm · refeed dinner',  items:[
+    { id:'papa', qty:4 },
   ]},
 ];
 
@@ -1022,17 +1048,44 @@ function mealMacros(meal){
   });
   return r;
 }
+// Plan mode: 'cut' (default) or 'refeed'. Defaults to refeed on Sunday automatically.
+function getPlanMode(){
+  const stored = localStorage.getItem('cut_plan_mode_'+todayKey());
+  if (stored) return stored;
+  return dayOfWeek() === 0 ? 'refeed' : 'cut';
+}
+function setPlanMode(mode){
+  localStorage.setItem('cut_plan_mode_'+todayKey(), mode);
+  haptic();
+  renderPlan();
+}
+function activePlan(){ return getPlanMode() === 'refeed' ? REFEED_PLAN : MEAL_PLAN; }
+
 function renderPlan(){
   const list = document.getElementById('plan-list'); if (!list) return;
+  const mode = getPlanMode();
+  const plan = activePlan();
+  // Toggle button styling
+  const cutBtn = document.getElementById('mode-cut');
+  const reBtn = document.getElementById('mode-refeed');
+  if (cutBtn && reBtn) {
+    cutBtn.className = mode === 'cut' ? 'btn' : 'btn btn-ghost';
+    reBtn.className = mode === 'refeed' ? 'btn' : 'btn btn-ghost';
+  }
+  document.getElementById('plan-mode-label').textContent = mode === 'refeed'
+    ? 'Refeed day · controlled glycogen refill · pizza night'
+    : 'Cut day · 1000 cal deficit · 6 meals';
+  document.getElementById('plan-meal-count').textContent = plan.length;
+
   // Total cell
   let T = { cal:0, p:0, c:0, f:0 };
-  MEAL_PLAN.forEach(m => { const x = mealMacros(m); T.cal+=x.cal; T.p+=x.p; T.c+=x.c; T.f+=x.f; });
+  plan.forEach(m => { const x = mealMacros(m); T.cal+=x.cal; T.p+=x.p; T.c+=x.c; T.f+=x.f; });
   document.getElementById('plan-cal-total').textContent = Math.round(T.cal);
   document.getElementById('plan-p-total').textContent = Math.round(T.p);
   document.getElementById('plan-c-total').textContent = Math.round(T.c);
   document.getElementById('plan-f-total').textContent = Math.round(T.f);
 
-  list.innerHTML = MEAL_PLAN.map(m => {
+  list.innerHTML = plan.map(m => {
     const mm = mealMacros(m);
     const itemRows = m.items.map(it => {
       const f = FOODS.find(x => x.id === it.id);
@@ -1058,7 +1111,7 @@ function renderPlan(){
   }).join('');
 }
 function logMeal(id){
-  const meal = MEAL_PLAN.find(m => m.id === id); if (!meal) return;
+  const meal = activePlan().find(m => m.id === id); if (!meal) return;
   const s = load();
   s.daily = s.daily || {}; s.daily[todayKey()] = s.daily[todayKey()] || { food:[], peptides:{}, steps:0 };
   meal.items.forEach(it => {
@@ -1068,15 +1121,19 @@ function logMeal(id){
   alert(`Logged ${meal.time} · ${Math.round(mealMacros(meal).cal)} cal`);
 }
 function autoLogAllMeals(){
-  if (!confirm('Log all 6 meals for today? (replaces current food log)')) return;
+  const plan = activePlan();
+  if (!confirm(`Log all ${plan.length} meals for today? (replaces current food log)`)) return;
   const s = load();
   s.daily = s.daily || {}; s.daily[todayKey()] = s.daily[todayKey()] || { food:[], peptides:{}, steps:0 };
   s.daily[todayKey()].food = [];
-  MEAL_PLAN.forEach(m => m.items.forEach(it => {
+  plan.forEach(m => m.items.forEach(it => {
     for (let i = 0; i < it.qty; i++) s.daily[todayKey()].food.push({ id: it.id, qty: 1 });
   }));
+  // Compute totals for confirmation
+  let T = { cal:0, p:0, c:0, f:0 };
+  plan.forEach(m => { const x = mealMacros(m); T.cal+=x.cal; T.p+=x.p; T.c+=x.c; T.f+=x.f; });
   save(s); haptic(); renderAll();
-  alert('Day logged · 2,300 cal · 240P / 220C / 50F');
+  alert(`Day logged · ${Math.round(T.cal)} cal · ${Math.round(T.p)}P / ${Math.round(T.c)}C / ${Math.round(T.f)}F`);
 }
 
 function renderAll(){
