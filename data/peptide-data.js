@@ -1,7 +1,7 @@
 /* AUTO-GENERATED — DO NOT EDIT.
  * Source: /data/peptides.json
  * Regenerate: node scripts/build-peptide-data.js
- * Built: 2026-05-02T04:29:05.586Z
+ * Built: 2026-05-02T04:34:03.632Z
  */
 window.APEX_PEPTIDES = {
   "_meta": {
@@ -201,6 +201,31 @@ window.APEX_PEPTIDES = {
     "route": "sc",
     "vial_mg": 10,
     "bac_ml": 3,
+    "cadence_flex": {
+      "options": [
+        {
+          "pattern": "2x weekly (Mon + Thu)",
+          "per_dose_mg": 1.6,
+          "weekly_total_mg": 3.2
+        },
+        {
+          "pattern": "Daily low-dose (smooth)",
+          "per_dose_mg": 0.5,
+          "weekly_total_mg": 3.5
+        },
+        {
+          "pattern": "Daily acute (cold/flu, 7-14 days)",
+          "per_dose_mg": 1.6,
+          "weekly_total_mg": 11.2
+        },
+        {
+          "pattern": "3x weekly (Mon · Wed · Fri)",
+          "per_dose_mg": 1.1,
+          "weekly_total_mg": 3.3
+        }
+      ],
+      "rule": "Standard immune-maintenance: 2x weekly @ 1.6mg = 3.2mg/wk. Daily low-dose (0.5mg) gives smoother coverage at the same weekly total. Daily acute (1.6mg/day × 7-14 days) is the clinical short-course used during active cold/flu/viral exposure — drop back to maintenance after."
+    },
     "dose_mg_per_inj": 1.6,
     "dose_label": "1.6 mg",
     "dose_range_mg": [
