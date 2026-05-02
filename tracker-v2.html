@@ -345,10 +345,12 @@ body::before{
   <button id="share-stack-btn" style="display:block;margin:0 16px 14px;padding:10px 16px;background:transparent;border:1px solid var(--border2);color:var(--text);font-family:'Rajdhani',sans-serif;font-weight:600;font-size:12px;letter-spacing:.08em;text-transform:uppercase;border-radius:8px;cursor:pointer;width:calc(100% - 32px);">📤 Share my stack</button>
 
   <!-- TOP TABS -->
-  <div class="tabs top-tabs">
+  <div class="tabs top-tabs" style="display:flex;gap:4px;flex-wrap:wrap;">
     <button class="tab active" data-tab="today">Today <span class="tab-badge" id="tab-today-badge">0</span></button>
+    <button class="tab" data-tab="week">Week</button>
+    <button class="tab" data-tab="month">Month</button>
     <button class="tab" data-tab="stack">Stack <span class="tab-badge" id="tab-stack-badge">0</span></button>
-    <button class="tab" data-tab="timeline">52-Week</button>
+    <button class="tab" data-tab="timeline">Year</button>
   </div>
 
   <!-- PANEL: TODAY -->
@@ -370,6 +372,32 @@ body::before{
     <div class="tiles-section" id="tiles-section" style="display:none;">
       <div class="tiles-title">Your Stack <span class="count" id="tiles-count">— 0 active</span></div>
       <div class="tiles-grid" id="tiles-grid"></div>
+    </div>
+  </div>
+
+  <!-- PANEL: WEEK -->
+  <div class="panel" data-panel="week">
+    <div id="week-section" style="padding:0 16px;">
+      <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;color:var(--text);margin:8px 0 4px;">This Week</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:14px;">Tap any day to see its scheduled doses.</div>
+      <div id="week-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;"></div>
+      <div id="week-detail" style="margin-top:18px;"></div>
+    </div>
+  </div>
+
+  <!-- PANEL: MONTH -->
+  <div class="panel" data-panel="month">
+    <div id="month-section" style="padding:0 16px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin:8px 0 12px;">
+        <button id="month-prev" style="background:transparent;border:1px solid var(--border);color:var(--muted);padding:8px 12px;border-radius:6px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.1em;cursor:pointer;">← PREV</button>
+        <div id="month-label" style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;color:var(--text);"></div>
+        <button id="month-next" style="background:transparent;border:1px solid var(--border);color:var(--muted);padding:8px 12px;border-radius:6px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.1em;cursor:pointer;">NEXT →</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;font-size:10px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:.1em;text-transform:uppercase;text-align:center;margin-bottom:4px;">
+        <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+      </div>
+      <div id="month-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;"></div>
+      <div id="month-detail" style="margin-top:18px;"></div>
     </div>
   </div>
 
@@ -1691,7 +1719,7 @@ body::before{
 
   // ── TAB SWITCHER ────────────────
   function switchTab(name){
-    // 52-Week tab is the SAME page as the "View my 52-week plan" button — single canonical view
+    // Year tab navigates to the canonical sequencer page
     if (name === 'timeline') {
       window.location.href = 'protocol-sequencer.html';
       return;
@@ -1699,17 +1727,133 @@ body::before{
     document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
     document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.dataset.panel === name));
     try { localStorage.setItem('apex_active_tab', name); } catch(e){}
+    if (name === 'week') renderWeek();
+    if (name === 'month') renderMonth();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
   document.addEventListener('click', e => {
     const t = e.target.closest('.tab');
     if (t && t.dataset.tab) switchTab(t.dataset.tab);
   });
-  // Restore last viewed tab on load — but never restore to 'timeline' (that's now a navigation, not a tab)
   try {
     const saved = localStorage.getItem('apex_active_tab');
-    if (saved && ['today','stack'].includes(saved)) switchTab(saved);
+    if (saved && ['today','stack','week','month'].includes(saved)) switchTab(saved);
   } catch(e){}
+
+  // ── WEEK VIEW ─────────────────────────────
+  function renderWeek(){
+    const state = getState();
+    const protos = state.protocols || [];
+    const grid = document.getElementById('week-grid');
+    const detail = document.getElementById('week-detail');
+    if (!grid) return;
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    const sunday = new Date(today);
+    sunday.setDate(today.getDate() - today.getDay());
+    const dayLabels = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const log = getDailyLog();
+    let html = '';
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(sunday);
+      d.setDate(sunday.getDate() + i);
+      const isToday = d.getTime() === today.getTime();
+      const dayDoses = protos.filter(p => shouldDoToday(p, d).go);
+      const k = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+      const doneCt = dayDoses.filter(p => log[k] && log[k][p.id]).length;
+      const allDone = dayDoses.length > 0 && doneCt === dayDoses.length;
+      html += `<button data-week-day="${k}" style="background:${isToday?'rgba(0,255,157,.12)':'rgba(255,255,255,.02)'};border:1px solid ${isToday?'var(--accent2)':'var(--border)'};border-radius:8px;padding:10px 4px;cursor:pointer;text-align:center;-webkit-tap-highlight-color:transparent;display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;">${dayLabels[i]}</div>
+        <div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:18px;color:${isToday?'var(--accent2)':'var(--text)'};">${d.getDate()}</div>
+        <div style="display:flex;gap:2px;justify-content:center;min-height:6px;">${dayDoses.map(()=>`<span style="width:5px;height:5px;border-radius:50%;background:${allDone?'var(--accent2)':'var(--accent)'};"></span>`).join('')}</div>
+        <div style="font-size:9px;color:var(--muted);">${dayDoses.length||''}</div>
+      </button>`;
+    }
+    grid.innerHTML = html;
+    // Default detail: today
+    showWeekDay(today);
+    grid.querySelectorAll('[data-week-day]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const [y,m,da] = btn.getAttribute('data-week-day').split('-').map(n=>parseInt(n,10));
+        showWeekDay(new Date(y, m-1, da));
+      });
+    });
+
+    function showWeekDay(d){
+      const dayDoses = (state.protocols || []).filter(p => shouldDoToday(p, d).go);
+      if (!dayDoses.length) {
+        detail.innerHTML = `<div style="padding:14px;background:var(--panel);border:1px solid var(--border);border-radius:10px;color:var(--muted);text-align:center;">No injections scheduled for ${d.toLocaleDateString(undefined,{weekday:'long', month:'short', day:'numeric'})}.</div>`;
+        return;
+      }
+      const recon = getRecon();
+      const rows = dayDoses.map(p => {
+        const reconInfo = recon[p.slug] || {};
+        const apx = (window.ApexUnits && window.ApexUnits.compute) ? window.ApexUnits.compute(p.slug, { intensity: p.intensity, userRecon: reconInfo }) : null;
+        const u = apx && apx.units != null ? apx.units : null;
+        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:rgba(0,212,255,.04);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;">
+          <div><div style="font-weight:700;color:var(--text);">${p.name}</div><div style="font-size:11px;color:var(--muted);">${p.freq||'daily'}</div></div>
+          <div style="text-align:right;"><strong style="color:var(--accent2);font-size:1.05em;">${u!=null?u+' units':'—'}</strong></div>
+        </div>`;
+      }).join('');
+      detail.innerHTML = `<div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">${d.toLocaleDateString(undefined,{weekday:'long', month:'short', day:'numeric'})}</div>${rows}`;
+    }
+  }
+
+  // ── MONTH VIEW ────────────────────────────
+  let monthOffset = 0;
+  function renderMonth(){
+    const state = getState();
+    const protos = state.protocols || [];
+    const grid = document.getElementById('month-grid');
+    const label = document.getElementById('month-label');
+    const detail = document.getElementById('month-detail');
+    if (!grid) return;
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    const view = new Date(today.getFullYear(), today.getMonth() + monthOffset, 1);
+    label.textContent = view.toLocaleDateString(undefined, { month:'long', year:'numeric' });
+    const firstDow = view.getDay();
+    const daysInMonth = new Date(view.getFullYear(), view.getMonth()+1, 0).getDate();
+    const log = getDailyLog();
+    let html = '';
+    // Empty leading cells
+    for (let i = 0; i < firstDow; i++) html += `<div></div>`;
+    for (let day = 1; day <= daysInMonth; day++) {
+      const d = new Date(view.getFullYear(), view.getMonth(), day);
+      const isToday = d.getTime() === today.getTime();
+      const dayDoses = protos.filter(p => shouldDoToday(p, d).go);
+      const k = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+      const doneCt = dayDoses.filter(p => log[k] && log[k][p.id]).length;
+      const allDone = dayDoses.length > 0 && doneCt === dayDoses.length;
+      html += `<button data-month-day="${k}" style="aspect-ratio:1;background:${isToday?'rgba(0,255,157,.12)':'rgba(255,255,255,.02)'};border:1px solid ${isToday?'var(--accent2)':'var(--border)'};border-radius:6px;padding:4px;cursor:pointer;-webkit-tap-highlight-color:transparent;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:2px;font-family:'Rajdhani',sans-serif;">
+        <div style="font-weight:700;font-size:13px;color:${isToday?'var(--accent2)':'var(--text)'};">${day}</div>
+        <div style="display:flex;gap:1px;flex-wrap:wrap;justify-content:center;">${dayDoses.slice(0,4).map(()=>`<span style="width:4px;height:4px;border-radius:50%;background:${allDone?'var(--accent2)':'var(--accent)'};"></span>`).join('')}</div>
+      </button>`;
+    }
+    grid.innerHTML = html;
+    detail.innerHTML = '';
+    grid.querySelectorAll('[data-month-day]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const [y,m,da] = btn.getAttribute('data-month-day').split('-').map(n=>parseInt(n,10));
+        const d = new Date(y, m-1, da);
+        const dayDoses = (state.protocols || []).filter(p => shouldDoToday(p, d).go);
+        if (!dayDoses.length) { detail.innerHTML = `<div style="padding:14px;background:var(--panel);border:1px solid var(--border);border-radius:10px;color:var(--muted);text-align:center;">No injections scheduled for ${d.toLocaleDateString(undefined,{weekday:'long', month:'short', day:'numeric'})}.</div>`; return; }
+        const recon = getRecon();
+        const rows = dayDoses.map(p => {
+          const reconInfo = recon[p.slug] || {};
+          const apx = (window.ApexUnits && window.ApexUnits.compute) ? window.ApexUnits.compute(p.slug, { intensity: p.intensity, userRecon: reconInfo }) : null;
+          const u = apx && apx.units != null ? apx.units : null;
+          return `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:rgba(0,212,255,.04);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;">
+            <div><div style="font-weight:700;color:var(--text);">${p.name}</div><div style="font-size:11px;color:var(--muted);">${p.freq||'daily'}</div></div>
+            <div style="text-align:right;"><strong style="color:var(--accent2);font-size:1.05em;">${u!=null?u+' units':'—'}</strong></div>
+          </div>`;
+        }).join('');
+        detail.innerHTML = `<div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">${d.toLocaleDateString(undefined,{weekday:'long', month:'short', day:'numeric'})}</div>${rows}`;
+      });
+    });
+  }
+  document.getElementById('month-prev').addEventListener('click', () => { monthOffset--; renderMonth(); });
+  document.getElementById('month-next').addEventListener('click', () => { monthOffset++; renderMonth(); });
 
   // ── INIT ───────────────────────────────
   if (document.readyState === 'loading') {
