@@ -1038,11 +1038,8 @@ body::before{
                 const vialMg = (userRecon && userRecon.vial) || ssotPepCB.vial_mg;
                 const bacMl  = (userRecon && userRecon.bac)  || ssotPepCB.bac_ml;
                 if (vialMg && bacMl) {
-                  // Standard combined-bottle dose = 50 units (0.5 mL draw) — the
-                  // community-accepted volume for KLOW/GLOW/Wolverine. Each component
-                  // delivers proportionally based on its share of the vial.
-                  const concPerComp = (vialMg / ssotPepCB.components.length) / bacMl;
-                  const drawMl = 0.5;
+                  // Standard combined-bottle dose = 30 units (0.3 mL draw)
+                  const drawMl = 0.3;
                   const u = Math.round(drawMl * 100);
                   return `<span style="color:var(--accent2);font-weight:800;font-size:1.05em;">${u}</span> <span style="color:var(--muted);">units</span> <span style="color:var(--muted);font-size:.78em;font-family:'Share Tech Mono',monospace;letter-spacing:.06em;">· standard daily draw</span>`;
                 }

@@ -340,8 +340,8 @@
       }
       const totalVol = bac + acetic;
       const concPerComp = (vial / p.components.length) / totalVol;  // mg/mL per component
-      // Default draw = 0.5 mL (50u) — works for any 1 mL pen, dilute enough to draw accurately
-      const drawMl = 0.5;
+      // Default draw = 0.3 mL (30u) — community-accepted standard for combined bottles
+      const drawMl = 0.3;
       const u = Math.round(drawMl * 100);
       const breakdown = p.components.map(c => {
         const delivered = (concPerComp * drawMl).toFixed(2);
