@@ -454,8 +454,12 @@ body::before{
       </div>
       <div id="em-intensity-preview" style="font-size:13px;color:var(--accent2);margin-top:8px;font-weight:700;letter-spacing:.04em;"></div>
     </div>
+    <div class="em-field" id="em-cadence-wrap" style="display:none;">
+      <div class="em-label">Cadence (pick one)</div>
+      <div id="em-cadence-options" style="display:flex;flex-direction:column;gap:6px;"></div>
+    </div>
     <div class="em-field">
-      <div class="em-label">Frequency</div>
+      <div class="em-label">Frequency (free-text override)</div>
       <input type="text" class="em-input" id="em-freq" placeholder="e.g. daily, weekly, 2x/wk">
     </div>
     <div class="em-row">
@@ -1650,6 +1654,43 @@ body::before{
     const currentTier = (p.intensity || 'recommended').toLowerCase();
     paintIntensityButtons(currentTier);
     updateIntensityPreview(p);
+    // Cadence picker — populate from SSOT cadence_flex if available
+    (function(){
+      const wrap = document.getElementById('em-cadence-wrap');
+      const optsBox = document.getElementById('em-cadence-options');
+      const ssotPep = (window.APEX_PEPTIDES || {})[p.slug];
+      if (!ssotPep || !ssotPep.cadence_flex || !ssotPep.cadence_flex.options || !optsBox) {
+        if (wrap) wrap.style.display = 'none';
+        return;
+      }
+      let saved = '';
+      try { saved = (JSON.parse(localStorage.getItem('apex_cadence_choice')||'{}'))[p.slug] || ''; } catch(_){}
+      wrap.style.display = 'block';
+      optsBox.innerHTML = ssotPep.cadence_flex.options.map(o => {
+        const isOn = o.pattern === saved;
+        const lbl = o.per_dose_mg < 1 ? Math.round(o.per_dose_mg*1000)+' mcg' : o.per_dose_mg+' mg';
+        return `<button type="button" data-em-cadence="${o.pattern.replace(/"/g,'&quot;')}" data-em-cadence-mg="${o.per_dose_mg}" style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;background:${isOn?'rgba(0,255,157,.10)':'rgba(255,255,255,.02)'};border:1px solid ${isOn?'var(--accent2)':'var(--border)'};color:#fff;font-family:'Barlow',sans-serif;font-size:12.5px;cursor:pointer;text-align:left;-webkit-tap-highlight-color:transparent;">
+          <span style="font-weight:600;">${o.pattern}</span>
+          <span style="color:var(--muted);font-size:11px;">${lbl}/dose · ${o.weekly_total_mg} mg/wk</span>
+        </button>`;
+      }).join('');
+      optsBox.querySelectorAll('[data-em-cadence]').forEach(b => {
+        b.addEventListener('click', () => {
+          const pat = b.getAttribute('data-em-cadence');
+          // Visual toggle
+          optsBox.querySelectorAll('[data-em-cadence]').forEach(x => {
+            const on = x === b;
+            x.style.background = on ? 'rgba(0,255,157,.10)' : 'rgba(255,255,255,.02)';
+            x.style.borderColor = on ? 'var(--accent2)' : 'var(--border)';
+          });
+          // Stash on the modal so save handler picks it up
+          wrap.dataset.pickedPattern = pat;
+          // Live mirror to freq input
+          document.getElementById('em-freq').value = pat;
+        });
+      });
+      wrap.dataset.pickedPattern = saved;
+    })();
     document.getElementById('em-freq').value = p.freq || '';
     document.getElementById('em-cycle').value = (typeof p.cycleWeeks === 'number' ? p.cycleWeeks : 8);
     document.getElementById('em-start').value = p.startDate || (new Date().toISOString().slice(0,10));
@@ -1673,6 +1714,17 @@ body::before{
     state.protocols[idx].dose = pickFromRange(rawDose, editingIntensity);
     // Flag as user-edited so ApexUnits.compute uses this value as override instead of SSOT canonical
     if (rawDose !== (editingDefaults && editingDefaults.dose)) state.protocols[idx].userEditedDose = true;
+    // Persist cadence pick to localStorage so Today/Stack/52-Week + protocol-summary all read it
+    try {
+      const wrap = document.getElementById('em-cadence-wrap');
+      const picked = wrap && wrap.dataset.pickedPattern;
+      if (picked) {
+        const all = JSON.parse(localStorage.getItem('apex_cadence_choice') || '{}');
+        all[state.protocols[idx].slug] = picked;
+        localStorage.setItem('apex_cadence_choice', JSON.stringify(all));
+        state.protocols[idx].freq = picked;
+      }
+    } catch(_){}
     state.protocols[idx].freq = document.getElementById('em-freq').value.trim() || state.protocols[idx].freq;
     const cw = parseInt(document.getElementById('em-cycle').value, 10);
     if (!isNaN(cw) && cw > 0) {
