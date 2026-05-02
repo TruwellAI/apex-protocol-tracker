@@ -482,11 +482,8 @@ body { padding-bottom: 90px; }
   <!-- ═══ INJECT PANEL ═══ -->
   <div class="panel" data-panel="inject">
     <div class="note">
-      <strong>Daily peptide stack.</strong> AM fasted shots before walk · pre-workout BPC · PM Anavar + BPC. Tap to log.
+      <strong>Daily peptide stack.</strong> Listed in order: morning fasted → post-workout → PM. Tap any card to log.
     </div>
-
-    <!-- STACK INTELLIGENCE (auto-generated from Apex encyclopedia) -->
-    <div id="stack-intel" style="margin:0 16px 14px;"></div>
     <div class="section-h">
       <h2>Today's injections</h2>
       <span class="count" id="inj-count">0 / 0</span>
@@ -497,6 +494,12 @@ body { padding-bottom: 90px; }
       <h2>Weekly schedule reference</h2>
     </div>
     <div class="list" id="pep-week"></div>
+
+    <!-- STACK INTELLIGENCE moved to bottom — auto-generated from Apex encyclopedia -->
+    <div class="section-h" style="margin-top:18px;">
+      <h2>🧠 Stack intelligence</h2>
+    </div>
+    <div id="stack-intel" style="margin:0 16px 14px;"></div>
 
     <div style="height:30px;"></div>
   </div>
@@ -602,8 +605,8 @@ body { padding-bottom: 90px; }
   <!-- TABS -->
   <div class="tabs" style="grid-template-columns:repeat(7,1fr);">
     <button class="tab on" data-tab="today"><div class="icon">●</div>Today</button>
-    <button class="tab" data-tab="plan"><div class="icon">📋</div>Meals</button>
     <button class="tab" data-tab="inject"><div class="icon">💉</div>Inject</button>
+    <button class="tab" data-tab="plan"><div class="icon">📋</div>Meals</button>
     <button class="tab" data-tab="train"><div class="icon">🏋︎</div>Train</button>
     <button class="tab" data-tab="rules"><div class="icon">📜</div>Rules</button>
     <button class="tab" data-tab="eat"><div class="icon">🍽</div>Eat</button>
