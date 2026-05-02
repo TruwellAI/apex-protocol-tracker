@@ -1020,39 +1020,44 @@ body::before{
 
         const row = document.createElement('div');
         row.className = 'today-row' + (isDone ? ' done' : '');
-        // Build dose detail. Order of precedence:
-        //   1. Pill / spray peptide → show form tag
-        //   2. Computable units → show "X units on the pen"
-        //   3. Fallback → just the dose label (rare; recon defaults usually cover it)
-        const tier = (p.intensity || 'recommended').toLowerCase();
-        const tierBadge = (/[-–—]/.test(String(dose.current)))
-          ? ` <span style="font-size:10px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:.08em;text-transform:uppercase;">· ${tier}</span>`
-          : '';
+        // Inline timing tag (icon-only on Today — keeps row compact)
+        const todayTimingIcon = (function(){
+          const ssotPep = (window.APEX_PEPTIDES || {})[p.slug] || {};
+          const note = String(ssotPep.timing_note || ssotPep.recon_tip || '').toLowerCase();
+          if (/fasted|before food|empty stomach/.test(note)) return '🌅';
+          if (/morning|am\b|pre-cardio|pre-workout/.test(note)) return '☀️';
+          if (/evening|pm\b|pre-bed|bedtime|night/.test(note)) return '🌙';
+          if (/post-workout|post workout/.test(note)) return '💪';
+          return '';
+        })();
+        const todayCadence = (function(){
+          try { return (JSON.parse(localStorage.getItem('apex_cadence_choice')||'{}'))[p.slug] || ''; } catch(_) { return ''; }
+        })();
         let doseDetail;
         if (ORAL_SLUGS.has(p.slug)) {
-          doseDetail = '<span style="color:var(--accent3);font-weight:800;">1</span> <span style="color:var(--muted);">capsule</span>' + tierBadge;
+          doseDetail = '<strong style="color:var(--accent3);">1 capsule</strong>';
         } else if (SPRAY_SLUGS.has(p.slug)) {
-          // Intranasal — count sprays. Default Selank/Semax: ~1 spray per 100mcg dose.
           const sprayCount = (function(){ const m = String(effectiveDose).match(/(\d+(?:\.\d+)?)\s*mcg/i); return m ? Math.max(1, Math.round(parseFloat(m[1])/100)) : null; })();
           doseDetail = sprayCount
-            ? '<span style="color:var(--accent);font-weight:800;font-size:1.1em;">' + sprayCount + '</span> <span style="color:var(--muted);">spray' + (sprayCount>1?'s':'') + ' · intranasal</span>' + tierBadge
-            : '<span style="color:var(--accent);font-weight:800;">intranasal</span>' + tierBadge;
+            ? '<strong style="color:var(--accent);">' + sprayCount + ' spray' + (sprayCount>1?'s':'') + '</strong> <span style="color:var(--muted);">intranasal</span>'
+            : '<strong style="color:var(--accent);">intranasal</strong>';
         } else if (apx && apx.source === 'combined' && apx.units != null) {
-          // Combined-bottle stack — show units + component breakdown
-          doseDetail = '<span style="color:var(--accent2);font-weight:800;font-size:1.1em;">' + apx.units + '</span> <span style="color:var(--muted);">units · </span><span style="color:var(--muted);font-size:.9em;">' + apx.breakdown + '</span>';
+          doseDetail = '<strong style="color:var(--accent2);">' + apx.units + ' units</strong> <span style="color:var(--muted);">on the pen</span>';
         } else if (units) {
           const num = units.range ? units.minUnits + '–' + units.maxUnits : units.units;
-          doseDetail = '<span style="color:var(--accent2);font-weight:800;font-size:1.1em;">' + num + '</span> <span style="color:var(--muted);">units on the pen</span>' + tierBadge;
+          doseDetail = '<strong style="color:var(--accent2);">' + num + ' units</strong> <span style="color:var(--muted);">on the pen</span>';
         } else {
-          // No usable concentration — DO NOT fall back to mg/mcg. Tell user to set vial.
-          doseDetail = '<a href="reconstitute.html" style="color:var(--warn,#fbbf24);font-weight:700;text-decoration:none;">⚠ Set vial size →</a>';
+          doseDetail = '<a href="reconstitute.html" style="color:#fbbf24;font-weight:700;text-decoration:none;">⚠ Set vial size →</a>';
         }
+        // Compose the detail line with timing icon prefix (if any) + cadence chip
+        const detailLine = (todayTimingIcon ? `<span style="margin-right:6px;">${todayTimingIcon}</span>` : '') + doseDetail
+          + (todayCadence ? ` <span style="color:var(--muted);font-size:.85em;">· ${todayCadence}</span>` : '');
 
         row.innerHTML = `
           <div class="today-check">✓</div>
           <div class="today-info">
             <div class="today-name">${p.name}</div>
-            <div class="today-detail">${doseDetail} · ${sched.reason}</div>
+            <div class="today-detail">${detailLine}</div>
           </div>
           <div class="today-stats">
             <div class="ts-row">
