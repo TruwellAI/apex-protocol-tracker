@@ -742,8 +742,9 @@ function get(){
 
 function today(){
   const s = get();
-  s.daily[todayKey()] = s.daily[todayKey()] || { food: [], peptides: {}, steps: 0, water: 0, checks: {} };
+  s.daily[todayKey()] = s.daily[todayKey()] || { food: [], peptides: {}, steps: 0, water: 0, checks: {}, mealsLogged: {} };
   if (!s.daily[todayKey()].checks) s.daily[todayKey()].checks = {};
+  if (!s.daily[todayKey()].mealsLogged) s.daily[todayKey()].mealsLogged = {};
   if (typeof s.daily[todayKey()].water !== 'number') s.daily[todayKey()].water = 0;
   return s.daily[todayKey()];
 }
@@ -1397,8 +1398,11 @@ function renderPlan(){
   document.getElementById('plan-c-total').textContent = Math.round(T.c);
   document.getElementById('plan-f-total').textContent = Math.round(T.f);
 
+  const t = today();
+  const logged = t.mealsLogged || {};
   list.innerHTML = plan.map(m => {
     const mm = mealMacros(m);
+    const isLogged = !!logged[m.id];
     const itemRows = m.items.map(it => {
       const f = FOODS.find(x => x.id === it.id);
       return `<div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text);padding:4px 0;">
@@ -1406,10 +1410,10 @@ function renderPlan(){
         <span style="color:var(--muted);">${Math.round(f.cal*it.qty)} cal</span>
       </div>`;
     }).join('');
-    return `<div style="background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px;">
+    return `<div style="background:${isLogged?'rgba(0,255,157,.06)':'var(--panel)'};border:1px solid ${isLogged?'var(--accent2)':'var(--border)'};border-radius:12px;padding:14px;">
       <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
         <div>
-          <div style="font-family:'SF Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--accent2);font-weight:700;">${m.time}</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.16em;color:${isLogged?'var(--accent2)':'var(--accent2)'};font-weight:700;">${m.time}${isLogged?' · ✓ LOGGED':''}</div>
           <div style="font-size:11px;color:var(--muted);">${m.when}</div>
         </div>
         <div style="text-align:right;">
@@ -1418,19 +1422,36 @@ function renderPlan(){
         </div>
       </div>
       <div style="border-top:1px solid var(--border);padding-top:8px;">${itemRows}</div>
-      <button class="btn btn-ghost" style="width:100%;margin-top:10px;font-size:12px;padding:10px;" onclick="logMeal('${m.id}')">＋ Log this meal</button>
+      <button class="btn ${isLogged?'':'btn-ghost'}" style="width:100%;margin-top:10px;font-size:12px;padding:10px;${isLogged?'':''}" onclick="logMeal('${m.id}')">${isLogged?'✓ LOGGED · TAP TO UNDO':'＋ Log this meal'}</button>
     </div>`;
   }).join('');
 }
 function logMeal(id){
   const meal = activePlan().find(m => m.id === id); if (!meal) return;
   const s = load();
-  s.daily = s.daily || {}; s.daily[todayKey()] = s.daily[todayKey()] || { food:[], peptides:{}, steps:0 };
-  meal.items.forEach(it => {
-    for (let i = 0; i < it.qty; i++) s.daily[todayKey()].food.push({ id: it.id, qty: 1 });
-  });
+  s.daily = s.daily || {};
+  s.daily[todayKey()] = s.daily[todayKey()] || { food:[], peptides:{}, steps:0, water:0, checks:{}, mealsLogged:{} };
+  if (!s.daily[todayKey()].mealsLogged) s.daily[todayKey()].mealsLogged = {};
+  const alreadyLogged = !!s.daily[todayKey()].mealsLogged[id];
+  if (alreadyLogged) {
+    // UNLOG — remove this meal's items from food log
+    meal.items.forEach(it => {
+      let need = it.qty;
+      while (need > 0) {
+        const idx = s.daily[todayKey()].food.findIndex(f => f.id === it.id);
+        if (idx === -1) break;
+        s.daily[todayKey()].food.splice(idx, 1);
+        need--;
+      }
+    });
+    s.daily[todayKey()].mealsLogged[id] = false;
+  } else {
+    meal.items.forEach(it => {
+      for (let i = 0; i < it.qty; i++) s.daily[todayKey()].food.push({ id: it.id, qty: 1 });
+    });
+    s.daily[todayKey()].mealsLogged[id] = true;
+  }
   save(s); haptic(); renderAll();
-  alert(`Logged ${meal.time} · ${Math.round(mealMacros(meal).cal)} cal`);
 }
 function autoLogAllMeals(){
   const plan = activePlan();
