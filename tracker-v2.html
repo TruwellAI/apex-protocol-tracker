@@ -1262,9 +1262,8 @@ body::before{
           <div class="tile-meta-value ${vialClass}">${vialDaysLeft} <span class="vu">days · ${fmtDate(nextMixDate)}</span></div>
         </div>
         <div class="tile-meta-row">
-          <div class="tile-meta-label">${nextTitText ? 'Next titration' : 'Frequency'}</div>
-          <div class="tile-meta-value">${nextTitText ? nextTitText : (function(){
-            // Read cadence choice from localStorage so tracker matches protocol-summary
+          <div class="tile-meta-label">Frequency</div>
+          <div class="tile-meta-value">${(function(){
             try {
               const choice = (JSON.parse(localStorage.getItem('apex_cadence_choice')||'{}'))[p.slug];
               if (choice) return choice;
@@ -1272,6 +1271,10 @@ body::before{
             return p.freq || 'daily';
           })()}</div>
         </div>
+        ${nextTitText ? `<div class="tile-meta-row">
+          <div class="tile-meta-label">Next titration</div>
+          <div class="tile-meta-value">${nextTitText}</div>
+        </div>` : ''}
         <div class="tile-meta-row">
           <div class="tile-meta-label">Timing</div>
           <div class="tile-meta-value" style="font-size:12px;">${(function(){
