@@ -1862,6 +1862,21 @@ body::before{
     sunday.setDate(today.getDate() - today.getDay());
     const dayLabels = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
     const log = getDailyLog();
+    const allSlugs = protos.map(p => p.slug);
+    // Legend above week strip
+    let weekLegend = document.getElementById('week-legend');
+    if (!weekLegend) {
+      weekLegend = document.createElement('div');
+      weekLegend.id = 'week-legend';
+      weekLegend.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px;padding:10px 12px;background:rgba(11,15,20,.4);border:1px solid var(--border);border-radius:8px;';
+      grid.parentNode.insertBefore(weekLegend, grid);
+    }
+    weekLegend.innerHTML = protos.map(p => `
+      <div style="display:inline-flex;align-items:center;gap:6px;padding:4px 8px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:14px;font-size:11px;color:var(--text);">
+        <span style="width:8px;height:8px;border-radius:50%;background:${colorFor(p.slug, allSlugs)};flex-shrink:0;"></span>
+        <span style="font-weight:600;">${p.name}</span>
+      </div>`).join('') || '<span style="color:var(--muted);font-size:12px;">No active peptides — add one to see this week.</span>';
+
     let html = '';
     for (let i = 0; i < 7; i++) {
       const d = new Date(sunday);
@@ -1871,11 +1886,16 @@ body::before{
       const k = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
       const doneCt = dayDoses.filter(p => log[k] && log[k][p.id]).length;
       const allDone = dayDoses.length > 0 && doneCt === dayDoses.length;
-      html += `<button data-week-day="${k}" style="background:${isToday?'rgba(0,255,157,.12)':'rgba(255,255,255,.02)'};border:1px solid ${isToday?'var(--accent2)':'var(--border)'};border-radius:8px;padding:10px 4px;cursor:pointer;text-align:center;-webkit-tap-highlight-color:transparent;display:flex;flex-direction:column;align-items:center;gap:4px;">
+      const chips = dayDoses.map(p => {
+        const c = colorFor(p.slug, allSlugs);
+        const isLogged = log[k] && log[k][p.id];
+        return `<div style="display:inline-flex;align-items:center;gap:3px;padding:1px 4px;border-radius:6px;background:${c}22;border:1px solid ${c};color:${c};font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:.04em;${isLogged?'opacity:.55;text-decoration:line-through;':''}">${shortName(p.name)}</div>`;
+      }).join('');
+      html += `<button data-week-day="${k}" style="background:${isToday?'rgba(0,255,157,.10)':'rgba(255,255,255,.02)'};border:1px solid ${isToday?'var(--accent2)':(dayDoses.length?'var(--accent)':'var(--border)')};border-radius:8px;padding:8px 4px;cursor:pointer;text-align:center;-webkit-tap-highlight-color:transparent;display:flex;flex-direction:column;align-items:center;gap:4px;min-height:96px;">
         <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;">${dayLabels[i]}</div>
         <div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:18px;color:${isToday?'var(--accent2)':'var(--text)'};">${d.getDate()}</div>
-        <div style="display:flex;gap:2px;justify-content:center;min-height:6px;">${dayDoses.map(()=>`<span style="width:5px;height:5px;border-radius:50%;background:${allDone?'var(--accent2)':'var(--accent)'};"></span>`).join('')}</div>
-        <div style="font-size:9px;color:var(--muted);">${dayDoses.length||''}</div>
+        <div style="display:flex;flex-direction:column;gap:2px;align-items:center;">${chips}</div>
+        ${dayDoses.length ? `<div style="font-size:9px;color:var(--muted);font-family:'Share Tech Mono',monospace;margin-top:auto;">${doneCt}/${dayDoses.length}</div>` : ''}
       </button>`;
     }
     grid.innerHTML = html;
@@ -1902,6 +1922,29 @@ body::before{
 
   // ── MONTH VIEW ────────────────────────────
   let monthOffset = 0;
+  // Color palette for peptide-keyed dots/labels (cycles if >8 peptides)
+  const PEP_COLORS = ['#00FF9D','#00D4FF','#FF6B35','#A78BFA','#FBBF24','#F472B6','#34D399','#60A5FA'];
+  function colorFor(slug, allSlugs){
+    const idx = allSlugs.indexOf(slug);
+    return PEP_COLORS[idx % PEP_COLORS.length];
+  }
+  function shortName(name){
+    // "NAD+" → "NAD+", "Thymosin α1" → "Tα1", "Retatrutide" → "Reta", "KLOW Stack" → "KLOW"
+    if (!name) return '?';
+    const cleaned = name.replace(/\s*Stack\s*$/i,'').trim();
+    if (cleaned.length <= 5) return cleaned;
+    if (/Thymosin/i.test(cleaned)) return 'Tα1';
+    if (/Retatrutide/i.test(cleaned)) return 'Reta';
+    if (/Semaglutide/i.test(cleaned)) return 'Sema';
+    if (/Tirzepatide/i.test(cleaned)) return 'Tirz';
+    if (/Tesamorelin/i.test(cleaned)) return 'Tesa';
+    if (/Ipamorelin/i.test(cleaned)) return 'Ipa';
+    if (/Sermorelin/i.test(cleaned)) return 'Serm';
+    if (/Cartalax/i.test(cleaned)) return 'Cart';
+    if (/Glutathione/i.test(cleaned)) return 'GSH';
+    return cleaned.slice(0,4);
+  }
+
   function renderMonth(){
     const state = getState();
     const protos = state.protocols || [];
@@ -1916,6 +1959,24 @@ body::before{
     const firstDow = view.getDay();
     const daysInMonth = new Date(view.getFullYear(), view.getMonth()+1, 0).getDate();
     const log = getDailyLog();
+    const allSlugs = protos.map(p => p.slug);
+
+    // ── LEGEND: peptide name + color chip — anchored above grid ──
+    let legendHost = document.getElementById('month-legend');
+    if (!legendHost) {
+      legendHost = document.createElement('div');
+      legendHost.id = 'month-legend';
+      legendHost.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 12px;padding:10px 12px;background:rgba(11,15,20,.4);border:1px solid var(--border);border-radius:8px;';
+      grid.parentNode.insertBefore(legendHost, grid);
+    }
+    legendHost.innerHTML = protos.map(p => `
+      <div style="display:inline-flex;align-items:center;gap:6px;padding:4px 8px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:14px;font-size:11px;color:var(--text);">
+        <span style="width:8px;height:8px;border-radius:50%;background:${colorFor(p.slug, allSlugs)};flex-shrink:0;"></span>
+        <span style="font-weight:600;">${p.name}</span>
+        <span style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.08em;">${shortName(p.name)}</span>
+      </div>
+    `).join('') || '<span style="color:var(--muted);font-size:12px;">No active peptides — add one to see scheduled doses on the calendar.</span>';
+
     let html = '';
     // Empty leading cells
     for (let i = 0; i < firstDow; i++) html += `<div></div>`;
@@ -1926,9 +1987,20 @@ body::before{
       const k = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
       const doneCt = dayDoses.filter(p => log[k] && log[k][p.id]).length;
       const allDone = dayDoses.length > 0 && doneCt === dayDoses.length;
-      html += `<button data-month-day="${k}" style="aspect-ratio:1;background:${isToday?'rgba(0,255,157,.12)':'rgba(255,255,255,.02)'};border:1px solid ${isToday?'var(--accent2)':'var(--border)'};border-radius:6px;padding:4px;cursor:pointer;-webkit-tap-highlight-color:transparent;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:2px;font-family:'Rajdhani',sans-serif;">
-        <div style="font-weight:700;font-size:13px;color:${isToday?'var(--accent2)':'var(--text)'};">${day}</div>
-        <div style="display:flex;gap:1px;flex-wrap:wrap;justify-content:center;">${dayDoses.slice(0,4).map(()=>`<span style="width:4px;height:4px;border-radius:50%;background:${allDone?'var(--accent2)':'var(--accent)'};"></span>`).join('')}</div>
+      // Build chip strip — abbreviated peptide names colored by slug
+      const chips = dayDoses.slice(0, 4).map(p => {
+        const c = colorFor(p.slug, allSlugs);
+        const isLogged = log[k] && log[k][p.id];
+        return `<span style="display:inline-flex;align-items:center;gap:3px;padding:1px 5px;border-radius:8px;background:${c}22;border:1px solid ${c};color:${c};font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.04em;${isLogged?'opacity:.55;text-decoration:line-through;':''}">${shortName(p.name)}</span>`;
+      }).join(' ');
+      const overflow = dayDoses.length > 4 ? `<span style="color:var(--muted);font-size:9px;font-family:'Share Tech Mono',monospace;">+${dayDoses.length-4}</span>` : '';
+      const ringColor = allDone ? 'var(--accent2)' : (dayDoses.length > 0 ? 'var(--accent)' : 'var(--border)');
+      html += `<button data-month-day="${k}" style="min-height:88px;background:${isToday?'rgba(0,255,157,.10)':'rgba(255,255,255,.02)'};border:1px solid ${isToday?'var(--accent2)':ringColor};border-radius:8px;padding:6px;cursor:pointer;-webkit-tap-highlight-color:transparent;display:flex;flex-direction:column;align-items:flex-start;gap:4px;font-family:'Rajdhani',sans-serif;text-align:left;overflow:hidden;">
+        <div style="display:flex;justify-content:space-between;align-items:center;width:100%;">
+          <span style="font-weight:800;font-size:14px;color:${isToday?'var(--accent2)':'var(--text)'};">${day}</span>
+          ${dayDoses.length ? `<span style="font-size:10px;color:var(--muted);font-family:'Share Tech Mono',monospace;">${doneCt}/${dayDoses.length}</span>` : ''}
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:3px;align-items:center;">${chips}${overflow}</div>
       </button>`;
     }
     grid.innerHTML = html;
