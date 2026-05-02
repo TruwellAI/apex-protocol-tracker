@@ -1010,7 +1010,44 @@ body::before{
             <div class="proto-r-value" data-dose-cell="${slug}">${(function(){
               const cs=cycleState[slug]||{};
               const userRecon=(cs.vialMg>0&&cs.bacMl>0)?{vial:cs.vialMg,bac:cs.bacMl}:null;
-              // ── Cadence override: if user picked a cadence option, render its per-dose mg ──
+              // ── If titrated, show CURRENT week's dose (Wk1 if brand new; else current week) ──
+              if (p.titration && Array.isArray(p.titration) && p.titration.length >= 2) {
+                const currentWeek = (cs.mode === 'mid' && cs.currentWeek) ? cs.currentWeek : 1;
+                // Pick the titration step that contains currentWeek (parse the "w" label)
+                let stepIdx = 0;
+                for (let i = 0; i < p.titration.length; i++) {
+                  const m = String(p.titration[i].w).match(/(\d+)(?:\s*[-–]\s*(\d+))?/);
+                  if (!m) continue;
+                  const lo = parseInt(m[1], 10);
+                  const hi = m[2] ? parseInt(m[2], 10) : (i === p.titration.length - 1 ? 999 : lo);
+                  if (currentWeek >= lo && currentWeek <= hi) { stepIdx = i; break; }
+                }
+                let stepDose = p.titration[stepIdx].d;
+                // Scale by cadence override if active
+                try {
+                  const choice = (JSON.parse(localStorage.getItem('apex_cadence_choice')||'{}'))[slug];
+                  const ssotPep = (window.APEX_PEPTIDES || {})[slug];
+                  const opt = choice && ssotPep && ssotPep.cadence_flex && ssotPep.cadence_flex.options.find(o => o.pattern === choice);
+                  if (opt) {
+                    const peakMg = Math.max(...p.titration.map(t => {
+                      const mm = String(t.d).match(/(\d+(?:\.\d+)?)\s*(mg|mcg)/i);
+                      if (!mm) return 0;
+                      return mm[2].toLowerCase()==='mcg' ? parseFloat(mm[1])/1000 : parseFloat(mm[1]);
+                    }));
+                    const stepMm = String(stepDose).match(/(\d+(?:\.\d+)?)\s*(mg|mcg)/i);
+                    if (stepMm && peakMg > 0) {
+                      const stepMg = stepMm[2].toLowerCase()==='mcg' ? parseFloat(stepMm[1])/1000 : parseFloat(stepMm[1]);
+                      const scaledMg = (stepMg / peakMg) * opt.per_dose_mg;
+                      const scaledLbl = scaledMg < 1 ? Math.round(scaledMg*1000)+' mcg' : (Math.round(scaledMg*10)/10) + ' mg';
+                      stepDose = stepDose.replace(/\d+(?:\.\d+)?\s*(mg|mcg)/i, scaledLbl);
+                    }
+                  }
+                } catch(_){}
+                const stepUnitsHtml = doseToUnitsLabel(stepDose, slug, { userRecon });
+                const phaseLabel = p.titration[stepIdx].w;
+                return stepUnitsHtml + ' <span style="color:var(--muted);font-size:.78em;font-family:\'Share Tech Mono\',monospace;letter-spacing:.06em;">· ' + phaseLabel + '</span>';
+              }
+              // ── Non-titrated: cadence override or default ──
               try {
                 const choice = (JSON.parse(localStorage.getItem('apex_cadence_choice')||'{}'))[slug];
                 const ssotPep = (window.APEX_PEPTIDES || {})[slug];
@@ -1020,16 +1057,6 @@ body::before{
                   return doseToUnitsLabel(lbl, slug, { userRecon });
                 }
               } catch(_){}
-              if (p.titration && Array.isArray(p.titration) && p.titration.length >= 2) {
-                const firstStep = doseToUnitsLabel(p.titration[0].d, slug, { userRecon });
-                const lastStep = doseToUnitsLabel(p.titration[p.titration.length-1].d, slug, { userRecon });
-                const stripUnits = s => String(s).replace(/<[^>]+>/g, '').replace(/[^\d.]/g, '');
-                const firstNum = stripUnits(firstStep);
-                const lastNum = stripUnits(lastStep);
-                if (firstNum && lastNum && firstNum !== lastNum) {
-                  return `<span style="color:var(--accent2);font-weight:800;font-size:1.05em;">${firstNum}→${lastNum}</span> <span style="color:var(--muted);font-size:.85em;">units/wk · titrating ${p.titration.length} phases</span>`;
-                }
-              }
               return doseToUnitsLabel(p.dose,slug,{userRecon});
             })()}</div>
           </div>
