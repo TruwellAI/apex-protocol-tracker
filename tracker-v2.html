@@ -934,15 +934,24 @@ body::before{
         const dayNum = cycleSpec.isAsNeeded ? 0 : Math.max(1, Math.min(cycleDays, daysBetween(start, today) + 1));
         const dose = resolveDose(p, dayNum || 1, cycleDays);
         // Collapse ranged dose to single value based on user-selected intensity (mild|recommended|aggressive)
-        const effectiveDose = pickFromRange(dose.current, p.intensity);
+        let effectiveDose = pickFromRange(dose.current, p.intensity);
         const reconKey = p.slug || '';
         const reconInfo = recon[reconKey] || {};
         const conc = reconInfo.vial && (reconInfo.bac || reconInfo.acetic) ? reconInfo.vial / ((reconInfo.bac||0) + (reconInfo.acetic||0)) : null;
+        // ── CADENCE OVERRIDE: if user picked a cadence in protocol-summary, use its per-dose mg ──
+        let cadenceOverride = null;
+        try {
+          const choice = (JSON.parse(localStorage.getItem('apex_cadence_choice')||'{}'))[p.slug];
+          const ssotPep = (window.APEX_PEPTIDES || {})[p.slug];
+          const opt = choice && ssotPep && ssotPep.cadence_flex && ssotPep.cadence_flex.options.find(o => o.pattern === choice);
+          if (opt) {
+            cadenceOverride = opt.per_dose_mg < 1 ? Math.round(opt.per_dose_mg*1000)+' mcg' : opt.per_dose_mg+' mg';
+            effectiveDose = cadenceOverride;
+          }
+        } catch(_){}
         // ── SYNC: route through ApexUnits.compute() so today/stack/52-week ALL agree ──
-        // ApexUnits is the single source of truth: pulls SSOT dose_mg_per_inj for Optimal,
-        // collapses range for Conservative/Aggressive, applies user's apex_recon vial/BAC.
         const apx = (window.ApexUnits && window.ApexUnits.compute)
-          ? window.ApexUnits.compute(p.slug, { intensity: p.intensity, userRecon: reconInfo, doseOverride: p.userEditedDose ? p.dose : null })
+          ? window.ApexUnits.compute(p.slug, { intensity: p.intensity, userRecon: reconInfo, doseOverride: cadenceOverride || (p.userEditedDose ? p.dose : null) })
           : null;
         const units = apx && apx.units != null
           ? { units: apx.units, range: false }
@@ -1090,13 +1099,24 @@ body::before{
     const pct = isAsNeededCycle ? 0 : Math.round((dayNum / cycleDays) * 100);
 
     const dose = resolveDose(p, dayNum || 1, cycleDays || 56);
-    const effectiveDose = pickFromRange(dose.current, p.intensity);
+    let effectiveDose = pickFromRange(dose.current, p.intensity);
     const reconInfo = recon[p.slug] || {};
     const totalVol = (reconInfo.bac || 0) + (reconInfo.acetic || 0);
     const conc = reconInfo.vial && totalVol > 0 ? reconInfo.vial / totalVol : null;
+    // ── CADENCE OVERRIDE (mirrors today-tab logic) ──
+    let cadenceOverride = null;
+    try {
+      const choice = (JSON.parse(localStorage.getItem('apex_cadence_choice')||'{}'))[p.slug];
+      const ssotPep = (window.APEX_PEPTIDES || {})[p.slug];
+      const opt = choice && ssotPep && ssotPep.cadence_flex && ssotPep.cadence_flex.options.find(o => o.pattern === choice);
+      if (opt) {
+        cadenceOverride = opt.per_dose_mg < 1 ? Math.round(opt.per_dose_mg*1000)+' mcg' : opt.per_dose_mg+' mg';
+        effectiveDose = cadenceOverride;
+      }
+    } catch(_){}
     // ── SYNC: Stack tab uses ApexUnits.compute() — same engine as Today + 52-Week ──
     const apx = (window.ApexUnits && window.ApexUnits.compute)
-      ? window.ApexUnits.compute(p.slug, { intensity: p.intensity, userRecon: reconInfo, doseOverride: p.userEditedDose ? p.dose : null })
+      ? window.ApexUnits.compute(p.slug, { intensity: p.intensity, userRecon: reconInfo, doseOverride: cadenceOverride || (p.userEditedDose ? p.dose : null) })
       : null;
     const units = apx && apx.units != null
       ? { units: apx.units, range: false }
