@@ -1440,19 +1440,25 @@ function renderPlan(){
         <span style="color:var(--muted);">${Math.round(f.cal*it.qty)} cal</span>
       </div>`;
     }).join('');
-    return `<div style="background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px;${isLogged?'opacity:.42;filter:grayscale(.7);':''}transition:opacity .2s, filter .2s;">
+    const dimmedStyle = isLogged
+      ? 'background:#0F1214;border-color:rgba(255,255,255,.04);'
+      : 'background:var(--panel);border-color:var(--border);';
+    const textColor = isLogged ? 'rgba(255,255,255,.25)' : 'var(--text)';
+    const accentDim = isLogged ? 'rgba(0,255,157,.25)' : 'var(--accent2)';
+    const calColor  = isLogged ? 'rgba(0,212,255,.25)' : 'var(--accent)';
+    return `<div style="${dimmedStyle}border:1px solid;border-radius:12px;padding:14px;transition:all .25s;">
       <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
         <div>
-          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--accent2);font-weight:700;${isLogged?'text-decoration:line-through;':''}">${m.time}${isLogged?' · ✓ LOGGED':''}</div>
-          <div style="font-size:11px;color:var(--muted);">${m.when}</div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.16em;color:${accentDim};font-weight:700;${isLogged?'text-decoration:line-through;':''}">${m.time}${isLogged?' · ✓ DONE':''}</div>
+          <div style="font-size:11px;color:${isLogged?'rgba(255,255,255,.18)':'var(--muted)'};${isLogged?'text-decoration:line-through;':''}">${m.when}</div>
         </div>
         <div style="text-align:right;">
-          <div style="font-size:18px;font-weight:800;color:var(--accent);">${Math.round(mm.cal)}</div>
-          <div style="font-size:10px;color:var(--muted);">${Math.round(mm.p)}P · ${Math.round(mm.c)}C · ${Math.round(mm.f)}F</div>
+          <div style="font-size:18px;font-weight:800;color:${calColor};${isLogged?'text-decoration:line-through;':''}">${Math.round(mm.cal)}</div>
+          <div style="font-size:10px;color:${isLogged?'rgba(255,255,255,.18)':'var(--muted)'};">${Math.round(mm.p)}P · ${Math.round(mm.c)}C · ${Math.round(mm.f)}F</div>
         </div>
       </div>
-      <div style="border-top:1px solid var(--border);padding-top:8px;">${itemRows}</div>
-      <button class="btn btn-ghost" style="width:100%;margin-top:10px;font-size:12px;padding:10px;" onclick="logMeal('${m.id}')">${isLogged?'↩ Tap to undo':'＋ Log this meal'}</button>
+      <div style="border-top:1px solid rgba(255,255,255,.04);padding-top:8px;color:${textColor};${isLogged?'text-decoration:line-through;':''}">${itemRows.replace(/color:var\(--text\)/g, 'color:'+textColor).replace(/color:var\(--muted\)/g, 'color:'+(isLogged?'rgba(255,255,255,.18)':'var(--muted)'))}</div>
+      <button class="btn btn-ghost" style="width:100%;margin-top:10px;font-size:12px;padding:10px;${isLogged?'opacity:.5;':''}" onclick="logMeal('${m.id}')">${isLogged?'↩ Tap to undo':'＋ Log this meal'}</button>
     </div>`;
   }).join('');
 }
