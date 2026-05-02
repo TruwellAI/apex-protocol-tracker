@@ -577,9 +577,9 @@ body { padding-bottom: 90px; }
       <div class="chart-wrap">
         <svg id="chart" class="chart-svg" viewBox="0 0 320 200" preserveAspectRatio="none"></svg>
         <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:10px;color:var(--muted);">
-          <span>Start: <strong id="ch-start">239.0</strong></span>
-          <span>Now: <strong id="ch-now">239.0</strong></span>
-          <span>Goal: <strong style="color:var(--accent2);">228.6</strong></span>
+          <span>Start fat: <strong id="ch-start">31.1 lb</strong></span>
+          <span>Now: <strong id="ch-now">31.1 lb</strong></span>
+          <span>Goal: <strong style="color:var(--accent2);" id="ch-goal">22 lb</strong></span>
         </div>
       </div>
     </div>
@@ -593,7 +593,7 @@ body { padding-bottom: 90px; }
     <div class="field"><label>Carb g</label><input type="number" id="set-c" value="285"></div>
     <div class="field"><label>Fat g</label><input type="number" id="set-f" value="70"></div>
     <div class="field"><label>Start weight (lb)</label><input type="number" step="0.1" id="set-startw" value="239"></div>
-    <div class="field"><label>Goal weight (lb)</label><input type="number" step="0.1" id="set-goalw" value="228.6"></div>
+    <div class="field"><label>Goal body fat (lb)</label><input type="number" step="0.1" id="set-goalfat" value="22"></div>
     <div style="padding:0 16px 30px;"><button class="btn btn-block btn-ghost" onclick="saveSettings()">Save settings</button></div>
 
     <div class="disc">⚠ Research-use peptides + prescription-only Rx (TRT, Anavar). Personal log — not medical advice.</div>
@@ -1082,8 +1082,18 @@ function renderProgress(){
     }).join('');
   }
   document.getElementById('hist-count').textContent = `${w.length} entr${w.length===1?'y':'ies'}`;
-  document.getElementById('ch-start').textContent = s.startWeight.toFixed(1);
-  document.getElementById('ch-now').textContent = (w.length ? w[w.length-1].weight : s.startWeight).toFixed(1);
+  // Chart legend in fat-pounds
+  const startFat = s.startWeight * 13 / 100;
+  document.getElementById('ch-start').textContent = startFat.toFixed(1) + ' lb';
+  const last = w.length ? w[w.length-1] : null;
+  let nowFat = startFat;
+  if (last) {
+    if (last.bflb) nowFat = last.bflb;
+    else if (last.bf && last.weight) nowFat = last.weight * last.bf / 100;
+  }
+  document.getElementById('ch-now').textContent = nowFat.toFixed(1) + ' lb';
+  const goalEl = document.getElementById('ch-goal');
+  if (goalEl) goalEl.textContent = (s.goalFat || 22) + ' lb';
 
   // Settings
   document.getElementById('set-cal').value = s.targetCal;
@@ -1091,7 +1101,7 @@ function renderProgress(){
   document.getElementById('set-c').value = s.targetC;
   document.getElementById('set-f').value = s.targetF;
   document.getElementById('set-startw').value = s.startWeight;
-  document.getElementById('set-goalw').value = s.goalWeight;
+  document.getElementById('set-goalfat').value = s.goalFat || 22;
 
   // Chart
   drawChart();
@@ -1102,32 +1112,37 @@ function drawChart(){
   const svg = document.getElementById('chart');
   if (!svg) return;
   const W = 320, H = 200, P = 14;
-  const data = [{ date: s.startDate, weight: s.startWeight }, ...s.weights];
+  // Plot FAT POUNDS over time — derived from bflb if logged, else weight × bf%
+  function fatLb(e){
+    if (e.bflb) return e.bflb;
+    if (e.bf && e.weight) return e.weight * e.bf / 100;
+    return null;
+  }
+  const startFat = s.startWeight * 13 / 100; // assume start 13% BF
+  const data = [{ date: s.startDate, fat: startFat }, ...s.weights.map(e => ({ date: e.date, fat: fatLb(e) })).filter(d => d.fat != null)];
   if (data.length < 2) {
-    // single point — show baseline
     svg.innerHTML = `<line x1="${P}" y1="${H/2}" x2="${W-P}" y2="${H/2}" stroke="#222" stroke-dasharray="4,4"/>
-      <text x="${W/2}" y="${H/2-8}" text-anchor="middle" fill="#666" font-size="11">Log a weigh-in to see progress</text>`;
+      <text x="${W/2}" y="${H/2-8}" text-anchor="middle" fill="#666" font-size="11">Log a weigh-in (with BF% or fat lb) to see progress</text>`;
     return;
   }
-  const maxW = Math.max(...data.map(d=>d.weight)) + 1;
-  const minW = Math.min(s.goalWeight - 1, ...data.map(d=>d.weight));
+  const goalFat = s.goalFat || 22;
+  const maxF = Math.max(...data.map(d=>d.fat)) + 1;
+  const minF = Math.min(goalFat - 1, ...data.map(d=>d.fat));
   const xs = (i) => P + (i / (data.length - 1)) * (W - P*2);
-  const ys = (w) => H - P - ((w - minW) / (maxW - minW)) * (H - P*2);
-  // grid
-  const goalY = ys(s.goalWeight);
-  const startY = ys(s.startWeight);
+  const ys = (f) => H - P - ((f - minF) / (maxF - minF)) * (H - P*2);
+  const goalY = ys(goalFat);
+  const startY = ys(startFat);
   let svgInner = `
     <line x1="${P}" y1="${goalY}" x2="${W-P}" y2="${goalY}" stroke="#00FF9D" stroke-dasharray="3,3" stroke-width="1" opacity=".5"/>
-    <text x="${W-P-2}" y="${goalY-4}" text-anchor="end" fill="#00FF9D" font-size="9" font-family="SF Mono, monospace">GOAL ${s.goalWeight.toFixed(1)}</text>
+    <text x="${W-P-2}" y="${goalY-4}" text-anchor="end" fill="#00FF9D" font-size="9" font-family="SF Mono, monospace">GOAL ${goalFat} lb fat</text>
     <line x1="${P}" y1="${startY}" x2="${W-P}" y2="${startY}" stroke="#666" stroke-dasharray="2,2" stroke-width="1" opacity=".4"/>
+    <text x="${P+2}" y="${startY-4}" fill="#666" font-size="9" font-family="SF Mono, monospace">START ${startFat.toFixed(1)} lb</text>
   `;
-  // line
   let pathD = '';
-  data.forEach((d,i) => { pathD += (i===0?'M':'L') + xs(i) + ' ' + ys(d.weight) + ' '; });
+  data.forEach((d,i) => { pathD += (i===0?'M':'L') + xs(i) + ' ' + ys(d.fat) + ' '; });
   svgInner += `<path d="${pathD}" fill="none" stroke="#00D4FF" stroke-width="2"/>`;
-  // points
   data.forEach((d,i) => {
-    const x = xs(i), y = ys(d.weight);
+    const x = xs(i), y = ys(d.fat);
     svgInner += `<circle cx="${x}" cy="${y}" r="3" fill="${i===data.length-1?'#00FF9D':'#00D4FF'}"/>`;
   });
   svg.innerHTML = svgInner;
@@ -1323,7 +1338,7 @@ function saveSettings(){
   s.targetC = parseInt(document.getElementById('set-c').value)||285;
   s.targetF = parseInt(document.getElementById('set-f').value)||70;
   s.startWeight = parseFloat(document.getElementById('set-startw').value)||239;
-  s.goalWeight = parseFloat(document.getElementById('set-goalw').value)||228.6;
+  s.goalFat = parseFloat(document.getElementById('set-goalfat').value)||22;
   save(s);
   alert('Settings saved.');
   renderAll();
