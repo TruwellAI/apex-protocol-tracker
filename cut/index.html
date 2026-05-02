@@ -307,20 +307,20 @@ body { padding-bottom: 90px; }
       <div id="hero-cal-msg" style="font-size:12px;color:var(--muted);margin-top:2px;">Eat <strong id="hero-cal-left" style="color:var(--accent2);">2780</strong> more to hit target</div>
       <div class="hero-row">
         <div class="hero-stat">
-          <div class="hero-stat-l">Weight</div>
-          <div class="hero-stat-v" id="hs-w">239.0</div>
+          <div class="hero-stat-l">Fat now</div>
+          <div class="hero-stat-v cyan" id="hs-fatnow">31.1 lb</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-l">Fat goal</div>
+          <div class="hero-stat-v green" id="hs-fatgoal">22 lb</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-l">Fat to go</div>
+          <div class="hero-stat-v" id="hs-fattogo">9.1 lb</div>
         </div>
         <div class="hero-stat">
           <div class="hero-stat-l">Body Fat</div>
-          <div class="hero-stat-v cyan" id="hs-bf">13.0%</div>
-        </div>
-        <div class="hero-stat">
-          <div class="hero-stat-l">Goal lbs</div>
-          <div class="hero-stat-v green" id="hs-goal">228.6</div>
-        </div>
-        <div class="hero-stat">
-          <div class="hero-stat-l">Lost</div>
-          <div class="hero-stat-v" id="hs-lost">0.0</div>
+          <div class="hero-stat-v" id="hs-bf">13.0%</div>
         </div>
       </div>
     </div>
@@ -725,7 +725,9 @@ function get(){
   const s = load();
   s.startDate = s.startDate || todayKey();
   s.startWeight = s.startWeight || 239;
-  s.goalWeight = s.goalWeight || 228.6;
+  s.goalWeight = s.goalWeight || 230;     // 208 LBM + 22 lb fat target
+  s.goalFat = s.goalFat || 22;            // Neil's locked target — 22 lb of fat
+  s.goalBF = s.goalBF || 9.6;             // 22 / 230
   s.targetCal = s.targetCal || 2150;   // 1150 deficit off ~3300 maintenance · 6-week boat shred
   s.targetP = s.targetP || 240;
   s.targetC = s.targetC || 195;
@@ -771,11 +773,18 @@ function renderHero(){
   document.getElementById('h-streak').textContent = streak;
 
   const last = s.weights.length ? s.weights[s.weights.length-1] : { weight: s.startWeight, bf: 13 };
-  document.getElementById('hs-w').textContent = (last.weight||s.startWeight).toFixed(1);
-  document.getElementById('hs-bf').textContent = last.bf ? last.bf.toFixed(1)+'%' : '—';
-  document.getElementById('hs-goal').textContent = s.goalWeight.toFixed(1);
-  const lost = (s.startWeight - (last.weight||s.startWeight)).toFixed(1);
-  document.getElementById('hs-lost').textContent = lost > 0 ? '-'+lost : '0.0';
+  const w = last.weight || s.startWeight;
+  const bf = last.bf;
+  // Fat pounds — prefer direct bflb, fall back to weight × bf%
+  const fatLb = last.bflb || (bf ? w * bf / 100 : null);
+  const fatNow = fatLb != null ? fatLb : null;
+  document.getElementById('hs-fatnow').textContent = fatNow != null ? fatNow.toFixed(1)+' lb' : '—';
+  document.getElementById('hs-fatgoal').textContent = (s.goalFat || 22) + ' lb';
+  const fatToGo = fatNow != null ? fatNow - (s.goalFat || 22) : null;
+  document.getElementById('hs-fattogo').textContent = fatToGo != null
+    ? (fatToGo > 0 ? fatToGo.toFixed(1)+' lb' : '✓ HIT')
+    : '—';
+  document.getElementById('hs-bf').textContent = bf ? bf.toFixed(1)+'%' : '—';
 
   // Cal
   const eaten = sumMacros(t.food);
