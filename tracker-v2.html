@@ -17,7 +17,7 @@
 </script>
 <!-- SINGLE SOURCE OF TRUTH for peptide data — see /data/peptides.json -->
 <script src="data/peptide-data.js"></script>
-<script src="assets/apex-stack-render.js?v=20260501"></script>
+<script src="assets/apex-stack-render.js?v=20260501c"></script>
 <style>
 :root {
   --bg:#080c10; --panel:#0d1318; --panel2:#121a22; --border:#1a2d3a;
@@ -1194,7 +1194,29 @@ body::before{
         </div>
         <div class="tile-meta-row">
           <div class="tile-meta-label">${nextTitText ? 'Next titration' : 'Frequency'}</div>
-          <div class="tile-meta-value">${nextTitText ? nextTitText : (p.freq || 'daily')}</div>
+          <div class="tile-meta-value">${nextTitText ? nextTitText : (function(){
+            // Read cadence choice from localStorage so tracker matches protocol-summary
+            try {
+              const choice = (JSON.parse(localStorage.getItem('apex_cadence_choice')||'{}'))[p.slug];
+              if (choice) return choice;
+            } catch(_){}
+            return p.freq || 'daily';
+          })()}</div>
+        </div>
+        <div class="tile-meta-row">
+          <div class="tile-meta-label">Timing</div>
+          <div class="tile-meta-value" style="font-size:12px;">${(function(){
+            const ssot = (window.APEX_PEPTIDES || {})[p.slug] || {};
+            const note = String(ssot.timing_note || ssot.recon_tip || '').toLowerCase();
+            const tags = [];
+            if (/fasted|before food|empty stomach/.test(note)) tags.push('🌅 Fasted');
+            if (/morning|am\b|pre-cardio|pre-workout/.test(note) && !tags.length) tags.push('☀️ Morning');
+            if (/evening|pm\b|pre-bed|bedtime|night/.test(note)) tags.push('🌙 Evening');
+            if (/post-workout|post workout/.test(note)) tags.push('💪 Post-workout');
+            if (/anytime|flexible|time of day flexible/.test(note) && !tags.length) tags.push('⏰ Anytime');
+            if (!tags.length) tags.push('⏰ Anytime');
+            return tags.join(' · ');
+          })()}</div>
         </div>
       </div>
 
