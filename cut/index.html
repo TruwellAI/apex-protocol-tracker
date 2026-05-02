@@ -322,6 +322,21 @@ body { padding-bottom: 90px; }
     <div style="height:30px;"></div>
   </div>
 
+  <!-- ═══ PLAN PANEL ═══ -->
+  <div class="panel" data-panel="plan">
+    <div class="hero" style="margin-top:14px;">
+      <div class="hero-eyebrow">Daily meal plan · 1000 cal deficit</div>
+      <div class="hero-num"><span id="plan-cal-total">2300</span><span class="unit">cal</span></div>
+      <div style="font-size:12px;color:var(--muted);margin-top:4px;">Hits <strong id="plan-p-total">240</strong>P · <strong id="plan-c-total">220</strong>C · <strong id="plan-f-total">50</strong>F · 6 meals</div>
+    </div>
+    <div style="padding:0 16px 14px;">
+      <button class="btn btn-block" onclick="autoLogAllMeals()">📋 Log entire day's plan</button>
+      <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:8px;">Tap a meal below to log just that meal · or eat off-script and log manually in Eat tab</div>
+    </div>
+    <div class="list" id="plan-list"></div>
+    <div style="height:30px;"></div>
+  </div>
+
   <!-- ═══ EAT PANEL ═══ -->
   <div class="panel" data-panel="eat">
     <div class="note">
@@ -417,8 +432,9 @@ body { padding-bottom: 90px; }
   </div>
 
   <!-- TABS -->
-  <div class="tabs">
+  <div class="tabs" style="grid-template-columns:repeat(6,1fr);">
     <button class="tab on" data-tab="today"><div class="icon">●</div>Today</button>
+    <button class="tab" data-tab="plan"><div class="icon">📋</div>Plan</button>
     <button class="tab" data-tab="eat"><div class="icon">🍽</div>Eat</button>
     <button class="tab" data-tab="inject"><div class="icon">💉</div>Inject</button>
     <button class="tab" data-tab="train"><div class="icon">🏋︎</div>Train</button>
@@ -441,6 +457,40 @@ const FOODS = [
   { id:'chicken',  name:'Chicken breast (raw)',        serving:'4 oz',            cal:140, p:26, c:0,  f:3  },
   { id:'rice',     name:'White rice (cooked)',         serving:'1 cup',           cal:205, p:4,  c:45, f:0  },
   { id:'potato',   name:'Potato (baked, medium)',      serving:'1 medium 173g',   cal:161, p:4,  c:37, f:0  },
+  { id:'avo',      name:'Avocado',                     serving:'1/2 medium ~70g', cal:120, p:1.5,c:6,  f:11 },
+];
+
+// ─────────────────────────────────────────────
+// MEAL PLAN: Neil's daily 2,300-cal cut menu
+// 1000-cal deficit · 240P / 220C / 50F
+// ─────────────────────────────────────────────
+const MEAL_PLAN = [
+  { id:'m1', time:'BREAKFAST',  when:'After AM peptides',  items:[
+    { id:'dkb',     qty:2 },
+    { id:'eggw',    qty:1 },
+    { id:'avo',     qty:1 },
+  ]},
+  { id:'m2', time:'MID-MORNING',when:'Post-lift',          items:[
+    { id:'premier', qty:1 },
+    { id:'chobani', qty:1 },
+    { id:'blue',    qty:1 },
+  ]},
+  { id:'m3', time:'LUNCH',      when:'~12-1pm',            items:[
+    { id:'chicken', qty:1.5 },  // 6 oz
+    { id:'rice',    qty:1 },
+  ]},
+  { id:'m4', time:'AFTERNOON',  when:'~3-4pm',             items:[
+    { id:'premier', qty:1 },
+    { id:'oats',    qty:1 },
+  ]},
+  { id:'m5', time:'DINNER',     when:'~6-7pm',             items:[
+    { id:'chicken', qty:2 },    // 8 oz
+    { id:'potato',  qty:1 },
+    { id:'avo',     qty:1 },
+  ]},
+  { id:'m6', time:'BEDTIME',    when:'1hr before bed (optional)', items:[
+    { id:'chobani', qty:1 },
+  ]},
 ];
 
 // ─────────────────────────────────────────────
@@ -452,6 +502,7 @@ const PEPTIDES = [
   { id:'tesa',   name:'Tesamorelin',     dose:'2 mg · 15u',     window:'AM fasted',          days:'all',      tag:'GH',    color:'#00FF9D' },
   { id:'aod',    name:'AOD-9604',        dose:'300 mcg · 6u',   window:'AM fasted',          days:'all',      tag:'fat',   color:'#00D4FF' },
   { id:'5amq',   name:'5-Amino-1MQ',     dose:'100 mg',         window:'AM fasted',          days:'all',      tag:'NNMT',  color:'#FBBF24' },
+  { id:'slupp',  name:'SLU-PP-332',      dose:'1 pill',         window:'AM fasted',          days:'all',      tag:'ERRα',  color:'#F472B6' },
   { id:'lcar',   name:'L-Carnitine',     dose:'200 mg',         window:'AM pre-cardio',      days:'all',      tag:'fat',   color:'#A78BFA' },
   { id:'anavarAM', name:'Anavar',         dose:'25 mg oral',     window:'AM with food',       days:'all',      tag:'Rx',    color:'#FF6B35' },
   { id:'bpcAM',  name:'BPC-157',         dose:'250 mcg · 5u',   window:'AM',                 days:'all',      tag:'heal',  color:'#34D399' },
@@ -500,10 +551,10 @@ function get(){
   s.startDate = s.startDate || todayKey();
   s.startWeight = s.startWeight || 239;
   s.goalWeight = s.goalWeight || 228.6;
-  s.targetCal = s.targetCal || 2780;
-  s.targetP = s.targetP || 250;
-  s.targetC = s.targetC || 285;
-  s.targetF = s.targetF || 70;
+  s.targetCal = s.targetCal || 2300;   // 1000-cal deficit off ~3300 maintenance
+  s.targetP = s.targetP || 240;
+  s.targetC = s.targetC || 220;
+  s.targetF = s.targetF || 50;
   s.weights = s.weights || [];   // [{date, weight, bf, waist}]
   s.daily = s.daily || {};       // { '2026-05-02': { food:[{id,qty}], peptides:{id:true}, steps:N } }
   return s;
@@ -866,11 +917,79 @@ document.querySelectorAll('.tab').forEach(b => {
   });
 });
 
+// ── PLAN RENDER + AUTO-LOG ──
+function mealMacros(meal){
+  let r = { cal:0, p:0, c:0, f:0 };
+  meal.items.forEach(it => {
+    const f = FOODS.find(x => x.id === it.id);
+    if (!f) return;
+    r.cal += f.cal*it.qty; r.p += f.p*it.qty; r.c += f.c*it.qty; r.f += f.f*it.qty;
+  });
+  return r;
+}
+function renderPlan(){
+  const list = document.getElementById('plan-list'); if (!list) return;
+  // Total cell
+  let T = { cal:0, p:0, c:0, f:0 };
+  MEAL_PLAN.forEach(m => { const x = mealMacros(m); T.cal+=x.cal; T.p+=x.p; T.c+=x.c; T.f+=x.f; });
+  document.getElementById('plan-cal-total').textContent = Math.round(T.cal);
+  document.getElementById('plan-p-total').textContent = Math.round(T.p);
+  document.getElementById('plan-c-total').textContent = Math.round(T.c);
+  document.getElementById('plan-f-total').textContent = Math.round(T.f);
+
+  list.innerHTML = MEAL_PLAN.map(m => {
+    const mm = mealMacros(m);
+    const itemRows = m.items.map(it => {
+      const f = FOODS.find(x => x.id === it.id);
+      return `<div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text);padding:4px 0;">
+        <span>${f.name} <span style="color:var(--muted);">×${it.qty}</span></span>
+        <span style="color:var(--muted);">${Math.round(f.cal*it.qty)} cal</span>
+      </div>`;
+    }).join('');
+    return `<div style="background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px;">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+        <div>
+          <div style="font-family:'SF Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--accent2);font-weight:700;">${m.time}</div>
+          <div style="font-size:11px;color:var(--muted);">${m.when}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:18px;font-weight:800;color:var(--accent);">${Math.round(mm.cal)}</div>
+          <div style="font-size:10px;color:var(--muted);">${Math.round(mm.p)}P · ${Math.round(mm.c)}C · ${Math.round(mm.f)}F</div>
+        </div>
+      </div>
+      <div style="border-top:1px solid var(--border);padding-top:8px;">${itemRows}</div>
+      <button class="btn btn-ghost" style="width:100%;margin-top:10px;font-size:12px;padding:10px;" onclick="logMeal('${m.id}')">＋ Log this meal</button>
+    </div>`;
+  }).join('');
+}
+function logMeal(id){
+  const meal = MEAL_PLAN.find(m => m.id === id); if (!meal) return;
+  const s = load();
+  s.daily = s.daily || {}; s.daily[todayKey()] = s.daily[todayKey()] || { food:[], peptides:{}, steps:0 };
+  meal.items.forEach(it => {
+    for (let i = 0; i < it.qty; i++) s.daily[todayKey()].food.push({ id: it.id, qty: 1 });
+  });
+  save(s); haptic(); renderAll();
+  alert(`Logged ${meal.time} · ${Math.round(mealMacros(meal).cal)} cal`);
+}
+function autoLogAllMeals(){
+  if (!confirm('Log all 6 meals for today? (replaces current food log)')) return;
+  const s = load();
+  s.daily = s.daily || {}; s.daily[todayKey()] = s.daily[todayKey()] || { food:[], peptides:{}, steps:0 };
+  s.daily[todayKey()].food = [];
+  MEAL_PLAN.forEach(m => m.items.forEach(it => {
+    for (let i = 0; i < it.qty; i++) s.daily[todayKey()].food.push({ id: it.id, qty: 1 });
+  }));
+  save(s); haptic(); renderAll();
+  alert('Day logged · 2,300 cal · 240P / 220C / 50F');
+}
+
 function renderAll(){
   renderHero();
   renderMacros();
   renderFoodList();
   renderFoodLog();
+  renderPlan();
   renderPeptides();
   renderSteps();
   renderTrain();
