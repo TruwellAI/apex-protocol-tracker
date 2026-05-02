@@ -1,7 +1,7 @@
 /* AUTO-GENERATED — DO NOT EDIT.
  * Source: /data/peptides.json
  * Regenerate: node scripts/build-peptide-data.js
- * Built: 2026-05-02T04:34:03.632Z
+ * Built: 2026-05-02T04:46:49.960Z
  */
 window.APEX_PEPTIDES = {
   "_meta": {
@@ -236,7 +236,7 @@ window.APEX_PEPTIDES = {
     "cycle_weeks": 8,
     "off_weeks": 8,
     "research_note": "1.6mg 2x/wk standard immune protocol",
-    "timing_note": "⏰ <strong>2x weekly (Mon + Thu typical).</strong> Time of day flexible. Immune-modulating — best run Q1/Q4 during cold/flu season."
+    "timing_note": "⏰ <strong>Time of day flexible.</strong> Immune-modulating — best run Q1/Q4 during cold/flu season."
   },
   "ara290.html": {
     "name": "ARA-290",
