@@ -42,7 +42,7 @@ body::before{
 }
 .wrap{max-width:760px;margin:0 auto;padding:0 16px;position:relative;z-index:1;}
 
-.top{display:flex;justify-content:space-between;align-items:center;padding:14px 0;}
+.top{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;position:sticky;top:0;z-index:50;background:rgba(8,12,16,.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--border);margin:0 -16px;}
 .brand{display:flex;align-items:center;gap:8px;text-decoration:none;}
 .brand-mark{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--accent2);letter-spacing:.16em;}
 .brand-tag{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.25em;color:var(--muted);text-transform:uppercase;border-left:1px solid var(--border);padding-left:8px;}

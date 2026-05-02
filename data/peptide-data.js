@@ -1,7 +1,7 @@
 /* AUTO-GENERATED — DO NOT EDIT.
  * Source: /data/peptides.json
  * Regenerate: node scripts/build-peptide-data.js
- * Built: 2026-05-02T04:46:49.960Z
+ * Built: 2026-05-02T05:00:16.354Z
  */
 window.APEX_PEPTIDES = {
   "_meta": {
@@ -665,6 +665,24 @@ window.APEX_PEPTIDES = {
     "off_weeks": 0,
     "research_note": "Loading 100mg 2x/wk × 4wk; substrate for MOTS-c biogenesis",
     "timing_note": "⏰ <strong>Morning, with or without food.</strong> Loading 2-3x/wk × 4 wks then 1x/wk maintenance. Some users get flushing — split doses help.",
+    "titration": [
+      {
+        "w": "Wk 1 tolerance",
+        "d": "25 mg"
+      },
+      {
+        "w": "Wk 2",
+        "d": "50 mg"
+      },
+      {
+        "w": "Wk 3-4",
+        "d": "75 mg"
+      },
+      {
+        "w": "Wk 5-12 full dose",
+        "d": "100 mg"
+      }
+    ],
     "cadence_flex": {
       "options": [
         {

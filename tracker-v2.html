@@ -41,7 +41,7 @@ body::before{
 .wrap{max-width:1080px;margin:0 auto;padding:0 16px;position:relative;z-index:1;}
 
 /* HEADER */
-.top{display:flex;justify-content:space-between;align-items:center;padding:14px 0;}
+.top{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;position:sticky;top:0;z-index:50;background:rgba(8,12,16,.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--border);margin:0 -16px;}
 .brand{display:flex;align-items:center;gap:8px;text-decoration:none;}
 .brand-mark{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--accent2);letter-spacing:.16em;}
 .brand-tag{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.25em;color:var(--muted);text-transform:uppercase;border-left:1px solid var(--border);padding-left:8px;}
@@ -938,14 +938,25 @@ body::before{
         const reconKey = p.slug || '';
         const reconInfo = recon[reconKey] || {};
         const conc = reconInfo.vial && (reconInfo.bac || reconInfo.acetic) ? reconInfo.vial / ((reconInfo.bac||0) + (reconInfo.acetic||0)) : null;
-        // ── CADENCE OVERRIDE: if user picked a cadence in protocol-summary, use its per-dose mg ──
+        // ── CADENCE OVERRIDE: scale current-week's titration step by chosen cadence per-dose ──
         let cadenceOverride = null;
         try {
           const choice = (JSON.parse(localStorage.getItem('apex_cadence_choice')||'{}'))[p.slug];
           const ssotPep = (window.APEX_PEPTIDES || {})[p.slug];
           const opt = choice && ssotPep && ssotPep.cadence_flex && ssotPep.cadence_flex.options.find(o => o.pattern === choice);
           if (opt) {
-            cadenceOverride = opt.per_dose_mg < 1 ? Math.round(opt.per_dose_mg*1000)+' mcg' : opt.per_dose_mg+' mg';
+            // Find the SSOT titration peak (largest mg in any step) for proportional scaling
+            const ssotTit = ssotPep && ssotPep.titration;
+            if (Array.isArray(ssotTit) && ssotTit.length >= 2) {
+              const parseMg = s => { const m = String(s).match(/(\d+(?:\.\d+)?)\s*(mg|mcg)/i); if (!m) return 0; return m[2].toLowerCase()==='mcg' ? parseFloat(m[1])/1000 : parseFloat(m[1]); };
+              const peakMg = Math.max(...ssotTit.map(t => parseMg(t.d)));
+              const stepMg = parseMg(dose.current);
+              if (peakMg > 0 && stepMg > 0) {
+                const scaledMg = (stepMg / peakMg) * opt.per_dose_mg;
+                cadenceOverride = scaledMg < 1 ? Math.round(scaledMg*1000)+' mcg' : (Math.round(scaledMg*10)/10)+' mg';
+              }
+            }
+            if (!cadenceOverride) cadenceOverride = opt.per_dose_mg < 1 ? Math.round(opt.per_dose_mg*1000)+' mcg' : opt.per_dose_mg+' mg';
             effectiveDose = cadenceOverride;
           }
         } catch(_){}
@@ -1103,14 +1114,24 @@ body::before{
     const reconInfo = recon[p.slug] || {};
     const totalVol = (reconInfo.bac || 0) + (reconInfo.acetic || 0);
     const conc = reconInfo.vial && totalVol > 0 ? reconInfo.vial / totalVol : null;
-    // ── CADENCE OVERRIDE (mirrors today-tab logic) ──
+    // ── CADENCE OVERRIDE: scale titration step by chosen cadence per-dose ──
     let cadenceOverride = null;
     try {
       const choice = (JSON.parse(localStorage.getItem('apex_cadence_choice')||'{}'))[p.slug];
       const ssotPep = (window.APEX_PEPTIDES || {})[p.slug];
       const opt = choice && ssotPep && ssotPep.cadence_flex && ssotPep.cadence_flex.options.find(o => o.pattern === choice);
       if (opt) {
-        cadenceOverride = opt.per_dose_mg < 1 ? Math.round(opt.per_dose_mg*1000)+' mcg' : opt.per_dose_mg+' mg';
+        const ssotTit = ssotPep && ssotPep.titration;
+        if (Array.isArray(ssotTit) && ssotTit.length >= 2) {
+          const parseMg = s => { const m = String(s).match(/(\d+(?:\.\d+)?)\s*(mg|mcg)/i); if (!m) return 0; return m[2].toLowerCase()==='mcg' ? parseFloat(m[1])/1000 : parseFloat(m[1]); };
+          const peakMg = Math.max(...ssotTit.map(t => parseMg(t.d)));
+          const stepMg = parseMg(dose.current);
+          if (peakMg > 0 && stepMg > 0) {
+            const scaledMg = (stepMg / peakMg) * opt.per_dose_mg;
+            cadenceOverride = scaledMg < 1 ? Math.round(scaledMg*1000)+' mcg' : (Math.round(scaledMg*10)/10)+' mg';
+          }
+        }
+        if (!cadenceOverride) cadenceOverride = opt.per_dose_mg < 1 ? Math.round(opt.per_dose_mg*1000)+' mcg' : opt.per_dose_mg+' mg';
         effectiveDose = cadenceOverride;
       }
     } catch(_){}

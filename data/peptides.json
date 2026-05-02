@@ -644,6 +644,12 @@
     "off_weeks": 0,
     "research_note": "Loading 100mg 2x/wk \u00d7 4wk; substrate for MOTS-c biogenesis",
     "timing_note": "\u23f0 <strong>Morning, with or without food.</strong> Loading 2-3x/wk \u00d7 4 wks then 1x/wk maintenance. Some users get flushing \u2014 split doses help.",
+    "titration": [
+      { "w": "Wk 1 tolerance", "d": "25 mg" },
+      { "w": "Wk 2", "d": "50 mg" },
+      { "w": "Wk 3-4", "d": "75 mg" },
+      { "w": "Wk 5-12 full dose", "d": "100 mg" }
+    ],
     "cadence_flex": {
       "options": [
         {
