@@ -1038,17 +1038,13 @@ body::before{
                 const vialMg = (userRecon && userRecon.vial) || ssotPepCB.vial_mg;
                 const bacMl  = (userRecon && userRecon.bac)  || ssotPepCB.bac_ml;
                 if (vialMg && bacMl) {
-                  const concPerComp = (vialMg / ssotPepCB.components.length) / bacMl; // mg/mL each
-                  // Smallest target volume = component that hits its dose at the lowest draw
-                  let smallestVol = Infinity, targetName = '';
-                  ssotPepCB.components.forEach(c => {
-                    const v = c.dose_mg / concPerComp;
-                    if (v > 0 && v < smallestVol) { smallestVol = v; targetName = c.name; }
-                  });
-                  if (isFinite(smallestVol)) {
-                    const u = Math.round(smallestVol * 100);
-                    return `<span style="color:var(--accent2);font-weight:800;font-size:1.05em;">${u}</span> <span style="color:var(--muted);">units</span> <span style="color:var(--muted);font-size:.78em;font-family:'Share Tech Mono',monospace;letter-spacing:.06em;">· targets ${targetName}</span>`;
-                  }
+                  // Standard combined-bottle dose = 50 units (0.5 mL draw) — the
+                  // community-accepted volume for KLOW/GLOW/Wolverine. Each component
+                  // delivers proportionally based on its share of the vial.
+                  const concPerComp = (vialMg / ssotPepCB.components.length) / bacMl;
+                  const drawMl = 0.5;
+                  const u = Math.round(drawMl * 100);
+                  return `<span style="color:var(--accent2);font-weight:800;font-size:1.05em;">${u}</span> <span style="color:var(--muted);">units</span> <span style="color:var(--muted);font-size:.78em;font-family:'Share Tech Mono',monospace;letter-spacing:.06em;">· standard daily draw</span>`;
                 }
               }
               // ── If titrated, show CURRENT week's dose (Wk1 if brand new; else current week) ──
