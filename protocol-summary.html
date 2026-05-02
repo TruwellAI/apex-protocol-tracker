@@ -869,10 +869,10 @@ body::before{
       // ── ONE-TIME EDUCATION: show full breakdown only on first view per peptide ──
       // After user acks it, collapse to a compact summary. Frequency + units stay
       // in the main proto-rows above; this block becomes a "ⓘ See composition" link.
-      let acked = false;
-      try { acked = !!(JSON.parse(localStorage.getItem('apex_combined_acked')||'{}'))[slug]; } catch(_){}
-      // Capture wrapper-mode flag — if acked, we'll wrap output in a <details>
-      var __combinedAcked = isCombined && acked;
+      // Default behavior for combined bottles: COLLAPSED. The educational warning
+      // is meant to fire once on selection (compare/build flow), not every time the
+      // user lands on the protocol summary. Here we just want clean units + freq.
+      var __combinedAcked = isCombined;
       const ssotEntry = (window.APEX_PEPTIDES || {})[slug] || {};
       const ssotComps = ssotEntry.components || [];
       const cs = cycleState[slug] || {};
