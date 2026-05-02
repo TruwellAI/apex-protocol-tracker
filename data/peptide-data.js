@@ -1,7 +1,7 @@
 /* AUTO-GENERATED — DO NOT EDIT.
  * Source: /data/peptides.json
  * Regenerate: node scripts/build-peptide-data.js
- * Built: 2026-05-02T04:22:29.578Z
+ * Built: 2026-05-02T04:24:48.246Z
  */
 window.APEX_PEPTIDES = {
   "_meta": {
@@ -643,27 +643,32 @@ window.APEX_PEPTIDES = {
     "cadence_flex": {
       "options": [
         {
-          "pattern": "1x weekly (maintenance)",
-          "per_dose_mg": 100,
-          "weekly_total_mg": 100
+          "pattern": "1x weekly (200 mg loading)",
+          "per_dose_mg": 200,
+          "weekly_total_mg": 200
         },
         {
-          "pattern": "2x weekly (loading)",
+          "pattern": "2x weekly split (100 mg each)",
           "per_dose_mg": 100,
           "weekly_total_mg": 200
         },
         {
-          "pattern": "3x weekly (Mon · Wed · Fri)",
-          "per_dose_mg": 100,
-          "weekly_total_mg": 300
+          "pattern": "3x weekly Mon · Wed · Fri (67 mg each)",
+          "per_dose_mg": 67,
+          "weekly_total_mg": 200
         },
         {
-          "pattern": "split daily (Mon-Fri)",
-          "per_dose_mg": 50,
-          "weekly_total_mg": 250
+          "pattern": "Daily Mon-Fri (40 mg each)",
+          "per_dose_mg": 40,
+          "weekly_total_mg": 200
+        },
+        {
+          "pattern": "1x weekly (100 mg maintenance)",
+          "per_dose_mg": 100,
+          "weekly_total_mg": 100
         }
       ],
-      "rule": "NAD+ benefits from steady substrate availability. Loading phase (first 4 weeks) uses 2-3x/wk to fill the cofactor pool, then drop to 1x/wk maintenance. Some users prefer split daily 50mg to minimize flushing."
+      "rule": "NAD+ is weekly-total-driven, not per-dose. Same weekly mg = same effect. More frequent = smoother substrate availability + less flushing per shot. Loading phase uses ~200 mg/wk × 4 weeks; maintenance drops to 100 mg/wk."
     }
   },
   "glutathione.html": {
