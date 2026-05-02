@@ -969,18 +969,43 @@ function renderPeptides(){
     document.getElementById('pep-count').textContent = `${doneCt} / ${todayPeps.length}`;
   }
 
-  // INJECT tab full view
+  // INJECT tab full view — grouped by timing window
   const pfl = document.getElementById('pep-full-list');
   if (pfl) {
-    pfl.innerHTML = todayPeps.map(p => `
-      <div class="card ${t.peptides[p.id]?'done':''}" onclick="togglePep('${p.id}')">
-        <div class="card-check">${t.peptides[p.id]?'✓':''}</div>
-        <div class="card-body">
-          <div class="card-name">${p.name} <span class="tag" style="background:${p.color}22;color:${p.color};border:1px solid ${p.color};">${p.tag}</span></div>
-          <div class="card-meta">${p.dose} · ${p.window}</div>
-        </div>
+    function bucket(p){
+      const w = String(p.window).toLowerCase();
+      if (/post.?workout/.test(w)) return 'post';
+      if (/\bpm\b|evening|bedtime/.test(w)) return 'pm';
+      if (/am|fasted|morning|pre.?cardio/.test(w)) return 'am';
+      return 'other';
+    }
+    const groups = { am:[], post:[], pm:[], other:[] };
+    todayPeps.forEach(p => groups[bucket(p)].push(p));
+    const groupLabels = {
+      am:    { label:'☀️ MORNING — AM fasted, before walk #1', color:'var(--accent2)' },
+      post:  { label:'⚡ POST-WORKOUT — within 30 min of last set', color:'var(--accent)' },
+      pm:    { label:'🌙 PM / EVENING', color:'#A78BFA' },
+      other: { label:'📅 WEEKLY / OTHER', color:'var(--muted)' },
+    };
+    const cardHtml = (p) => `<div class="card ${t.peptides[p.id]?'done':''}" onclick="togglePep('${p.id}')">
+      <div class="card-check">${t.peptides[p.id]?'✓':''}</div>
+      <div class="card-body">
+        <div class="card-name">${p.name} <span class="tag" style="background:${p.color}22;color:${p.color};border:1px solid ${p.color};">${p.tag}</span></div>
+        <div class="card-meta">${p.dose} · ${p.window}</div>
       </div>
-    `).join('');
+    </div>`;
+    pfl.innerHTML = ['am','post','pm','other'].map(g => {
+      if (!groups[g].length) return '';
+      const meta = groupLabels[g];
+      const doneInGroup = groups[g].filter(p => t.peptides[p.id]).length;
+      return `<div style="margin-bottom:6px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.16em;color:${meta.color};font-weight:700;padding:8px 4px 6px;display:flex;justify-content:space-between;align-items:center;">
+          <span>${meta.label}</span>
+          <span style="color:var(--muted);">${doneInGroup} / ${groups[g].length}</span>
+        </div>
+        ${groups[g].map(cardHtml).join('')}
+      </div>`;
+    }).join('');
     document.getElementById('inj-count').textContent = `${doneCt} / ${todayPeps.length}`;
 
     // Weekly schedule (all peptides regardless of today)
