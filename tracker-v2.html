@@ -1209,97 +1209,97 @@ body::before{
 
     const tile = document.createElement('div');
     tile.className = 'tile';
+    // ── INTENSITY badge ──
+    const tierName = (p.intensity || 'recommended').toLowerCase();
+    const tierLabel = tierName === 'mild' ? '⬇ Conservative' : tierName === 'aggressive' ? '⬆ Aggressive' : '★ Optimal';
+    const tierColor = tierName === 'mild' ? '#fbbf24' : tierName === 'aggressive' ? '#ff6b35' : 'var(--accent2)';
+    // ── RECON line ──
+    const reconConc = (reconInfo.vial && totalVol > 0) ? (reconInfo.vial / totalVol).toFixed(2) : null;
+    const reconLine = reconConc
+      ? `${reconInfo.vial} mg vial · ${(reconInfo.bac||0)} mL BAC · ${reconConc} mg/mL`
+      : '⚠ recon not set';
+    // ── DOSE display (units only — no breakdown clutter on the dashboard) ──
+    const cadenceLabel = (function(){
+      try { return (JSON.parse(localStorage.getItem('apex_cadence_choice')||'{}'))[p.slug] || p.freq || 'daily'; } catch(_) { return p.freq || 'daily'; }
+    })();
+    const timingTag = (function(){
+      const ssot = (window.APEX_PEPTIDES || {})[p.slug] || {};
+      const note = String(ssot.timing_note || ssot.recon_tip || '').toLowerCase();
+      if (/fasted|before food|empty stomach/.test(note)) return '🌅 Fasted';
+      if (/morning|am\b|pre-cardio|pre-workout/.test(note)) return '☀️ Morning';
+      if (/evening|pm\b|pre-bed|bedtime|night/.test(note)) return '🌙 Evening';
+      if (/post-workout|post workout/.test(note)) return '💪 Post-workout';
+      return '⏰ Anytime';
+    })();
+    const doseUnits = (function(){
+      if (ORAL_SLUGS.has(p.slug)) return '<strong style="color:var(--accent3);font-size:1.4em;">1</strong> <span style="color:var(--muted);">capsule</span>';
+      if (SPRAY_SLUGS.has(p.slug)) {
+        const m = String(effectiveDose).match(/(\d+(?:\.\d+)?)\s*mcg/i);
+        const c = m ? Math.max(1, Math.round(parseFloat(m[1])/100)) : 1;
+        return `<strong style="color:var(--accent);font-size:1.4em;">${c}</strong> <span style="color:var(--muted);">spray${c>1?'s':''}</span>`;
+      }
+      if (apx && apx.source === 'combined' && apx.units != null) return `<strong style="color:var(--accent2);font-size:1.4em;">${apx.units}</strong> <span style="color:var(--muted);">units</span>`;
+      if (units) { const n = units.range ? units.minUnits+'–'+units.maxUnits : units.units; return `<strong style="color:var(--accent2);font-size:1.4em;">${n}</strong> <span style="color:var(--muted);">units</span>`; }
+      return '<a href="reconstitute.html" style="color:#fbbf24;text-decoration:none;font-weight:700;">⚠ Set vial size →</a>';
+    })();
+    const startDateStr = p.startDate ? fmtDate(new Date(p.startDate)) : '—';
+    const cycleStr = isAsNeededCycle ? 'as needed' : `Wk ${Math.ceil(dayNum/7)} of ${Math.ceil(cycleDays/7)}`;
+
     tile.innerHTML = `
-      <button class="tile-edit-btn" data-act="edit" aria-label="Edit ${p.name}" title="Edit ${p.name}">✎</button>
+      <button class="tile-edit-btn" data-act="edit" aria-label="Edit ${p.name}" title="Edit ${p.name}" style="position:absolute;top:10px;right:10px;background:rgba(0,212,255,.08);border:1px solid var(--border2);color:var(--accent);width:32px;height:32px;border-radius:6px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;z-index:5;">✎</button>
+
+      <!-- HEAD: name + Rx + intensity -->
       <div class="tile-head">
-        <div>
-          <div class="tile-name">${p.name}${RX_SLUGS.has(p.slug) ? ' <span style="display:inline-block;padding:2px 7px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.5);color:#ef4444;font-family:\'Share Tech Mono\',monospace;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;border-radius:4px;vertical-align:middle;margin-left:6px;">⚠ Rx</span>' : ''}</div>
-          <div class="tile-mech">${p.mech || ''}</div>
-        </div>
-        ${statusBadge}
-      </div>
-
-      <div class="tile-injection">
-        <div class="ti-icon">💉</div>
-        <div class="ti-text">
-          <div class="ti-label">${sched.go ? "Inject today" : (isAsNeededCycle ? 'Use as needed' : 'Next injection')}</div>
-          <div class="ti-value">${(function(){
-            const tier = (p.intensity || 'recommended').toLowerCase();
-            const isRanged = /[-–—]/.test(String(dose.current));
-            const tierTag = isRanged ? ` <span style="font-size:10px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:.08em;text-transform:uppercase;margin-left:6px;">· ${tier}</span>` : '';
-            if (ORAL_SLUGS.has(p.slug)) {
-              return '<span style="color:var(--accent3);font-weight:800;font-size:1.05em;">1</span> <span class="units" style="color:var(--muted);">capsule</span>' + tierTag;
-            }
-            if (SPRAY_SLUGS.has(p.slug)) {
-              const m = String(effectiveDose).match(/(\d+(?:\.\d+)?)\s*mcg/i);
-              const sprayCount = m ? Math.max(1, Math.round(parseFloat(m[1])/100)) : null;
-              return sprayCount
-                ? '<span style="color:var(--accent);font-weight:800;font-size:1.05em;">' + sprayCount + '</span> <span class="units" style="color:var(--muted);">spray' + (sprayCount>1?'s':'') + '</span>' + tierTag
-                : '<span style="color:var(--accent);font-weight:800;">intranasal</span>' + tierTag;
-            }
-            if (apx && apx.source === 'combined' && apx.units != null) {
-              return '<span style="color:var(--accent2);font-weight:800;font-size:1.05em;">' + apx.units + '</span> <span class="units" style="color:var(--muted);">units · ' + apx.breakdown + '</span>';
-            }
-            if (units) {
-              const num = units.range ? units.minUnits + '–' + units.maxUnits : units.units;
-              return '<span style="color:var(--accent2);font-weight:800;font-size:1.05em;">' + num + '</span> <span class="units" style="color:var(--muted);">units</span>' + tierTag;
-            }
-            return '<a href="reconstitute.html" style="color:var(--warn,#fbbf24);font-weight:700;text-decoration:none;font-size:.95em;">⚠ Set vial size</a>';
-          })()}<span class="when">${sched.go ? 'today' : sched.reason}</span></div>
+        <div style="min-width:0;">
+          <div class="tile-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.name}${RX_SLUGS.has(p.slug) ? ' <span style="display:inline-block;padding:2px 6px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.5);color:#ef4444;font-family:\'Share Tech Mono\',monospace;font-size:9px;font-weight:700;letter-spacing:.12em;border-radius:4px;vertical-align:middle;margin-left:4px;">⚠ Rx</span>' : ''}</div>
+          <div class="tile-mech" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:11px;">${p.mech || ''}</div>
+          <div style="margin-top:6px;display:inline-flex;align-items:center;gap:4px;padding:2px 8px;background:rgba(0,255,157,.08);border:1px solid ${tierColor};border-radius:4px;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.14em;color:${tierColor};font-weight:700;">${tierLabel}</div>
         </div>
       </div>
 
+      <!-- DOSE — the headline number -->
+      <div style="margin:14px 0 10px;padding:14px;background:linear-gradient(135deg,rgba(0,212,255,.06),rgba(0,255,157,.03));border:1px solid var(--border2);border-radius:10px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Dose per injection</div>
+        <div style="line-height:1.2;">${doseUnits}</div>
+        <div style="margin-top:6px;font-size:11px;color:var(--muted);">${cadenceLabel} · ${timingTag}</div>
+      </div>
+
+      <!-- RECON receipt -->
+      <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(11,15,20,.5);border:1px solid var(--border);border-radius:8px;font-size:11px;color:var(--muted);margin-bottom:10px;">
+        <span style="flex-shrink:0;">🧪</span>
+        <span style="font-family:'Share Tech Mono',monospace;letter-spacing:.04em;">${reconLine}</span>
+      </div>
+
+      <!-- CYCLE position + bottle countdown -->
       ${isAsNeededCycle ? `
-      <div class="tile-progress">
-        <div class="tp-row" style="justify-content:center;color:var(--accent3);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;">As Needed · No Cycle Countdown</div>
-      </div>
+        <div style="padding:10px 12px;background:rgba(11,15,20,.4);border:1px solid var(--border);border-radius:8px;color:var(--accent3);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.16em;text-align:center;text-transform:uppercase;margin-bottom:10px;">As Needed · No Cycle</div>
       ` : `
-      <div class="tile-progress">
-        <div class="tp-row"><span><strong>Day ${dayNum}</strong> of ${cycleDays}</span><span><strong>${daysLeft}</strong> days left · ends ${fmtDate(cycleEnd)}</span></div>
-        <div class="tp-bar"><div class="tp-fill" style="width:${pct}%"></div></div>
-      </div>
+        <div style="padding:10px 12px;background:rgba(11,15,20,.4);border:1px solid var(--border);border-radius:8px;margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;font-size:11px;color:var(--muted);margin-bottom:6px;">
+            <span><strong style="color:var(--text);font-size:13px;">${cycleStr}</strong> · started ${startDateStr}</span>
+            <span>${daysLeft}d left</span>
+          </div>
+          <div class="tp-bar"><div class="tp-fill" style="width:${pct}%"></div></div>
+        </div>
       `}
 
-      <div class="tile-meta">
-        <div class="tile-meta-row">
-          <div class="tile-meta-label">Bottle expires</div>
-          <div class="tile-meta-value ${vialClass}">${vialDaysLeft} <span class="vu">days · ${fmtDate(nextMixDate)}</span></div>
+      <!-- BOTTLE + NEXT TITRATION (compact two-up) -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">
+        <div style="padding:8px 10px;background:rgba(11,15,20,.4);border:1px solid var(--border);border-radius:6px;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;">Bottle</div>
+          <div class="${vialClass}" style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;color:var(--text);">${vialDaysLeft}d <span style="font-size:10px;color:var(--muted);font-weight:500;">· ${fmtDate(nextMixDate)}</span></div>
         </div>
-        <div class="tile-meta-row">
-          <div class="tile-meta-label">Frequency</div>
-          <div class="tile-meta-value">${(function(){
-            try {
-              const choice = (JSON.parse(localStorage.getItem('apex_cadence_choice')||'{}'))[p.slug];
-              if (choice) return choice;
-            } catch(_){}
-            return p.freq || 'daily';
-          })()}</div>
-        </div>
-        ${nextTitText ? `<div class="tile-meta-row">
-          <div class="tile-meta-label">Next titration</div>
-          <div class="tile-meta-value">${nextTitText}</div>
-        </div>` : ''}
-        <div class="tile-meta-row">
-          <div class="tile-meta-label">Timing</div>
-          <div class="tile-meta-value" style="font-size:12px;">${(function(){
-            const ssot = (window.APEX_PEPTIDES || {})[p.slug] || {};
-            const note = String(ssot.timing_note || ssot.recon_tip || '').toLowerCase();
-            const tags = [];
-            if (/fasted|before food|empty stomach/.test(note)) tags.push('🌅 Fasted');
-            if (/morning|am\b|pre-cardio|pre-workout/.test(note) && !tags.length) tags.push('☀️ Morning');
-            if (/evening|pm\b|pre-bed|bedtime|night/.test(note)) tags.push('🌙 Evening');
-            if (/post-workout|post workout/.test(note)) tags.push('💪 Post-workout');
-            if (/anytime|flexible|time of day flexible/.test(note) && !tags.length) tags.push('⏰ Anytime');
-            if (!tags.length) tags.push('⏰ Anytime');
-            return tags.join(' · ');
-          })()}</div>
+        <div style="padding:8px 10px;background:rgba(11,15,20,.4);border:1px solid var(--border);border-radius:6px;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;">${nextTitText ? 'Next titration' : 'Status'}</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;color:${sched.go?'var(--accent2)':'var(--accent)'};">${nextTitText || (sched.go ? '● Inject today' : sched.reason)}</div>
         </div>
       </div>
 
-      <div class="tile-actions" style="position:relative;">
-        <button class="tile-btn primary ${isDone ? 'done' : ''}" data-act="log" ${(!units && !(apx && apx.source==='combined' && apx.units!=null) && !ORAL_SLUGS.has(p.slug) && !SPRAY_SLUGS.has(p.slug)) ? 'disabled style="opacity:.35;pointer-events:none;"' : ''}>${isDone ? '✓ Logged Today' : (sched.go ? "Log Today's Dose" : (isAsNeededCycle ? 'Log a Dose' : 'Log Anyway'))}</button>
-        <button class="tile-btn" data-act="refill" title="Reset bottle countdown after mixing a fresh vial">🧪 Refilled</button>
-        <button class="tile-btn" data-act="more" aria-label="More" style="padding:8px 12px;font-size:18px;line-height:1;">⋯</button>
+      <!-- FOOTER actions — secondary, log lives on Today tab -->
+      <div class="tile-actions" style="position:relative;display:flex;gap:6px;">
+        <button class="tile-btn ${isDone ? 'done' : ''}" data-act="log" style="flex:1;font-size:11px;padding:8px;" ${(!units && !(apx && apx.source==='combined' && apx.units!=null) && !ORAL_SLUGS.has(p.slug) && !SPRAY_SLUGS.has(p.slug)) ? 'disabled style="opacity:.35;pointer-events:none;flex:1;font-size:11px;padding:8px;"' : ''}>${isDone ? '✓ Logged' : 'Log dose'}</button>
+        <button class="tile-btn" data-act="refill" title="Reset bottle countdown after mixing a fresh vial" style="flex:1;font-size:11px;padding:8px;">🧪 Refilled</button>
+        <button class="tile-btn" data-act="more" aria-label="More" style="padding:8px 12px;font-size:16px;line-height:1;">⋯</button>
         <div data-menu="more" style="display:none;position:absolute;bottom:100%;right:0;margin-bottom:6px;background:var(--panel);border:1px solid var(--border2);border-radius:8px;padding:4px;box-shadow:0 8px 24px rgba(0,0,0,.5);z-index:10;min-width:140px;">
           <button class="tile-btn" data-act="end" style="width:100%;text-align:left;padding:10px 14px;color:#ef4444;border:0;background:transparent;font-family:Rajdhani,sans-serif;font-weight:600;cursor:pointer;">End cycle</button>
         </div>
