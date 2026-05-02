@@ -479,7 +479,11 @@ body::before{
     // (3.5mg) instead of the SSOT canonical value (3mg). Now we use the SSOT
     // value for 'recommended' intensity, fall back to range parsing for mild/aggressive.
     const ssot = (window.APEX_PEPTIDES || {})[slug];
-    if (ssot && ssot.dose_mg_per_inj != null && intensity === 'recommended') {
+    // Only short-circuit to SSOT when caller passed a generic/non-numeric dose string
+    // (e.g., "titrated", "see schedule"). If doseStr has explicit mg/mcg, parse THAT
+    // instead — otherwise titration steps all render as the same flat SSOT canonical value.
+    const hasExplicitDose = /\d+(?:\.\d+)?\s*(mg|mcg)/i.test(s);
+    if (ssot && ssot.dose_mg_per_inj != null && intensity === 'recommended' && !hasExplicitDose) {
       const recon = (opts && opts.userRecon) || RECON_DEFAULTS[slug];
       if (recon && recon.vial && recon.bac) {
         const conc = recon.vial / recon.bac;

@@ -1,7 +1,7 @@
 /* AUTO-GENERATED — DO NOT EDIT.
  * Source: /data/peptides.json
  * Regenerate: node scripts/build-peptide-data.js
- * Built: 2026-05-01T23:29:21.550Z
+ * Built: 2026-05-02T04:22:29.578Z
  */
 window.APEX_PEPTIDES = {
   "_meta": {
@@ -639,7 +639,32 @@ window.APEX_PEPTIDES = {
     "cycle_weeks": 4,
     "off_weeks": 0,
     "research_note": "Loading 100mg 2x/wk × 4wk; substrate for MOTS-c biogenesis",
-    "timing_note": "⏰ <strong>Morning, with or without food.</strong> Loading 2-3x/wk × 4 wks then 1x/wk maintenance. Some users get flushing — split doses help."
+    "timing_note": "⏰ <strong>Morning, with or without food.</strong> Loading 2-3x/wk × 4 wks then 1x/wk maintenance. Some users get flushing — split doses help.",
+    "cadence_flex": {
+      "options": [
+        {
+          "pattern": "1x weekly (maintenance)",
+          "per_dose_mg": 100,
+          "weekly_total_mg": 100
+        },
+        {
+          "pattern": "2x weekly (loading)",
+          "per_dose_mg": 100,
+          "weekly_total_mg": 200
+        },
+        {
+          "pattern": "3x weekly (Mon · Wed · Fri)",
+          "per_dose_mg": 100,
+          "weekly_total_mg": 300
+        },
+        {
+          "pattern": "split daily (Mon-Fri)",
+          "per_dose_mg": 50,
+          "weekly_total_mg": 250
+        }
+      ],
+      "rule": "NAD+ benefits from steady substrate availability. Loading phase (first 4 weeks) uses 2-3x/wk to fill the cofactor pool, then drop to 1x/wk maintenance. Some users prefer split daily 50mg to minimize flushing."
+    }
   },
   "glutathione.html": {
     "name": "Glutathione",
