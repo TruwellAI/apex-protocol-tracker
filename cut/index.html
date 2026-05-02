@@ -8,6 +8,10 @@
 <meta name="apple-mobile-web-app-title" content="Cut">
 <meta name="theme-color" content="#0A0A0A">
 <link rel="manifest" href="manifest.json">
+<!-- Apex brand fonts: Rajdhani for headings, Barlow for body, Share Tech Mono for labels -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <!-- ENCYCLOPEDIA INTEGRATION: pulls SSOT + interaction engine + units math from main Apex app -->
 <script src="../data/peptide-data.js?v=20260502a"></script>
 <script src="../assets/apex-stack-render.js?v=20260502a"></script>
@@ -15,20 +19,24 @@
 <style>
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 :root {
-  --bg: #0A0A0A;
+  --bg: #080C10;            /* Apex deep navy — exact SSOT match */
   --panel: #131618;
   --panel2: #1B1F22;
-  --border: rgba(255,255,255,.08);
-  --border2: rgba(0,255,157,.25);
+  --border: rgba(0,212,255,.12);
+  --border2: rgba(0,212,255,.30);
   --text: #E8EAED;
   --muted: #7A8489;
-  --accent: #00D4FF;
-  --accent2: #00FF9D;
+  --accent: #00D4FF;        /* Apex cyan primary */
+  --accent2: #00FF9D;        /* Apex health green */
+  --accent3: #A78BFA;        /* Apex purple (longevity peptides) */
   --warn: #FBBF24;
-  --bad: #FF6B35;
+  --bad: #FF6B35;            /* Apex orange · disclaimers + warnings */
   --good: #00FF9D;
 }
-html, body { margin:0; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif; -webkit-font-smoothing: antialiased; }
+html, body { margin:0; background: var(--bg); color: var(--text); font-family: 'Barlow', -apple-system, BlinkMacSystemFont, sans-serif; -webkit-font-smoothing: antialiased; }
+.brand, .hero-num, .macro-val, .steps-num, .ti-value, .card-name, .ct-label, h1, h2, h3 { font-family: 'Rajdhani', sans-serif; letter-spacing: -.2px; }
+.hero-eyebrow, .macro-label, .section-h h2, .tile-status, .tag, .head-stats, .tab { font-family: 'Share Tech Mono', monospace; }
+.section-h h2 { font-family: 'Rajdhani', sans-serif; letter-spacing: 0; }
 body { padding-bottom: 90px; }
 .wrap { max-width: 540px; margin: 0 auto; }
 
@@ -443,16 +451,45 @@ body { padding-bottom: 90px; }
     <div style="height:30px;"></div>
   </div>
 
+  <!-- ═══ RULES PANEL ═══ -->
+  <div class="panel" data-panel="rules">
+    <div class="hero" style="margin-top:14px;">
+      <div class="hero-eyebrow">The 10 Commandments · 6-week shred</div>
+      <div style="font-size:14px;color:var(--text);margin-top:4px;line-height:1.5;">Break these and the math doesn't work. Follow them and you're <strong style="color:var(--accent2);">8% by week 6.</strong></div>
+    </div>
+    <div class="list" id="rules-list"></div>
+    <div style="height:30px;"></div>
+  </div>
+
   <!-- ═══ PROGRESS PANEL ═══ -->
   <div class="panel" data-panel="progress">
-    <div class="section-h"><h2>Log today</h2></div>
+    <div class="note">
+      <strong>InBody-style check-in.</strong> Log every Friday AM (post-bathroom, pre-water). Daily weight is fine — Friday is the official lock-in.
+    </div>
+    <div class="section-h"><h2>Log today's body comp</h2></div>
     <div class="field">
       <label>Weight (lb)</label>
       <input type="number" step="0.1" id="log-weight" placeholder="239.0">
     </div>
     <div class="field">
-      <label>Body fat % (optional — InBody / Bod Pod / pinch)</label>
+      <label>Body fat %</label>
       <input type="number" step="0.1" id="log-bf" placeholder="13.0">
+    </div>
+    <div class="field">
+      <label>Subcutaneous fat % (optional · InBody)</label>
+      <input type="number" step="0.1" id="log-sub" placeholder="9.5">
+    </div>
+    <div class="field">
+      <label>Visceral fat level (optional · InBody 1-30)</label>
+      <input type="number" step="0.1" id="log-visc" placeholder="8">
+    </div>
+    <div class="field">
+      <label>Lean muscle mass % (optional · LBM/total)</label>
+      <input type="number" step="0.1" id="log-lbm" placeholder="87.0">
+    </div>
+    <div class="field">
+      <label>Water % (optional · TBW)</label>
+      <input type="number" step="0.1" id="log-water" placeholder="62.0">
     </div>
     <div class="field">
       <label>Waist (in, optional)</label>
@@ -488,12 +525,13 @@ body { padding-bottom: 90px; }
   </div>
 
   <!-- TABS -->
-  <div class="tabs" style="grid-template-columns:repeat(6,1fr);">
+  <div class="tabs" style="grid-template-columns:repeat(7,1fr);">
     <button class="tab on" data-tab="today"><div class="icon">●</div>Today</button>
-    <button class="tab" data-tab="plan"><div class="icon">📋</div>Plan</button>
-    <button class="tab" data-tab="eat"><div class="icon">🍽</div>Eat</button>
+    <button class="tab" data-tab="plan"><div class="icon">📋</div>Meals</button>
     <button class="tab" data-tab="inject"><div class="icon">💉</div>Inject</button>
     <button class="tab" data-tab="train"><div class="icon">🏋︎</div>Train</button>
+    <button class="tab" data-tab="rules"><div class="icon">📜</div>Rules</button>
+    <button class="tab" data-tab="eat"><div class="icon">🍽</div>Eat</button>
     <button class="tab" data-tab="progress"><div class="icon">📈</div>Track</button>
   </div>
 </div>
@@ -908,14 +946,21 @@ function renderProgress(){
   const histList = document.getElementById('history-list');
   if (!w.length) { histList.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:13px;padding:14px;">No weigh-ins yet — log one above.</div>'; }
   else {
-    histList.innerHTML = w.slice().reverse().map((e,i) => `
-      <div class="card" style="cursor:default;">
+    histList.innerHTML = w.slice().reverse().map((e) => {
+      const meta = [];
+      if (e.bf) meta.push(`${e.bf.toFixed(1)}% BF`);
+      if (e.sub) meta.push(`${e.sub.toFixed(1)}% sub`);
+      if (e.visc) meta.push(`visc ${e.visc}`);
+      if (e.lbm) meta.push(`${e.lbm.toFixed(1)}% LBM`);
+      if (e.water) meta.push(`${e.water.toFixed(1)}% H₂O`);
+      if (e.waist) meta.push(`waist ${e.waist}"`);
+      return `<div class="card" style="cursor:default;align-items:flex-start;">
         <div class="card-body">
-          <div class="card-name">${e.weight.toFixed(1)} lb ${e.bf?'· '+e.bf.toFixed(1)+'% BF':''}</div>
-          <div class="card-meta">${e.date}${e.waist?' · waist '+e.waist+'"':''}</div>
+          <div class="card-name">${e.weight.toFixed(1)} lb · ${e.date}</div>
+          ${meta.length ? `<div class="card-meta">${meta.join(' · ')}</div>` : ''}
         </div>
-      </div>
-    `).join('');
+      </div>`;
+    }).join('');
   }
   document.getElementById('hist-count').textContent = `${w.length} entr${w.length===1?'y':'ies'}`;
   document.getElementById('ch-start').textContent = s.startWeight.toFixed(1);
@@ -1063,22 +1108,23 @@ function resetSteps(){
 function logWeight(){
   const w = parseFloat(document.getElementById('log-weight').value);
   const bf = parseFloat(document.getElementById('log-bf').value);
+  const sub = parseFloat(document.getElementById('log-sub').value);
+  const visc = parseFloat(document.getElementById('log-visc').value);
+  const lbm = parseFloat(document.getElementById('log-lbm').value);
+  const water = parseFloat(document.getElementById('log-water').value);
   const waist = parseFloat(document.getElementById('log-waist').value);
   if (!w || w < 100 || w > 500) { alert('Enter a weight between 100-500 lb'); return; }
   const s = load();
   s.weights = s.weights || [];
-  // dedupe today
   const k = todayKey();
   s.weights = s.weights.filter(e => e.date !== k);
-  s.weights.push({ date: k, weight: w, bf: bf||null, waist: waist||null });
+  s.weights.push({ date: k, weight: w, bf: bf||null, sub: sub||null, visc: visc||null, lbm: lbm||null, water: water||null, waist: waist||null });
   s.weights.sort((a,b) => a.date.localeCompare(b.date));
   save(s);
-  document.getElementById('log-weight').value = '';
-  document.getElementById('log-bf').value = '';
-  document.getElementById('log-waist').value = '';
+  ['log-weight','log-bf','log-sub','log-visc','log-lbm','log-water','log-waist'].forEach(id => document.getElementById(id).value = '');
   haptic();
   renderAll();
-  alert('Logged · '+w.toFixed(1)+' lb' + (bf?' · '+bf+'% BF':''));
+  alert('✓ Logged · '+w.toFixed(1)+' lb'+(bf?' · '+bf+'% BF':''));
 }
 function saveSettings(){
   const s = load();
@@ -1194,6 +1240,51 @@ function autoLogAllMeals(){
   alert(`Day logged · ${Math.round(T.cal)} cal · ${Math.round(T.p)}P / ${Math.round(T.c)}C / ${Math.round(T.f)}F`);
 }
 
+// ── RULES TAB ─────────────────────────────
+const RULES = [
+  { tag:'NUTRITION',     icon:'🍽',  rule:'Hit 240g protein every day.', why:'This is the LBM lock. Miss it on a 1150-cal deficit and the scale drops faster — but it\'s muscle leaving, not fat. Anavar can\'t save sub-protein.' },
+  { tag:'NUTRITION',     icon:'🍽',  rule:'No alcohol.',                   why:'Alcohol shuts down fat oxidation for 36hrs and tanks Anavar liver values. One night = 4-7 days off the timeline. Save it for the boat.' },
+  { tag:'NUTRITION',     icon:'🍽',  rule:'No deviation outside Thursday cheat night.', why:'Off-script "small bite" snacks compound. The food list is finite by design. Stick to it 6 days, eat pizza on day 7.' },
+  { tag:'NUTRITION',     icon:'🍽',  rule:'4-slice cap on Thursday cheat. Period.', why:'5 slices = over maintenance. 6 = full overshoot = lost week. The discipline is in stopping at 4, not in skipping cheat night.' },
+  { tag:'HYDRATION',     icon:'💧',  rule:'1 gallon (16 cups) of water daily.', why:'On Anavar your kidneys work harder. Dehydration shows up as scale stalls, false BF spikes, headaches, and crap workouts. Salt the water with electrolytes mid-day.' },
+  { tag:'TRAINING',      icon:'🏋︎',  rule:'Both walks happen. Every day. No skips.', why:'The 10k×2 walks burn ~600 cal of pure NEAT outside the gym. Skipping one = 200 cal back on the deficit. Walk #1 is fasted (peptide-fueled fat ox), Walk #2 is post-dinner (glucose disposal).' },
+  { tag:'TRAINING',      icon:'🏋︎',  rule:'Lift heavy 5-7 days/week per the split.', why:'On a deficit, intensity > volume. Keep the 5×5 weight stable — that\'s the muscle-preservation signal. Drop weight = body reads "starve" mode = LBM dumps.' },
+  { tag:'TRAINING',      icon:'🏋︎',  rule:'No extra cardio.',              why:'You don\'t need it. Two walks + 5-7 lifts + peptides + 1150 deficit is the engine. Adding cardio drives cortisol, water retention, hunger, and stalls the scale for a week. Boring works.' },
+  { tag:'PEPTIDES',      icon:'💉',  rule:'AM peptides hit before Walk #1.', why:'Tesa/AOD/5-Amino need fasted state. Eat first and you blunt 60-80% of the lipolysis signal. Peptides → walk → breakfast. Order matters.' },
+  { tag:'PEPTIDES',      icon:'💉',  rule:'Anavar always with food.', why:'Empty-stomach Anavar = bigger liver hit + nausea. Take with breakfast (AM 25mg) and dinner (PM 25mg). Protect the 6-week run — bloodwork at week 4 is non-negotiable.' },
+  { tag:'PEPTIDES',      icon:'💉',  rule:'HCG M·W·F or testes shrink.', why:'On 525mg/wk Test you\'re fully suppressed. Skip HCG and within 4 weeks: testicular atrophy, libido drop, motivation crash. 30u (500 IU) M·W·F maintains everything.' },
+  { tag:'RECOVERY',      icon:'😴',  rule:'7+ hours of sleep, every night.', why:'Cortisol from sleep deprivation directly correlates with belly fat retention. Anavar + Test recovery both hinge on REM. Phone out of bedroom by 10pm. This is non-optional.' },
+  { tag:'TRACKING',      icon:'📊',  rule:'Daily AM weigh-in. Friday is the official lock.', why:'Daily smooths noise. Friday 7-day average = your real weight. Trust the trend, not the tide. Photo + measurements every Friday too.' },
+  { tag:'TRACKING',      icon:'📊',  rule:'Log every meal. Don\'t eyeball.', why:'"I think that was 6oz" → 8oz reality. Over 6 weeks, 30 cal/day × 42 = 1,260 unaccounted cal = 0.4 lb fat NOT lost. Open the app. Tap the food.' },
+  { tag:'MENTAL',        icon:'🧠',  rule:'No "I deserve it" reasoning.', why:'You earned the boat trip with discipline, not with capitulation. The reward is being shredded on the boat — not a Tuesday cookie. Discipline IS the reward.' },
+  { tag:'MENTAL',        icon:'🧠',  rule:'Don\'t panic when the scale stalls.', why:'Weeks 3-4 are notorious for water shifts (Anavar + glycogen + cortisol). Trust the photos, the waist tape, and the 7-day average. Don\'t add cardio. Don\'t cut more cal. Hold the line.' },
+];
+
+function renderRules(){
+  const list = document.getElementById('rules-list'); if (!list) return;
+  // Color-code by tag matching peptide encyclopedia palette
+  const tagColors = {
+    NUTRITION: { bg:'rgba(0,255,157,.06)', border:'rgba(0,255,157,.45)', accent:'var(--accent2)' },
+    HYDRATION: { bg:'rgba(0,212,255,.06)', border:'rgba(0,212,255,.45)', accent:'var(--accent)' },
+    TRAINING:  { bg:'rgba(255,107,53,.06)', border:'rgba(255,107,53,.45)', accent:'#FF6B35' },
+    PEPTIDES:  { bg:'rgba(167,139,250,.06)', border:'rgba(167,139,250,.45)', accent:'#A78BFA' },
+    RECOVERY:  { bg:'rgba(244,114,182,.06)', border:'rgba(244,114,182,.45)', accent:'#F472B6' },
+    TRACKING:  { bg:'rgba(251,191,36,.06)', border:'rgba(251,191,36,.45)', accent:'var(--warn)' },
+    MENTAL:    { bg:'rgba(52,211,153,.06)', border:'rgba(52,211,153,.45)', accent:'#34D399' },
+  };
+  list.innerHTML = RULES.map((r, i) => {
+    const c = tagColors[r.tag] || tagColors.NUTRITION;
+    return `<div style="background:${c.bg};border:1px solid ${c.border};border-left:3px solid ${c.accent};padding:14px;border-radius:10px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+        <span style="font-size:18px;">${r.icon}</span>
+        <span style="font-family:'SF Mono',monospace;font-size:9px;letter-spacing:.16em;color:${c.accent};font-weight:700;">RULE ${i+1} · ${r.tag}</span>
+      </div>
+      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px;line-height:1.4;">${r.rule}</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.5;">${r.why}</div>
+    </div>`;
+  }).join('');
+}
+
 function renderAll(){
   renderHero();
   renderMacros();
@@ -1206,6 +1297,7 @@ function renderAll(){
   renderWater();
   renderChecks();
   renderTrain();
+  renderRules();
   renderProgress();
 }
 renderAll();
