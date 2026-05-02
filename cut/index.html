@@ -514,6 +514,7 @@ const FOODS = [
   { id:'rice',     name:'White rice (cooked)',         serving:'1 cup',           cal:205, p:4,  c:45, f:0  },
   { id:'potato',   name:'Potato (baked, medium)',      serving:'1 medium 173g',   cal:161, p:4,  c:37, f:0  },
   { id:'avo',      name:'Avocado',                     serving:'1/2 medium ~70g', cal:120, p:1.5,c:6,  f:11 },
+  { id:'papa',     name:'Papa Johns NY pepperoni',     serving:'1 slice (1/8 large)', cal:340, p:13, c:38, f:14 },
 ];
 
 // ─────────────────────────────────────────────
@@ -1115,7 +1116,18 @@ function mealMacros(meal){
   });
   return r;
 }
-function activePlan(){ return MEAL_PLAN; }
+// THURSDAY CHEAT DINNER override — swaps the chicken/potato/avocado dinner for
+// 4 slices Papa Johns NY pepperoni. Net day: ~3,086 cal · 238P · 304C · 90F
+// (still ~214 cal under maintenance — controlled overshoot for sanity + glycogen)
+function activePlan(){
+  if (dayOfWeek() === 4) {
+    return MEAL_PLAN.map(m => {
+      if (m.id !== 'm5') return m;
+      return { id:'m5', time:'🍕 CHEAT NIGHT', when:'~6-7pm · Thursday family pizza · stop at 4 slices', items:[{ id:'papa', qty:4 }] };
+    });
+  }
+  return MEAL_PLAN;
+}
 
 function renderPlan(){
   const list = document.getElementById('plan-list'); if (!list) return;
