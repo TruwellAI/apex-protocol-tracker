@@ -8,6 +8,9 @@
 <meta name="apple-mobile-web-app-title" content="Cut">
 <meta name="theme-color" content="#0A0A0A">
 <link rel="manifest" href="manifest.json">
+<!-- ENCYCLOPEDIA INTEGRATION: pulls SSOT + interaction engine + units math from main Apex app -->
+<script src="../data/peptide-data.js?v=20260502a"></script>
+<script src="../assets/apex-stack-render.js?v=20260502a"></script>
 <title>Neil's Cut · 239 → 9%</title>
 <style>
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -359,8 +362,11 @@ body { padding-bottom: 90px; }
   <!-- ═══ INJECT PANEL ═══ -->
   <div class="panel" data-panel="inject">
     <div class="note">
-      <strong>Daily peptide stack.</strong> AM fasted shots before walk. Pre-workout BPC. PM Anavar + BPC. Weekly: Test Mon+Thu, Reta Sun. Tap to log.
+      <strong>Daily peptide stack.</strong> AM fasted shots before walk · pre-workout BPC · PM Anavar + BPC. Tap to log.
     </div>
+
+    <!-- STACK INTELLIGENCE (auto-generated from Apex encyclopedia) -->
+    <div id="stack-intel" style="margin:0 16px 14px;"></div>
     <div class="section-h">
       <h2>Today's injections</h2>
       <span class="count" id="inj-count">0 / 0</span>
@@ -499,26 +505,27 @@ const MEAL_PLAN = [
 // ─────────────────────────────────────────────
 const PEPTIDES = [
   // ── DAILY AM FASTED (before walk) ──
-  { id:'tesa',   name:'Tesamorelin',     dose:'2 mg · 15u',     window:'AM fasted',          days:'all',      tag:'GH',    color:'#00FF9D' },
-  { id:'aod',    name:'AOD-9604',        dose:'300 mcg · 6u',   window:'AM fasted',          days:'all',      tag:'fat',   color:'#00D4FF' },
-  { id:'5amq',   name:'5-Amino-1MQ',     dose:'100 mg',         window:'AM fasted',          days:'all',      tag:'NNMT',  color:'#FBBF24' },
-  { id:'slupp',  name:'SLU-PP-332',      dose:'1 pill',         window:'AM fasted',          days:'all',      tag:'ERRα',  color:'#F472B6' },
-  { id:'lcar',   name:'L-Carnitine',     dose:'200 mg',         window:'AM pre-cardio',      days:'all',      tag:'fat',   color:'#A78BFA' },
-  { id:'anavarAM', name:'Anavar',         dose:'25 mg oral',     window:'AM with food',       days:'all',      tag:'Rx',    color:'#FF6B35' },
-  { id:'bpcAM',  name:'BPC-157',         dose:'250 mcg · 5u',   window:'AM',                 days:'all',      tag:'heal',  color:'#34D399' },
+  { id:'tesa',   name:'Tesamorelin',     dose:'2 mg · 15u',     window:'AM fasted',          days:'all',      tag:'GH',    color:'#00FF9D', ssot:'tesamorelin.html' },
+  { id:'aod',    name:'AOD-9604',        dose:'300 mcg · 6u',   window:'AM fasted',          days:'all',      tag:'fat',   color:'#00D4FF', ssot:'aod9604.html' },
+  { id:'5amq',   name:'5-Amino-1MQ',     dose:'100 mg',         window:'AM fasted',          days:'all',      tag:'NNMT',  color:'#FBBF24', ssot:'5amino1mq.html' },
+  { id:'slupp',  name:'SLU-PP-332',      dose:'1 pill',         window:'AM fasted',          days:'all',      tag:'ERRα',  color:'#F472B6', ssot:'slu-pp-322.html' },
+  { id:'lcar',   name:'L-Carnitine',     dose:'200 mg',         window:'AM pre-cardio',      days:'all',      tag:'fat',   color:'#A78BFA', ssot:'l-carnitine.html' },
+  { id:'anavarAM', name:'Anavar',         dose:'25 mg oral',     window:'AM with food',       days:'all',      tag:'Rx',    color:'#FF6B35', ssot:null },
+  { id:'bpcAM',  name:'BPC-157',         dose:'250 mcg · 5u',   window:'AM',                 days:'all',      tag:'heal',  color:'#34D399', ssot:'bpc157.html' },
   // ── DAILY PM ──
-  { id:'anavarPM', name:'Anavar',         dose:'25 mg oral',     window:'PM with food',       days:'all',      tag:'Rx',    color:'#FF6B35' },
-  { id:'bpcPM',  name:'BPC-157',         dose:'250 mcg · 5u',   window:'PM',                 days:'all',      tag:'heal',  color:'#34D399' },
+  { id:'anavarPM', name:'Anavar',         dose:'25 mg oral',     window:'PM with food',       days:'all',      tag:'Rx',    color:'#FF6B35', ssot:null },
+  { id:'bpcPM',  name:'BPC-157',         dose:'250 mcg · 5u',   window:'PM',                 days:'all',      tag:'heal',  color:'#34D399', ssot:'bpc157.html' },
   // ── DAILY TRT (pre-mixed 250 mg/mL) ──
-  { id:'test',   name:'Testosterone Cyp',dose:'30u (75 mg)',    window:'Daily AM · 250 mg/mL pre-mix', days:'all', tag:'TRT', color:'#F472B6' },
+  { id:'test',   name:'Testosterone Cyp',dose:'30u (75 mg)',    window:'Daily AM · 250 mg/mL pre-mix', days:'all', tag:'TRT', color:'#F472B6', ssot:'testosterone-cyp.html' },
+  { id:'hcg',    name:'HCG',             dose:'500 IU · 30u',   window:'Mon · Wed · Fri', days:[1,3,5], tag:'fertility', color:'#FBBF24', ssot:null, note:'5000 IU vial + 3 mL BAC → 1667 IU/mL · 30u draw = 500 IU. Maintains testicular size + libido + fertility on TRT. Refrigerate after mixing, use within 30 days.' },
   // ── 2x WEEKLY (Mon + Thu) ──
-  { id:'tb',     name:'TB-500',          dose:'5 mg · 50u',     window:'Mon + Thu',          days:[1,4],      tag:'heal',  color:'#34D399' },
+  { id:'tb',     name:'TB-500',          dose:'5 mg · 50u',     window:'Mon + Thu',          days:[1,4],      tag:'heal',  color:'#34D399', ssot:'tb500.html' },
   // ── 3x WEEKLY (Mon · Wed · Fri) ──
-  { id:'reta',   name:'Retatrutide',     dose:'25u',            window:'M · W · F',          days:[1,3,5],    tag:'GLP-1', color:'#00FF9D' },
-  { id:'nad',    name:'NAD+',            dose:'20u',            window:'M · W · F AM',       days:[1,3,5],    tag:'mito',  color:'#FBBF24' },
-  { id:'mots',   name:'MOTS-c',          dose:'2× 50u (100u total · pen maxes at 60)', window:'M · W · F AM', days:[1,3,5], tag:'mito',  color:'#FBBF24' },
+  { id:'reta',   name:'Retatrutide',     dose:'25u',            window:'M · W · F',          days:[1,3,5],    tag:'GLP-1', color:'#00FF9D', ssot:'retatrutide.html' },
+  { id:'nad',    name:'NAD+',            dose:'20u',            window:'M · W · F AM',       days:[1,3,5],    tag:'mito',  color:'#FBBF24', ssot:'nad-plus.html' },
+  { id:'mots',   name:'MOTS-c',          dose:'2× 50u (100u total · pen maxes at 60)', window:'M · W · F AM', days:[1,3,5], tag:'mito',  color:'#FBBF24', ssot:'motsc.html' },
   // ── 2x WEEKLY (Tue + Fri) ──
-  { id:'gsh',    name:'Glutathione',     dose:'400 mg',         window:'Tue + Fri AM',       days:[2,5],      tag:'antiox',color:'#A78BFA' },
+  { id:'gsh',    name:'Glutathione',     dose:'400 mg',         window:'Tue + Fri AM',       days:[2,5],      tag:'antiox',color:'#A78BFA', ssot:'glutathione.html' },
 ];
 
 const TRAIN = [
@@ -683,6 +690,94 @@ function renderFoodLog(){
   // total
   const m = sumMacros(t.food);
   document.getElementById('eat-total').textContent = `${Math.round(m.cal)} cal · ${Math.round(m.p)}P / ${Math.round(m.c)}C / ${Math.round(m.f)}F`;
+}
+
+// ── STACK INTELLIGENCE: pull from Apex encyclopedia (interactions.json + peptides.json) ──
+function renderStackIntel(){
+  const host = document.getElementById('stack-intel'); if (!host) return;
+  const ssotMap = window.APEX_PEPTIDES || {};
+  const interactions = window.APEX_INTERACTIONS || [];
+  const stackSlugs = PEPTIDES.map(p => p.ssot).filter(Boolean);
+  const dedupedSlugs = [...new Set(stackSlugs)];
+
+  // Find all interactions where ALL listed peptides are in his stack
+  const hits = interactions.filter(i => {
+    const peps = i.peptides || [];
+    return peps.length >= 2 && peps.every(slug => dedupedSlugs.includes(slug));
+  });
+
+  // Build cards
+  const sevColor = { high:'#FF6B35', medium:'#00D4FF', synergy:'#00FF9D' };
+  const sevLabel = { high:'⚠ HEADS UP', medium:'⚠ HEADS UP', synergy:'⚡ SYNERGY' };
+  let cards = hits.map(i => {
+    const c = sevColor[i.severity] || '#7A8489';
+    const lbl = sevLabel[i.severity] || 'NOTE';
+    const peptideNames = (i.peptides||[]).map(s => (ssotMap[s] && ssotMap[s].name) || s).join(' + ');
+    return `<div style="background:${c}11;border:1px solid ${c};border-left:3px solid ${c};padding:12px 14px;border-radius:8px;margin-bottom:8px;">
+      <div style="font-family:'SF Mono',monospace;font-size:9px;letter-spacing:.16em;color:${c};font-weight:700;margin-bottom:4px;">${lbl} · ${peptideNames}</div>
+      <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">${i.title || ''}</div>
+      <div style="font-size:12px;color:var(--text);line-height:1.5;">${i.body || i.description || ''}</div>
+      ${i.fix ? `<div style="margin-top:6px;font-size:11px;color:${c};font-weight:600;">→ ${i.fix}</div>` : ''}
+    </div>`;
+  }).join('');
+
+  // Hardcoded cut-specific intelligence Apex doesn't yet model
+  const cutLessons = [
+    {
+      sev:'high', tag:'TIMING',
+      title:'Reta + Tesamorelin — gastric emptying conflict',
+      body:'GLP-1s (Reta) delay gastric emptying. GH peptides (Tesa) need a fasted state for 2hrs post-shot. On Reta days (M·W·F): Tesa first thing, wait 2hrs, eat breakfast. Reta later (PM ideally) so it doesn\'t blunt the morning fasted GH pulse.',
+      show: dedupedSlugs.includes('retatrutide.html') && dedupedSlugs.includes('tesamorelin.html'),
+    },
+    {
+      sev:'medium', tag:'REDUNDANCY',
+      title:'AOD-9604 + Tesamorelin overlap',
+      body:'Both target lipolysis through GH-related pathways. Tesa is the heavier hitter (FDA-approved for visceral fat). AOD adds little on top of Tesa — consider dropping AOD or running it ONLY on non-Tesa days. Saves money + injection load.',
+      show: dedupedSlugs.includes('aod9604.html') && dedupedSlugs.includes('tesamorelin.html'),
+    },
+    {
+      sev:'synergy', tag:'SUBSTRATE FUEL',
+      title:'MOTS-c + NAD+ — biogenesis pairing',
+      body:'NAD+ fills the cofactor pool that MOTS-c uses to drive new mitochondrial biogenesis. Both M·W·F is the textbook stack — substrate available exactly when the signaler fires. Don\'t skip NAD+ on MOTS days.',
+      show: dedupedSlugs.includes('motsc.html') && dedupedSlugs.includes('nad-plus.html'),
+    },
+    {
+      sev:'synergy', tag:'PAIRED HEALING',
+      title:'BPC-157 + TB-500 — tendon/ligament synergy',
+      body:'BPC drives angiogenesis at injury site, TB-500 drives systemic cell migration + repair. Together > either alone for joint/tendon recovery on a heavy 6-day split. Run separate vials (TB twice weekly, BPC daily). Do NOT co-vial with GHK-Cu — copper degrades TB.',
+      show: dedupedSlugs.includes('bpc157.html') && dedupedSlugs.includes('tb500.html'),
+    },
+    {
+      sev:'medium', tag:'TRT + ANAVAR',
+      title:'Anavar 50 mg/day on TRT 525 mg/wk',
+      body:'Anavar is mildly hepatotoxic (oral 17α-alkylated). Run no longer than 6-8 weeks. Keep liver enzymes monitored (AST/ALT bloodwork before + week 6). Anavar drops HDL — your daily fish oil + cardio (zone 2) blunts that. HCG 500 IU 3x/wk maintains testicular function on TRT.',
+      show: true,
+    },
+    {
+      sev:'synergy', tag:'CUT STACK',
+      title:'Reta + 5-Amino-1MQ + SLU-PP-332 — three-front fat loss',
+      body:'Reta (GLP-1: appetite + glucose), 5-Amino-1MQ (NNMT inhibitor: methylation pool + fat oxidation), SLU-PP-332 (ERRα: exercise mimetic). Three different mechanisms, no overlap, all preserve LBM under deficit. Aggressive but well-engineered for your goal.',
+      show: dedupedSlugs.includes('retatrutide.html'),
+    },
+  ];
+  const cutCards = cutLessons.filter(l => l.show).map(l => {
+    const c = sevColor[l.sev];
+    const lbl = sevLabel[l.sev];
+    return `<div style="background:${c}11;border:1px solid ${c};border-left:3px solid ${c};padding:12px 14px;border-radius:8px;margin-bottom:8px;">
+      <div style="font-family:'SF Mono',monospace;font-size:9px;letter-spacing:.16em;color:${c};font-weight:700;margin-bottom:4px;">${lbl} · ${l.tag}</div>
+      <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">${l.title}</div>
+      <div style="font-size:12px;color:var(--text);line-height:1.5;">${l.body}</div>
+    </div>`;
+  }).join('');
+
+  const all = (cards + cutCards) || `<div style="padding:14px;text-align:center;color:var(--muted);font-size:12px;">Encyclopedia loading…</div>`;
+  host.innerHTML = `<details open style="background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:0;overflow:hidden;">
+    <summary style="cursor:pointer;list-style:none;padding:14px;display:flex;align-items:center;gap:8px;font-family:'SF Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent2);font-weight:700;-webkit-tap-highlight-color:transparent;">
+      🧠 Stack intelligence · ${(hits.length + cutLessons.filter(l=>l.show).length)} insights from encyclopedia
+      <span style="margin-left:auto;font-size:10px;opacity:.6;">▾</span>
+    </summary>
+    <div style="padding:0 14px 14px;">${all}</div>
+  </details>`;
 }
 
 function renderPeptides(){
@@ -991,6 +1086,7 @@ function renderAll(){
   renderFoodList();
   renderFoodLog();
   renderPlan();
+  renderStackIntel();
   renderPeptides();
   renderSteps();
   renderTrain();
