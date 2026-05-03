@@ -19,7 +19,7 @@
 <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="pragma" content="no-cache">
 <meta http-equiv="expires" content="0">
-<meta name="version" content="v20260502i">
+<meta name="version" content="v20260503a">
 <style>
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 :root {
@@ -445,12 +445,10 @@ body { padding-bottom: 90px; }
     </div>
 
 
-    <!-- TODAY'S PEPTIDE QUICK CHECKLIST -->
-    <div class="section-h">
-      <h2>Today's Stack</h2>
-      <span class="count" id="pep-count">0 / 0</span>
+    <!-- Tap-through to Inject tab — peptide checklist lives there now -->
+    <div style="margin:0 16px 14px;">
+      <button class="btn btn-ghost" style="width:100%;font-size:12px;padding:14px;" onclick="document.querySelector('[data-tab=\\'inject\\']').click()">💉 OPEN INJECTION TAB <span id="pep-count" style="float:right;color:var(--muted);">0 / 0</span></button>
     </div>
-    <div class="list" id="pep-today-list"></div>
 
     <div style="height:30px;"></div>
   </div>
@@ -979,20 +977,9 @@ function renderPeptides(){
   const todayPeps = PEPTIDES.filter(isPeptideTodayScheduled);
   const doneCt = todayPeps.filter(p => t.peptides[p.id]).length;
 
-  // TODAY tab quick checklist
-  const ptl = document.getElementById('pep-today-list');
-  if (ptl) {
-    ptl.innerHTML = todayPeps.map(p => `
-      <div class="card ${t.peptides[p.id]?'done':''}" onclick="togglePep('${p.id}')">
-        <div class="card-check">${t.peptides[p.id]?'✓':''}</div>
-        <div class="card-body">
-          <div class="card-name">${p.name} <span class="tag" style="background:${p.color}22;color:${p.color};border:1px solid ${p.color};">${p.tag}</span></div>
-          <div class="card-meta">${p.dose} · ${p.window}</div>
-        </div>
-      </div>
-    `).join('') || '<div style="text-align:center;color:var(--muted);padding:14px;">No injections scheduled today — rest day.</div>';
-    document.getElementById('pep-count').textContent = `${doneCt} / ${todayPeps.length}`;
-  }
+  // Today tab now just shows the count badge in the "open Inject tab" button
+  const pepCount = document.getElementById('pep-count');
+  if (pepCount) pepCount.textContent = `${doneCt} / ${todayPeps.length}`;
 
   // INJECT tab full view — grouped by timing window
   const pfl = document.getElementById('pep-full-list');
@@ -1476,9 +1463,14 @@ function renderPlan(){
     const isLogged = !!logged[m.id];
     const itemRows = m.items.map(it => {
       const f = FOODS.find(x => x.id === it.id);
-      return `<div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text);padding:4px 0;">
-        <span>${f.name} <span style="color:var(--muted);">×${it.qty}</span></span>
-        <span style="color:var(--muted);">${Math.round(f.cal*it.qty)} cal</span>
+      // Multiply portion size by qty for display: "1 cup × 2 = 2 cups"
+      const portionLine = it.qty > 1 ? `${it.qty} × ${f.serving}` : f.serving;
+      return `<div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text);padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04);">
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:600;">${f.name}</div>
+          <div style="font-size:11px;color:var(--accent);font-family:'Share Tech Mono',monospace;letter-spacing:.04em;margin-top:1px;">${portionLine}</div>
+        </div>
+        <span style="color:var(--muted);flex-shrink:0;margin-left:8px;">${Math.round(f.cal*it.qty)} cal</span>
       </div>`;
     }).join('');
     const dimmedStyle = isLogged
