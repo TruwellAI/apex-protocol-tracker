@@ -686,11 +686,13 @@ const PEPTIDES = [
   { id:'aod',    name:'AOD-9604',        dose:'300 mcg · 6u',   window:'AM fasted',          days:'all',      tag:'fat',   color:'#00D4FF', ssot:'aod9604.html' },
   { id:'5amq',   name:'5-Amino-1MQ',     dose:'2 mg · 40u (10mg/2mL recon)', window:'AM fasted SubQ', days:'all', tag:'NNMT', color:'#FBBF24', ssot:'5amino1mq.html' },
   { id:'slupp',  name:'SLU-PP-332',      dose:'1 pill',         window:'AM fasted',          days:'all',      tag:'ERRα',  color:'#F472B6', ssot:'slu-pp-322.html' },
-  { id:'lcar',   name:'L-Carnitine',     dose:'30u · 15 mg (PRE-MIXED 50mg/mL · ~33 days/bottle)', window:'Daily AM 30min before Walk #1', days:'all', tag:'fat-ox', color:'#A78BFA', ssot:'l-carnitine.html' },
+  { id:'lcarAM', name:'L-Carnitine (AM)', dose:'50u · 25 mg (PRE-MIXED 50mg/mL)', window:'AM fasted · 30min before Walk #1', days:'all', tag:'fat-ox', color:'#A78BFA', ssot:'l-carnitine.html' },
   { id:'anavarAM', name:'Anavar',         dose:'25 mg oral',     window:'AM with food',       days:'all',      tag:'Rx',    color:'#FF6B35', ssot:null },
   { id:'bpcAM',  name:'BPC-157',         dose:'250 mcg · 5u',   window:'AM',                 days:'all',      tag:'heal',  color:'#34D399', ssot:'bpc157.html' },
   { id:'ghkcu',  name:'GHK-Cu',          dose:'2 mg · 12u (50mg vial / 3mL BAC)', window:'AM · separate site from TB-500 (copper degrades it)', days:'all', tag:'collagen', color:'#A78BFA', ssot:'ghkcu.html' },
   { id:'tesa',   name:'Tesamorelin',     dose:'2 mg · 15u',     window:'AM fasted · 2hrs before food',  days:'all', tag:'VAT',   color:'#00FF9D', ssot:'tesamorelin.html' },
+  // ── PRE-GYM (sustains plasma L-Carnitine through the noon lift) ──
+  { id:'lcarPM', name:'L-Carnitine (pre-gym)', dose:'50u · 25 mg (PRE-MIXED 50mg/mL)', window:'Pre-workout ~11:30am · sustains plasma into the lift', days:'all', tag:'fat-ox', color:'#A78BFA', ssot:'l-carnitine.html' },
   // ── POST-WORKOUT (every training day) ──
   { id:'igf',    name:'IGF-1 LR3 (site-target)', dose:'30u total · 15u per worked muscle group', window:'Post-workout · split into worked muscles', days:'all', tag:'GH', color:'#00D4FF', ssot:'igf1-lr3.html' },
   // ── DAILY PM ──
@@ -998,15 +1000,17 @@ function renderPeptides(){
   if (pfl) {
     function bucket(p){
       const w = String(p.window).toLowerCase();
-      if (/post.?workout/.test(w)) return 'post';
+      if (/post.?workout|post.?gym/.test(w)) return 'post';
+      if (/pre.?workout|pre.?gym/.test(w)) return 'pre';
       if (/\bpm\b|evening|bedtime/.test(w)) return 'pm';
       if (/am|fasted|morning|pre.?cardio/.test(w)) return 'am';
       return 'other';
     }
-    const groups = { am:[], post:[], pm:[], other:[] };
+    const groups = { am:[], pre:[], post:[], pm:[], other:[] };
     todayPeps.forEach(p => groups[bucket(p)].push(p));
     const groupLabels = {
       am:    { label:'☀️ MORNING — AM fasted, before walk #1', color:'var(--accent2)' },
+      pre:   { label:'🏋︎ PRE-GYM — ~30 min before lifting', color:'#FBBF24' },
       post:  { label:'⚡ POST-WORKOUT — within 30 min of last set', color:'var(--accent)' },
       pm:    { label:'🌙 PM / EVENING', color:'#A78BFA' },
       other: { label:'📅 WEEKLY / OTHER', color:'var(--muted)' },
@@ -1018,7 +1022,7 @@ function renderPeptides(){
         <div class="card-meta">${p.dose} · ${p.window}</div>
       </div>
     </div>`;
-    pfl.innerHTML = ['am','post','pm','other'].map(g => {
+    pfl.innerHTML = ['am','pre','post','pm','other'].map(g => {
       if (!groups[g].length) return '';
       const meta = groupLabels[g];
       const doneInGroup = groups[g].filter(p => t.peptides[p.id]).length;
