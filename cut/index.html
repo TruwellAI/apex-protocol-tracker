@@ -1564,6 +1564,9 @@ const RULES = [
   { tag:'TRACKING',      icon:'📊',  rule:'Log every meal. Don\'t eyeball.', why:'"I think that was 6oz" → 8oz reality. Over 6 weeks, 30 cal/day × 42 = 1,260 unaccounted cal = 0.4 lb fat NOT lost. Open the app. Tap the food.' },
   { tag:'MENTAL',        icon:'🧠',  rule:'No "I deserve it" reasoning.', why:'You earned the boat trip with discipline, not with capitulation. The reward is being shredded on the boat — not a Tuesday cookie. Discipline IS the reward.' },
   { tag:'MENTAL',        icon:'🧠',  rule:'Don\'t panic when the scale stalls.', why:'Weeks 3-4 are notorious for water shifts (Anavar + glycogen + cortisol). Trust the photos, the waist tape, and the 7-day average. Don\'t add cardio. Don\'t cut more cal. Hold the line.' },
+  { tag:'CYCLING',       icon:'🔁', rule:'Post-cut: swap Tesamorelin → AOD-9604.', why:'Tesa runs 6-8 weeks on, then needs a 4-week off block to keep pituitary GH responsiveness. During Tesa-OFF: run AOD-9604 300 mcg / 6u SubQ daily fasted to maintain mild lipolysis support without GH-axis stimulation. Then cycle back to Tesa for the next cut block.' },
+  { tag:'CYCLING',       icon:'🔁', rule:'Anavar: 6-8 weeks max, then 8-week wash-out.', why:'Liver enzymes (AST/ALT) and HDL need recovery time. Bloodwork at week 4 + week 8 of any Anavar block. NEVER stack two Anavar runs back-to-back without the wash-out — that\'s how guys end up with persistent lipid issues.' },
+  { tag:'CYCLING',       icon:'🔁', rule:'Reta: when cut hits goal, taper down 25% per week.', why:'Hard-stopping a GLP-1 = appetite rebounds hard, you can regain 5-10 lb in a month. Taper: Wk1 75% dose, Wk2 50%, Wk3 25%, Wk4 off. Smooth landing back to maintenance eating.' },
 ];
 
 function renderRules(){
@@ -1577,6 +1580,7 @@ function renderRules(){
     RECOVERY:  { bg:'rgba(244,114,182,.06)', border:'rgba(244,114,182,.45)', accent:'#F472B6' },
     TRACKING:  { bg:'rgba(251,191,36,.06)', border:'rgba(251,191,36,.45)', accent:'var(--warn)' },
     MENTAL:    { bg:'rgba(52,211,153,.06)', border:'rgba(52,211,153,.45)', accent:'#34D399' },
+    CYCLING:   { bg:'rgba(0,212,255,.06)', border:'rgba(0,212,255,.45)', accent:'var(--accent)' },
   };
   list.innerHTML = RULES.map((r, i) => {
     const c = tagColors[r.tag] || tagColors.NUTRITION;
