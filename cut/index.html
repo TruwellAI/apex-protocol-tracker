@@ -353,6 +353,12 @@ body { padding-bottom: 90px; }
       </div>
     </div>
 
+    <!-- Quick reset for the day -->
+    <div style="margin:0 16px 14px;display:flex;gap:8px;">
+      <button class="btn btn-ghost" style="flex:1;font-size:11px;padding:10px;" onclick="resetFoodLog()">↺ Reset food + meals</button>
+      <button class="btn btn-ghost" style="flex:1;font-size:11px;padding:10px;" onclick="undoLastFood()">⌫ Undo last item</button>
+    </div>
+
     <!-- ACTIVITY LOG CARDS: walks + workout with steps + calories burned -->
     <div style="margin:0 16px 14px;display:flex;flex-direction:column;gap:10px;">
       <div class="activity-card" id="ac-walkAM">
@@ -1178,12 +1184,23 @@ function removeFood(id){
   haptic();
   renderAll();
 }
-function resetFoodLog(){
-  if (!confirm('Reset today\'s food log?')) return;
+function undoLastFood(){
   const s = load();
-  if (s.daily && s.daily[todayKey()]) s.daily[todayKey()].food = [];
-  save(s);
-  renderAll();
+  if (!s.daily || !s.daily[todayKey()] || !s.daily[todayKey()].food.length) {
+    alert('Nothing to undo.');
+    return;
+  }
+  s.daily[todayKey()].food.pop();
+  save(s); haptic(); renderAll();
+}
+function resetFoodLog(){
+  if (!confirm('Reset today\'s food log + meal check-marks back to zero?')) return;
+  const s = load();
+  if (s.daily && s.daily[todayKey()]) {
+    s.daily[todayKey()].food = [];
+    s.daily[todayKey()].mealsLogged = {};
+  }
+  save(s); haptic(); renderAll();
 }
 function togglePep(id){
   const s = load();
