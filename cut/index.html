@@ -742,10 +742,10 @@ function get(){
   s.goalWeight = s.goalWeight || 230;     // 208 LBM + 22 lb fat target
   s.goalFat = s.goalFat || 22;            // Neil's locked target — 22 lb of fat
   s.goalBF = s.goalBF || 9.6;             // 22 / 230
-  s.targetCal = s.targetCal || 2150;   // 1150 deficit off ~3300 maintenance · 6-week boat shred
-  s.targetP = s.targetP || 240;
-  s.targetC = s.targetC || 195;
-  s.targetF = s.targetF || 50;
+  s.targetCal = s.targetCal || 2300;   // 1000 deficit · 6-week boat shred
+  s.targetP = s.targetP || 240;        // 1.15 g/lb LBM — anabolic protection
+  s.targetC = s.targetC || 175;        // training fuel + glycogen
+  s.targetF = s.targetF || 70;         // hormone-floor fat (was too low at 50g)
   s.weights = s.weights || [];   // [{date, weight, bf, waist}]
   s.daily = s.daily || {};       // { '2026-05-02': { food:[{id,qty}], peptides:{id:true}, steps:N } }
   return s;
