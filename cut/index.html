@@ -246,6 +246,15 @@ body { padding-bottom: 90px; }
 .note { background: rgba(0,212,255,.06); border: 1px solid rgba(0,212,255,.25); padding: 10px 12px; margin: 0 16px 14px; border-radius: 10px; font-size: 12px; color: var(--text); line-height: 1.5; }
 .note strong { color: var(--accent); }
 
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+@keyframes flashIn {
+  0%   { background: rgba(0,255,157,.18); }
+  100% { background: transparent; }
+}
+
 /* Check-tiles for walks/workout */
 .check-tile {
   background: var(--panel);
@@ -470,8 +479,18 @@ body { padding-bottom: 90px; }
 
   <!-- ═══ EAT PANEL ═══ -->
   <div class="panel" data-panel="eat">
+    <!-- STICKY TODAY'S TOTAL — always visible while tapping foods -->
+    <div id="eat-running" style="position:sticky;top:60px;z-index:20;margin:14px 16px 14px;padding:14px;background:linear-gradient(135deg,rgba(0,212,255,.10),rgba(0,255,157,.06));border:1px solid var(--border2);border-radius:12px;backdrop-filter:blur(8px);">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:700;">Today's Running Total</div>
+      <div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:30px;line-height:1.1;margin:4px 0;"><span id="er-cal" style="color:var(--accent2);">0</span><span style="color:var(--muted);font-size:14px;font-weight:500;"> / <span id="er-cal-target">2300</span> cal</span></div>
+      <div style="display:flex;gap:14px;font-size:11px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:.04em;">
+        <span>P <strong id="er-p" style="color:var(--accent);font-size:13px;">0</strong>/<span id="er-p-t">240</span></span>
+        <span>C <strong id="er-c" style="color:var(--warn);font-size:13px;">0</strong>/<span id="er-c-t">175</span></span>
+        <span>F <strong id="er-f" style="color:#f472b6;font-size:13px;">0</strong>/<span id="er-f-t">70</span></span>
+      </div>
+    </div>
     <div class="note">
-      <strong>Eat clean, eat enough.</strong> Tap food to log a serving. Hold for custom qty. Premier shakes + chicken = your protein anchor; rice/potatoes flex carbs based on training day.
+      <strong>Tap food to log.</strong> Total above updates instantly with haptic + click.
     </div>
     <div class="section-h">
       <h2>Quick log — your foods</h2>
@@ -845,7 +864,7 @@ function renderMacros(){
 function renderFoodList(){
   const list = document.getElementById('food-list');
   list.innerHTML = FOODS.map(f => `
-    <div class="card" onclick="addFood('${f.id}')">
+    <div class="card" onclick="addFood('${f.id}')" style="transition:transform .12s, background .12s;">
       <div class="card-check">＋</div>
       <div class="card-body">
         <div class="card-name">${f.name}</div>
@@ -854,6 +873,35 @@ function renderFoodList(){
       <div class="card-right"><div class="v">${f.cal}</div><div class="l">cal</div></div>
     </div>
   `).join('');
+}
+
+// Update sticky Eat-tab running total
+function renderEatRunning(){
+  const s = get();
+  const t = today();
+  const m = sumMacros(t.food);
+  const set = (id,v) => { const el=document.getElementById(id); if (el) el.textContent = v; };
+  set('er-cal', Math.round(m.cal));
+  set('er-cal-target', s.targetCal);
+  set('er-p', Math.round(m.p));
+  set('er-c', Math.round(m.c));
+  set('er-f', Math.round(m.f));
+  set('er-p-t', s.targetP);
+  set('er-c-t', s.targetC);
+  set('er-f-t', s.targetF);
+}
+
+// Brief in-app toast — shows when food is logged so user knows the tap registered
+function toast(msg, color){
+  const existing = document.getElementById('app-toast');
+  if (existing) existing.remove();
+  const el = document.createElement('div');
+  el.id = 'app-toast';
+  el.style.cssText = `position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:${color||'var(--accent2)'};color:#000;padding:10px 18px;border-radius:24px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:.04em;z-index:200;box-shadow:0 6px 20px rgba(0,0,0,.5);animation:toastIn .25s ease-out;`;
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateX(-50%) translateY(10px)'; el.style.transition = 'all .25s'; }, 1400);
+  setTimeout(() => el.remove(), 1700);
 }
 
 function renderFoodLog(){
@@ -1163,6 +1211,8 @@ function addFood(id){
   s.daily[todayKey()].food.push({ id, qty: 1 });
   save(s);
   haptic();
+  const f = FOODS.find(x => x.id === id);
+  if (f) toast(`+ ${f.name} · ${f.cal} cal`);
   renderAll();
 }
 function removeFood(id){
@@ -1591,6 +1641,7 @@ function renderRules(){
 function renderAll(){
   renderHero();
   renderMacros();
+  renderEatRunning();
   renderFoodList();
   renderFoodLog();
   renderPlan();
@@ -1604,6 +1655,20 @@ function renderAll(){
   renderProgress();
 }
 renderAll();
+
+// ── GLOBAL TAP HAPTIC: every button + every card click triggers feedback ──
+// Unlocks AudioContext on first user gesture (iOS requirement) so subsequent
+// clicks throughout the session get audible+vibratory confirmation.
+document.addEventListener('click', (e) => {
+  const target = e.target.closest('button, .card, .activity-card, [onclick]');
+  if (!target) return;
+  // Skip if already handled by inline onclick (those already call haptic())
+  // Just guarantee the AudioContext is unlocked + provide a visual press flash for inputs
+  if (!_hapticAudioCtx) {
+    try { _hapticAudioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(_){}
+  }
+  if (_hapticAudioCtx && _hapticAudioCtx.state === 'suspended') _hapticAudioCtx.resume();
+}, true);
 </script>
 </body>
 </html>
