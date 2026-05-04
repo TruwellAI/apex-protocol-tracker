@@ -1002,7 +1002,7 @@ body::before{
         } catch(_){}
         // ── SYNC: route through ApexUnits.compute() so today/stack/52-week ALL agree ──
         const apx = (window.ApexUnits && window.ApexUnits.compute)
-          ? window.ApexUnits.compute(p.slug, { intensity: p.intensity, userRecon: reconInfo, doseOverride: cadenceOverride || (p.userEditedDose ? p.dose : null) })
+          ? window.ApexUnits.compute(p.slug, { intensity: p.intensity, userRecon: reconInfo, cycleDay: dayNum, doseOverride: cadenceOverride || (p.userEditedDose ? p.dose : null) })
           : null;
         const units = apx && apx.units != null
           ? { units: apx.units, range: false }
