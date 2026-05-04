@@ -522,10 +522,12 @@ body { padding-bottom: 90px; }
     </div>
     <div class="list" id="pep-full-list"></div>
 
-    <div class="section-h">
-      <h2>Weekly schedule reference</h2>
-    </div>
-    <div class="list" id="pep-week"></div>
+    <details style="margin:18px 16px 0;background:var(--panel);border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+      <summary style="cursor:pointer;list-style:none;padding:14px;display:flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--muted);font-weight:700;-webkit-tap-highlight-color:transparent;">
+        📅 Full weekly reference (all peptides) <span style="margin-left:auto;font-size:10px;opacity:.6;">▾ tap to expand</span>
+      </summary>
+      <div class="list" id="pep-week" style="padding:0 14px 14px;"></div>
+    </details>
 
     <!-- STACK INTELLIGENCE moved to bottom — auto-generated from Apex encyclopedia -->
     <div class="section-h" style="margin-top:18px;">
