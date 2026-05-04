@@ -369,15 +369,54 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
     // RECOMMENDATION
     let rec = '';
     // ── BUILD A PURCHASING ROADMAP — bottle-by-bottle plan to cover the full schedule ──
-    // Walk through titration, group consecutive weeks into "buy windows" sized by shelf life.
+    // Walk through titration, group weeks into shelf-life windows, find min-waste vial combo.
+    const COMMON_VIALS = [5, 10, 15, 20, 30, 50];
+
+    // Bin-packing: find smallest-waste combo of vial sizes >= mg needed
+    function findBestCombo(mgNeeded){
+      // Try 1 bottle first (simplest)
+      let best = null;
+      // Single vial
+      for (const v of COMMON_VIALS) {
+        if (v >= mgNeeded) {
+          const waste = v - mgNeeded;
+          if (!best || waste < best.waste) best = { vials: [v], waste, count: 1 };
+        }
+      }
+      // Two-vial combos
+      for (const a of COMMON_VIALS) {
+        for (const b of COMMON_VIALS) {
+          const sum = a + b;
+          if (sum >= mgNeeded) {
+            const waste = sum - mgNeeded;
+            if (!best || waste < best.waste || (waste === best.waste && 2 < best.count)) {
+              best = { vials: [a, b].sort((x,y)=>y-x), waste, count: 2 };
+            }
+          }
+        }
+      }
+      // Three-vial combos (only if it beats 2-vial substantially)
+      if (best && best.waste > 5) {
+        for (const a of COMMON_VIALS) {
+          for (const b of COMMON_VIALS) {
+            for (const c of COMMON_VIALS) {
+              const sum = a + b + c;
+              if (sum >= mgNeeded && sum - mgNeeded < best.waste) {
+                best = { vials: [a,b,c].sort((x,y)=>y-x), waste: sum - mgNeeded, count: 3 };
+              }
+            }
+          }
+        }
+      }
+      return best || { vials: [Math.ceil(mgNeeded/10)*10], waste: 0, count: 1 };
+    }
+
     function planPurchases(){
       if (!schedule.length) return [];
-      const COMMON_VIALS = [5, 10, 15, 20, 30, 50]; // common research-vial sizes in mg
       const purchases = [];
       let i = 0;
       let bottleNum = 1;
       while (i < schedule.length) {
-        // How many weeks fit in shelf life (max ceil(shelfDays/7))
         const maxWeeksPerBottle = Math.floor(shelfDays / 7);
         let mgNeeded = 0;
         let weeksCovered = 0;
@@ -387,20 +426,20 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
           weeksCovered++;
           endIdx = j;
         }
-        // Pick smallest bottle that covers mgNeeded
-        const idealVial = COMMON_VIALS.find(v => v >= mgNeeded) || Math.ceil(mgNeeded / 10) * 10;
+        const combo = findBestCombo(mgNeeded);
         purchases.push({
           bottleNum,
           weekStart: schedule[i].week,
           weekEnd: schedule[endIdx].week,
           mgNeeded: mgNeeded.toFixed(1),
-          vialSize: idealVial,
-          waste: idealVial - mgNeeded,
+          vialSize: combo.vials.length === 1 ? combo.vials[0] : combo.vials,
+          vialCombo: combo.vials,
+          waste: combo.waste,
           phase: schedule[i].label
         });
         bottleNum++;
         i = endIdx + 1;
-        if (bottleNum > 12) break; // sanity cap
+        if (bottleNum > 12) break;
       }
       return purchases;
     }
@@ -412,10 +451,21 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
       const roadmap = buyPlan.map((b, idx) => {
         const wkRange = b.weekStart === b.weekEnd ? `Wk ${b.weekStart}` : `Wk ${b.weekStart}-${b.weekEnd}`;
         const wasteNote = b.waste > 1 ? ` <span style="color:var(--warn);font-size:11px;">(${b.waste.toFixed(1)}mg leftover)</span>` : ` <span style="color:var(--accent2);font-size:11px;">(clean fit)</span>`;
+        // Format combo: single vial vs multi-vial
+        let buyCopy;
+        if (Array.isArray(b.vialCombo) && b.vialCombo.length > 1) {
+          const counts = {};
+          b.vialCombo.forEach(v => counts[v] = (counts[v]||0) + 1);
+          const parts = Object.entries(counts).map(([sz,n]) => n > 1 ? `${n}× <span style="color:var(--accent2);">${sz} mg</span>` : `<span style="color:var(--accent2);">${sz} mg</span>`);
+          buyCopy = `Buy ${parts.join(' + ')} bottles`;
+        } else {
+          const v = Array.isArray(b.vialCombo) ? b.vialCombo[0] : b.vialSize;
+          buyCopy = `Buy a <span style="color:var(--accent2);">${v} mg</span> bottle`;
+        }
         return `<div style="display:flex;align-items:center;gap:14px;padding:14px;background:rgba(0,255,157,.04);border:1px solid var(--accent2);border-radius:10px;margin-bottom:8px;">
           <div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:24px;color:var(--accent2);min-width:54px;text-align:center;">#${b.bottleNum}</div>
           <div style="flex:1;">
-            <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;color:var(--text);">Buy a <span style="color:var(--accent2);">${b.vialSize} mg</span> bottle</div>
+            <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;color:var(--text);">${buyCopy}</div>
             <div style="font-size:12px;color:var(--muted);margin-top:2px;">Covers <strong style="color:var(--text);">${wkRange}</strong> · uses ${b.mgNeeded} mg${wasteNote}</div>
           </div>
         </div>`;
