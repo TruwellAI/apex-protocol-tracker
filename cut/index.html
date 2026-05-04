@@ -19,7 +19,7 @@
 <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="pragma" content="no-cache">
 <meta http-equiv="expires" content="0">
-<meta name="version" content="v20260503d">
+<meta name="version" content="v20260504a">
 <style>
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 :root {
@@ -932,7 +932,7 @@ function renderMacros(){
   s._effectiveTargetCal = dynamicCalGoal;
   // Live deficit indicator: TDEE = baseline maintenance + today's extra burn − consumed
   const baselineMaint = s.targetCal + 1000; // ~3300
-  const tdeeToday = baselineMaint + (todayBurn - baselineBurn);
+  const tdeeToday = baselineMaint + (projectedEODBurn - baselineBurn);
   const realDeficit = Math.round(tdeeToday - m.cal);
   const live = document.getElementById('deficit-live');
   if (live) {
