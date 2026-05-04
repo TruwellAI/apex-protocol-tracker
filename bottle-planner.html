@@ -547,6 +547,12 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
               combo.vials.forEach(v => counts[v] = (counts[v]||0) + 1);
               return Object.entries(counts).map(([sz,n]) => n > 1 ? `${n}× <span style="color:var(--accent2);">${sz} mg</span>` : `<span style="color:var(--accent2);">${sz} mg</span>`).join(' + ');
             })(),
+        bigBadge: (() => {
+          if (combo.vials.length === 1) return `${combo.vials[0]}<span style="font-size:18px;font-weight:600;opacity:.8;"> mg</span>`;
+          const counts = {};
+          combo.vials.forEach(v => counts[v] = (counts[v]||0) + 1);
+          return Object.entries(counts).map(([sz,n]) => n > 1 ? `${n}×${sz}` : `${sz}`).join('+') + `<span style="font-size:18px;font-weight:600;opacity:.8;"> mg</span>`;
+        })(),
         mgUsedPerCycle: mgPerCycle,
         waste: combo.waste
       };
@@ -560,33 +566,42 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
       const roadmap = buyPlan.map((b, idx) => {
         const wkRange = b.weekStart === b.weekEnd ? `Wk ${b.weekStart}` : `Wk ${b.weekStart}-${b.weekEnd}`;
         const wasteNote = b.waste > 1 ? ` <span style="color:var(--warn);font-size:11px;">(${b.waste.toFixed(1)}mg leftover)</span>` : ` <span style="color:var(--accent2);font-size:11px;">(clean fit)</span>`;
-        // Format combo: single vial vs multi-vial
-        let buyCopy;
+        // Big bottle-size badge — the thing the eye should hit first
+        let bottleBadge;
         if (Array.isArray(b.vialCombo) && b.vialCombo.length > 1) {
           const counts = {};
           b.vialCombo.forEach(v => counts[v] = (counts[v]||0) + 1);
-          const parts = Object.entries(counts).map(([sz,n]) => n > 1 ? `${n}× <span style="color:var(--accent2);">${sz} mg</span>` : `<span style="color:var(--accent2);">${sz} mg</span>`);
-          buyCopy = `Buy ${parts.join(' + ')} bottles`;
+          const parts = Object.entries(counts).map(([sz,n]) => n > 1 ? `${n}×${sz}` : `${sz}`);
+          bottleBadge = `${parts.join('+')}<span style="font-size:13px;font-weight:600;opacity:.8;"> mg</span>`;
         } else {
           const v = Array.isArray(b.vialCombo) ? b.vialCombo[0] : b.vialSize;
-          buyCopy = `Buy a <span style="color:var(--accent2);">${v} mg</span> bottle`;
+          bottleBadge = `${v}<span style="font-size:14px;font-weight:600;opacity:.8;"> mg</span>`;
         }
-        return `<div style="display:flex;align-items:center;gap:14px;padding:14px;background:rgba(0,255,157,.04);border:1px solid var(--accent2);border-radius:10px;margin-bottom:8px;">
-          <div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:24px;color:var(--accent2);min-width:54px;text-align:center;">#${b.bottleNum}</div>
-          <div style="flex:1;">
-            <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;color:var(--text);">${buyCopy}</div>
-            <div style="font-size:12px;color:var(--muted);margin-top:2px;">Covers <strong style="color:var(--text);">${wkRange}</strong> · uses ${b.mgNeeded} mg${wasteNote}</div>
+        return `<div style="display:flex;align-items:center;gap:12px;padding:14px;background:rgba(0,255,157,.04);border:1px solid var(--accent2);border-radius:10px;margin-bottom:8px;">
+          <div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:20px;color:var(--accent2);min-width:38px;text-align:center;opacity:.7;">#${b.bottleNum}</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-bottom:2px;">Buy a bottle this size</div>
+            <div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:32px;line-height:1;color:var(--accent2);letter-spacing:.5px;">${bottleBadge}</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:6px;">Covers <strong style="color:var(--text);">${wkRange}</strong> · uses ${b.mgNeeded} mg${wasteNote}</div>
           </div>
         </div>`;
       }).join('');
       // MAINTENANCE block — what to buy forever after titration is done
       const maintBlock = maintenance ? `
-        <div style="margin-top:18px;padding:14px;background:linear-gradient(135deg,rgba(167,139,250,.08),rgba(0,212,255,.04));border:1px solid var(--accent3);border-radius:10px;">
-          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--accent3);font-weight:700;text-transform:uppercase;margin-bottom:6px;">♾ AFTER WK ${maintenance.startsWeek} · MAINTENANCE FOREVER</div>
-          <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;color:var(--text);margin-bottom:6px;">Once you hit Wk ${maintenance.startsWeek}, you're on <strong style="color:var(--accent3);">${maintenance.weeklyMg} mg/wk</strong> for as long as you stay on the protocol.</div>
-          <div style="font-size:13px;color:var(--text);line-height:1.55;">
-            That's <strong>${maintenance.mgUsedPerCycle} mg every ${maintenance.weeksPerBottle} weeks</strong> (within ${shelfDays}-day shelf life).<br>
-            <strong style="color:var(--accent2);">Standing order: every ${maintenance.weeksPerBottle} weeks, buy a ${maintenance.comboLabel}.</strong> ${maintenance.waste > 1 ? `<span style="color:var(--warn);">(~${maintenance.waste.toFixed(1)} mg leftover per cycle)</span>` : `<span style="color:var(--accent2);">(clean fit)</span>`}
+        <div style="margin-top:18px;padding:18px;background:linear-gradient(135deg,rgba(167,139,250,.10),rgba(0,212,255,.05));border:2px solid var(--accent3);border-radius:12px;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--accent3);font-weight:700;text-transform:uppercase;margin-bottom:10px;">♾ AFTER WK ${maintenance.startsWeek} · MAINTENANCE FOREVER</div>
+
+          <div style="display:flex;align-items:center;gap:16px;padding:14px;background:rgba(0,255,157,.06);border:1px solid var(--accent2);border-radius:10px;margin-bottom:12px;">
+            <div style="flex:1;min-width:0;">
+              <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-bottom:2px;">As long as you're on ${maintenance.weeklyMg} mg/wk →</div>
+              <div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:14px;color:var(--text);margin-bottom:6px;">Buy a bottle this size:</div>
+              <div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:48px;line-height:1;color:var(--accent2);letter-spacing:.5px;">${maintenance.bigBadge}</div>
+              <div style="font-size:12px;color:var(--muted);margin-top:8px;">every <strong style="color:var(--text);">${maintenance.weeksPerBottle} weeks</strong> ${maintenance.waste > 1 ? `<span style="color:var(--warn);">· ~${maintenance.waste.toFixed(1)} mg leftover</span>` : `<span style="color:var(--accent2);">· clean fit, zero waste</span>`}</div>
+            </div>
+          </div>
+
+          <div style="font-size:12px;color:var(--muted);line-height:1.5;">
+            ${maintenance.mgUsedPerCycle} mg every ${maintenance.weeksPerBottle} weeks fits inside the ${shelfDays}-day shelf life. Mix the bottle, finish it, mix the next. Same standing order forever.
           </div>
         </div>
       ` : '';
