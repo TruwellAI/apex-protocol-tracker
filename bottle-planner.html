@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#080C10">
+<title>Bottle Planner · Apex Protocol</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<script src="data/peptide-data.js?v=20260504c"></script>
+<style>
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+:root {
+  --bg: #080C10; --panel: #131618; --panel2: #1B1F22;
+  --border: rgba(0,212,255,.12); --border2: rgba(0,212,255,.30);
+  --text: #E8EAED; --muted: #7A8489;
+  --accent: #00D4FF; --accent2: #00FF9D; --accent3: #A78BFA;
+  --warn: #FBBF24; --bad: #FF6B35;
+}
+html, body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Barlow', -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 720px; margin: 0 auto; padding: 0 16px 60px; }
+.top { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--border); margin-bottom: 18px; }
+.back-btn { display: inline-flex; align-items: center; gap: 6px; font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: .22em; color: var(--muted); text-decoration: none; text-transform: uppercase; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; }
+.brand { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 18px; letter-spacing: -.4px; }
+.brand .accent { color: var(--accent); }
+h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; letter-spacing: -.5px; margin: 0 0 6px; }
+.sub { font-size: 14px; color: var(--muted); margin-bottom: 24px; line-height: 1.5; }
+.eyebrow { font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: .22em; color: var(--accent); text-transform: uppercase; font-weight: 700; }
+.card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin-bottom: 14px; }
+.field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.field label { font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: .14em; color: var(--muted); text-transform: uppercase; font-weight: 700; }
+.field select, .field input { background: var(--panel2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 12px; font-size: 16px; font-family: 'Barlow', sans-serif; -webkit-appearance: none; appearance: none; }
+.field select:focus, .field input:focus { outline: none; border-color: var(--accent); }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.btn { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #000; border: 0; padding: 14px 18px; border-radius: 10px; font-size: 15px; font-weight: 800; cursor: pointer; font-family: 'Rajdhani', sans-serif; letter-spacing: .04em; text-transform: uppercase; width: 100%; }
+.btn-ghost { background: transparent; border: 1px solid var(--border2); color: var(--accent); }
+.tag { display: inline-block; padding: 2px 8px; border-radius: 10px; font-family: 'Share Tech Mono', monospace; font-size: 9px; letter-spacing: .14em; font-weight: 700; }
+.tag.green { background: rgba(0,255,157,.10); color: var(--accent2); border: 1px solid var(--accent2); }
+.tag.warn { background: rgba(251,191,36,.10); color: var(--warn); border: 1px solid var(--warn); }
+.tag.bad { background: rgba(255,107,53,.10); color: var(--bad); border: 1px solid var(--bad); }
+.results { display: none; }
+.result-num { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; line-height: 1; }
+.timeline { margin-top: 14px; }
+.timeline-row { display: grid; grid-template-columns: 80px 1fr 80px 80px; gap: 8px; align-items: center; padding: 8px 12px; border-bottom: 1px solid var(--border); font-size: 13px; }
+.timeline-row.header { font-family: 'Share Tech Mono', monospace; font-size: 9px; letter-spacing: .14em; color: var(--muted); font-weight: 700; text-transform: uppercase; border-bottom: 1px solid var(--accent); padding-bottom: 8px; }
+.timeline-row.expired { background: rgba(255,107,53,.06); color: var(--bad); }
+.timeline-row.empty { background: rgba(167,139,250,.06); color: var(--accent3); }
+.summary-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin: 14px 0; }
+.summary-cell { background: var(--panel2); border: 1px solid var(--border); border-radius: 8px; padding: 12px; text-align: center; }
+.summary-cell .label { font-family: 'Share Tech Mono', monospace; font-size: 9px; letter-spacing: .14em; color: var(--muted); text-transform: uppercase; }
+.summary-cell .val { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 22px; margin-top: 4px; }
+.recommend { background: linear-gradient(135deg, rgba(0,255,157,.08), rgba(0,212,255,.04)); border: 1px solid var(--border2); border-radius: 10px; padding: 14px; margin-top: 14px; }
+.disc { font-size: 11px; color: var(--muted); text-align: center; padding: 14px 0 30px; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="top">
+    <a href="index.html" class="back-btn">← Home</a>
+    <a href="index.html" class="brand">⚡ <span class="accent">APEX</span></a>
+    <a href="reconstitute.html" class="back-btn">RECON →</a>
+  </div>
+
+  <div class="eyebrow">📦 Calculator</div>
+  <h1>Bottle Planner</h1>
+  <p class="sub">How long will your vial actually last? Compare bottle sizes, see waste from shelf life, and figure out the cheapest buy strategy <strong style="color:var(--accent);">before</strong> you order.</p>
+
+  <!-- INPUTS -->
+  <div class="card">
+    <div class="field">
+      <label>Peptide</label>
+      <select id="peptide-select"></select>
+    </div>
+
+    <div class="row">
+      <div class="field">
+        <label>Vial size (mg)</label>
+        <input type="number" id="vial-mg" value="30" min="1" max="500">
+      </div>
+      <div class="field">
+        <label>BAC water (mL)</label>
+        <input type="number" id="bac-ml" value="3" step="0.5" min="0.5" max="10">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="field">
+        <label>Shelf life (days refrigerated)</label>
+        <input type="number" id="shelf-days" value="30" min="7" max="365">
+      </div>
+      <div class="field">
+        <label>Cost per vial ($)</label>
+        <input type="number" id="cost-vial" value="100" min="0" step="10">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Dose strategy</label>
+      <select id="strategy">
+        <option value="titration">Follow titration ladder (if peptide has one)</option>
+        <option value="flat">Flat weekly dose</option>
+      </select>
+    </div>
+
+    <div id="flat-dose-row" class="row" style="display:none;">
+      <div class="field">
+        <label>Weekly dose (mg)</label>
+        <input type="number" id="flat-mg" value="4" min="0.1" step="0.1">
+      </div>
+      <div class="field">
+        <label>Plan length (weeks)</label>
+        <input type="number" id="flat-weeks" value="12" min="1" max="52">
+      </div>
+    </div>
+
+    <button class="btn" onclick="runPlanner()">📊 Calculate</button>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="results" class="results">
+
+    <div class="card">
+      <div class="eyebrow">📦 What this bottle gives you</div>
+      <div class="summary-grid">
+        <div class="summary-cell"><div class="label">Concentration</div><div class="val" id="r-conc" style="color:var(--accent);">—</div></div>
+        <div class="summary-cell"><div class="label">Doses possible</div><div class="val" id="r-doses" style="color:var(--accent);">—</div></div>
+        <div class="summary-cell"><div class="label">Days at protocol</div><div class="val" id="r-days" style="color:var(--accent2);">—</div></div>
+      </div>
+      <div id="r-shelf-warning" style="margin-top:8px;"></div>
+    </div>
+
+    <div class="card">
+      <div class="eyebrow">📅 Week-by-week timeline</div>
+      <div id="timeline" class="timeline"></div>
+    </div>
+
+    <div class="card">
+      <div class="eyebrow">💰 Cost & waste</div>
+      <div class="summary-grid">
+        <div class="summary-cell"><div class="label">Used</div><div class="val" id="r-used-mg" style="color:var(--accent2);">—</div></div>
+        <div class="summary-cell"><div class="label">Wasted</div><div class="val" id="r-waste-mg" style="color:var(--bad);">—</div></div>
+        <div class="summary-cell"><div class="label">Effective $/mg</div><div class="val" id="r-eff-cost" style="color:var(--text);">—</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="eyebrow">🎯 Smart buy recommendation</div>
+      <div id="r-recommend" class="recommend"></div>
+    </div>
+
+  </div>
+
+  <div class="disc">⚠ Research-use peptides only. Shelf-life data is manufacturer-typical; actual stability varies by peptide chemistry and storage conditions. Personal research tool — not medical advice.</div>
+
+</div>
+
+<script>
+(function(){
+  // Populate peptide dropdown from SSOT, sorted alphabetically
+  const sel = document.getElementById('peptide-select');
+  const ssot = window.APEX_PEPTIDES || {};
+  const opts = Object.entries(ssot)
+    .filter(([k,v]) => k !== '_meta' && v.name && !v.combined_bottle && v.route !== 'oral' && v.route !== 'spray' && !v.premixed)
+    .sort((a,b) => a[1].name.localeCompare(b[1].name));
+  opts.forEach(([slug, p]) => {
+    const opt = document.createElement('option');
+    opt.value = slug;
+    opt.textContent = p.name + (p.titration ? ' (titrated)' : '');
+    sel.appendChild(opt);
+  });
+  // Default to Reta (most common titration question)
+  if (ssot['retatrutide.html']) sel.value = 'retatrutide.html';
+
+  // Pre-fill defaults from SSOT when peptide changes
+  function fillFromSSOT(){
+    const slug = sel.value;
+    const p = ssot[slug];
+    if (!p) return;
+    if (p.vial_mg) document.getElementById('vial-mg').value = p.vial_mg;
+    if (p.bac_ml) document.getElementById('bac-ml').value = p.bac_ml;
+    if (p.shelf_life_days) document.getElementById('shelf-days').value = p.shelf_life_days;
+    // Strategy: titration if available
+    document.getElementById('strategy').value = Array.isArray(p.titration) ? 'titration' : 'flat';
+    document.getElementById('flat-dose-row').style.display =
+      document.getElementById('strategy').value === 'flat' ? 'grid' : 'none';
+    if (p.dose_mg_per_inj) document.getElementById('flat-mg').value = p.dose_mg_per_inj * (parseFreq(p.freq) || 1);
+  }
+  function parseFreq(freqStr){
+    const f = String(freqStr || '').toLowerCase();
+    if (/2.?3x.*daily|2x.*daily/.test(f)) return 14;
+    if (/3x.*daily/.test(f)) return 21;
+    if (/daily/.test(f)) return 7;
+    if (/3x.*weekly|m.?w.?f/.test(f)) return 3;
+    if (/2x.*weekly/.test(f)) return 2;
+    if (/weekly|once.*weekly/.test(f)) return 1;
+    return 1;
+  }
+  sel.addEventListener('change', fillFromSSOT);
+  document.getElementById('strategy').addEventListener('change', () => {
+    document.getElementById('flat-dose-row').style.display =
+      document.getElementById('strategy').value === 'flat' ? 'grid' : 'none';
+  });
+  fillFromSSOT();
+
+  window.runPlanner = function(){
+    const slug = sel.value;
+    const p = ssot[slug];
+    if (!p) return;
+    const vialMg = parseFloat(document.getElementById('vial-mg').value);
+    const bacMl = parseFloat(document.getElementById('bac-ml').value);
+    const shelfDays = parseInt(document.getElementById('shelf-days').value);
+    const costVial = parseFloat(document.getElementById('cost-vial').value);
+    const strategy = document.getElementById('strategy').value;
+    if (!vialMg || !bacMl) return;
+
+    const conc = vialMg / bacMl;
+    document.getElementById('r-conc').textContent = conc.toFixed(2) + ' mg/mL';
+
+    // Build week-by-week schedule
+    let schedule = [];
+    if (strategy === 'titration' && Array.isArray(p.titration)) {
+      p.titration.forEach(step => {
+        const startWk = Math.ceil(step.day_start / 7);
+        const endWk = Math.min(52, Math.ceil(step.day_end / 7));
+        for (let w = startWk; w <= endWk; w++) {
+          schedule.push({ week: w, mg: step.mg_per_dose, label: step.w });
+        }
+      });
+    } else {
+      const flatMg = parseFloat(document.getElementById('flat-mg').value);
+      const flatWeeks = parseInt(document.getElementById('flat-weeks').value);
+      for (let w = 1; w <= flatWeeks; w++) {
+        schedule.push({ week: w, mg: flatMg, label: 'flat' });
+      }
+    }
+
+    // Run through schedule, tracking cumulative usage + day count
+    let cumMg = 0;
+    let cumDays = 0;
+    let bottleEmpty = null;
+    let shelfExpire = null;
+    let lastUsedWeek = 0;
+    const rows = schedule.map(row => {
+      cumMg += row.mg;
+      cumDays += 7;
+      const left = vialMg - cumMg;
+      const drawMl = (cumMg / conc).toFixed(2);
+      let status = 'ok';
+      if (left < 0 && bottleEmpty == null) { bottleEmpty = row.week; status = 'empty'; }
+      else if (left < 0) status = 'past-empty';
+      if (cumDays > shelfDays && shelfExpire == null) shelfExpire = row.week;
+      if (cumDays > shelfDays && status === 'ok') status = 'expired';
+      if (status === 'ok' || status === 'expired') lastUsedWeek = row.week;
+      return { ...row, cumMg, left: Math.max(0, left), drawMl, cumDays, status };
+    });
+
+    // Build timeline UI
+    const tl = document.getElementById('timeline');
+    let html = `<div class="timeline-row header"><span>Week</span><span>Step</span><span>Dose</span><span>Cumulative</span></div>`;
+    rows.slice(0, 25).forEach(r => {
+      const cls = r.status === 'expired' ? 'expired' : (r.status === 'empty' || r.status === 'past-empty' ? 'empty' : '');
+      const tag = r.status === 'expired' ? '<span class="tag bad">SHELF</span>' : r.status === 'empty' ? '<span class="tag warn">LAST</span>' : '';
+      html += `<div class="timeline-row ${cls}">
+        <span><strong>Wk ${r.week}</strong></span>
+        <span style="font-size:11px;color:var(--muted);">${r.label}</span>
+        <span>${r.mg} mg</span>
+        <span>${r.cumMg.toFixed(1)} / ${vialMg} mg ${tag}</span>
+      </div>`;
+      if (r.status === 'past-empty') return;
+    });
+    tl.innerHTML = html;
+
+    // Determine effective bottle life — limited by either shelf life OR bottle empty
+    const limitWeek = Math.min(shelfExpire || 999, bottleEmpty || 999);
+    const limitedBy = limitWeek === bottleEmpty ? 'bottle empty' : 'shelf life expired';
+    const usedAtLimit = rows.find(r => r.week === limitWeek)?.cumMg || 0;
+    const wasted = limitedBy === 'shelf life expired' ? Math.max(0, vialMg - usedAtLimit) : 0;
+    const effectiveDays = Math.min(shelfDays, Math.ceil(vialMg * 7 / (schedule[0]?.mg || 1)));
+
+    document.getElementById('r-doses').textContent = '~' + Math.floor(vialMg / (schedule[0]?.mg || 1));
+    document.getElementById('r-days').textContent = limitWeek * 7;
+    document.getElementById('r-shelf-warning').innerHTML = limitedBy === 'shelf life expired'
+      ? `<div style="background:rgba(255,107,53,.08);border:1px solid var(--bad);padding:10px;border-radius:8px;font-size:13px;color:var(--bad);">⚠ <strong>Shelf life caps at Wk ${limitWeek}</strong> (${shelfDays} days). You only get through Wk ${limitWeek} of titration before peptide degrades.</div>`
+      : `<div style="background:rgba(0,255,157,.06);border:1px solid var(--accent2);padding:10px;border-radius:8px;font-size:13px;color:var(--accent2);">✅ <strong>Bottle empties at Wk ${limitWeek}</strong> — within shelf life. Clean run, no waste.</div>`;
+
+    document.getElementById('r-used-mg').textContent = usedAtLimit.toFixed(1) + ' mg';
+    document.getElementById('r-waste-mg').textContent = wasted.toFixed(1) + ' mg';
+    const wastePct = (wasted / vialMg) * 100;
+    const usedPct = (usedAtLimit / vialMg) * 100;
+    const effCostPerMg = costVial / usedAtLimit;
+    document.getElementById('r-eff-cost').textContent = '$' + effCostPerMg.toFixed(2);
+
+    // RECOMMENDATION
+    let rec = '';
+    if (wastePct > 30) {
+      // Suggest smaller bottle
+      const idealMg = Math.ceil(usedAtLimit / 5) * 5;
+      rec = `<div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:18px;color:var(--bad);margin-bottom:6px;">⚠ ${wastePct.toFixed(0)}% waste — buy smaller</div>
+      <div style="font-size:13px;line-height:1.6;">
+        At ${vialMg} mg / ${bacMl} mL, you only use <strong>${usedAtLimit.toFixed(1)} mg</strong> of the bottle before shelf life expires (Day ${shelfDays}).
+        That's <strong style="color:var(--bad);">$${(wasted * effCostPerMg).toFixed(2)}</strong> of peptide down the drain.<br><br>
+        <strong style="color:var(--accent2);">Better strategy:</strong>
+        <ol style="margin:8px 0 0 20px;padding:0;">
+          <li>Buy a <strong>${idealMg} mg vial</strong> for early phases (Wk 1-${Math.floor(shelfDays/7)})</li>
+          <li>Buy a larger vial only when weekly dose justifies the volume</li>
+          <li>Or freeze half the mixed bottle in sterile aliquots → 60-day runway with one freeze-thaw cycle (~10-15% potency loss)</li>
+        </ol>
+      </div>`;
+    } else if (wastePct > 5) {
+      rec = `<div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:18px;color:var(--warn);margin-bottom:6px;">🟡 ${wastePct.toFixed(0)}% waste — acceptable but suboptimal</div>
+      <div style="font-size:13px;line-height:1.6;">
+        You'll use ${usedAtLimit.toFixed(1)} mg of the ${vialMg} mg vial within shelf life. ${wasted.toFixed(1)} mg gets discarded (~$${(wasted * effCostPerMg).toFixed(2)}).<br><br>
+        Acceptable if you don't want to deal with multiple smaller vials, but a slightly smaller bottle would tighten this up.
+      </div>`;
+    } else {
+      rec = `<div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:18px;color:var(--accent2);margin-bottom:6px;">✅ Optimal bottle size</div>
+      <div style="font-size:13px;line-height:1.6;">
+        You'll use <strong>${usedPct.toFixed(0)}%</strong> of the bottle within shelf life. Clean run, minimal waste. <strong>Effective cost: $${effCostPerMg.toFixed(2)}/mg.</strong> Buy this size.
+      </div>`;
+    }
+    document.getElementById('r-recommend').innerHTML = rec;
+    document.getElementById('results').style.display = 'block';
+    document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+  };
+
+  // Auto-run on load
+  setTimeout(runPlanner, 100);
+})();
+</script>
+
+</body>
+</html>
