@@ -19,7 +19,7 @@
 <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="pragma" content="no-cache">
 <meta http-equiv="expires" content="0">
-<meta name="version" content="v20260503a">
+<meta name="version" content="v20260503c">
 <style>
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 :root {
@@ -279,6 +279,12 @@ body { padding-bottom: 90px; }
 .ct-icon { font-size: 24px; line-height: 1; }
 .ct-label { font-size: 11px; font-weight: 700; letter-spacing: .04em; }
 
+/* Macro ladder rows (Goal · Consumed · Left/Over) */
+.ml-cell { display:flex; flex-direction:column; align-items:center; gap:2px; }
+.ml-label { font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:.14em; color:var(--muted); font-weight:700; }
+.ml-num { font-family:'Rajdhani',sans-serif; font-weight:800; font-size:18px; line-height:1.1; }
+.ml-unit { font-size:9px; color:var(--muted); }
+
 /* Activity cards (walk/workout) — expandable with steps + cal burned inputs */
 .activity-card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
 .activity-card.on { background: rgba(0,255,157,.06); border-color: var(--accent2); }
@@ -313,12 +319,10 @@ body { padding-bottom: 90px; }
   <!-- ═══ TODAY PANEL ═══ -->
   <div class="panel on" data-panel="today">
 
-    <!-- HERO: weight + BF -->
-    <div class="hero">
-      <div class="hero-eyebrow">Today</div>
-      <div class="hero-num"><span id="hero-cal">0</span><span class="unit">/ <span id="hero-cal-target">2780</span> cal</span></div>
-      <div id="hero-cal-msg" style="font-size:12px;color:var(--muted);margin-top:2px;">Eat <strong id="hero-cal-left" style="color:var(--accent2);">2780</strong> more to hit target</div>
-      <div class="hero-row">
+    <!-- FAT-LOSS GOAL HEADER (always visible) -->
+    <div class="hero" style="margin-bottom:10px;">
+      <div class="hero-eyebrow">🎯 Fat-loss goal · 6-week shred</div>
+      <div class="hero-row" style="margin-top:8px;border-top:0;padding-top:0;">
         <div class="hero-stat">
           <div class="hero-stat-l">Fat now</div>
           <div class="hero-stat-v cyan" id="hs-fatnow">31.1 lb</div>
@@ -328,37 +332,75 @@ body { padding-bottom: 90px; }
           <div class="hero-stat-v green" id="hs-fatgoal">22 lb</div>
         </div>
         <div class="hero-stat">
-          <div class="hero-stat-l">Fat to go</div>
+          <div class="hero-stat-l">To go</div>
           <div class="hero-stat-v" id="hs-fattogo">9.1 lb</div>
         </div>
         <div class="hero-stat">
-          <div class="hero-stat-l">Body Fat</div>
+          <div class="hero-stat-l">BF %</div>
           <div class="hero-stat-v" id="hs-bf">13.0%</div>
         </div>
       </div>
     </div>
 
-    <!-- MACROS -->
-    <div class="macros">
-      <div class="macro" id="m-cal">
-        <div class="macro-label">Cal</div>
-        <div class="macro-val"><span id="mv-cal">0</span><span class="target"> / <span id="mt-cal">2780</span></span></div>
-        <div class="macro-bar"><div class="macro-bar-fill fill-cal" id="mb-cal" style="width:0%"></div></div>
+    <!-- 3-ROW MACRO LADDER: GOAL · CONSUMED · LEFT/OVER -->
+    <div style="margin:0 16px 14px;background:var(--panel);border:1px solid var(--border);border-radius:12px;overflow:hidden;">
+      <!-- Row 1: GOAL -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;border-bottom:1px solid var(--border);">
+        <div class="ml-cell" style="padding:10px;text-align:center;">
+          <div class="ml-label">GOAL</div>
+          <div class="ml-num" style="color:var(--muted);"><span id="g-cal">2300</span></div>
+          <div class="ml-unit">cal</div>
+        </div>
+        <div class="ml-cell" style="padding:10px;text-align:center;border-left:1px solid var(--border);">
+          <div class="ml-label">PROTEIN</div>
+          <div class="ml-num" style="color:var(--muted);"><span id="g-p">240</span>g</div>
+        </div>
+        <div class="ml-cell" style="padding:10px;text-align:center;border-left:1px solid var(--border);">
+          <div class="ml-label">CARB</div>
+          <div class="ml-num" style="color:var(--muted);"><span id="g-c">175</span>g</div>
+        </div>
+        <div class="ml-cell" style="padding:10px;text-align:center;border-left:1px solid var(--border);">
+          <div class="ml-label">FAT</div>
+          <div class="ml-num" style="color:var(--muted);"><span id="g-f">70</span>g</div>
+        </div>
       </div>
-      <div class="macro" id="m-p">
-        <div class="macro-label">Protein</div>
-        <div class="macro-val"><span id="mv-p">0</span><span class="target">g / <span id="mt-p">250</span>g</span></div>
-        <div class="macro-bar"><div class="macro-bar-fill fill-p" id="mb-p" style="width:0%"></div></div>
+      <!-- Row 2: CONSUMED (live) -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;border-bottom:1px solid var(--border);background:rgba(0,212,255,.04);">
+        <div class="ml-cell" style="padding:10px;text-align:center;">
+          <div class="ml-label" style="color:var(--accent);">CONSUMED</div>
+          <div class="ml-num" id="c-cal" style="color:var(--accent);">0</div>
+        </div>
+        <div class="ml-cell" style="padding:10px;text-align:center;border-left:1px solid var(--border);">
+          <div class="ml-label" style="color:var(--accent);">EATEN</div>
+          <div class="ml-num" id="c-p" style="color:var(--accent);">0g</div>
+        </div>
+        <div class="ml-cell" style="padding:10px;text-align:center;border-left:1px solid var(--border);">
+          <div class="ml-label" style="color:var(--accent);">EATEN</div>
+          <div class="ml-num" id="c-c" style="color:var(--accent);">0g</div>
+        </div>
+        <div class="ml-cell" style="padding:10px;text-align:center;border-left:1px solid var(--border);">
+          <div class="ml-label" style="color:var(--accent);">EATEN</div>
+          <div class="ml-num" id="c-f" style="color:var(--accent);">0g</div>
+        </div>
       </div>
-      <div class="macro" id="m-c">
-        <div class="macro-label">Carb</div>
-        <div class="macro-val"><span id="mv-c">0</span><span class="target">g / <span id="mt-c">285</span>g</span></div>
-        <div class="macro-bar"><div class="macro-bar-fill fill-c" id="mb-c" style="width:0%"></div></div>
-      </div>
-      <div class="macro" id="m-f">
-        <div class="macro-label">Fat</div>
-        <div class="macro-val"><span id="mv-f">0</span><span class="target">g / <span id="mt-f">70</span>g</span></div>
-        <div class="macro-bar"><div class="macro-bar-fill fill-f" id="mb-f" style="width:0%"></div></div>
+      <!-- Row 3: LEFT / OVER -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;">
+        <div class="ml-cell" style="padding:10px;text-align:center;">
+          <div class="ml-label" id="d-cal-l">LEFT</div>
+          <div class="ml-num" id="d-cal" style="color:var(--accent2);">2300</div>
+        </div>
+        <div class="ml-cell" style="padding:10px;text-align:center;border-left:1px solid var(--border);">
+          <div class="ml-label" id="d-p-l">LEFT</div>
+          <div class="ml-num" id="d-p" style="color:var(--accent2);">240g</div>
+        </div>
+        <div class="ml-cell" style="padding:10px;text-align:center;border-left:1px solid var(--border);">
+          <div class="ml-label" id="d-c-l">LEFT</div>
+          <div class="ml-num" id="d-c" style="color:var(--accent2);">175g</div>
+        </div>
+        <div class="ml-cell" style="padding:10px;text-align:center;border-left:1px solid var(--border);">
+          <div class="ml-label" id="d-f-l">LEFT</div>
+          <div class="ml-num" id="d-f" style="color:var(--accent2);">70g</div>
+        </div>
       </div>
     </div>
 
@@ -372,54 +414,34 @@ body { padding-bottom: 90px; }
     <div class="section-h"><h2>🔥 Streaks · perfect-day count</h2></div>
     <div id="streaks-grid" style="margin:0 16px 14px;display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
 
-    <!-- ACTIVITY LOG CARDS: consolidated walks + workout -->
-    <div style="margin:0 16px 14px;display:flex;flex-direction:column;gap:10px;">
-      <!-- WALKS CARD: AM/PM check boxes + single daily totals -->
-      <div class="activity-card" id="ac-walks">
-        <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;">
-          <div class="ac-icon" style="font-size:22px;">🚶‍♂️</div>
-          <div class="ac-title" style="flex:1;">Walks</div>
-          <div class="ac-summary" id="sum-walks"></div>
-        </div>
-        <div style="padding:0 14px 12px;display:flex;gap:10px;">
-          <button onclick="toggleCheck('walkAM')" id="walk-am-pill" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px;border-radius:8px;background:rgba(255,255,255,.02);border:1px solid var(--border);color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.12em;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;">
-            <div id="check-walkAM" class="ac-check" style="margin:0;width:20px;height:20px;font-size:11px;">✓</div>
-            <span>AM WALK</span>
-          </button>
-          <button onclick="toggleCheck('walkPM')" id="walk-pm-pill" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px;border-radius:8px;background:rgba(255,255,255,.02);border:1px solid var(--border);color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.12em;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;">
-            <div id="check-walkPM" class="ac-check" style="margin:0;width:20px;height:20px;font-size:11px;">✓</div>
-            <span>PM WALK</span>
-          </button>
-        </div>
-        <div style="padding:0 14px 12px;display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-          <div class="ac-field">
-            <label>Total steps today</label>
-            <input type="number" id="in-day-steps" placeholder="0" inputmode="numeric" oninput="saveDayTotal()">
-          </div>
-          <div class="ac-field">
-            <label>Total cal burned</label>
-            <input type="number" id="in-day-kcal" placeholder="0" inputmode="numeric" oninput="saveDayTotal()">
-          </div>
-        </div>
+    <!-- ACTIVITY: 3 checks + 2 day-total inputs. Simple. -->
+    <div style="margin:0 16px 14px;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px;">
+      <div style="display:flex;gap:8px;margin-bottom:14px;">
+        <button onclick="toggleCheck('walkAM')" id="walk-am-pill" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 8px;border-radius:8px;background:rgba(255,255,255,.02);border:1px solid var(--border);color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.12em;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;">
+          <div id="check-walkAM" class="ac-check" style="margin:0;width:18px;height:18px;font-size:10px;">✓</div>
+          <span>AM WALK</span>
+        </button>
+        <button onclick="toggleCheck('walkPM')" id="walk-pm-pill" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 8px;border-radius:8px;background:rgba(255,255,255,.02);border:1px solid var(--border);color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.12em;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;">
+          <div id="check-walkPM" class="ac-check" style="margin:0;width:18px;height:18px;font-size:10px;">✓</div>
+          <span>PM WALK</span>
+        </button>
+        <button onclick="toggleCheck('workout')" id="workout-pill" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 8px;border-radius:8px;background:rgba(255,255,255,.02);border:1px solid var(--border);color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.12em;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;">
+          <div id="check-workout" class="ac-check" style="margin:0;width:18px;height:18px;font-size:10px;">✓</div>
+          <span id="ct-workout-label">WORKOUT</span>
+        </button>
       </div>
 
-      <!-- WORKOUT card stays separate -->
-      <div class="activity-card" id="ac-workout">
-        <div class="ac-head" onclick="toggleCheck('workout')">
-          <div class="ac-check">✓</div>
-          <div class="ac-icon">🏋︎</div>
-          <div class="ac-title" id="ct-workout-label">Workout</div>
-          <div class="ac-summary" id="sum-workout"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div class="ac-field">
+          <label>Steps · goal 10,000</label>
+          <input type="number" id="in-day-steps" placeholder="0" inputmode="numeric" oninput="saveDayTotal()">
+          <div style="margin-top:4px;height:4px;background:rgba(255,255,255,.05);border-radius:2px;overflow:hidden;">
+            <div id="steps-progress-bar" style="height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;transition:width .3s;"></div>
+          </div>
         </div>
-        <div class="ac-fields">
-          <div class="ac-field">
-            <label>Cal burned</label>
-            <input type="number" id="in-workout-kcal" placeholder="0" inputmode="numeric" oninput="saveActivity('workout')">
-          </div>
-          <div class="ac-field">
-            <label>Duration (min)</label>
-            <input type="number" id="in-workout-min" placeholder="0" inputmode="numeric" oninput="saveActivity('workout')">
-          </div>
+        <div class="ac-field">
+          <label>Total cal burned</label>
+          <input type="number" id="in-day-kcal" placeholder="0" inputmode="numeric" oninput="saveDayTotal()">
         </div>
       </div>
     </div>
@@ -826,19 +848,35 @@ function renderMacros(){
   const s = get();
   const t = today();
   const m = sumMacros(t.food);
-  const M = [
-    { id:'cal', v:m.cal, t:s.targetCal },
-    { id:'p',   v:m.p,   t:s.targetP },
-    { id:'c',   v:m.c,   t:s.targetC },
-    { id:'f',   v:m.f,   t:s.targetF },
-  ];
-  M.forEach(({id,v,t}) => {
-    document.getElementById('mv-'+id).textContent = Math.round(v*10)/10;
-    document.getElementById('mt-'+id).textContent = t;
-    const pct = Math.min(100, (v/t)*100);
-    document.getElementById('mb-'+id).style.width = pct+'%';
-    const card = document.getElementById('m-'+id);
-    if (v > t * 1.05) card.classList.add('over'); else card.classList.remove('over');
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  // Row 1: GOAL
+  set('g-cal', s.targetCal);
+  set('g-p', s.targetP);
+  set('g-c', s.targetC);
+  set('g-f', s.targetF);
+  // Row 2: CONSUMED
+  set('c-cal', Math.round(m.cal));
+  set('c-p', Math.round(m.p)+'g');
+  set('c-c', Math.round(m.c)+'g');
+  set('c-f', Math.round(m.f)+'g');
+  // Row 3: LEFT / OVER
+  function diff(v, target, unit){
+    const left = target - v;
+    return {
+      val: Math.round(Math.abs(left)) + (unit||''),
+      label: left >= 0 ? 'LEFT' : 'OVER',
+      color: left >= 0 ? 'var(--accent2)' : 'var(--bad)'
+    };
+  }
+  const dCal = diff(m.cal, s.targetCal, '');
+  const dP = diff(m.p, s.targetP, 'g');
+  const dC = diff(m.c, s.targetC, 'g');
+  const dF = diff(m.f, s.targetF, 'g');
+  [['cal',dCal],['p',dP],['c',dC],['f',dF]].forEach(([id,d]) => {
+    const numEl = document.getElementById('d-'+id);
+    const lblEl = document.getElementById('d-'+id+'-l');
+    if (numEl) { numEl.textContent = d.val; numEl.style.color = d.color; }
+    if (lblEl) { lblEl.textContent = d.label; lblEl.style.color = d.color; }
   });
 }
 
@@ -1285,9 +1323,14 @@ function renderChecks(){
   const t = today();
   const c = t.checks || {};
   const a = t.activity || {};
-  // Walk AM/PM pill buttons
-  ['walkAM','walkPM'].forEach(k => {
-    const pill = document.getElementById(k === 'walkAM' ? 'walk-am-pill' : 'walk-pm-pill');
+  // Three check-pills: AM walk · PM walk · Workout
+  const pillMap = {
+    walkAM:  'walk-am-pill',
+    walkPM:  'walk-pm-pill',
+    workout: 'workout-pill',
+  };
+  Object.entries(pillMap).forEach(([k, pillId]) => {
+    const pill = document.getElementById(pillId);
     const ck = document.getElementById('check-'+k);
     const on = !!c[k];
     if (pill) {
@@ -1301,43 +1344,19 @@ function renderChecks(){
       ck.style.color = on ? '#000' : 'transparent';
     }
   });
-  // Walks card overall — light up if both walks done
-  const walksCard = document.getElementById('ac-walks');
-  if (walksCard) walksCard.classList.toggle('on', !!c.walkAM && !!c.walkPM);
-  // Day totals — restore inputs from saved state
+  // Day-total inputs
   const stepsIn = document.getElementById('in-day-steps');
   const kcalIn  = document.getElementById('in-day-kcal');
   if (stepsIn && document.activeElement !== stepsIn && a.daySteps) stepsIn.value = a.daySteps;
   if (kcalIn  && document.activeElement !== kcalIn  && a.dayKcal)  kcalIn.value  = a.dayKcal;
-  // Walk header summary
-  const sumWalks = document.getElementById('sum-walks');
-  if (sumWalks) {
-    const totS = a.daySteps || 0;
-    const totK = a.dayKcal || 0;
-    sumWalks.textContent = (totS || totK) ? `${totS.toLocaleString()} steps · ${totK} cal` : '';
-  }
-  // Workout card
-  const workoutCard = document.getElementById('ac-workout');
-  if (workoutCard) {
-    workoutCard.classList.toggle('on', !!c.workout);
-    const v = a.workout || {};
-    const wkcalEl = document.getElementById('in-workout-kcal');
-    const minEl = document.getElementById('in-workout-min');
-    if (wkcalEl && document.activeElement !== wkcalEl && v.kcal) wkcalEl.value = v.kcal;
-    if (minEl  && document.activeElement !== minEl   && v.min)  minEl.value  = v.min;
-    const sumEl = document.getElementById('sum-workout');
-    if (sumEl) {
-      const bits = [];
-      if (v.kcal) bits.push(v.kcal+' cal');
-      if (v.min) bits.push(v.min+' min');
-      sumEl.textContent = bits.join(' · ');
-    }
-  }
-  // Workout label = today's split
+  // Steps progress bar toward 10k goal
+  const bar = document.getElementById('steps-progress-bar');
+  if (bar) bar.style.width = Math.min(100, ((a.daySteps||0)/10000)*100) + '%';
+  // Workout pill label = today's split
   const workoutLbl = document.getElementById('ct-workout-label');
   if (workoutLbl) {
     const d = TRAIN.find(x => x.d === dayOfWeek());
-    workoutLbl.textContent = d ? d.name : 'Workout';
+    workoutLbl.textContent = d ? d.name.toUpperCase() : 'WORKOUT';
   }
 }
 function addWater(n){
