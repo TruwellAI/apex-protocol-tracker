@@ -170,8 +170,10 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
     opt.textContent = p.name + (p.titration ? ' (titrated)' : '');
     sel.appendChild(opt);
   });
-  // Default to Reta (most common titration question)
-  if (ssot['retatrutide.html']) sel.value = 'retatrutide.html';
+  // Default to Reta OR ?p=<slug> URL param (deep-linked from peptide pages)
+  const urlSlug = new URLSearchParams(location.search).get('p');
+  if (urlSlug && ssot[urlSlug]) sel.value = urlSlug;
+  else if (ssot['retatrutide.html']) sel.value = 'retatrutide.html';
 
   // Pre-fill defaults from SSOT when peptide changes
   function fillFromSSOT(){
