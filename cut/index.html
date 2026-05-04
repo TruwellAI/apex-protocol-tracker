@@ -19,7 +19,7 @@
 <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="pragma" content="no-cache">
 <meta http-equiv="expires" content="0">
-<meta name="version" content="v20260503c">
+<meta name="version" content="v20260503d">
 <style>
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 :root {
@@ -826,16 +826,7 @@ function renderHero(){
     ? (fatToGo > 0 ? fatToGo.toFixed(1)+' lb' : '✓ HIT')
     : '—';
   document.getElementById('hs-bf').textContent = bf ? bf.toFixed(1)+'%' : '—';
-
-  // Cal
-  const eaten = sumMacros(t.food);
-  document.getElementById('hero-cal').textContent = Math.round(eaten.cal);
-  document.getElementById('hero-cal-target').textContent = s.targetCal;
-  const left = s.targetCal - eaten.cal;
-  document.getElementById('hero-cal-left').textContent = Math.max(0, Math.round(left));
-  document.getElementById('hero-cal-msg').innerHTML = left >= 0
-    ? `Eat <strong style="color:var(--accent2);">${Math.round(left)}</strong> more to hit target`
-    : `<strong style="color:var(--bad);">+${Math.round(-left)}</strong> over target`;
+  // Cal display lives in the macro ladder now, not the hero — handled by renderMacros()
 }
 
 function sumMacros(foodArr){
@@ -1297,11 +1288,7 @@ function resetFoodLog(){
     if (bar) bar.style.width = '0%';
     if (card) card.classList.remove('over');
   });
-  // Hero cal too
-  const heroCal = document.getElementById('hero-cal');
-  const heroLeft = document.getElementById('hero-cal-left');
-  if (heroCal) heroCal.textContent = '0';
-  if (heroLeft) heroLeft.textContent = (s.targetCal || 2150);
+  // (hero-cal display removed — macro ladder is the source of truth now)
   // Now do full re-render for everything else
   renderAll();
 }
