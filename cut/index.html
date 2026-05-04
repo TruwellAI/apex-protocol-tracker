@@ -342,6 +342,12 @@ body { padding-bottom: 90px; }
       </div>
     </div>
 
+    <!-- DYNAMIC DEFICIT EXPLAINER -->
+    <div id="deficit-banner" style="margin:0 16px 8px;padding:8px 12px;background:rgba(0,212,255,.06);border:1px solid var(--border);border-radius:8px;display:flex;justify-content:space-between;align-items:center;font-size:11px;font-family:'Share Tech Mono',monospace;letter-spacing:.04em;">
+      <span style="color:var(--muted);">⚡ DYNAMIC · Goal flexes with burn for guaranteed 1000-cal deficit</span>
+      <span id="deficit-live" style="color:var(--accent2);font-weight:700;">−1000 cal</span>
+    </div>
+
     <!-- 3-ROW MACRO LADDER: GOAL · CONSUMED · LEFT/OVER -->
     <div style="margin:0 16px 14px;background:var(--panel);border:1px solid var(--border);border-radius:12px;overflow:hidden;">
       <!-- Row 1: GOAL -->
@@ -847,12 +853,46 @@ function renderMacros(){
   const s = get();
   const t = today();
   const m = sumMacros(t.food);
+  const a = t.activity || {};
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
-  // Row 1: GOAL
-  set('g-cal', s.targetCal);
-  set('g-p', s.targetP);
-  set('g-c', s.targetC);
-  set('g-f', s.targetF);
+  // ── DYNAMIC GOAL: cal target flexes with today's recorded burn ──
+  // Maintenance baseline = 2300 cal eat at 750 avg burn → 1000 deficit guaranteed.
+  // If burn ↑, eat goal ↑ (same deficit). If burn ↓, eat goal ↓. Floor 2000 cal.
+  const baselineBurn = 750;
+  const todayBurn = a.dayKcal || baselineBurn;
+  const dynamicCalGoal = Math.max(2000, s.targetCal + (todayBurn - baselineBurn));
+  // Also scale macros proportionally so protein/carb/fat remain in ratio
+  const calRatio = dynamicCalGoal / s.targetCal;
+  const dynamicP = Math.round(s.targetP); // protein stays fixed (LBM-protective)
+  const dynamicF = Math.round(s.targetF * Math.max(1, calRatio)); // fat scales up but never down
+  const dynamicC = Math.round((dynamicCalGoal - dynamicP*4 - dynamicF*9) / 4);
+  // Row 1: GOAL (dynamic)
+  set('g-cal', dynamicCalGoal);
+  set('g-p', dynamicP);
+  set('g-c', dynamicC);
+  set('g-f', dynamicF);
+  // Stash for elsewhere
+  s._effectiveTargetCal = dynamicCalGoal;
+  // Live deficit indicator: TDEE = baseline maintenance + today's extra burn − consumed
+  const baselineMaint = s.targetCal + 1000; // ~3300
+  const tdeeToday = baselineMaint + (todayBurn - baselineBurn);
+  const realDeficit = Math.round(tdeeToday - m.cal);
+  const live = document.getElementById('deficit-live');
+  if (live) {
+    if (realDeficit >= 800 && realDeficit <= 1300) {
+      live.textContent = `−${realDeficit} cal · 🎯 ON TARGET`;
+      live.style.color = 'var(--accent2)';
+    } else if (realDeficit > 1300) {
+      live.textContent = `−${realDeficit} cal · ⚠ TOO LOW · eat more`;
+      live.style.color = 'var(--warn)';
+    } else if (realDeficit > 0) {
+      live.textContent = `−${realDeficit} cal · under target`;
+      live.style.color = 'var(--muted)';
+    } else {
+      live.textContent = `+${Math.abs(realDeficit)} cal OVER · stop eating`;
+      live.style.color = 'var(--bad)';
+    }
+  }
   // Row 2: CONSUMED
   set('c-cal', Math.round(m.cal));
   set('c-p', Math.round(m.p)+'g');
@@ -867,10 +907,10 @@ function renderMacros(){
       color: left >= 0 ? 'var(--accent2)' : 'var(--bad)'
     };
   }
-  const dCal = diff(m.cal, s.targetCal, '');
-  const dP = diff(m.p, s.targetP, 'g');
-  const dC = diff(m.c, s.targetC, 'g');
-  const dF = diff(m.f, s.targetF, 'g');
+  const dCal = diff(m.cal, dynamicCalGoal, '');
+  const dP = diff(m.p, dynamicP, 'g');
+  const dC = diff(m.c, dynamicC, 'g');
+  const dF = diff(m.f, dynamicF, 'g');
   [['cal',dCal],['p',dP],['c',dC],['f',dF]].forEach(([id,d]) => {
     const numEl = document.getElementById('d-'+id);
     const lblEl = document.getElementById('d-'+id+'-l');
