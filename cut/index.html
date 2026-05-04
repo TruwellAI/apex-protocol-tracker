@@ -724,11 +724,11 @@ const PEPTIDES = [
   { id:'bpcPM',  name:'BPC-157',         dose:'250 mcg · 5u',   window:'PM',                 days:'all',      tag:'heal',  color:'#34D399', ssot:'bpc157.html' },
   // ── DAILY TRT (pre-mixed 250 mg/mL) ──
   { id:'test',   name:'Testosterone Cyp',dose:'30u (75 mg)',    window:'Daily AM · 250 mg/mL pre-mix', days:'all', tag:'TRT', color:'#F472B6', ssot:'testosterone-cyp.html' },
-  { id:'hcg',    name:'HCG',             dose:'500 IU · 30u',   window:'Mon · Wed · Fri', days:[1,3,5], tag:'fertility', color:'#FBBF24', ssot:null, note:'5000 IU vial + 3 mL BAC → 1667 IU/mL · 30u draw = 500 IU. Maintains testicular size + libido + fertility on TRT. Refrigerate after mixing, use within 30 days.' },
+  { id:'hcg',    name:'HCG',             dose:'500 IU · 30u',   window:'AM · Mon · Wed · Fri', days:[1,3,5], tag:'fertility', color:'#FBBF24', ssot:null, note:'5000 IU vial + 3 mL BAC → 1667 IU/mL · 30u draw = 500 IU. Maintains testicular size + libido + fertility on TRT. Refrigerate after mixing, use within 30 days.' },
   // ── 2x WEEKLY (Mon + Thu) ──
-  { id:'tb',     name:'TB-500',          dose:'5 mg · 50u',     window:'Mon + Thu',          days:[1,4],      tag:'heal',  color:'#34D399', ssot:'tb500.html' },
+  { id:'tb',     name:'TB-500',          dose:'5 mg · 50u',     window:'AM · Mon + Thu',     days:[1,4],      tag:'heal',  color:'#34D399', ssot:'tb500.html' },
   // ── 3x WEEKLY (Mon · Wed · Fri) ──
-  { id:'reta',   name:'Retatrutide',     dose:'25u',            window:'M · W · F',          days:[1,3,5],    tag:'GLP-1', color:'#00FF9D', ssot:'retatrutide.html' },
+  { id:'reta',   name:'Retatrutide',     dose:'25u',            window:'AM · M · W · F',     days:[1,3,5],    tag:'GLP-1', color:'#00FF9D', ssot:'retatrutide.html' },
   { id:'nad',    name:'NAD+',            dose:'20u',            window:'M · W · F AM',       days:[1,3,5],    tag:'mito',  color:'#FBBF24', ssot:'nad-plus.html' },
   { id:'mots',   name:'MOTS-c',          dose:'33u per dose (100u/wk total split M·W·F)', window:'M · W · F AM', days:[1,3,5], tag:'mito',  color:'#FBBF24', ssot:'motsc.html' },
   // ── 2x WEEKLY (Tue + Fri) ──
@@ -1060,17 +1060,16 @@ function renderPeptides(){
       if (/post.?workout|post.?gym/.test(w)) return 'post';
       if (/pre.?workout|pre.?gym/.test(w)) return 'pre';
       if (/\bpm\b|evening|bedtime/.test(w)) return 'pm';
-      if (/am|fasted|morning|pre.?cardio/.test(w)) return 'am';
-      return 'other';
+      // Default everything else (including weekly day-only windows) to AM
+      return 'am';
     }
-    const groups = { am:[], pre:[], post:[], pm:[], other:[] };
+    const groups = { am:[], pre:[], post:[], pm:[] };
     todayPeps.forEach(p => groups[bucket(p)].push(p));
     const groupLabels = {
       am:    { label:'☀️ MORNING — AM fasted, before walk #1', color:'var(--accent2)' },
       pre:   { label:'🏋︎ PRE-GYM — ~30 min before lifting', color:'#FBBF24' },
       post:  { label:'⚡ POST-WORKOUT — within 30 min of last set', color:'var(--accent)' },
       pm:    { label:'🌙 PM / EVENING', color:'#A78BFA' },
-      other: { label:'📅 WEEKLY / OTHER', color:'var(--muted)' },
     };
     const cardHtml = (p) => {
       const isDoneToday = isViewingToday && t.peptides[p.id];
@@ -1083,7 +1082,7 @@ function renderPeptides(){
         </div>
       </div>`;
     };
-    pfl.innerHTML = ['am','pre','post','pm','other'].map(g => {
+    pfl.innerHTML = ['am','pre','post','pm'].map(g => {
       if (!groups[g].length) return '';
       const meta = groupLabels[g];
       const doneInGroup = groups[g].filter(p => t.peptides[p.id]).length;
@@ -1778,16 +1777,17 @@ function checkPerfectDay(){
   }
 }
 
+function safe(name, fn){ try { fn(); } catch(e) { console.error('[render]', name, e.message); } }
 function renderAll(){
-  renderHero();
-  renderMacros();
-  renderEatRunning();
-  renderFoodList();
-  renderFoodLog();
-  renderPlan();
-  renderStreaks();
-  renderDowStrip();
-  checkPerfectDay();
+  safe('Hero',          renderHero);
+  safe('Macros',        renderMacros);
+  safe('EatRunning',    renderEatRunning);
+  safe('FoodList',      renderFoodList);
+  safe('FoodLog',       renderFoodLog);
+  safe('Plan',          renderPlan);
+  safe('Streaks',       renderStreaks);
+  safe('DowStrip',      renderDowStrip);
+  safe('CheckPerfect',  checkPerfectDay);
   renderStackIntel();
   renderPeptides();
   renderSteps();
