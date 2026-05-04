@@ -1,7 +1,7 @@
 /* AUTO-GENERATED — DO NOT EDIT.
  * Source: /data/peptides.json
  * Regenerate: node scripts/build-peptide-data.js
- * Built: 2026-05-02T19:28:24.375Z
+ * Built: 2026-05-04T13:48:33.674Z
  */
 window.APEX_PEPTIDES = {
   "_meta": {
@@ -321,22 +321,22 @@ window.APEX_PEPTIDES = {
     "cadence_flex": {
       "options": [
         {
-          "pattern": "2x weekly",
+          "pattern": "2x weekly (loading)",
           "per_dose_mg": 3,
           "weekly_total_mg": 6
         },
         {
-          "pattern": "3x weekly",
-          "per_dose_mg": 3,
-          "weekly_total_mg": 9
+          "pattern": "3x weekly Mon · Wed · Fri",
+          "per_dose_mg": 2,
+          "weekly_total_mg": 6
         },
         {
-          "pattern": "daily",
-          "per_dose_mg": 1,
-          "weekly_total_mg": 7
+          "pattern": "Daily (smooth)",
+          "per_dose_mg": 0.86,
+          "weekly_total_mg": 6
         }
       ],
-      "rule": "MOTS-c is weekly-total dose-driven, not frequency-driven. Same weekly mg = same effect. Daily is fine at 1 mg/dose if you prefer smoother baseline or want to time it post-workout. ❌ NEVER daily at 3 mg — that's 21 mg/wk, 2-3× over target."
+      "rule": "MOTS-c is WEEKLY-TOTAL driven (6 mg/wk research-backed). Pick a frequency — per-dose flexes to keep weekly total constant. 2x = 3mg each, 3x = 2mg each, daily = ~0.86mg each. Same effect, different smoothness."
     }
   },
   "cartalax.html": {
