@@ -69,16 +69,51 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
   <h1>Bottle Planner</h1>
   <p class="sub">Pick a peptide. We'll tell you exactly what bottles to buy, when, and for how many weeks. Zero guesswork.</p>
 
-  <!-- INPUTS — radically simplified. Just pick the peptide. -->
-  <div class="card">
+  <!-- DECISION TREE: two big buttons. First thing user sees. -->
+  <div id="decision-tree" class="card">
+    <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:20px;color:var(--text);text-align:center;margin-bottom:6px;">First — quick question:</div>
+    <div style="text-align:center;color:var(--muted);font-size:13px;margin-bottom:18px;">Are you starting fresh or already running this peptide?</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <button onclick="chooseNew()" style="padding:24px 12px;border-radius:14px;background:linear-gradient(135deg,rgba(0,255,157,.10),rgba(0,212,255,.04));border:2px solid var(--accent2);color:var(--accent2);font-family:'Rajdhani',sans-serif;font-weight:800;cursor:pointer;-webkit-tap-highlight-color:transparent;text-align:center;">
+        <div style="font-size:32px;margin-bottom:6px;">🆕</div>
+        <div style="font-size:15px;letter-spacing:.04em;">I'M NEW TO IT</div>
+        <div style="font-size:11px;color:var(--muted);font-weight:500;margin-top:4px;letter-spacing:0;">Wk 1 · starting today</div>
+      </button>
+      <button onclick="chooseMid()" style="padding:24px 12px;border-radius:14px;background:rgba(0,212,255,.04);border:2px solid var(--border);color:var(--text);font-family:'Rajdhani',sans-serif;font-weight:800;cursor:pointer;-webkit-tap-highlight-color:transparent;text-align:center;">
+        <div style="font-size:32px;margin-bottom:6px;">▶</div>
+        <div style="font-size:15px;letter-spacing:.04em;">I'M ALREADY ON IT</div>
+        <div style="font-size:11px;color:var(--muted);font-weight:500;margin-top:4px;letter-spacing:0;">Mid-cycle · pick up where I am</div>
+      </button>
+    </div>
+  </div>
+
+  <!-- PEPTIDE PICKER — hidden until user picks a path -->
+  <div id="picker-card" class="card" style="display:none;">
     <div class="field" style="margin-bottom:0;">
-      <label>Which peptide are you running?</label>
+      <label id="picker-label">Which peptide are you running?</label>
       <select id="peptide-select" onchange="runPlanner()" style="font-size:18px;padding:14px;"></select>
     </div>
-    <!-- Hidden inputs with sensible defaults — power users access via tiny link below -->
+    <!-- Mid-cycle questions revealed inline when user picked "I'm already on it" -->
+    <div id="mid-questions" style="display:none;margin-top:14px;padding:14px;background:rgba(0,212,255,.04);border:1px solid var(--border);border-radius:10px;">
+      <div class="field">
+        <label>What's your total weekly dose right now? (mg)</label>
+        <input type="number" id="last-dose-mg" value="4" min="0.1" step="0.1" oninput="runPlanner()">
+        <div style="font-size:11px;color:var(--muted);margin-top:6px;line-height:1.45;">Add up everything you inject in a week. Doesn't matter how you split it.</div>
+      </div>
+      <div class="field" style="margin-bottom:0;">
+        <label>How many more weeks do you want to plan?</label>
+        <input type="number" id="forward-weeks" value="12" min="1" max="52" oninput="runPlanner()">
+      </div>
+      <input type="hidden" id="current-week" value="1">
+    </div>
+    <!-- Hidden technical inputs -->
     <input type="hidden" id="vial-mg" value="10">
     <input type="hidden" id="bac-ml" value="3">
     <input type="hidden" id="shelf-days" value="30">
+    <!-- Tiny link to swap modes -->
+    <div style="text-align:center;margin-top:14px;">
+      <a href="javascript:void(0)" id="swap-mode" onclick="swapMode()" style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--muted);text-decoration:underline;text-transform:uppercase;font-weight:700;-webkit-tap-highlight-color:transparent;">↺ Wrong choice? Switch to "already on it"</a>
+    </div>
   </div>
 
     <!-- Hidden mode buttons — toggled via the small text link below the plan -->
@@ -122,25 +157,6 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
       <div class="eyebrow">📦 Your full plan</div>
       <div id="r-recommend" class="recommend"></div>
 
-      <!-- Tiny mode-switch link below the plan -->
-      <div style="margin-top:14px;text-align:center;">
-        <a id="mode-link" href="javascript:void(0)" onclick="toggleMode()" style="display:inline-block;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);text-decoration:underline;text-transform:uppercase;font-weight:700;-webkit-tap-highlight-color:transparent;">▶ I'm already on a cycle · adjust plan</a>
-      </div>
-    </div>
-
-    <!-- MID-CYCLE INPUTS — only revealed when user taps the link above -->
-    <div id="mid-cycle-fields" style="display:none;background:rgba(0,212,255,.04);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;">
-      <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.16em;color:var(--accent);font-weight:700;text-transform:uppercase;margin-bottom:6px;">▶ TWO QUESTIONS</div>
-      <div style="font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:14px;">We'll figure out your week from your dose.</div>
-      <div class="field">
-        <label>What's your total weekly dose right now? (mg)</label>
-        <input type="number" id="last-dose-mg" value="4" min="0.1" step="0.1" oninput="runPlanner()">
-      </div>
-      <div class="field" style="margin-bottom:0;">
-        <label>How many more weeks do you want to plan?</label>
-        <input type="number" id="forward-weeks" value="12" min="1" max="52" oninput="runPlanner()">
-      </div>
-      <input type="hidden" id="current-week" value="1">
     </div>
 
     <!-- DETAILED BREAKDOWN — collapsed by default, for users who want the math -->
@@ -233,6 +249,30 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
   }
   // Mode toggle: BRAND NEW vs ALREADY ON CYCLE
   let cycleMode = 'new';
+  // Decision tree: user picks new vs already-on-it
+  window.chooseNew = function(){
+    document.getElementById('decision-tree').style.display = 'none';
+    document.getElementById('picker-card').style.display = 'block';
+    document.getElementById('picker-label').textContent = '🆕 Which peptide are you starting?';
+    document.getElementById('mid-questions').style.display = 'none';
+    document.getElementById('swap-mode').textContent = '↺ Actually I\'m already on a cycle — switch';
+    setMode('new');
+    runPlanner();
+    document.getElementById('picker-card').scrollIntoView({behavior:'smooth'});
+  };
+  window.chooseMid = function(){
+    document.getElementById('decision-tree').style.display = 'none';
+    document.getElementById('picker-card').style.display = 'block';
+    document.getElementById('picker-label').textContent = '▶ Which peptide are you running?';
+    document.getElementById('mid-questions').style.display = 'block';
+    document.getElementById('swap-mode').textContent = '↺ Actually I\'m brand new — switch';
+    setMode('mid');
+    runPlanner();
+    document.getElementById('picker-card').scrollIntoView({behavior:'smooth'});
+  };
+  window.swapMode = function(){
+    if (cycleMode === 'new') chooseMid(); else chooseNew();
+  };
   window.toggleMode = function(){
     setMode(cycleMode === 'new' ? 'mid' : 'new');
     const link = document.getElementById('mode-link');
@@ -704,15 +744,11 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
   // Render saved plans + load URL share on boot
   renderSavedPlans();
   loadFromHash();
-  // BRAND-NEW DEFAULT for initial load: 10 mg vial + 3 mL BAC for first-time users (Reta especially).
-  // Runs only if no share-link hash + no saved-plan-load happened.
-  if (!location.hash.startsWith('#plan=')) {
-    document.getElementById('vial-mg').value = 10;
-    document.getElementById('bac-ml').value = 3;
-    setMode('new');  // ensures both bottle defaults stick + activates BRAND NEW pill
+  // Boot: if shared-link or peptide-deeplink, auto-jump past decision tree to BRAND NEW.
+  // Otherwise, decision tree is the first thing user sees.
+  if (location.hash.startsWith('#plan=') || urlSlug) {
+    chooseNew();
   }
-  // Auto-run on load
-  setTimeout(runPlanner, 100);
 })();
 </script>
 
