@@ -474,6 +474,12 @@ body { padding-bottom: 90px; }
           <strong style="color:var(--accent);">Cal left for afternoon + dinner:</strong> <span id="cal-left-rest" style="color:var(--accent2);font-weight:700;">—</span>
         </div>
       </div>
+
+      <!-- 🤖 SMART RECOMMENDATION: tells you EXACTLY what to eat + how far to walk -->
+      <div id="smart-rec" style="margin-top:10px;padding:12px;background:linear-gradient(135deg,rgba(0,212,255,.08),rgba(0,255,157,.04));border:1px solid var(--border2);border-radius:8px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--accent);font-weight:700;margin-bottom:6px;">🤖 RECOMMENDATION · stay at −1000</div>
+        <div id="smart-rec-body" style="font-size:12px;color:var(--text);line-height:1.55;">Log your noon cal-burn above to get a tailored plan for afternoon + PM walk.</div>
+      </div>
     </div>
 
     <!-- WATER -->
@@ -1445,10 +1451,44 @@ function renderChecks(){
   const projEODEl = document.getElementById('proj-eod-burn');
   if (projEODEl) projEODEl.textContent = `${projEOD} cal projected EOD`;
   const calLeftEl = document.getElementById('cal-left-rest');
+  const calLeft = Math.round(dynamicGoal - m2.cal);
   if (calLeftEl) {
-    const left = Math.round(dynamicGoal - m2.cal);
-    calLeftEl.textContent = (left > 0 ? `${left} cal` : `0 cal · ${Math.abs(left)} OVER`);
-    calLeftEl.style.color = left > 0 ? 'var(--accent2)' : 'var(--bad)';
+    calLeftEl.textContent = (calLeft > 0 ? `${calLeft} cal` : `0 cal · ${Math.abs(calLeft)} OVER`);
+    calLeftEl.style.color = calLeft > 0 ? 'var(--accent2)' : 'var(--bad)';
+  }
+
+  // ── SMART RECOMMENDATION ENGINE ──
+  // Looks at what's logged, what's planned, and tells Neil EXACTLY what to do
+  // for the rest of the day to land at exactly −1000 deficit.
+  const recEl = document.getElementById('smart-rec-body');
+  if (recEl && burnSoFar > 0) {
+    const ml = t.mealsLogged || {};
+    const remainingMeals = MEAL_PLAN.filter(m => !ml[m.id]);
+    const remainingCal = remainingMeals.reduce((sum, m) => sum + mealMacros(m).cal, 0);
+    const remainingProtein = remainingMeals.reduce((sum, m) => sum + mealMacros(m).p, 0);
+    const remainingMealNames = remainingMeals.map(m => m.time.replace(/[^\w\s]/g,'').trim()).join(' · ');
+    let html = '';
+    const buffer = 100; // ±100 cal tolerance is fine
+    if (Math.abs(calLeft - remainingCal) <= buffer) {
+      // Plan + cal-left aligned — eat the plan
+      html = `<strong style="color:var(--accent2);">🎯 Stay the course.</strong> Eat all remaining meals as planned (<strong>${remainingMealNames || 'all logged'}</strong>) — that's <strong>${Math.round(remainingCal)} cal · ${Math.round(remainingProtein)}g protein</strong>. Hit the PM walk (~${pmProj} cal projected). Lands you within ±100 cal of the −1000 deficit.`;
+    } else if (calLeft > remainingCal + buffer) {
+      // Have more cal headroom than planned — eat plan + add a buffer item
+      const extra = calLeft - remainingCal;
+      html = `<strong style="color:var(--accent);">⚡ You have headroom.</strong> Eat all remaining meals (<strong>${Math.round(remainingCal)} cal</strong>) PLUS add ~<strong>${Math.round(extra)} cal</strong> extra (e.g. another Premier shake = 160 / extra avocado = 120 / extra 4oz chicken = 140). You burned more than baseline — your body wants the fuel. Don't undereat.`;
+    } else if (calLeft < remainingCal - buffer && calLeft > 0) {
+      // Less cal-left than planned — drop or shrink something OR walk longer
+      const over = remainingCal - calLeft;
+      const extraWalkBurn = Math.round(over);
+      const extraSteps = Math.round((over / 300) * 10000); // ~300 cal per 10k steps
+      html = `<strong style="color:var(--warn);">⚠ Plan exceeds budget by ${Math.round(over)} cal.</strong> Two options:<br>
+        <strong>(A)</strong> Skip the bedtime Chobani (saves 170 cal) or shrink dinner chicken to 6oz (saves 70 cal).<br>
+        <strong>(B)</strong> Lengthen PM walk by ~${Math.round(extraSteps/1000)}k steps (~${extraWalkBurn} extra cal burn) and eat the full plan.`;
+    } else if (calLeft <= 0) {
+      // Already over — stop eating
+      html = `<strong style="color:var(--bad);">🛑 You're at or over the EOD goal.</strong> Stop eating for the day. PM walk still happens — every step now is pure deficit boost. <strong>Skip remaining planned meals</strong> (${remainingMealNames || 'none scheduled'}). Hydrate, hit the walk, lock the day.`;
+    }
+    recEl.innerHTML = html || 'Log your noon cal-burn to get a tailored plan.';
   }
   // Workout pill label = today's split
   const workoutLbl = document.getElementById('ct-workout-label');
