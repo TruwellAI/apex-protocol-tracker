@@ -65,30 +65,35 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
 
   <div class="eyebrow">📦 Calculator</div>
   <h1>Bottle Planner</h1>
-  <p class="sub">How long will your vial actually last? Compare bottle sizes, see waste from shelf life, and figure out the cheapest buy strategy <strong style="color:var(--accent);">before</strong> you order.</p>
+  <p class="sub">Pick a peptide. We'll tell you exactly what bottles to buy, when, and for how many weeks. Zero guesswork.</p>
 
-  <!-- INPUTS -->
+  <!-- INPUTS — bare bones -->
   <div class="card">
     <div class="field">
-      <label>Peptide</label>
-      <select id="peptide-select"></select>
+      <label>Which peptide?</label>
+      <select id="peptide-select" onchange="runPlanner()"></select>
     </div>
 
-    <div class="row">
-      <div class="field">
-        <label>Vial size (mg)</label>
-        <input type="number" id="vial-mg" value="30" min="1" max="500">
+    <!-- All technical fields hidden — set automatically. Power users can override. -->
+    <details id="advanced-inputs" style="margin-bottom:0;">
+      <summary style="cursor:pointer;list-style:none;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;font-weight:700;padding:6px 0;-webkit-tap-highlight-color:transparent;opacity:.7;">⚙ Custom vial size · only tap if you already bought a specific bottle</summary>
+      <div style="padding-top:8px;">
+        <div class="row">
+          <div class="field">
+            <label>Vial size (mg)</label>
+            <input type="number" id="vial-mg" value="10" min="1" max="500">
+          </div>
+          <div class="field">
+            <label>BAC water (mL)</label>
+            <input type="number" id="bac-ml" value="3" step="0.5" min="0.5" max="10">
+          </div>
+        </div>
+        <div class="field" style="margin-bottom:0;">
+          <label>Shelf life (days refrigerated)</label>
+          <input type="number" id="shelf-days" value="30" min="7" max="365">
+        </div>
       </div>
-      <div class="field">
-        <label>BAC water (mL)</label>
-        <input type="number" id="bac-ml" value="3" step="0.5" min="0.5" max="10">
-      </div>
-    </div>
-
-    <div class="field">
-      <label>Shelf life (days refrigerated)</label>
-      <input type="number" id="shelf-days" value="30" min="7" max="365">
-    </div>
+    </details>
 
     <!-- WHERE ARE YOU IN YOUR CYCLE? -->
     <div class="field">
@@ -117,58 +122,61 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
       <input type="hidden" id="current-week" value="1">
     </div>
 
-    <div class="field">
-      <label>Dose strategy</label>
-      <select id="strategy">
-        <option value="titration">Follow titration ladder (if peptide has one)</option>
-        <option value="flat">Flat weekly dose · same dose every week</option>
-      </select>
-    </div>
-
-    <div id="flat-dose-row" class="row" style="display:none;">
-      <div class="field">
-        <label>Weekly dose (mg)</label>
-        <input type="number" id="flat-mg" value="4" min="0.1" step="0.1">
+    <!-- Strategy + flat-dose inputs hidden inside Advanced (auto = titration for first-timers) -->
+    <details id="strategy-advanced" style="margin-bottom:14px;display:none;">
+      <summary style="cursor:pointer;list-style:none;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;font-weight:700;padding:8px 0;-webkit-tap-highlight-color:transparent;">⚙ Custom dose strategy</summary>
+      <div style="padding-top:8px;">
+        <div class="field">
+          <label>Strategy</label>
+          <select id="strategy">
+            <option value="titration">Follow titration ladder (default — recommended)</option>
+            <option value="flat">Flat weekly dose · same dose every week</option>
+          </select>
+        </div>
+        <div id="flat-dose-row" class="row" style="display:none;">
+          <div class="field">
+            <label>Weekly dose (mg)</label>
+            <input type="number" id="flat-mg" value="4" min="0.1" step="0.1">
+          </div>
+          <div class="field">
+            <label>Plan length (weeks)</label>
+            <input type="number" id="flat-weeks" value="12" min="1" max="52">
+          </div>
+        </div>
       </div>
-      <div class="field">
-        <label>Plan length (weeks)</label>
-        <input type="number" id="flat-weeks" value="12" min="1" max="52">
-      </div>
-    </div>
+    </details>
+    <!-- Hidden default for non-advanced users: titration strategy with sensible defaults -->
+    <input type="hidden" id="hidden-strategy" value="titration">
 
-    <button class="btn" onclick="runPlanner()" style="font-size:16px;padding:18px;">📦 Will my bottle go to waste?</button>
   </div>
 
-  <!-- RESULTS -->
+  <!-- RESULTS — single primary card with the purchase plan -->
   <div id="results" class="results">
 
     <div class="card">
-      <div class="eyebrow">📦 What this bottle gives you</div>
-      <div class="summary-grid">
-        <div class="summary-cell"><div class="label">Concentration</div><div class="val" id="r-conc" style="color:var(--accent);">—</div></div>
-        <div class="summary-cell"><div class="label">Doses possible</div><div class="val" id="r-doses" style="color:var(--accent);">—</div></div>
-        <div class="summary-cell"><div class="label">Days at protocol</div><div class="val" id="r-days" style="color:var(--accent2);">—</div></div>
-      </div>
-      <div id="r-shelf-warning" style="margin-top:8px;"></div>
-    </div>
-
-    <div class="card">
-      <div class="eyebrow">📅 Week-by-week timeline</div>
-      <div id="timeline" class="timeline"></div>
-    </div>
-
-    <div class="card">
-      <div class="eyebrow">📊 Waste check</div>
-      <div class="summary-grid" style="grid-template-columns:1fr 1fr;">
-        <div class="summary-cell"><div class="label">Used</div><div class="val" id="r-used-mg" style="color:var(--accent2);">—</div></div>
-        <div class="summary-cell"><div class="label">Wasted</div><div class="val" id="r-waste-mg" style="color:var(--bad);">—</div></div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="eyebrow">🎯 Smart buy recommendation</div>
+      <div class="eyebrow">📦 Your purchase plan</div>
       <div id="r-recommend" class="recommend"></div>
     </div>
+
+    <!-- DETAILED BREAKDOWN — collapsed by default, for users who want the math -->
+    <details style="background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:14px;">
+      <summary style="cursor:pointer;list-style:none;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;font-weight:700;-webkit-tap-highlight-color:transparent;">📊 Show me the math (week-by-week, concentration, etc.)</summary>
+      <div style="padding-top:14px;">
+        <div class="summary-grid">
+          <div class="summary-cell"><div class="label">Concentration</div><div class="val" id="r-conc" style="color:var(--accent);">—</div></div>
+          <div class="summary-cell"><div class="label">Doses possible</div><div class="val" id="r-doses" style="color:var(--accent);">—</div></div>
+          <div class="summary-cell"><div class="label">Days at protocol</div><div class="val" id="r-days" style="color:var(--accent2);">—</div></div>
+        </div>
+        <div id="r-shelf-warning" style="margin-top:8px;"></div>
+        <div class="eyebrow" style="margin-top:14px;">📅 Week-by-week timeline</div>
+        <div id="timeline" class="timeline"></div>
+        <div class="eyebrow" style="margin-top:14px;">📊 Waste check</div>
+        <div class="summary-grid" style="grid-template-columns:1fr 1fr;">
+          <div class="summary-cell"><div class="label">Used</div><div class="val" id="r-used-mg" style="color:var(--accent2);">—</div></div>
+          <div class="summary-cell"><div class="label">Wasted</div><div class="val" id="r-waste-mg" style="color:var(--bad);">—</div></div>
+        </div>
+      </div>
+    </details>
 
     <!-- SAVE / SHARE PLAN -->
     <div class="card">
@@ -258,7 +266,12 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
     if (typeof runPlanner === 'function') runPlanner();
   };
 
-  sel.addEventListener('change', fillFromSSOT);
+  sel.addEventListener('change', () => { fillFromSSOT(); runPlanner(); });
+  // Auto-run on any field change
+  ['vial-mg','bac-ml','shelf-days','last-dose-mg','forward-weeks','flat-mg','flat-weeks'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', () => runPlanner());
+  });
   document.getElementById('strategy').addEventListener('change', () => {
     document.getElementById('flat-dose-row').style.display =
       document.getElementById('strategy').value === 'flat' ? 'grid' : 'none';
