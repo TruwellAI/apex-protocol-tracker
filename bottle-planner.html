@@ -164,6 +164,23 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
       <div id="r-recommend" class="recommend"></div>
     </div>
 
+    <!-- SAVE / SHARE PLAN -->
+    <div class="card">
+      <div class="eyebrow">💾 Save this plan</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.5;margin:6px 0 12px;">Pull this exact plan back up later or send the link to your coach / supplier.</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn" style="flex:1;min-width:140px;font-size:13px;padding:12px;" onclick="sharePlan()">🔗 Copy share link</button>
+        <button class="btn btn-ghost" style="flex:1;min-width:140px;font-size:13px;padding:12px;" onclick="savePlan()">⭐ Save to my plans</button>
+      </div>
+      <div id="share-status" style="margin-top:10px;font-size:12px;color:var(--accent2);font-family:'Share Tech Mono',monospace;letter-spacing:.04em;text-align:center;display:none;"></div>
+    </div>
+
+    <!-- MY SAVED PLANS -->
+    <div id="saved-plans-card" class="card" style="display:none;">
+      <div class="eyebrow">⭐ My saved plans</div>
+      <div id="saved-plans-list" style="margin-top:8px;"></div>
+    </div>
+
   </div>
 
   <div class="disc">⚠ Research-use peptides only. Shelf-life data is manufacturer-typical; actual stability varies by peptide chemistry and storage conditions. Personal research tool — not medical advice.</div>
@@ -496,6 +513,140 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
     document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
   };
 
+  // ─── SAVE / SHARE PLAN ───
+  function getCurrentPlan(){
+    return {
+      peptide: sel.value,
+      vial: parseFloat(document.getElementById('vial-mg').value),
+      bac: parseFloat(document.getElementById('bac-ml').value),
+      shelf: parseInt(document.getElementById('shelf-days').value),
+      strategy: document.getElementById('strategy').value,
+      mode: cycleMode,
+      currentWeek: parseInt(document.getElementById('current-week').value) || 1,
+      lastDose: parseFloat(document.getElementById('last-dose-mg').value) || 0,
+      flatMg: parseFloat(document.getElementById('flat-mg').value) || 0,
+      flatWeeks: parseInt(document.getElementById('flat-weeks').value) || 12,
+      saved: new Date().toISOString()
+    };
+  }
+
+  window.sharePlan = function(){
+    const plan = getCurrentPlan();
+    const encoded = btoa(JSON.stringify(plan));
+    const url = `${location.origin}${location.pathname}#plan=${encoded}`;
+    const status = document.getElementById('share-status');
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(url).then(() => {
+        status.textContent = '✓ LINK COPIED — paste it anywhere';
+        status.style.display = 'block';
+        status.style.color = 'var(--accent2)';
+        setTimeout(() => { status.style.display = 'none'; }, 4000);
+      }).catch(() => fallbackCopy(url, status));
+    } else {
+      fallbackCopy(url, status);
+    }
+  };
+
+  function fallbackCopy(url, status){
+    const ta = document.createElement('textarea');
+    ta.value = url; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); status.textContent = '✓ LINK COPIED'; status.style.display = 'block'; }
+    catch (e) { status.textContent = url; status.style.display = 'block'; }
+    document.body.removeChild(ta);
+    setTimeout(() => { status.style.display = 'none'; }, 5000);
+  }
+
+  window.savePlan = function(){
+    const plan = getCurrentPlan();
+    const peptide = (window.APEX_PEPTIDES || {})[plan.peptide];
+    plan.label = (peptide?.name || plan.peptide) + ' · ' + plan.vial + 'mg/' + plan.bac + 'mL';
+    let saved = [];
+    try { saved = JSON.parse(localStorage.getItem('apex_bottle_plans') || '[]'); } catch(e){}
+    // Dedupe by peptide+vial+bac
+    saved = saved.filter(s => !(s.peptide === plan.peptide && s.vial === plan.vial && s.bac === plan.bac));
+    saved.unshift(plan);
+    saved = saved.slice(0, 10); // keep most recent 10
+    try { localStorage.setItem('apex_bottle_plans', JSON.stringify(saved)); } catch(e){}
+    const status = document.getElementById('share-status');
+    status.textContent = '✓ SAVED — see "My saved plans" below';
+    status.style.display = 'block';
+    status.style.color = 'var(--accent2)';
+    setTimeout(() => { status.style.display = 'none'; }, 3500);
+    renderSavedPlans();
+  };
+
+  function renderSavedPlans(){
+    let saved = [];
+    try { saved = JSON.parse(localStorage.getItem('apex_bottle_plans') || '[]'); } catch(e){}
+    const card = document.getElementById('saved-plans-card');
+    const list = document.getElementById('saved-plans-list');
+    if (!saved.length) { card.style.display = 'none'; return; }
+    card.style.display = 'block';
+    list.innerHTML = saved.map((p, idx) => {
+      const date = new Date(p.saved).toLocaleDateString();
+      return `<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--panel2);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;">
+        <div style="flex:1;min-width:0;">
+          <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:var(--text);">${p.label}</div>
+          <div style="font-size:10px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:.04em;">SAVED ${date} · ${p.mode === 'mid' ? 'MID-CYCLE WK ' + p.currentWeek : 'BRAND NEW'}</div>
+        </div>
+        <button onclick="loadPlan(${idx})" style="background:transparent;border:1px solid var(--accent);color:var(--accent);padding:6px 10px;border-radius:6px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.1em;font-weight:700;cursor:pointer;">LOAD</button>
+        <button onclick="deletePlan(${idx})" style="background:transparent;border:1px solid var(--bad);color:var(--bad);padding:6px 8px;border-radius:6px;font-size:14px;line-height:1;cursor:pointer;">×</button>
+      </div>`;
+    }).join('');
+  }
+
+  window.loadPlan = function(idx){
+    let saved = [];
+    try { saved = JSON.parse(localStorage.getItem('apex_bottle_plans') || '[]'); } catch(e){}
+    const p = saved[idx];
+    if (!p) return;
+    applyPlan(p);
+  };
+
+  window.deletePlan = function(idx){
+    let saved = [];
+    try { saved = JSON.parse(localStorage.getItem('apex_bottle_plans') || '[]'); } catch(e){}
+    saved.splice(idx, 1);
+    localStorage.setItem('apex_bottle_plans', JSON.stringify(saved));
+    renderSavedPlans();
+  };
+
+  function applyPlan(p){
+    sel.value = p.peptide;
+    document.getElementById('vial-mg').value = p.vial;
+    document.getElementById('bac-ml').value = p.bac;
+    document.getElementById('shelf-days').value = p.shelf;
+    document.getElementById('strategy').value = p.strategy;
+    document.getElementById('current-week').value = p.currentWeek || 1;
+    document.getElementById('last-dose-mg').value = p.lastDose || 0;
+    document.getElementById('flat-mg').value = p.flatMg || 4;
+    document.getElementById('flat-weeks').value = p.flatWeeks || 12;
+    setMode(p.mode || 'new');
+    document.getElementById('flat-dose-row').style.display = p.strategy === 'flat' ? 'grid' : 'none';
+    runPlanner();
+    window.scrollTo({ top: document.getElementById('results').offsetTop - 20, behavior: 'smooth' });
+  }
+
+  // Load plan from URL hash on boot
+  function loadFromHash(){
+    if (!location.hash.startsWith('#plan=')) return;
+    try {
+      const encoded = location.hash.slice(6);
+      const plan = JSON.parse(atob(encoded));
+      applyPlan(plan);
+    } catch(e){ console.warn('Bad share link', e); }
+  }
+
+  // Render saved plans + load URL share on boot
+  renderSavedPlans();
+  loadFromHash();
+  // BRAND-NEW DEFAULT for initial load: 10 mg vial + 3 mL BAC for first-time users (Reta especially).
+  // Runs only if no share-link hash + no saved-plan-load happened.
+  if (!location.hash.startsWith('#plan=')) {
+    document.getElementById('vial-mg').value = 10;
+    document.getElementById('bac-ml').value = 3;
+    setMode('new');  // ensures both bottle defaults stick + activates BRAND NEW pill
+  }
   // Auto-run on load
   setTimeout(runPlanner, 100);
 })();
