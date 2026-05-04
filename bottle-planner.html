@@ -258,19 +258,44 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
       return { ...row, cumMg, left: Math.max(0, left), drawMl, cumDays, status };
     });
 
-    // Build timeline UI
+    // Build timeline UI — plain-English labels + clear icons + color legend
     const tl = document.getElementById('timeline');
-    let html = `<div class="timeline-row header"><span>Week</span><span>Step</span><span>Dose</span><span>Cumulative</span></div>`;
-    rows.slice(0, 25).forEach(r => {
-      const cls = r.status === 'expired' ? 'expired' : (r.status === 'empty' || r.status === 'past-empty' ? 'empty' : '');
-      const tag = r.status === 'expired' ? '<span class="tag bad">SHELF</span>' : r.status === 'empty' ? '<span class="tag warn">LAST</span>' : '';
-      html += `<div class="timeline-row ${cls}">
-        <span><strong>Wk ${r.week}</strong></span>
-        <span style="font-size:11px;color:var(--muted);">${r.label}</span>
-        <span>${r.mg} mg</span>
-        <span>${r.cumMg.toFixed(1)} / ${vialMg} mg ${tag}</span>
+    const legend = `
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;font-size:11px;">
+        <div style="display:inline-flex;align-items:center;gap:6px;padding:6px 10px;background:rgba(0,255,157,.08);border:1px solid var(--accent2);border-radius:8px;">
+          <span style="font-size:14px;">✅</span><span style="color:var(--accent2);font-weight:700;">FRESH — inject this week</span>
+        </div>
+        <div style="display:inline-flex;align-items:center;gap:6px;padding:6px 10px;background:rgba(255,107,53,.08);border:1px solid var(--bad);border-radius:8px;">
+          <span style="font-size:14px;">💀</span><span style="color:var(--bad);font-weight:700;">EXPIRED — throw bottle out</span>
+        </div>
+        <div style="display:inline-flex;align-items:center;gap:6px;padding:6px 10px;background:rgba(167,139,250,.08);border:1px solid var(--accent3);border-radius:8px;">
+          <span style="font-size:14px;">📭</span><span style="color:var(--accent3);font-weight:700;">EMPTY — bottle ran out</span>
+        </div>
       </div>`;
+    let html = legend + `
+      <div style="display:grid;grid-template-columns:60px 1fr 70px 90px;gap:8px;padding:10px 12px;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.14em;color:var(--muted);font-weight:700;text-transform:uppercase;border-bottom:1px solid var(--border);">
+        <span>Week</span><span>Status</span><span>Dose</span><span>Used</span>
+      </div>`;
+    rows.slice(0, 25).forEach(r => {
+      let bg = 'transparent';
+      let icon = '✅';
+      let statusText = 'Fresh — inject this week';
+      let statusColor = 'var(--accent2)';
+      let weekColor = 'var(--text)';
       if (r.status === 'past-empty') return;
+      if (r.status === 'empty') {
+        icon = '📭'; statusText = 'Bottle empty — order next vial'; statusColor = 'var(--accent3)'; weekColor = 'var(--accent3)';
+        bg = 'rgba(167,139,250,.06)';
+      } else if (r.status === 'expired') {
+        icon = '💀'; statusText = `Peptide degraded — bottle past ${shelfDays}-day shelf life`; statusColor = 'var(--bad)'; weekColor = 'var(--bad)';
+        bg = 'rgba(255,107,53,.06)';
+      }
+      html += `<div style="display:grid;grid-template-columns:60px 1fr 70px 90px;gap:8px;padding:12px;border-bottom:1px solid var(--border);background:${bg};font-size:13px;align-items:center;">
+        <span style="font-family:'Rajdhani',sans-serif;font-weight:800;color:${weekColor};font-size:15px;">Wk ${r.week}</span>
+        <span><span style="font-size:14px;">${icon}</span> <span style="color:${statusColor};font-size:11px;">${statusText}</span></span>
+        <span style="text-align:right;color:var(--muted);">${r.mg} mg</span>
+        <span style="text-align:right;color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:11px;">${r.cumMg.toFixed(0)}/${vialMg}mg</span>
+      </div>`;
     });
     tl.innerHTML = html;
 
@@ -296,30 +321,97 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
 
     // RECOMMENDATION
     let rec = '';
+    // ── BUILD A PURCHASING ROADMAP — bottle-by-bottle plan to cover the full schedule ──
+    // Walk through titration, group consecutive weeks into "buy windows" sized by shelf life.
+    function planPurchases(){
+      if (!schedule.length) return [];
+      const COMMON_VIALS = [5, 10, 15, 20, 30, 50]; // common research-vial sizes in mg
+      const purchases = [];
+      let i = 0;
+      let bottleNum = 1;
+      while (i < schedule.length) {
+        // How many weeks fit in shelf life (max ceil(shelfDays/7))
+        const maxWeeksPerBottle = Math.floor(shelfDays / 7);
+        let mgNeeded = 0;
+        let weeksCovered = 0;
+        let endIdx = i;
+        for (let j = i; j < Math.min(i + maxWeeksPerBottle, schedule.length); j++) {
+          mgNeeded += schedule[j].mg;
+          weeksCovered++;
+          endIdx = j;
+        }
+        // Pick smallest bottle that covers mgNeeded
+        const idealVial = COMMON_VIALS.find(v => v >= mgNeeded) || Math.ceil(mgNeeded / 10) * 10;
+        purchases.push({
+          bottleNum,
+          weekStart: schedule[i].week,
+          weekEnd: schedule[endIdx].week,
+          mgNeeded: mgNeeded.toFixed(1),
+          vialSize: idealVial,
+          waste: idealVial - mgNeeded,
+          phase: schedule[i].label
+        });
+        bottleNum++;
+        i = endIdx + 1;
+        if (bottleNum > 12) break; // sanity cap
+      }
+      return purchases;
+    }
+    const buyPlan = planPurchases();
+
     if (wastePct > 30) {
-      // Suggest smaller bottle
       const idealMg = Math.ceil(usedAtLimit / 5) * 5;
-      rec = `<div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:18px;color:var(--bad);margin-bottom:6px;">⚠ ${wastePct.toFixed(0)}% waste — buy smaller</div>
-      <div style="font-size:13px;line-height:1.6;">
-        At ${vialMg} mg / ${bacMl} mL, you only use <strong>${usedAtLimit.toFixed(1)} mg</strong> of the bottle before shelf life expires (Day ${shelfDays}).
-        That's <strong style="color:var(--bad);">$${(wasted * effCostPerMg).toFixed(2)}</strong> of peptide down the drain.<br><br>
-        <strong style="color:var(--accent2);">Better strategy:</strong>
-        <ol style="margin:8px 0 0 20px;padding:0;">
-          <li>Buy a <strong>${idealMg} mg vial</strong> for early phases (Wk 1-${Math.floor(shelfDays/7)})</li>
-          <li>Buy a larger vial only when weekly dose justifies the volume</li>
-          <li>Or freeze half the mixed bottle in sterile aliquots → 60-day runway with one freeze-thaw cycle (~10-15% potency loss)</li>
-        </ol>
+      const wasteDollars = (wasted * effCostPerMg).toFixed(0);
+      // Build step-by-step roadmap UI
+      const roadmap = buyPlan.map((b, idx) => {
+        const wkRange = b.weekStart === b.weekEnd ? `Wk ${b.weekStart}` : `Wk ${b.weekStart}-${b.weekEnd}`;
+        const wasteNote = b.waste > 1 ? ` <span style="color:var(--warn);font-size:11px;">(${b.waste.toFixed(1)}mg leftover)</span>` : ` <span style="color:var(--accent2);font-size:11px;">(clean fit)</span>`;
+        return `<div style="display:flex;align-items:center;gap:14px;padding:14px;background:rgba(0,255,157,.04);border:1px solid var(--accent2);border-radius:10px;margin-bottom:8px;">
+          <div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:24px;color:var(--accent2);min-width:54px;text-align:center;">#${b.bottleNum}</div>
+          <div style="flex:1;">
+            <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;color:var(--text);">Buy a <span style="color:var(--accent2);">${b.vialSize} mg</span> bottle</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px;">Covers <strong style="color:var(--text);">${wkRange}</strong> · uses ${b.mgNeeded} mg${wasteNote}</div>
+          </div>
+        </div>`;
+      }).join('');
+      rec = `<div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:20px;color:var(--bad);margin-bottom:8px;">❌ Don't buy ONE big bottle. You'll throw away $${wasteDollars}.</div>
+      <div style="font-size:14px;line-height:1.6;color:var(--text);margin-bottom:14px;">
+        Mixed peptide goes bad after <strong>${shelfDays} days</strong>. By the time you'd use a ${vialMg} mg bottle, half of it has degraded.
+      </div>
+      <div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:16px;color:var(--accent2);margin-bottom:10px;">📦 Buy in this order instead:</div>
+      ${roadmap}
+      <div style="font-size:12px;color:var(--muted);margin-top:10px;line-height:1.5;">
+        Each bottle covers what fits inside the ${shelfDays}-day shelf life. Mix bottle, finish it, mix the next one. Zero waste.
+      </div>`;
+    } else if (wastePct > 30 && false) {
+      <div style="font-size:14px;line-height:1.65;color:var(--text);">
+        <strong style="color:var(--bad);">You'll throw away $${wasteDollars} of peptide.</strong><br><br>
+        Here's what happens with the ${vialMg} mg bottle:
+        <ul style="margin:8px 0 12px 22px;padding:0;color:var(--muted);font-size:13px;">
+          <li>Day 1: mix it. Bottle is fresh.</li>
+          <li>Day ${shelfDays}: <strong style="color:var(--bad);">peptide goes bad</strong> (shelf life expires)</li>
+          <li>You only used <strong>${usedAtLimit.toFixed(1)} mg</strong> · <strong style="color:var(--bad);">${wasted.toFixed(1)} mg ($${wasteDollars}) goes in the trash</strong></li>
+        </ul>
+        <div style="background:rgba(0,255,157,.08);border:1px solid var(--accent2);border-radius:8px;padding:12px;margin-top:8px;">
+          <div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:15px;color:var(--accent2);margin-bottom:4px;">✅ Buy a ${idealMg} mg bottle instead</div>
+          <div style="font-size:13px;color:var(--text);line-height:1.55;">
+            Smaller bottle = use it all before shelf life expires. <strong>$0 wasted.</strong><br>
+            When your weekly dose grows big enough, then you upgrade to a larger size.
+          </div>
+        </div>
       </div>`;
     } else if (wastePct > 5) {
-      rec = `<div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:18px;color:var(--warn);margin-bottom:6px;">🟡 ${wastePct.toFixed(0)}% waste — acceptable but suboptimal</div>
-      <div style="font-size:13px;line-height:1.6;">
-        You'll use ${usedAtLimit.toFixed(1)} mg of the ${vialMg} mg vial within shelf life. ${wasted.toFixed(1)} mg gets discarded (~$${(wasted * effCostPerMg).toFixed(2)}).<br><br>
-        Acceptable if you don't want to deal with multiple smaller vials, but a slightly smaller bottle would tighten this up.
+      const wasteDollars = (wasted * effCostPerMg).toFixed(0);
+      rec = `<div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:20px;color:var(--warn);margin-bottom:8px;">🟡 OK — but you'll waste a bit</div>
+      <div style="font-size:14px;line-height:1.65;color:var(--text);">
+        You'll use <strong>${usedAtLimit.toFixed(1)} mg</strong> of the ${vialMg} mg bottle. <strong style="color:var(--warn);">${wasted.toFixed(1)} mg ($${wasteDollars}) gets thrown out</strong> when shelf life hits.<br><br>
+        Buying this size is fine if you don't want to deal with multiple smaller bottles. Just know you're paying for peptide you can't use.
       </div>`;
     } else {
-      rec = `<div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:18px;color:var(--accent2);margin-bottom:6px;">✅ Optimal bottle size</div>
-      <div style="font-size:13px;line-height:1.6;">
-        You'll use <strong>${usedPct.toFixed(0)}%</strong> of the bottle within shelf life. Clean run, minimal waste. <strong>Effective cost: $${effCostPerMg.toFixed(2)}/mg.</strong> Buy this size.
+      rec = `<div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:20px;color:var(--accent2);margin-bottom:8px;">✅ This is the right bottle. Buy it.</div>
+      <div style="font-size:14px;line-height:1.65;color:var(--text);">
+        You'll use <strong>${usedPct.toFixed(0)}%</strong> of the bottle within shelf life. <strong>Almost no waste.</strong><br>
+        Cost works out to <strong>$${effCostPerMg.toFixed(2)} per mg</strong> of peptide actually used.
       </div>`;
     }
     document.getElementById('r-recommend').innerHTML = rec;
