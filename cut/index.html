@@ -783,7 +783,7 @@ const PEPTIDES = [
   // ── POST-WORKOUT (every training day) ──
   { id:'igf',    name:'IGF-1 LR3 (site-target)', dose:'30u total · 15u per worked muscle group', window:'Post-workout · split into worked muscles', days:'all', tag:'GH', color:'#00D4FF', ssot:'igf1-lr3.html' },
   // ── DAILY PM ──
-  { id:'anavarPM', name:'Anavar',         dose:'25 mg oral',     window:'PM with food',       days:'all',      tag:'Rx',    color:'#FF6B35', ssot:null },
+  { id:'anavarPM', name:'Anavar',         dose:'25 mg oral',     window:'5:30-6pm WITH DINNER · 4-5hr buffer before sleep', days:'all', tag:'Rx', color:'#FF6B35', ssot:null },
   { id:'bpcPM',  name:'BPC-157',         dose:'250 mcg · 5u',   window:'PM',                 days:'all',      tag:'heal',  color:'#34D399', ssot:'bpc157.html' },
   // ── DAILY TRT (pre-mixed 250 mg/mL) ──
   { id:'test',   name:'Testosterone Cyp',dose:'30u (75 mg)',    window:'Daily AM · 250 mg/mL pre-mix', days:'all', tag:'TRT', color:'#F472B6', ssot:'testosterone-cyp.html', ssotOverride:'cut/blast 525 mg/wk daily, not 200/wk standard TRT' },
@@ -1812,6 +1812,22 @@ const RULES = [
   { tag:'CYCLING',       icon:'🔁', rule:'Post-cut: swap Tesamorelin → AOD-9604.', why:'Tesa runs 6-8 weeks on, then needs a 4-week off block to keep pituitary GH responsiveness. During Tesa-OFF: run AOD-9604 300 mcg / 6u SubQ daily fasted to maintain mild lipolysis support without GH-axis stimulation. Then cycle back to Tesa for the next cut block.' },
   { tag:'CYCLING',       icon:'🔁', rule:'Anavar: 6-8 weeks max, then 8-week wash-out.', why:'Liver enzymes (AST/ALT) and HDL need recovery time. Bloodwork at week 4 + week 8 of any Anavar block. NEVER stack two Anavar runs back-to-back without the wash-out — that\'s how guys end up with persistent lipid issues.' },
   { tag:'CYCLING',       icon:'🔁', rule:'Reta: when cut hits goal, taper down 25% per week.', why:'Hard-stopping a GLP-1 = appetite rebounds hard, you can regain 5-10 lb in a month. Taper: Wk1 75% dose, Wk2 50%, Wk3 25%, Wk4 off. Smooth landing back to maintenance eating.' },
+
+  // ── 🌙 SLEEP CATEGORY (added May 4 after 64-min sleep latency wake-up call) ──
+  { tag:'SLEEP', icon:'🌙', rule:'Anavar PM at 5:30-6pm WITH DINNER. Never after 7pm.', why:'Anavar is mildly stimulating + androgenic for 8-12 hrs. Late-evening dose = androgens still firing at bedtime → 30-60 min added sleep latency. Move it to dinner. 4-5 hr buffer before sleep.' },
+  { tag:'SLEEP', icon:'🌙', rule:'Magnesium glycinate 400mg at 8pm.', why:'Calms nervous system, replaces electrolytes lost in cut, improves sleep onset and quality. Glycinate (not oxide) for sleep — oxide is a laxative. Non-negotiable on aggressive cut + Anavar.' },
+  { tag:'SLEEP', icon:'🌙', rule:'L-theanine 200mg + glycine 3g at 9pm.', why:'L-theanine = calm without sedation (alpha brain waves). Glycine 3g = 30% faster sleep onset (research-backed: Yamadera 2007). Stack drops latency from 60+ min to 15-20.' },
+  { tag:'SLEEP', icon:'🌙', rule:'No caffeine after 12pm. Period.', why:'Caffeine half-life is 5-6 hrs. Coffee at 2pm = 50% still circulating at 8pm = wired at bedtime. Coffee before noon only.' },
+  { tag:'SLEEP', icon:'🌙', rule:'Phone OUT of bedroom by 9:30pm.', why:'Blue light delays melatonin 60-90 min. Scrolling spikes dopamine right when it should drop. Phone charges in another room. Read or sleep — that\'s the only options after 9:30.' },
+  { tag:'SLEEP', icon:'🌙', rule:'Bedroom 65-67°F · cool body, fast sleep.', why:'Sleep onset requires core body temp to drop ~1-2°F. Hot bedroom = body fights to cool down = 10-15 min added latency. AC or fan, plus thinner blankets.' },
+  { tag:'SLEEP', icon:'🌙', rule:'Sleep score below 80? Diagnose, don\'t just push through.', why:'On TRT + Anavar + 1000-cal deficit + 6-day gym, sleep IS recovery. Score 69 = something\'s broken. Run the protocol above. If it doesn\'t fix in 3 days, drop Anavar by 12hr (1 dose, not stack-wide) to reset.' },
+
+  // ── 📅 DAYS 1-7 ADAPTATION (expectations for early cut) ──
+  { tag:'ADAPTATION', icon:'📅', rule:'Days 1-3: expect fatigue + brain fog. Push through.', why:'Body switches from glucose to fat oxidation. Glycogen drops, sodium dumps, mild cortisol spike. Feels like ass. Salt food aggressively (3-4g/day), drink electrolytes, don\'t cut deeper. This phase ends day 5-7 — then you hit the lean-machine energy state.' },
+  { tag:'ADAPTATION', icon:'📅', rule:'Days 1-3: salt 3-4g/day · electrolyte powder once daily.', why:'Cutting carbs drops insulin → kidneys dump sodium + water. Low sodium = headache, fatigue, dizziness. Pink salt on every meal. LMNT or DIY electrolyte (1g salt + 1g lite salt + 400mg mag) in 16oz water once daily.' },
+  { tag:'ADAPTATION', icon:'📅', rule:'Days 4-7: expect water-weight whoosh.', why:'Glycogen-bound water releases. Scale can drop 4-6 lb in 48 hrs that\'s NOT fat — but it IS leaner. Photos look different. Don\'t panic when it later plateaus for a week — that\'s the real fat-loss curve underneath.' },
+  { tag:'ADAPTATION', icon:'📅', rule:'Week 2: scale stalls. Trust the trend, not the day.', why:'Anavar + cortisol + glycogen refill from rest days creates 1-3 lb water fluctuations. Your weekly average is your real number. Photos + waist tape are more honest than the scale this phase.' },
+  { tag:'ADAPTATION', icon:'📅', rule:'Week 3-4: gym performance dips. Maintain weight, drop reps.', why:'Glycogen-limited training feels weaker. Don\'t reduce load (signal to body = "we don\'t need this muscle"). Keep heavy weights, drop reps if needed (3×3 instead of 3×8). Strength holds, fat keeps falling.' },
 ];
 
 function renderRules(){
@@ -1826,6 +1842,8 @@ function renderRules(){
     TRACKING:  { bg:'rgba(251,191,36,.06)', border:'rgba(251,191,36,.45)', accent:'var(--warn)' },
     MENTAL:    { bg:'rgba(52,211,153,.06)', border:'rgba(52,211,153,.45)', accent:'#34D399' },
     CYCLING:   { bg:'rgba(0,212,255,.06)', border:'rgba(0,212,255,.45)', accent:'var(--accent)' },
+    SLEEP:     { bg:'rgba(167,139,250,.08)', border:'rgba(167,139,250,.50)', accent:'#A78BFA' },
+    ADAPTATION:{ bg:'rgba(251,191,36,.06)', border:'rgba(251,191,36,.45)', accent:'var(--warn)' },
   };
   list.innerHTML = RULES.map((r, i) => {
     const c = tagColors[r.tag] || tagColors.NUTRITION;
