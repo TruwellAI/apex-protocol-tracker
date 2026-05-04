@@ -277,20 +277,14 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
 
   window.setMode = function(mode){
     cycleMode = mode;
-    const newBtn = document.getElementById('mode-new');
-    const midBtn = document.getElementById('mode-mid');
-    const midFields = document.getElementById('mid-cycle-fields');
+    const midFields = document.getElementById('mid-questions');
     if (mode === 'new') {
-      newBtn.style.background = 'rgba(0,255,157,.10)'; newBtn.style.borderColor = 'var(--accent2)'; newBtn.style.color = 'var(--accent2)';
-      midBtn.style.background = 'transparent'; midBtn.style.borderColor = 'var(--border)'; midBtn.style.color = 'var(--muted)';
-      midFields.style.display = 'none';
+      if (midFields) midFields.style.display = 'none';
       // BRAND-NEW DEFAULT: 10 mg vial / 3 mL BAC — Neil's recommended starter recon
       document.getElementById('vial-mg').value = 10;
       document.getElementById('bac-ml').value = 3;
     } else {
-      midBtn.style.background = 'rgba(0,212,255,.10)'; midBtn.style.borderColor = 'var(--accent)'; midBtn.style.color = 'var(--accent)';
-      newBtn.style.background = 'transparent'; newBtn.style.borderColor = 'var(--border)'; newBtn.style.color = 'var(--muted)';
-      midFields.style.display = 'grid';
+      if (midFields) midFields.style.display = 'block';
     }
     if (typeof runPlanner === 'function') runPlanner();
   };
