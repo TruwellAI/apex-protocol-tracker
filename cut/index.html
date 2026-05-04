@@ -368,27 +368,60 @@ body { padding-bottom: 90px; }
       <button class="btn btn-ghost" style="flex:1;font-size:11px;padding:10px;" onclick="undoLastFood()">⌫ Undo last item</button>
     </div>
 
-    <!-- ACTIVITY LOG CARDS: walks + workout with steps + calories burned -->
+    <!-- 🔥 STREAKS CARD -->
+    <div class="section-h"><h2>🔥 Streaks · perfect-day count</h2></div>
+    <div id="streaks-grid" style="margin:0 16px 14px;display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
+
+    <!-- ACTIVITY LOG CARDS: consolidated walks + workout -->
     <div style="margin:0 16px 14px;display:flex;flex-direction:column;gap:10px;">
-      <div class="activity-card" id="ac-walkAM">
-        <div class="ac-head" onclick="toggleCheck('walkAM')">
-          <div class="ac-check">✓</div>
-          <div class="ac-icon">🚶‍♂️</div>
-          <div class="ac-title">Walk AM</div>
-          <div class="ac-summary" id="sum-walkAM"></div>
+      <!-- ONE WALK CARD with AM + PM inside -->
+      <div class="activity-card" id="ac-walks">
+        <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;">
+          <div class="ac-icon" style="font-size:22px;">🚶‍♂️</div>
+          <div class="ac-title" style="flex:1;">Walks</div>
+          <div class="ac-summary" id="sum-walks"></div>
         </div>
-        <div class="ac-fields">
+        <div style="padding:0 14px 12px;display:grid;grid-template-columns:auto 1fr 1fr;gap:8px;align-items:end;">
+          <div style="display:flex;align-items:center;gap:6px;padding-bottom:8px;cursor:pointer;-webkit-tap-highlight-color:transparent;" onclick="toggleCheck('walkAM')">
+            <div id="check-walkAM" class="ac-check" style="margin:0;">✓</div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.1em;font-weight:700;">AM</div>
+          </div>
           <div class="ac-field">
-            <label>Steps</label>
+            <label>AM steps</label>
             <input type="number" id="in-walkAM-steps" placeholder="0" inputmode="numeric" oninput="saveActivity('walkAM')">
           </div>
           <div class="ac-field">
-            <label>Cal burned</label>
+            <label>AM cal</label>
             <input type="number" id="in-walkAM-kcal" placeholder="0" inputmode="numeric" oninput="saveActivity('walkAM')">
+          </div>
+
+          <div style="display:flex;align-items:center;gap:6px;padding-bottom:8px;cursor:pointer;-webkit-tap-highlight-color:transparent;" onclick="toggleCheck('walkPM')">
+            <div id="check-walkPM" class="ac-check" style="margin:0;">✓</div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.1em;font-weight:700;">PM</div>
+          </div>
+          <div class="ac-field">
+            <label>PM steps</label>
+            <input type="number" id="in-walkPM-steps" placeholder="0" inputmode="numeric" oninput="saveActivity('walkPM')">
+          </div>
+          <div class="ac-field">
+            <label>PM cal</label>
+            <input type="number" id="in-walkPM-kcal" placeholder="0" inputmode="numeric" oninput="saveActivity('walkPM')">
+          </div>
+        </div>
+        <!-- Day total at the bottom of the walk card -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--border);">
+          <div style="padding:10px;text-align:center;border-right:1px solid var(--border);">
+            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.16em;color:var(--muted);font-weight:700;">TOTAL STEPS</div>
+            <div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:20px;color:var(--accent);"><span id="day-total-steps">0</span></div>
+          </div>
+          <div style="padding:10px;text-align:center;">
+            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.16em;color:var(--muted);font-weight:700;">TOTAL CAL BURNED</div>
+            <div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:20px;color:var(--accent2);"><span id="day-total-kcal">0</span></div>
           </div>
         </div>
       </div>
 
+      <!-- WORKOUT card stays separate -->
       <div class="activity-card" id="ac-workout">
         <div class="ac-head" onclick="toggleCheck('workout')">
           <div class="ac-check">✓</div>
@@ -407,37 +440,6 @@ body { padding-bottom: 90px; }
           </div>
         </div>
       </div>
-
-      <div class="activity-card" id="ac-walkPM">
-        <div class="ac-head" onclick="toggleCheck('walkPM')">
-          <div class="ac-check">✓</div>
-          <div class="ac-icon">🚶‍♂️</div>
-          <div class="ac-title">Walk PM</div>
-          <div class="ac-summary" id="sum-walkPM"></div>
-        </div>
-        <div class="ac-fields">
-          <div class="ac-field">
-            <label>Steps</label>
-            <input type="number" id="in-walkPM-steps" placeholder="0" inputmode="numeric" oninput="saveActivity('walkPM')">
-          </div>
-          <div class="ac-field">
-            <label>Cal burned</label>
-            <input type="number" id="in-walkPM-kcal" placeholder="0" inputmode="numeric" oninput="saveActivity('walkPM')">
-          </div>
-        </div>
-      </div>
-
-      <!-- Daily totals from the 3 activities -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px;">
-        <div style="background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center;">
-          <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.16em;color:var(--muted);font-weight:700;">TOTAL STEPS</div>
-          <div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:22px;color:var(--accent);"><span id="day-total-steps">0</span></div>
-        </div>
-        <div style="background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center;">
-          <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.16em;color:var(--muted);font-weight:700;">TOTAL CAL BURNED</div>
-          <div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:22px;color:var(--accent2);"><span id="day-total-kcal">0</span></div>
-        </div>
-      </div>
     </div>
 
     <!-- WATER -->
@@ -453,11 +455,6 @@ body { padding-bottom: 90px; }
       </div>
     </div>
 
-
-    <!-- Tap-through to Inject tab — peptide checklist lives there now -->
-    <div style="margin:0 16px 14px;">
-      <button class="btn btn-ghost" style="width:100%;font-size:12px;padding:14px;" onclick="document.querySelector('[data-tab=\\'inject\\']').click()">💉 OPEN INJECTION TAB <span id="pep-count" style="float:right;color:var(--muted);">0 / 0</span></button>
-    </div>
 
     <div style="height:30px;"></div>
   </div>
@@ -508,8 +505,10 @@ body { padding-bottom: 90px; }
 
   <!-- ═══ INJECT PANEL ═══ -->
   <div class="panel" data-panel="inject">
-    <div class="note">
-      <strong>Daily peptide stack.</strong> Listed in order: morning fasted → post-workout → PM. Tap any card to log.
+    <!-- DAY-OF-WEEK NAVIGATOR — preview any day's schedule -->
+    <div id="dow-strip" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:14px 16px 0;"></div>
+    <div class="note" id="inject-note">
+      <strong>Daily peptide stack.</strong> Tap a day above to preview · listed in order: morning → pre-gym → post-workout → PM.
     </div>
     <div class="section-h">
       <h2>Today's injections</h2>
@@ -1294,35 +1293,56 @@ function renderChecks(){
   const t = today();
   const c = t.checks || {};
   const a = t.activity || {};
-  ['walkAM','workout','walkPM'].forEach(k => {
-    const card = document.getElementById('ac-'+k);
-    if (!card) return;
-    card.classList.toggle('on', !!c[k]);
+  // Walk AM/PM mini-checks inside the consolidated walk card
+  ['walkAM','walkPM'].forEach(k => {
+    const ck = document.getElementById('check-'+k);
+    if (ck) {
+      const on = !!c[k];
+      ck.style.background = on ? 'var(--accent2)' : 'transparent';
+      ck.style.borderColor = on ? 'var(--accent2)' : 'var(--border)';
+      ck.style.color = on ? '#000' : 'transparent';
+    }
     const v = a[k] || {};
-    // Restore inputs from state (don't clobber if user is mid-typing)
     const stepsEl = document.getElementById('in-'+k+'-steps');
     const kcalEl  = document.getElementById('in-'+k+'-kcal');
-    const minEl   = document.getElementById('in-'+k+'-min');
     if (stepsEl && document.activeElement !== stepsEl && v.steps) stepsEl.value = v.steps;
     if (kcalEl  && document.activeElement !== kcalEl  && v.kcal)  kcalEl.value  = v.kcal;
-    if (minEl   && document.activeElement !== minEl   && v.min)   minEl.value   = v.min;
-    // Summary line
-    const sumEl = document.getElementById('sum-'+k);
+  });
+  // Walks card overall — light up if both walks done
+  const walksCard = document.getElementById('ac-walks');
+  if (walksCard) walksCard.classList.toggle('on', !!c.walkAM && !!c.walkPM);
+  // Workout card
+  const workoutCard = document.getElementById('ac-workout');
+  if (workoutCard) {
+    workoutCard.classList.toggle('on', !!c.workout);
+    const v = a.workout || {};
+    const kcalEl = document.getElementById('in-workout-kcal');
+    const minEl = document.getElementById('in-workout-min');
+    if (kcalEl && document.activeElement !== kcalEl && v.kcal) kcalEl.value = v.kcal;
+    if (minEl  && document.activeElement !== minEl  && v.min)  minEl.value  = v.min;
+    const sumEl = document.getElementById('sum-workout');
     if (sumEl) {
       const bits = [];
-      if (v.steps) bits.push(v.steps.toLocaleString()+' steps');
       if (v.kcal) bits.push(v.kcal+' cal');
       if (v.min) bits.push(v.min+' min');
       sumEl.textContent = bits.join(' · ');
     }
-  });
+  }
+  // Walk summary in header
+  const sumWalks = document.getElementById('sum-walks');
+  if (sumWalks) {
+    const am = a.walkAM || {}, pm = a.walkPM || {};
+    const totS = (am.steps||0) + (pm.steps||0);
+    const totK = (am.kcal||0) + (pm.kcal||0);
+    sumWalks.textContent = (totS||totK) ? `${totS.toLocaleString()} steps · ${totK} cal` : '';
+  }
   // Workout label = today's split
   const workoutLbl = document.getElementById('ct-workout-label');
   if (workoutLbl) {
     const d = TRAIN.find(x => x.d === dayOfWeek());
     workoutLbl.textContent = d ? d.name : 'Workout';
   }
-  // Daily totals
+  // Day totals (steps + cal burned across walks + workout)
   const totalSteps = (a.walkAM?.steps||0) + (a.walkPM?.steps||0);
   const totalKcal  = (a.walkAM?.kcal||0) + (a.workout?.kcal||0) + (a.walkPM?.kcal||0);
   const ts = document.getElementById('day-total-steps'); if (ts) ts.textContent = totalSteps.toLocaleString();
@@ -1638,6 +1658,102 @@ function renderRules(){
   }).join('');
 }
 
+// ── DAY-OF-WEEK STRIP for Inject tab — preview any day's schedule ──
+let dowPreview = null; // null = today, otherwise 0-6 (Sun-Sat)
+function renderDowStrip(){
+  const strip = document.getElementById('dow-strip'); if (!strip) return;
+  const dn = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const todayDow = dayOfWeek();
+  const viewDow = dowPreview != null ? dowPreview : todayDow;
+  strip.innerHTML = dn.map((n,i) => {
+    const isToday = i === todayDow;
+    const isViewing = i === viewDow;
+    return `<button onclick="setDowPreview(${i})" style="padding:8px 4px;border-radius:8px;border:1px solid ${isViewing?'var(--accent2)':'var(--border)'};background:${isViewing?'rgba(0,255,157,.10)':'rgba(255,255,255,.02)'};color:${isViewing?'var(--accent2)':'var(--muted)'};font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.1em;cursor:pointer;font-weight:700;">
+      <div>${n}</div>
+      ${isToday?'<div style="font-size:7px;color:var(--accent);margin-top:2px;">TODAY</div>':''}
+    </button>`;
+  }).join('');
+}
+function setDowPreview(d){
+  dowPreview = (d === dayOfWeek()) ? null : d;
+  haptic();
+  renderPeptides();
+  renderDowStrip();
+}
+
+// ── STREAKS — consecutive days hitting each goal ──
+function computeStreaks(){
+  const s = get();
+  const result = { meals:0, peptides:0, workout:0, walks:0, water:0, perfect:0 };
+  const cutoff = 365;
+  for (let i = 0; i < cutoff; i++) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const k = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    const day = s.daily && s.daily[k];
+    if (!day) break;
+    // What counts as "hit" for that day:
+    const ml = day.mealsLogged || {};
+    const mealsHit = Object.values(ml).filter(Boolean).length >= 5; // 5 of 6 meals
+    const peps = day.peptides || {};
+    // Get peptides scheduled for THAT day-of-week — count compliance
+    const dow = d.getDay();
+    const scheduledPeps = PEPTIDES.filter(p => p.days === 'all' || (Array.isArray(p.days) && p.days.includes(dow)));
+    const pepsHit = scheduledPeps.length > 0 && scheduledPeps.every(p => peps[p.id]);
+    const checks = day.checks || {};
+    const workoutHit = !!checks.workout;
+    const walksHit = !!checks.walkAM && !!checks.walkPM;
+    const waterHit = (day.water || 0) >= 16;
+    const perfectDay = mealsHit && pepsHit && workoutHit && walksHit && waterHit;
+
+    // Streaks (only consecutive — break on first miss)
+    if (mealsHit && result.meals === i) result.meals = i + 1;
+    if (pepsHit && result.peptides === i) result.peptides = i + 1;
+    if (workoutHit && result.workout === i) result.workout = i + 1;
+    if (walksHit && result.walks === i) result.walks = i + 1;
+    if (waterHit && result.water === i) result.water = i + 1;
+    if (perfectDay && result.perfect === i) result.perfect = i + 1;
+  }
+  return result;
+}
+function renderStreaks(){
+  const grid = document.getElementById('streaks-grid'); if (!grid) return;
+  const st = computeStreaks();
+  const items = [
+    { label:'Perfect day', icon:'🏆', n:st.perfect, color:'var(--accent2)' },
+    { label:'Meals',       icon:'🍽', n:st.meals,   color:'var(--accent)' },
+    { label:'Peptides',    icon:'💉', n:st.peptides,color:'#A78BFA' },
+    { label:'Workouts',    icon:'🏋︎', n:st.workout, color:'#FF6B35' },
+    { label:'Walks (both)', icon:'🚶‍♂️', n:st.walks, color:'var(--accent2)' },
+    { label:'Water (1 gal)', icon:'💧', n:st.water,  color:'#00D4FF' },
+  ];
+  grid.innerHTML = items.map(i => `<div style="background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;">
+    <div style="font-size:20px;line-height:1;">${i.icon}</div>
+    <div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:24px;color:${i.color};margin-top:4px;line-height:1;">${i.n}<span style="font-size:11px;color:var(--muted);font-weight:500;"> day${i.n===1?'':'s'}</span></div>
+    <div style="font-size:10px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:.08em;margin-top:4px;text-transform:uppercase;">${i.label}</div>
+  </div>`).join('');
+}
+
+// Celebratory check — fires when full day's targets are hit
+function checkPerfectDay(){
+  const t = today();
+  const ml = t.mealsLogged || {};
+  const mealsHit = Object.values(ml).filter(Boolean).length >= 5;
+  const peps = t.peptides || {};
+  const dow = dayOfWeek();
+  const scheduledPeps = PEPTIDES.filter(p => p.days === 'all' || (Array.isArray(p.days) && p.days.includes(dow)));
+  const pepsHit = scheduledPeps.length > 0 && scheduledPeps.every(p => peps[p.id]);
+  const checks = t.checks || {};
+  if (mealsHit && pepsHit && checks.workout && checks.walkAM && checks.walkPM && (t.water||0) >= 16) {
+    if (!t._celebrated) {
+      const s = load();
+      s.daily[todayKey()]._celebrated = true;
+      save(s);
+      toast('🏆 PERFECT DAY · Boat-ready compounding', '#FBBF24');
+      haptic(true);
+    }
+  }
+}
+
 function renderAll(){
   renderHero();
   renderMacros();
@@ -1645,6 +1761,9 @@ function renderAll(){
   renderFoodList();
   renderFoodLog();
   renderPlan();
+  renderStreaks();
+  renderDowStrip();
+  checkPerfectDay();
   renderStackIntel();
   renderPeptides();
   renderSteps();
