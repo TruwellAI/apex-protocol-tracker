@@ -342,10 +342,13 @@ body { padding-bottom: 90px; }
       </div>
     </div>
 
-    <!-- DYNAMIC DEFICIT EXPLAINER -->
-    <div id="deficit-banner" style="margin:0 16px 8px;padding:8px 12px;background:rgba(0,212,255,.06);border:1px solid var(--border);border-radius:8px;display:flex;justify-content:space-between;align-items:center;font-size:11px;font-family:'Share Tech Mono',monospace;letter-spacing:.04em;">
-      <span style="color:var(--muted);">⚡ DYNAMIC · Goal flexes with burn for guaranteed 1000-cal deficit</span>
-      <span id="deficit-live" style="color:var(--accent2);font-weight:700;">−1000 cal</span>
+    <!-- DYNAMIC DEFICIT — flexes with Apple Watch burn for exact 1000 deficit (the rule) -->
+    <div id="deficit-banner" style="margin:0 16px 8px;padding:10px 12px;background:rgba(0,212,255,.06);border:1px solid var(--border2);border-radius:8px;font-size:11px;font-family:'Share Tech Mono',monospace;letter-spacing:.04em;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <span style="color:var(--muted);">⚡ TODAY'S DEFICIT (vs Apple Watch burn)</span>
+        <span id="deficit-live" style="color:var(--accent2);font-weight:700;">−1000 cal</span>
+      </div>
+      <div style="font-size:10px;color:var(--muted);line-height:1.4;">Burn more → eat more. Burn less → eat less. Hit exactly <strong style="color:var(--accent2);">−1000</strong>. Excessive deficit triggers metabolic shutdown.</div>
     </div>
 
     <!-- 3-ROW MACRO LADDER: GOAL · CONSUMED · LEFT/OVER -->
@@ -1678,7 +1681,8 @@ function autoLogAllMeals(){
 
 // ── RULES TAB ─────────────────────────────
 const RULES = [
-  { tag:'NUTRITION',     icon:'🍽',  rule:'Hit 240g protein every day.', why:'This is the LBM lock. Miss it on a 1150-cal deficit and the scale drops faster — but it\'s muscle leaving, not fat. Anavar can\'t save sub-protein.' },
+  { tag:'NUTRITION',     icon:'⚡', rule:'Maintain EXACT 1000-cal deficit · no more, no less.', why:'Excessive deficit (>1500 cal) triggers metabolic adaptation: body slows BMR, drops T3, stores fat as starvation insurance, and burns muscle for fuel. Insufficient deficit = no fat loss. The sweet spot is exactly 1000. App auto-flexes the GOAL row based on Apple Watch total cal burned: high-burn day = eat more, low-burn day = eat less. Always 1000 below TDEE.' },
+  { tag:'NUTRITION',     icon:'🍽',  rule:'Hit 240g protein every day.', why:'This is the LBM lock. Miss it on a 1000-cal deficit and the scale drops faster — but it\'s muscle leaving, not fat. Anavar can\'t save sub-protein.' },
   { tag:'NUTRITION',     icon:'🍽',  rule:'No alcohol.',                   why:'Alcohol shuts down fat oxidation for 36hrs and tanks Anavar liver values. One night = 4-7 days off the timeline. Save it for the boat.' },
   { tag:'NUTRITION',     icon:'🍽',  rule:'No deviation outside Thursday cheat night.', why:'Off-script "small bite" snacks compound. The food list is finite by design. Stick to it 6 days, eat pizza on day 7.' },
   { tag:'NUTRITION',     icon:'🍽',  rule:'4-slice cap on Thursday cheat. Period.', why:'5 slices = over maintenance. 6 = full overshoot = lost week. The discipline is in stopping at 4, not in skipping cheat night.' },
