@@ -444,16 +444,26 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
       const purchases = [];
       let i = 0;
       let bottleNum = 1;
+      // Stop the explicit-bottle roadmap when we hit maintenance phase (last titration step).
+      // The "♾ MAINTENANCE FOREVER" callout handles everything after that.
+      let titrationEndsWeek = 999;
+      if (Array.isArray(p.titration) && p.titration.length) {
+        const lastStep = p.titration[p.titration.length - 1];
+        titrationEndsWeek = Math.ceil(lastStep.day_start / 7);
+      }
       while (i < schedule.length) {
+        if (schedule[i].week >= titrationEndsWeek) break;  // maintenance handled separately
         const maxWeeksPerBottle = Math.floor(shelfDays / 7);
         let mgNeeded = 0;
         let weeksCovered = 0;
         let endIdx = i;
         for (let j = i; j < Math.min(i + maxWeeksPerBottle, schedule.length); j++) {
+          if (schedule[j].week >= titrationEndsWeek) break;  // don't bleed into maintenance
           mgNeeded += schedule[j].mg;
           weeksCovered++;
           endIdx = j;
         }
+        if (mgNeeded === 0) break;
         const combo = findBestCombo(mgNeeded);
         purchases.push({
           bottleNum,
@@ -472,6 +482,33 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
       return purchases;
     }
     const buyPlan = planPurchases();
+
+    // ── MAINTENANCE PHASE SUMMARY — what to buy AFTER titration is done ──
+    function buildMaintenanceSummary(){
+      if (!Array.isArray(p.titration) || !p.titration.length) return null;
+      const lastStep = p.titration[p.titration.length - 1];
+      const maintMg = lastStep.mg_per_dose;
+      const titrationEndsWeek = Math.ceil(lastStep.day_start / 7);
+      // After titration ends, user is on flat maintenance dose forever
+      const maxWeeksPerBottle = Math.floor(shelfDays / 7);
+      const mgPerCycle = maintMg * maxWeeksPerBottle;
+      const combo = findBestCombo(mgPerCycle);
+      return {
+        startsWeek: titrationEndsWeek,
+        weeklyMg: maintMg,
+        weeksPerBottle: maxWeeksPerBottle,
+        comboLabel: combo.vials.length === 1
+          ? `<span style="color:var(--accent2);">${combo.vials[0]} mg</span> bottle`
+          : (() => {
+              const counts = {};
+              combo.vials.forEach(v => counts[v] = (counts[v]||0) + 1);
+              return Object.entries(counts).map(([sz,n]) => n > 1 ? `${n}× <span style="color:var(--accent2);">${sz} mg</span>` : `<span style="color:var(--accent2);">${sz} mg</span>`).join(' + ');
+            })(),
+        mgUsedPerCycle: mgPerCycle,
+        waste: combo.waste
+      };
+    }
+    const maintenance = buildMaintenanceSummary();
 
     if (wastePct > 30) {
       const idealMg = Math.ceil(usedAtLimit / 5) * 5;
@@ -498,15 +535,27 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
           </div>
         </div>`;
       }).join('');
+      // MAINTENANCE block — what to buy forever after titration is done
+      const maintBlock = maintenance ? `
+        <div style="margin-top:18px;padding:14px;background:linear-gradient(135deg,rgba(167,139,250,.08),rgba(0,212,255,.04));border:1px solid var(--accent3);border-radius:10px;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--accent3);font-weight:700;text-transform:uppercase;margin-bottom:6px;">♾ AFTER WK ${maintenance.startsWeek} · MAINTENANCE FOREVER</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;color:var(--text);margin-bottom:6px;">Once you hit Wk ${maintenance.startsWeek}, you're on <strong style="color:var(--accent3);">${maintenance.weeklyMg} mg/wk</strong> for as long as you stay on the protocol.</div>
+          <div style="font-size:13px;color:var(--text);line-height:1.55;">
+            That's <strong>${maintenance.mgUsedPerCycle} mg every ${maintenance.weeksPerBottle} weeks</strong> (within ${shelfDays}-day shelf life).<br>
+            <strong style="color:var(--accent2);">Standing order: every ${maintenance.weeksPerBottle} weeks, buy a ${maintenance.comboLabel}.</strong> ${maintenance.waste > 1 ? `<span style="color:var(--warn);">(~${maintenance.waste.toFixed(1)} mg leftover per cycle)</span>` : `<span style="color:var(--accent2);">(clean fit)</span>`}
+          </div>
+        </div>
+      ` : '';
       rec = `<div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:20px;color:var(--bad);margin-bottom:8px;">❌ Don't buy ONE big bottle. You'll throw away ${wasted.toFixed(1)} mg.</div>
       <div style="font-size:14px;line-height:1.6;color:var(--text);margin-bottom:14px;">
         Mixed peptide goes bad after <strong>${shelfDays} days</strong>. By the time you'd use a ${vialMg} mg bottle, half of it has degraded.
       </div>
-      <div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:16px;color:var(--accent2);margin-bottom:10px;">📦 Buy in this order instead:</div>
+      <div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:16px;color:var(--accent2);margin-bottom:10px;">📦 Titration phase — buy in this order:</div>
       ${roadmap}
       <div style="font-size:12px;color:var(--muted);margin-top:10px;line-height:1.5;">
-        Each bottle covers what fits inside the ${shelfDays}-day shelf life. Mix bottle, finish it, mix the next one. Zero waste.
-      </div>`;
+        Each bottle covers what fits inside the ${shelfDays}-day shelf life. Mix bottle, finish it, mix the next one.
+      </div>
+      ${maintBlock}`;
     } else if (wastePct > 5) {
       rec = `<div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:20px;color:var(--warn);margin-bottom:8px;">🟡 OK — but you'll waste a bit</div>
       <div style="font-size:14px;line-height:1.65;color:var(--text);">
