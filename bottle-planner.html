@@ -273,14 +273,7 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
   window.swapMode = function(){
     if (cycleMode === 'new') chooseMid(); else chooseNew();
   };
-  window.toggleMode = function(){
-    setMode(cycleMode === 'new' ? 'mid' : 'new');
-    const link = document.getElementById('mode-link');
-    if (link) link.textContent = cycleMode === 'mid' ? '🆕 BACK TO BRAND-NEW PLAN' : '▶ I\'m already on a cycle · adjust plan';
-    // Show/hide mid-cycle inputs (now revealed inline below the plan)
-    const midFields = document.getElementById('mid-cycle-fields');
-    if (midFields) midFields.style.display = cycleMode === 'mid' ? 'block' : 'none';
-  };
+  // toggleMode() retired — replaced by chooseNew/chooseMid/swapMode in decision tree
 
   window.setMode = function(mode){
     cycleMode = mode;
