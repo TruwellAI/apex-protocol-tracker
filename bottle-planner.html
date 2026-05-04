@@ -99,27 +99,22 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
       </div>
     </div>
 
-    <!-- ALREADY-ON-CYCLE INPUTS (hidden until "mid" picked) -->
-    <div id="mid-cycle-fields" style="display:none;background:rgba(0,212,255,.04);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:14px;">
-      <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.16em;color:var(--accent);font-weight:700;text-transform:uppercase;margin-bottom:10px;">▶ TELL US WHERE YOU ARE</div>
+    <!-- ALREADY-ON-CYCLE INPUTS — streamlined to TWO questions -->
+    <div id="mid-cycle-fields" style="display:none;background:rgba(0,212,255,.04);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:14px;">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.16em;color:var(--accent);font-weight:700;text-transform:uppercase;margin-bottom:6px;">▶ JUST TWO QUESTIONS</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:14px;">We'll figure out which week you're on from your dose. No need to count.</div>
       <div class="field">
-        <label>What week of the cycle are you on?</label>
-        <input type="number" id="current-week" value="5" min="1" max="52">
-      </div>
-      <div class="field">
-        <label>Total weekly dose (mg)</label>
+        <label>What's your total weekly dose right now? (mg)</label>
         <input type="number" id="last-dose-mg" value="4" min="0.1" step="0.1">
-        <div style="font-size:11px;color:var(--muted);margin-top:6px;line-height:1.4;">Add up everything you inject in a week. Split dosing 2× weekly @ 2 mg each = enter <strong>4 mg</strong>. Daily 0.5 mg × 7 = enter <strong>3.5 mg</strong>. The bottle math doesn't care how you split it — only total weekly mg.</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:6px;line-height:1.45;">Add up everything you inject in a week. Split 2× weekly @ 2 mg = <strong>4 mg</strong>. Daily 0.5 mg × 7 = <strong>3.5 mg</strong>. Doesn't matter how you split it — just total weekly mg.</div>
       </div>
       <div class="field" style="margin-bottom:0;">
-        <label>Shots per week (optional · for your reference)</label>
-        <select id="shots-per-week">
-          <option value="1">1× weekly (most common for GLP-1s)</option>
-          <option value="2">2× weekly split (Mon + Thu)</option>
-          <option value="3">3× weekly (Mon · Wed · Fri)</option>
-          <option value="7">Daily</option>
-        </select>
+        <label>How many more weeks do you want to stay on this protocol?</label>
+        <input type="number" id="forward-weeks" value="12" min="1" max="52">
+        <div style="font-size:11px;color:var(--muted);margin-top:6px;line-height:1.45;">We'll plan all your bottle purchases for that window. Default 12 wks = ~3-month plan.</div>
       </div>
+      <!-- Hidden: derived from dose -->
+      <input type="hidden" id="current-week" value="1">
     </div>
 
     <div class="field">
@@ -301,15 +296,27 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
       }
     }
 
-    // ── MID-CYCLE OFFSET: skip ahead to user's current week ──
-    // If user said "already on cycle wk 5", drop weeks 1-4 from schedule
-    // and start projecting from wk 5 with their actual current dose.
+    // ── MID-CYCLE: auto-detect current week from stated dose ──
+    // User said "I'm on 4 mg/wk Reta" → ladder tells us that's Wk 5-8 → start there.
+    // No need to ask the user what week they're on.
     if (cycleMode === 'mid') {
-      const currentWk = parseInt(document.getElementById('current-week').value) || 1;
       const lastDose = parseFloat(document.getElementById('last-dose-mg').value);
-      schedule = schedule.filter(s => s.week >= currentWk);
-      // If user's current dose differs from titration step (e.g., they're holding at a dose),
-      // override the current-week's mg with their stated dose
+      const forwardWeeks = parseInt(document.getElementById('forward-weeks').value) || 12;
+      let currentWk = 1;
+      if (Array.isArray(p.titration) && lastDose) {
+        // Find the titration step whose mg_per_dose matches user's dose (closest match)
+        let bestMatch = p.titration[0];
+        let bestDiff = Infinity;
+        p.titration.forEach(step => {
+          const diff = Math.abs(step.mg_per_dose - lastDose);
+          if (diff < bestDiff) { bestDiff = diff; bestMatch = step; }
+        });
+        currentWk = Math.ceil(bestMatch.day_start / 7);
+        document.getElementById('current-week').value = currentWk;
+      }
+      // Trim schedule to current week, then cap at forward-weeks duration
+      schedule = schedule.filter(s => s.week >= currentWk && s.week < currentWk + forwardWeeks);
+      // If user's current dose differs significantly from ladder, override current week
       if (schedule.length && lastDose && Math.abs(schedule[0].mg - lastDose) > 0.1) {
         schedule[0] = { ...schedule[0], mg: lastDose, label: schedule[0].label + ' (your dose)' };
       }
