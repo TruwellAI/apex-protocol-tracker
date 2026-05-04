@@ -100,14 +100,25 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
     </div>
 
     <!-- ALREADY-ON-CYCLE INPUTS (hidden until "mid" picked) -->
-    <div id="mid-cycle-fields" class="row" style="display:none;background:rgba(0,212,255,.04);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:14px;grid-template-columns:1fr 1fr;">
-      <div class="field" style="margin-bottom:0;">
-        <label>What week are you on?</label>
+    <div id="mid-cycle-fields" style="display:none;background:rgba(0,212,255,.04);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:14px;">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.16em;color:var(--accent);font-weight:700;text-transform:uppercase;margin-bottom:10px;">▶ TELL US WHERE YOU ARE</div>
+      <div class="field">
+        <label>What week of the cycle are you on?</label>
         <input type="number" id="current-week" value="5" min="1" max="52">
       </div>
-      <div class="field" style="margin-bottom:0;">
-        <label>Last dose (mg/wk)</label>
+      <div class="field">
+        <label>Total weekly dose (mg)</label>
         <input type="number" id="last-dose-mg" value="4" min="0.1" step="0.1">
+        <div style="font-size:11px;color:var(--muted);margin-top:6px;line-height:1.4;">Add up everything you inject in a week. Split dosing 2× weekly @ 2 mg each = enter <strong>4 mg</strong>. Daily 0.5 mg × 7 = enter <strong>3.5 mg</strong>. The bottle math doesn't care how you split it — only total weekly mg.</div>
+      </div>
+      <div class="field" style="margin-bottom:0;">
+        <label>Shots per week (optional · for your reference)</label>
+        <select id="shots-per-week">
+          <option value="1">1× weekly (most common for GLP-1s)</option>
+          <option value="2">2× weekly split (Mon + Thu)</option>
+          <option value="3">3× weekly (Mon · Wed · Fri)</option>
+          <option value="7">Daily</option>
+        </select>
       </div>
     </div>
 
