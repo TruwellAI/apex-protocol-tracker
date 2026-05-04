@@ -1,7 +1,7 @@
 /* AUTO-GENERATED — DO NOT EDIT.
  * Source: /data/peptides.json
  * Regenerate: node scripts/build-peptide-data.js
- * Built: 2026-05-04T13:48:33.674Z
+ * Built: 2026-05-04T20:46:44.919Z
  */
 window.APEX_PEPTIDES = {
   "_meta": {
@@ -417,7 +417,50 @@ window.APEX_PEPTIDES = {
     "freq": "weekly",
     "cycle_weeks": 24,
     "off_weeks": 0,
-    "titration": true,
+    "titration": [
+      {
+        "w": "Wk 1-4",
+        "d": "2 mg/wk",
+        "mg_per_dose": 2,
+        "day_start": 1,
+        "day_end": 28
+      },
+      {
+        "w": "Wk 5-8",
+        "d": "4 mg/wk",
+        "mg_per_dose": 4,
+        "day_start": 29,
+        "day_end": 56
+      },
+      {
+        "w": "Wk 9-12",
+        "d": "6 mg/wk",
+        "mg_per_dose": 6,
+        "day_start": 57,
+        "day_end": 84
+      },
+      {
+        "w": "Wk 13-16",
+        "d": "8 mg/wk",
+        "mg_per_dose": 8,
+        "day_start": 85,
+        "day_end": 112
+      },
+      {
+        "w": "Wk 17-20",
+        "d": "10 mg/wk",
+        "mg_per_dose": 10,
+        "day_start": 113,
+        "day_end": 140
+      },
+      {
+        "w": "Wk 21+",
+        "d": "12 mg/wk",
+        "mg_per_dose": 12,
+        "day_start": 141,
+        "day_end": 999
+      }
+    ],
     "research_note": "Titrate 2→4→8→12mg weekly; Phase 2 trials weekly only",
     "recon_tip": "<strong>Titrate slowly</strong> to avoid GI hammer. Reta is the most aggressive of the GLP-1s — start at 2mg/wk, hold each step 4 weeks before bumping. Skip a week if nausea is severe.",
     "timing_note": "⏰ <strong>Same day each week, time flexible.</strong> Most users do Sunday PM with dinner. Skip a dose if GI symptoms severe — restart at lower step."
@@ -439,7 +482,43 @@ window.APEX_PEPTIDES = {
     "freq": "weekly",
     "cycle_weeks": 24,
     "off_weeks": 0,
-    "titration": true,
+    "titration": [
+      {
+        "w": "Wk 1-4",
+        "d": "0.25 mg/wk",
+        "mg_per_dose": 0.25,
+        "day_start": 1,
+        "day_end": 28
+      },
+      {
+        "w": "Wk 5-8",
+        "d": "0.5 mg/wk",
+        "mg_per_dose": 0.5,
+        "day_start": 29,
+        "day_end": 56
+      },
+      {
+        "w": "Wk 9-12",
+        "d": "1.0 mg/wk",
+        "mg_per_dose": 1,
+        "day_start": 57,
+        "day_end": 84
+      },
+      {
+        "w": "Wk 13-16",
+        "d": "1.7 mg/wk",
+        "mg_per_dose": 1.7,
+        "day_start": 85,
+        "day_end": 112
+      },
+      {
+        "w": "Wk 17+",
+        "d": "2.4 mg/wk",
+        "mg_per_dose": 2.4,
+        "day_start": 113,
+        "day_end": 999
+      }
+    ],
     "research_note": "STEP trials; titrate 0.25→2.4mg weekly",
     "recon_tip": "Refrigerate after mixing. Reusing the same syringe across multiple injections from the same vial is fine — just keep the vial cold and the seal intact.",
     "timing_note": "⏰ <strong>Same day each week, time flexible.</strong> Refrigerate after mixing."
@@ -461,7 +540,50 @@ window.APEX_PEPTIDES = {
     "freq": "weekly",
     "cycle_weeks": 24,
     "off_weeks": 0,
-    "titration": true,
+    "titration": [
+      {
+        "w": "Wk 1-4",
+        "d": "2.5 mg/wk",
+        "mg_per_dose": 2.5,
+        "day_start": 1,
+        "day_end": 28
+      },
+      {
+        "w": "Wk 5-8",
+        "d": "5 mg/wk",
+        "mg_per_dose": 5,
+        "day_start": 29,
+        "day_end": 56
+      },
+      {
+        "w": "Wk 9-12",
+        "d": "7.5 mg/wk",
+        "mg_per_dose": 7.5,
+        "day_start": 57,
+        "day_end": 84
+      },
+      {
+        "w": "Wk 13-16",
+        "d": "10 mg/wk",
+        "mg_per_dose": 10,
+        "day_start": 85,
+        "day_end": 112
+      },
+      {
+        "w": "Wk 17-20",
+        "d": "12.5 mg/wk",
+        "mg_per_dose": 12.5,
+        "day_start": 113,
+        "day_end": 140
+      },
+      {
+        "w": "Wk 21+",
+        "d": "15 mg/wk",
+        "mg_per_dose": 15,
+        "day_start": 141,
+        "day_end": 999
+      }
+    ],
     "research_note": "SURMOUNT trials; titrate 2.5→15mg weekly",
     "recon_tip": "Tirz titration: 2.5 → 5 → 7.5 → 10 → 12.5 → 15 mg, hold each step 4 weeks. The GIP component reduces appetite faster than Sema — most users plateau at 10 mg.",
     "timing_note": "⏰ <strong>Same day each week, time flexible.</strong> The GIP component reduces appetite faster than Sema."
@@ -668,19 +790,31 @@ window.APEX_PEPTIDES = {
     "titration": [
       {
         "w": "Wk 1 tolerance",
-        "d": "25 mg"
+        "d": "25 mg",
+        "mg_per_dose": 25,
+        "day_start": 1,
+        "day_end": 7
       },
       {
         "w": "Wk 2",
-        "d": "50 mg"
+        "d": "50 mg",
+        "mg_per_dose": 50,
+        "day_start": 8,
+        "day_end": 14
       },
       {
         "w": "Wk 3-4",
-        "d": "75 mg"
+        "d": "75 mg",
+        "mg_per_dose": 75,
+        "day_start": 15,
+        "day_end": 28
       },
       {
-        "w": "Wk 5-12 full dose",
-        "d": "100 mg"
+        "w": "Wk 5-12 full",
+        "d": "100 mg",
+        "mg_per_dose": 100,
+        "day_start": 29,
+        "day_end": 84
       }
     ],
     "cadence_flex": {
