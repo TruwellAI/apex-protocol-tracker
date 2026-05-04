@@ -90,11 +90,32 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
       <input type="number" id="shelf-days" value="30" min="7" max="365">
     </div>
 
+    <!-- WHERE ARE YOU IN YOUR CYCLE? -->
+    <div class="field">
+      <label>Where are you in your cycle?</label>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px;">
+        <button type="button" id="mode-new"     onclick="setMode('new')"     style="padding:14px 8px;border-radius:8px;background:rgba(0,255,157,.10);border:1px solid var(--accent2);color:var(--accent2);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:.04em;cursor:pointer;-webkit-tap-highlight-color:transparent;">🆕 BRAND NEW · WK 1</button>
+        <button type="button" id="mode-mid"     onclick="setMode('mid')"     style="padding:14px 8px;border-radius:8px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:.04em;cursor:pointer;-webkit-tap-highlight-color:transparent;">▶ ALREADY ON CYCLE</button>
+      </div>
+    </div>
+
+    <!-- ALREADY-ON-CYCLE INPUTS (hidden until "mid" picked) -->
+    <div id="mid-cycle-fields" class="row" style="display:none;background:rgba(0,212,255,.04);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:14px;grid-template-columns:1fr 1fr;">
+      <div class="field" style="margin-bottom:0;">
+        <label>What week are you on?</label>
+        <input type="number" id="current-week" value="5" min="1" max="52">
+      </div>
+      <div class="field" style="margin-bottom:0;">
+        <label>Last dose (mg/wk)</label>
+        <input type="number" id="last-dose-mg" value="4" min="0.1" step="0.1">
+      </div>
+    </div>
+
     <div class="field">
       <label>Dose strategy</label>
       <select id="strategy">
         <option value="titration">Follow titration ladder (if peptide has one)</option>
-        <option value="flat">Flat weekly dose</option>
+        <option value="flat">Flat weekly dose · same dose every week</option>
       </select>
     </div>
 
@@ -192,6 +213,28 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
     if (/weekly|once.*weekly/.test(f)) return 1;
     return 1;
   }
+  // Mode toggle: BRAND NEW vs ALREADY ON CYCLE
+  let cycleMode = 'new';
+  window.setMode = function(mode){
+    cycleMode = mode;
+    const newBtn = document.getElementById('mode-new');
+    const midBtn = document.getElementById('mode-mid');
+    const midFields = document.getElementById('mid-cycle-fields');
+    if (mode === 'new') {
+      newBtn.style.background = 'rgba(0,255,157,.10)'; newBtn.style.borderColor = 'var(--accent2)'; newBtn.style.color = 'var(--accent2)';
+      midBtn.style.background = 'transparent'; midBtn.style.borderColor = 'var(--border)'; midBtn.style.color = 'var(--muted)';
+      midFields.style.display = 'none';
+      // BRAND-NEW DEFAULT: 10 mg vial / 3 mL BAC — Neil's recommended starter recon
+      document.getElementById('vial-mg').value = 10;
+      document.getElementById('bac-ml').value = 3;
+    } else {
+      midBtn.style.background = 'rgba(0,212,255,.10)'; midBtn.style.borderColor = 'var(--accent)'; midBtn.style.color = 'var(--accent)';
+      newBtn.style.background = 'transparent'; newBtn.style.borderColor = 'var(--border)'; newBtn.style.color = 'var(--muted)';
+      midFields.style.display = 'grid';
+    }
+    if (typeof runPlanner === 'function') runPlanner();
+  };
+
   sel.addEventListener('change', fillFromSSOT);
   document.getElementById('strategy').addEventListener('change', () => {
     document.getElementById('flat-dose-row').style.display =
@@ -227,6 +270,20 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
       const flatWeeks = parseInt(document.getElementById('flat-weeks').value);
       for (let w = 1; w <= flatWeeks; w++) {
         schedule.push({ week: w, mg: flatMg, label: 'flat' });
+      }
+    }
+
+    // ── MID-CYCLE OFFSET: skip ahead to user's current week ──
+    // If user said "already on cycle wk 5", drop weeks 1-4 from schedule
+    // and start projecting from wk 5 with their actual current dose.
+    if (cycleMode === 'mid') {
+      const currentWk = parseInt(document.getElementById('current-week').value) || 1;
+      const lastDose = parseFloat(document.getElementById('last-dose-mg').value);
+      schedule = schedule.filter(s => s.week >= currentWk);
+      // If user's current dose differs from titration step (e.g., they're holding at a dose),
+      // override the current-week's mg with their stated dose
+      if (schedule.length && lastDose && Math.abs(schedule[0].mg - lastDose) > 0.1) {
+        schedule[0] = { ...schedule[0], mg: lastDose, label: schedule[0].label + ' (your dose)' };
       }
     }
 
