@@ -509,10 +509,12 @@ body { padding-bottom: 90px; }
 
   <!-- ═══ INJECT PANEL ═══ -->
   <div class="panel" data-panel="inject">
-    <!-- DAY-OF-WEEK NAVIGATOR — preview any day's schedule -->
-    <div id="dow-strip" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:14px 16px 0;"></div>
-    <div class="note" id="inject-note">
-      <strong>Daily peptide stack.</strong> Tap a day above to preview · listed in order: morning → pre-gym → post-workout → PM.
+    <!-- DAY-OF-WEEK NAVIGATOR — tap any day to see exactly what you take that day -->
+    <div id="dow-strip" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:14px 16px 8px;"></div>
+    <div id="dow-banner" style="margin:0 16px 14px;padding:14px;background:linear-gradient(135deg,rgba(0,212,255,.08),rgba(0,255,157,.04));border:1px solid var(--border2);border-radius:10px;text-align:center;">
+      <div id="dow-banner-eyebrow" style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:700;">VIEWING TODAY · MONDAY</div>
+      <div id="dow-banner-title" style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:18px;color:var(--text);margin-top:2px;">What you're taking · 12 shots</div>
+      <div id="dow-banner-sub" style="font-size:11px;color:var(--muted);margin-top:2px;">Tap any peptide to log · listed in injection order</div>
     </div>
     <div class="section-h">
       <h2>Today's injections</h2>
@@ -1042,8 +1044,16 @@ function renderStackIntel(){
 
 function renderPeptides(){
   const t = today();
-  const todayPeps = PEPTIDES.filter(isPeptideTodayScheduled);
-  const doneCt = todayPeps.filter(p => t.peptides[p.id]).length;
+  // Use previewed day (Mon-Sun strip selection) if set, else actual today
+  const viewDow = (typeof dowPreview === 'number') ? dowPreview : dayOfWeek();
+  const isViewingToday = viewDow === dayOfWeek();
+  function isPepOnDay(p, dow){
+    if (p.days === 'all') return true;
+    if (Array.isArray(p.days)) return p.days.indexOf(dow) !== -1;
+    return false;
+  }
+  const todayPeps = PEPTIDES.filter(p => isPepOnDay(p, viewDow));
+  const doneCt = todayPeps.filter(p => isViewingToday && t.peptides[p.id]).length;
 
   // Today tab now just shows the count badge in the "open Inject tab" button
   const pepCount = document.getElementById('pep-count');
@@ -1069,13 +1079,17 @@ function renderPeptides(){
       pm:    { label:'🌙 PM / EVENING', color:'#A78BFA' },
       other: { label:'📅 WEEKLY / OTHER', color:'var(--muted)' },
     };
-    const cardHtml = (p) => `<div class="card ${t.peptides[p.id]?'done':''}" onclick="togglePep('${p.id}')">
-      <div class="card-check">${t.peptides[p.id]?'✓':''}</div>
-      <div class="card-body">
-        <div class="card-name">${p.name} <span class="tag" style="background:${p.color}22;color:${p.color};border:1px solid ${p.color};">${p.tag}</span></div>
-        <div class="card-meta">${p.dose} · ${p.window}</div>
-      </div>
-    </div>`;
+    const cardHtml = (p) => {
+      const isDoneToday = isViewingToday && t.peptides[p.id];
+      const clickable = isViewingToday;
+      return `<div class="card ${isDoneToday?'done':''}" ${clickable?`onclick="togglePep('${p.id}')"`:'style="cursor:default;opacity:.85;"'}>
+        <div class="card-check">${isDoneToday?'✓':''}</div>
+        <div class="card-body">
+          <div class="card-name">${p.name} <span class="tag" style="background:${p.color}22;color:${p.color};border:1px solid ${p.color};">${p.tag}</span></div>
+          <div class="card-meta">${p.dose} · ${p.window}</div>
+        </div>
+      </div>`;
+    };
     pfl.innerHTML = ['am','pre','post','pm','other'].map(g => {
       if (!groups[g].length) return '';
       const meta = groupLabels[g];
@@ -1088,7 +1102,17 @@ function renderPeptides(){
         ${groups[g].map(cardHtml).join('')}
       </div>`;
     }).join('');
-    document.getElementById('inj-count').textContent = `${doneCt} / ${todayPeps.length}`;
+    const injCt = document.getElementById('inj-count'); if (injCt) injCt.textContent = `${doneCt} / ${todayPeps.length}`;
+    // Update day banner
+    const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const eyebrowEl = document.getElementById('dow-banner-eyebrow');
+    const titleEl   = document.getElementById('dow-banner-title');
+    const subEl     = document.getElementById('dow-banner-sub');
+    if (eyebrowEl) eyebrowEl.textContent = (isViewingToday ? '▶ TODAY · ' : '👁 PREVIEW · ') + dayNames[viewDow].toUpperCase();
+    if (titleEl)   titleEl.textContent   = `What you take · ${todayPeps.length} shot${todayPeps.length===1?'':'s'}`;
+    if (subEl)     subEl.textContent     = isViewingToday
+      ? 'Tap any peptide to log · listed in injection order'
+      : 'Preview only — switch to TODAY tab on the strip above to log';
 
     // Weekly schedule (all peptides regardless of today)
     const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
