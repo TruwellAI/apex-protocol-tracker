@@ -374,49 +374,31 @@ body { padding-bottom: 90px; }
 
     <!-- ACTIVITY LOG CARDS: consolidated walks + workout -->
     <div style="margin:0 16px 14px;display:flex;flex-direction:column;gap:10px;">
-      <!-- ONE WALK CARD with AM + PM inside -->
+      <!-- WALKS CARD: AM/PM check boxes + single daily totals -->
       <div class="activity-card" id="ac-walks">
         <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;">
           <div class="ac-icon" style="font-size:22px;">🚶‍♂️</div>
           <div class="ac-title" style="flex:1;">Walks</div>
           <div class="ac-summary" id="sum-walks"></div>
         </div>
-        <div style="padding:0 14px 12px;display:grid;grid-template-columns:auto 1fr 1fr;gap:8px;align-items:end;">
-          <div style="display:flex;align-items:center;gap:6px;padding-bottom:8px;cursor:pointer;-webkit-tap-highlight-color:transparent;" onclick="toggleCheck('walkAM')">
-            <div id="check-walkAM" class="ac-check" style="margin:0;">✓</div>
-            <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.1em;font-weight:700;">AM</div>
-          </div>
-          <div class="ac-field">
-            <label>AM steps</label>
-            <input type="number" id="in-walkAM-steps" placeholder="0" inputmode="numeric" oninput="saveActivity('walkAM')">
-          </div>
-          <div class="ac-field">
-            <label>AM cal</label>
-            <input type="number" id="in-walkAM-kcal" placeholder="0" inputmode="numeric" oninput="saveActivity('walkAM')">
-          </div>
-
-          <div style="display:flex;align-items:center;gap:6px;padding-bottom:8px;cursor:pointer;-webkit-tap-highlight-color:transparent;" onclick="toggleCheck('walkPM')">
-            <div id="check-walkPM" class="ac-check" style="margin:0;">✓</div>
-            <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.1em;font-weight:700;">PM</div>
-          </div>
-          <div class="ac-field">
-            <label>PM steps</label>
-            <input type="number" id="in-walkPM-steps" placeholder="0" inputmode="numeric" oninput="saveActivity('walkPM')">
-          </div>
-          <div class="ac-field">
-            <label>PM cal</label>
-            <input type="number" id="in-walkPM-kcal" placeholder="0" inputmode="numeric" oninput="saveActivity('walkPM')">
-          </div>
+        <div style="padding:0 14px 12px;display:flex;gap:10px;">
+          <button onclick="toggleCheck('walkAM')" id="walk-am-pill" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px;border-radius:8px;background:rgba(255,255,255,.02);border:1px solid var(--border);color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.12em;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;">
+            <div id="check-walkAM" class="ac-check" style="margin:0;width:20px;height:20px;font-size:11px;">✓</div>
+            <span>AM WALK</span>
+          </button>
+          <button onclick="toggleCheck('walkPM')" id="walk-pm-pill" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px;border-radius:8px;background:rgba(255,255,255,.02);border:1px solid var(--border);color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.12em;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;">
+            <div id="check-walkPM" class="ac-check" style="margin:0;width:20px;height:20px;font-size:11px;">✓</div>
+            <span>PM WALK</span>
+          </button>
         </div>
-        <!-- Day total at the bottom of the walk card -->
-        <div style="display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--border);">
-          <div style="padding:10px;text-align:center;border-right:1px solid var(--border);">
-            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.16em;color:var(--muted);font-weight:700;">TOTAL STEPS</div>
-            <div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:20px;color:var(--accent);"><span id="day-total-steps">0</span></div>
+        <div style="padding:0 14px 12px;display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div class="ac-field">
+            <label>Total steps today</label>
+            <input type="number" id="in-day-steps" placeholder="0" inputmode="numeric" oninput="saveDayTotal()">
           </div>
-          <div style="padding:10px;text-align:center;">
-            <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.16em;color:var(--muted);font-weight:700;">TOTAL CAL BURNED</div>
-            <div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:20px;color:var(--accent2);"><span id="day-total-kcal">0</span></div>
+          <div class="ac-field">
+            <label>Total cal burned</label>
+            <input type="number" id="in-day-kcal" placeholder="0" inputmode="numeric" oninput="saveDayTotal()">
           </div>
         </div>
       </div>
@@ -1274,6 +1256,16 @@ function toggleCheck(key){
   s.daily[todayKey()].checks[key] = !s.daily[todayKey()].checks[key];
   save(s); haptic(); renderChecks();
 }
+function saveDayTotal(){
+  const s = load();
+  s.daily = s.daily || {}; s.daily[todayKey()] = s.daily[todayKey()] || { food:[], peptides:{}, steps:0, water:0, checks:{}, activity:{} };
+  if (!s.daily[todayKey()].activity) s.daily[todayKey()].activity = {};
+  const stepsEl = document.getElementById('in-day-steps');
+  const kcalEl  = document.getElementById('in-day-kcal');
+  s.daily[todayKey()].activity.daySteps = stepsEl ? parseInt(stepsEl.value)||0 : 0;
+  s.daily[todayKey()].activity.dayKcal  = kcalEl  ? parseInt(kcalEl.value) ||0 : 0;
+  save(s);
+}
 function saveActivity(key){
   const s = load();
   s.daily = s.daily || {}; s.daily[todayKey()] = s.daily[todayKey()] || { food:[], peptides:{}, steps:0, water:0, checks:{}, activity:{} };
@@ -1293,33 +1285,46 @@ function renderChecks(){
   const t = today();
   const c = t.checks || {};
   const a = t.activity || {};
-  // Walk AM/PM mini-checks inside the consolidated walk card
+  // Walk AM/PM pill buttons
   ['walkAM','walkPM'].forEach(k => {
+    const pill = document.getElementById(k === 'walkAM' ? 'walk-am-pill' : 'walk-pm-pill');
     const ck = document.getElementById('check-'+k);
+    const on = !!c[k];
+    if (pill) {
+      pill.style.background = on ? 'rgba(0,255,157,.10)' : 'rgba(255,255,255,.02)';
+      pill.style.borderColor = on ? 'var(--accent2)' : 'var(--border)';
+      pill.style.color = on ? 'var(--accent2)' : 'var(--muted)';
+    }
     if (ck) {
-      const on = !!c[k];
       ck.style.background = on ? 'var(--accent2)' : 'transparent';
       ck.style.borderColor = on ? 'var(--accent2)' : 'var(--border)';
       ck.style.color = on ? '#000' : 'transparent';
     }
-    const v = a[k] || {};
-    const stepsEl = document.getElementById('in-'+k+'-steps');
-    const kcalEl  = document.getElementById('in-'+k+'-kcal');
-    if (stepsEl && document.activeElement !== stepsEl && v.steps) stepsEl.value = v.steps;
-    if (kcalEl  && document.activeElement !== kcalEl  && v.kcal)  kcalEl.value  = v.kcal;
   });
   // Walks card overall — light up if both walks done
   const walksCard = document.getElementById('ac-walks');
   if (walksCard) walksCard.classList.toggle('on', !!c.walkAM && !!c.walkPM);
+  // Day totals — restore inputs from saved state
+  const stepsIn = document.getElementById('in-day-steps');
+  const kcalIn  = document.getElementById('in-day-kcal');
+  if (stepsIn && document.activeElement !== stepsIn && a.daySteps) stepsIn.value = a.daySteps;
+  if (kcalIn  && document.activeElement !== kcalIn  && a.dayKcal)  kcalIn.value  = a.dayKcal;
+  // Walk header summary
+  const sumWalks = document.getElementById('sum-walks');
+  if (sumWalks) {
+    const totS = a.daySteps || 0;
+    const totK = a.dayKcal || 0;
+    sumWalks.textContent = (totS || totK) ? `${totS.toLocaleString()} steps · ${totK} cal` : '';
+  }
   // Workout card
   const workoutCard = document.getElementById('ac-workout');
   if (workoutCard) {
     workoutCard.classList.toggle('on', !!c.workout);
     const v = a.workout || {};
-    const kcalEl = document.getElementById('in-workout-kcal');
+    const wkcalEl = document.getElementById('in-workout-kcal');
     const minEl = document.getElementById('in-workout-min');
-    if (kcalEl && document.activeElement !== kcalEl && v.kcal) kcalEl.value = v.kcal;
-    if (minEl  && document.activeElement !== minEl  && v.min)  minEl.value  = v.min;
+    if (wkcalEl && document.activeElement !== wkcalEl && v.kcal) wkcalEl.value = v.kcal;
+    if (minEl  && document.activeElement !== minEl   && v.min)  minEl.value  = v.min;
     const sumEl = document.getElementById('sum-workout');
     if (sumEl) {
       const bits = [];
@@ -1328,25 +1333,12 @@ function renderChecks(){
       sumEl.textContent = bits.join(' · ');
     }
   }
-  // Walk summary in header
-  const sumWalks = document.getElementById('sum-walks');
-  if (sumWalks) {
-    const am = a.walkAM || {}, pm = a.walkPM || {};
-    const totS = (am.steps||0) + (pm.steps||0);
-    const totK = (am.kcal||0) + (pm.kcal||0);
-    sumWalks.textContent = (totS||totK) ? `${totS.toLocaleString()} steps · ${totK} cal` : '';
-  }
   // Workout label = today's split
   const workoutLbl = document.getElementById('ct-workout-label');
   if (workoutLbl) {
     const d = TRAIN.find(x => x.d === dayOfWeek());
     workoutLbl.textContent = d ? d.name : 'Workout';
   }
-  // Day totals (steps + cal burned across walks + workout)
-  const totalSteps = (a.walkAM?.steps||0) + (a.walkPM?.steps||0);
-  const totalKcal  = (a.walkAM?.kcal||0) + (a.workout?.kcal||0) + (a.walkPM?.kcal||0);
-  const ts = document.getElementById('day-total-steps'); if (ts) ts.textContent = totalSteps.toLocaleString();
-  const tk = document.getElementById('day-total-kcal');  if (tk) tk.textContent = totalKcal.toLocaleString();
 }
 function addWater(n){
   const s = load();
