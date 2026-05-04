@@ -85,15 +85,9 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
       </div>
     </div>
 
-    <div class="row">
-      <div class="field">
-        <label>Shelf life (days refrigerated)</label>
-        <input type="number" id="shelf-days" value="30" min="7" max="365">
-      </div>
-      <div class="field">
-        <label>Cost per vial ($)</label>
-        <input type="number" id="cost-vial" value="100" min="0" step="10">
-      </div>
+    <div class="field">
+      <label>Shelf life (days refrigerated)</label>
+      <input type="number" id="shelf-days" value="30" min="7" max="365">
     </div>
 
     <div class="field">
@@ -115,7 +109,7 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
       </div>
     </div>
 
-    <button class="btn" onclick="runPlanner()">📊 Calculate</button>
+    <button class="btn" onclick="runPlanner()" style="font-size:16px;padding:18px;">📦 Will my bottle go to waste?</button>
   </div>
 
   <!-- RESULTS -->
@@ -137,11 +131,10 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
     </div>
 
     <div class="card">
-      <div class="eyebrow">💰 Cost & waste</div>
-      <div class="summary-grid">
+      <div class="eyebrow">📊 Waste check</div>
+      <div class="summary-grid" style="grid-template-columns:1fr 1fr;">
         <div class="summary-cell"><div class="label">Used</div><div class="val" id="r-used-mg" style="color:var(--accent2);">—</div></div>
         <div class="summary-cell"><div class="label">Wasted</div><div class="val" id="r-waste-mg" style="color:var(--bad);">—</div></div>
-        <div class="summary-cell"><div class="label">Effective $/mg</div><div class="val" id="r-eff-cost" style="color:var(--text);">—</div></div>
       </div>
     </div>
 
@@ -213,7 +206,6 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
     const vialMg = parseFloat(document.getElementById('vial-mg').value);
     const bacMl = parseFloat(document.getElementById('bac-ml').value);
     const shelfDays = parseInt(document.getElementById('shelf-days').value);
-    const costVial = parseFloat(document.getElementById('cost-vial').value);
     const strategy = document.getElementById('strategy').value;
     if (!vialMg || !bacMl) return;
 
@@ -316,8 +308,6 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
     document.getElementById('r-waste-mg').textContent = wasted.toFixed(1) + ' mg';
     const wastePct = (wasted / vialMg) * 100;
     const usedPct = (usedAtLimit / vialMg) * 100;
-    const effCostPerMg = costVial / usedAtLimit;
-    document.getElementById('r-eff-cost').textContent = '$' + effCostPerMg.toFixed(2);
 
     // RECOMMENDATION
     let rec = '';
@@ -361,7 +351,6 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
 
     if (wastePct > 30) {
       const idealMg = Math.ceil(usedAtLimit / 5) * 5;
-      const wasteDollars = (wasted * effCostPerMg).toFixed(0);
       // Build step-by-step roadmap UI
       const roadmap = buyPlan.map((b, idx) => {
         const wkRange = b.weekStart === b.weekEnd ? `Wk ${b.weekStart}` : `Wk ${b.weekStart}-${b.weekEnd}`;
@@ -374,7 +363,7 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
           </div>
         </div>`;
       }).join('');
-      rec = `<div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:20px;color:var(--bad);margin-bottom:8px;">❌ Don't buy ONE big bottle. You'll throw away $${wasteDollars}.</div>
+      rec = `<div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:20px;color:var(--bad);margin-bottom:8px;">❌ Don't buy ONE big bottle. You'll throw away ${wasted.toFixed(1)} mg.</div>
       <div style="font-size:14px;line-height:1.6;color:var(--text);margin-bottom:14px;">
         Mixed peptide goes bad after <strong>${shelfDays} days</strong>. By the time you'd use a ${vialMg} mg bottle, half of it has degraded.
       </div>
@@ -384,17 +373,15 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
         Each bottle covers what fits inside the ${shelfDays}-day shelf life. Mix bottle, finish it, mix the next one. Zero waste.
       </div>`;
     } else if (wastePct > 5) {
-      const wasteDollars = (wasted * effCostPerMg).toFixed(0);
       rec = `<div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:20px;color:var(--warn);margin-bottom:8px;">🟡 OK — but you'll waste a bit</div>
       <div style="font-size:14px;line-height:1.65;color:var(--text);">
-        You'll use <strong>${usedAtLimit.toFixed(1)} mg</strong> of the ${vialMg} mg bottle. <strong style="color:var(--warn);">${wasted.toFixed(1)} mg ($${wasteDollars}) gets thrown out</strong> when shelf life hits.<br><br>
+        You'll use <strong>${usedAtLimit.toFixed(1)} mg</strong> of the ${vialMg} mg bottle. <strong style="color:var(--warn);">${wasted.toFixed(1)} mg gets thrown out</strong> when shelf life hits.<br><br>
         Buying this size is fine if you don't want to deal with multiple smaller bottles. Just know you're paying for peptide you can't use.
       </div>`;
     } else {
       rec = `<div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:20px;color:var(--accent2);margin-bottom:8px;">✅ This is the right bottle. Buy it.</div>
       <div style="font-size:14px;line-height:1.65;color:var(--text);">
-        You'll use <strong>${usedPct.toFixed(0)}%</strong> of the bottle within shelf life. <strong>Almost no waste.</strong><br>
-        Cost works out to <strong>$${effCostPerMg.toFixed(2)} per mg</strong> of peptide actually used.
+        You'll use <strong>${usedPct.toFixed(0)}%</strong> of the bottle within shelf life. <strong>Almost no waste.</strong>
       </div>`;
     }
     document.getElementById('r-recommend').innerHTML = rec;
