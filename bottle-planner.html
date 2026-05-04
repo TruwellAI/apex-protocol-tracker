@@ -383,23 +383,6 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
       <div style="font-size:12px;color:var(--muted);margin-top:10px;line-height:1.5;">
         Each bottle covers what fits inside the ${shelfDays}-day shelf life. Mix bottle, finish it, mix the next one. Zero waste.
       </div>`;
-    } else if (wastePct > 30 && false) {
-      <div style="font-size:14px;line-height:1.65;color:var(--text);">
-        <strong style="color:var(--bad);">You'll throw away $${wasteDollars} of peptide.</strong><br><br>
-        Here's what happens with the ${vialMg} mg bottle:
-        <ul style="margin:8px 0 12px 22px;padding:0;color:var(--muted);font-size:13px;">
-          <li>Day 1: mix it. Bottle is fresh.</li>
-          <li>Day ${shelfDays}: <strong style="color:var(--bad);">peptide goes bad</strong> (shelf life expires)</li>
-          <li>You only used <strong>${usedAtLimit.toFixed(1)} mg</strong> · <strong style="color:var(--bad);">${wasted.toFixed(1)} mg ($${wasteDollars}) goes in the trash</strong></li>
-        </ul>
-        <div style="background:rgba(0,255,157,.08);border:1px solid var(--accent2);border-radius:8px;padding:12px;margin-top:8px;">
-          <div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:15px;color:var(--accent2);margin-bottom:4px;">✅ Buy a ${idealMg} mg bottle instead</div>
-          <div style="font-size:13px;color:var(--text);line-height:1.55;">
-            Smaller bottle = use it all before shelf life expires. <strong>$0 wasted.</strong><br>
-            When your weekly dose grows big enough, then you upgrade to a larger size.
-          </div>
-        </div>
-      </div>`;
     } else if (wastePct > 5) {
       const wasteDollars = (wasted * effCostPerMg).toFixed(0);
       rec = `<div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:20px;color:var(--warn);margin-bottom:8px;">🟡 OK — but you'll waste a bit</div>
