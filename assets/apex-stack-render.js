@@ -361,7 +361,31 @@
       };
     }
 
-    // 2b. Resolve dose label
+    // 2b. CYCLE-AWARE TITRATION RESOLUTION
+    // If SSOT has a structured titration ladder AND a cycle day is provided,
+    // resolve the dose for THAT specific day. This is what unifies the 20u-vs-40u
+    // mismatch: tracker, protocol-summary, reconstitute, and 52-week sequencer
+    // all read the same ladder + cycle position.
+    if (Array.isArray(p.titration) && p.titration.length && opts.cycleDay) {
+      const day = opts.cycleDay;
+      const step = p.titration.find(s => day >= s.day_start && day <= s.day_end) || p.titration[0];
+      if (step && step.mg_per_dose != null) {
+        const stepMg = step.mg_per_dose;
+        if (!vial || !bac) return { mg: stepMg, units: null, dose_label: step.d, units_label: '⚠ set vial', source: 'titration', step: step.w, warning: 'no recon' };
+        const conc = vial / (bac + acetic);
+        const u = Math.round((stepMg / conc) * 100);
+        let warn = null;
+        if (u > 100) warn = 'over-pen';
+        else if (u > 0 && u < 5) warn = 'tiny-draw';
+        return {
+          mg: stepMg, units: u, dose_label: step.d, units_label: u + ' units',
+          conc_mg_per_ml: conc, route: p.route || 'sc', source: 'titration',
+          step: step.w, warning: warn
+        };
+      }
+    }
+
+    // 2c. Resolve dose label (no titration / no cycle context)
     let doseLabel, doseMg, source;
     // Detect "titrated" / "titration" / arrow-style strings (e.g. "titrated 2→12 mg")
     // These can't be range-parsed reliably — they describe a ladder, not a single dose.
