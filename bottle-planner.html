@@ -524,7 +524,8 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
     }
     const maintenance = buildMaintenanceSummary();
 
-    if (wastePct > 30) {
+    // ── UNIFIED OUTPUT: just the schedule, no conditional messaging ──
+    {
       const idealMg = Math.ceil(usedAtLimit / 5) * 5;
       // Build step-by-step roadmap UI
       const roadmap = buyPlan.map((b, idx) => {
@@ -560,27 +561,14 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
           </div>
         </div>
       ` : '';
-      rec = `<div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:20px;color:var(--bad);margin-bottom:8px;">❌ Don't buy ONE big bottle. You'll throw away ${wasted.toFixed(1)} mg.</div>
-      <div style="font-size:14px;line-height:1.6;color:var(--text);margin-bottom:14px;">
-        Mixed peptide goes bad after <strong>${shelfDays} days</strong>. By the time you'd use a ${vialMg} mg bottle, half of it has degraded.
-      </div>
-      <div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:16px;color:var(--accent2);margin-bottom:10px;">📦 Titration phase — buy in this order:</div>
+      // SINGLE UNIFIED OUTPUT — always the same format, no conditional messaging
+      rec = `
+      <div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:18px;color:var(--accent2);margin-bottom:14px;">📦 Titration phase — buy in this order:</div>
       ${roadmap}
       <div style="font-size:12px;color:var(--muted);margin-top:10px;line-height:1.5;">
-        Each bottle covers what fits inside the ${shelfDays}-day shelf life. Mix bottle, finish it, mix the next one.
+        Each bottle is sized to fit inside the ${shelfDays}-day shelf life. Mix bottle, finish it, mix the next one. Zero waste.
       </div>
       ${maintBlock}`;
-    } else if (wastePct > 5) {
-      rec = `<div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:20px;color:var(--warn);margin-bottom:8px;">🟡 OK — but you'll waste a bit</div>
-      <div style="font-size:14px;line-height:1.65;color:var(--text);">
-        You'll use <strong>${usedAtLimit.toFixed(1)} mg</strong> of the ${vialMg} mg bottle. <strong style="color:var(--warn);">${wasted.toFixed(1)} mg gets thrown out</strong> when shelf life hits.<br><br>
-        Buying this size is fine if you don't want to deal with multiple smaller bottles. Just know you're paying for peptide you can't use.
-      </div>`;
-    } else {
-      rec = `<div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:20px;color:var(--accent2);margin-bottom:8px;">✅ This is the right bottle. Buy it.</div>
-      <div style="font-size:14px;line-height:1.65;color:var(--text);">
-        You'll use <strong>${usedPct.toFixed(0)}%</strong> of the bottle within shelf life. <strong>Almost no waste.</strong>
-      </div>`;
     }
     document.getElementById('r-recommend').innerHTML = rec;
     document.getElementById('results').style.display = 'block';
