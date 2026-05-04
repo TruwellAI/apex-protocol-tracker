@@ -499,45 +499,65 @@ body { padding-bottom: 90px; }
     <div style="height:30px;"></div>
   </div>
 
-  <!-- ═══ PLAN PANEL ═══ -->
+  <!-- ═══ MEALS PANEL — consolidated: macro ladder · planned meals · free food log ═══ -->
   <div class="panel" data-panel="plan">
-    <div class="hero" style="margin-top:14px;">
+    <!-- LIVE MACRO LADDER (Goal · Consumed · Left/Over) — same as Today tab, sticky-feel at top -->
+    <div style="margin:14px 16px 8px;background:var(--panel);border:1px solid var(--border);border-radius:12px;overflow:hidden;">
+      <!-- Row 1: GOAL -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;border-bottom:1px solid var(--border);">
+        <div class="ml-cell" style="padding:10px;text-align:center;">
+          <div class="ml-label">GOAL</div>
+          <div class="ml-num" style="color:var(--muted);"><span id="g-cal-2">2300</span></div>
+          <div class="ml-unit">cal</div>
+        </div>
+        <div class="ml-cell" style="padding:10px;text-align:center;border-left:1px solid var(--border);">
+          <div class="ml-label">PROTEIN</div>
+          <div class="ml-num" style="color:var(--muted);"><span id="g-p-2">240</span>g</div>
+        </div>
+        <div class="ml-cell" style="padding:10px;text-align:center;border-left:1px solid var(--border);">
+          <div class="ml-label">CARB</div>
+          <div class="ml-num" style="color:var(--muted);"><span id="g-c-2">175</span>g</div>
+        </div>
+        <div class="ml-cell" style="padding:10px;text-align:center;border-left:1px solid var(--border);">
+          <div class="ml-label">FAT</div>
+          <div class="ml-num" style="color:var(--muted);"><span id="g-f-2">70</span>g</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;border-bottom:1px solid var(--border);background:rgba(0,212,255,.04);">
+        <div class="ml-cell" style="padding:10px;text-align:center;"><div class="ml-label" style="color:var(--accent);">CONSUMED</div><div class="ml-num" id="c-cal-2" style="color:var(--accent);">0</div></div>
+        <div class="ml-cell" style="padding:10px;text-align:center;border-left:1px solid var(--border);"><div class="ml-label" style="color:var(--accent);">EATEN</div><div class="ml-num" id="c-p-2" style="color:var(--accent);">0g</div></div>
+        <div class="ml-cell" style="padding:10px;text-align:center;border-left:1px solid var(--border);"><div class="ml-label" style="color:var(--accent);">EATEN</div><div class="ml-num" id="c-c-2" style="color:var(--accent);">0g</div></div>
+        <div class="ml-cell" style="padding:10px;text-align:center;border-left:1px solid var(--border);"><div class="ml-label" style="color:var(--accent);">EATEN</div><div class="ml-num" id="c-f-2" style="color:var(--accent);">0g</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;">
+        <div class="ml-cell" style="padding:10px;text-align:center;"><div class="ml-label" id="d-cal-l-2">LEFT</div><div class="ml-num" id="d-cal-2" style="color:var(--accent2);">2300</div></div>
+        <div class="ml-cell" style="padding:10px;text-align:center;border-left:1px solid var(--border);"><div class="ml-label" id="d-p-l-2">LEFT</div><div class="ml-num" id="d-p-2" style="color:var(--accent2);">240g</div></div>
+        <div class="ml-cell" style="padding:10px;text-align:center;border-left:1px solid var(--border);"><div class="ml-label" id="d-c-l-2">LEFT</div><div class="ml-num" id="d-c-2" style="color:var(--accent2);">175g</div></div>
+        <div class="ml-cell" style="padding:10px;text-align:center;border-left:1px solid var(--border);"><div class="ml-label" id="d-f-l-2">LEFT</div><div class="ml-num" id="d-f-2" style="color:var(--accent2);">70g</div></div>
+      </div>
+    </div>
+
+    <!-- PLAN HEADER -->
+    <div class="hero" style="margin-top:8px;">
       <div class="hero-eyebrow"><span id="plan-mode-label">Daily meal plan · 1000 cal deficit</span></div>
-      <div class="hero-num"><span id="plan-cal-total">2300</span><span class="unit">cal</span></div>
-      <div style="font-size:12px;color:var(--muted);margin-top:4px;"><strong id="plan-p-total">240</strong>P · <strong id="plan-c-total">220</strong>C · <strong id="plan-f-total">50</strong>F · <span id="plan-meal-count">6</span> meals</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:4px;">Plan total: <strong id="plan-cal-total" style="color:var(--accent2);">2300</strong> cal · <strong id="plan-p-total">240</strong>P · <strong id="plan-c-total">220</strong>C · <strong id="plan-f-total">50</strong>F · <span id="plan-meal-count">6</span> meals</div>
     </div>
     <div style="padding:0 16px 14px;">
       <button class="btn btn-block" onclick="autoLogAllMeals()">📋 Log entire day's plan</button>
-      <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:8px;">Tap a meal below to log just that meal · or eat off-script and log manually in Eat tab</div>
+      <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:8px;">Tap any meal card to log just that one · greys out when logged · tap again to undo</div>
     </div>
     <div class="list" id="plan-list"></div>
-    <div style="height:30px;"></div>
-  </div>
 
-  <!-- ═══ EAT PANEL ═══ -->
-  <div class="panel" data-panel="eat">
-    <!-- STICKY TODAY'S TOTAL — always visible while tapping foods -->
-    <div id="eat-running" style="position:sticky;top:60px;z-index:20;margin:14px 16px 14px;padding:14px;background:linear-gradient(135deg,rgba(0,212,255,.10),rgba(0,255,157,.06));border:1px solid var(--border2);border-radius:12px;backdrop-filter:blur(8px);">
-      <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:700;">Today's Running Total</div>
-      <div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:30px;line-height:1.1;margin:4px 0;"><span id="er-cal" style="color:var(--accent2);">0</span><span style="color:var(--muted);font-size:14px;font-weight:500;"> / <span id="er-cal-target">2300</span> cal</span></div>
-      <div style="display:flex;gap:14px;font-size:11px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:.04em;">
-        <span>P <strong id="er-p" style="color:var(--accent);font-size:13px;">0</strong>/<span id="er-p-t">240</span></span>
-        <span>C <strong id="er-c" style="color:var(--warn);font-size:13px;">0</strong>/<span id="er-c-t">175</span></span>
-        <span>F <strong id="er-f" style="color:#f472b6;font-size:13px;">0</strong>/<span id="er-f-t">70</span></span>
-      </div>
-    </div>
-    <div class="note">
-      <strong>Tap food to log.</strong> Total above updates instantly with haptic + click.
-    </div>
-    <div class="section-h">
-      <h2>Quick log — your foods</h2>
-      <span class="count" id="eat-total"></span>
+    <!-- ═══ FOOD QUICK-LOG (moved from old Eat tab) ═══ -->
+    <div class="section-h" style="margin-top:24px;"><h2>🍽 Off-script · quick log</h2><span class="count" id="eat-total"></span></div>
+    <div class="note" style="margin-bottom:8px;">
+      <strong>Eat outside the plan?</strong> Tap any food below to add a serving. Macro ladder above updates instantly.
     </div>
     <div class="list" id="food-list"></div>
 
-    <div class="section-h">
-      <h2>Today's intake</h2>
-      <button class="btn-ghost" style="font-size:11px;padding:6px 10px;border-radius:6px;cursor:pointer;font-family:inherit;background:transparent;border:1px solid var(--border);color:var(--muted);" onclick="resetFoodLog()">Reset day</button>
+    <div class="section-h" style="margin-top:18px;">
+      <h2>Today's full intake log</h2>
+      <button class="btn-ghost" style="font-size:11px;padding:6px 10px;border-radius:6px;cursor:pointer;font-family:inherit;background:transparent;border:1px solid var(--border);color:var(--muted);" onclick="resetFoodLog()">↺ Reset day</button>
     </div>
     <div class="list" id="food-log"></div>
     <div style="height:30px;"></div>
@@ -673,13 +693,12 @@ body { padding-bottom: 90px; }
   </div>
 
   <!-- TABS -->
-  <div class="tabs" style="grid-template-columns:repeat(7,1fr);">
+  <div class="tabs" style="grid-template-columns:repeat(6,1fr);">
     <button class="tab on" data-tab="today"><div class="icon">●</div>Today</button>
     <button class="tab" data-tab="inject"><div class="icon">💉</div>Inject</button>
-    <button class="tab" data-tab="plan"><div class="icon">📋</div>Meals</button>
+    <button class="tab" data-tab="plan"><div class="icon">🍽</div>Meals</button>
     <button class="tab" data-tab="train"><div class="icon">🏋︎</div>Train</button>
     <button class="tab" data-tab="rules"><div class="icon">📜</div>Rules</button>
-    <button class="tab" data-tab="eat"><div class="icon">🍽</div>Eat</button>
     <button class="tab" data-tab="progress"><div class="icon">📈</div>Track</button>
   </div>
 </div>
@@ -899,6 +918,8 @@ function renderMacros(){
   set('g-p', dynamicP);
   set('g-c', dynamicC);
   set('g-f', dynamicF);
+  // Mirror to Meals tab ladder (-2 suffix IDs)
+  set('g-cal-2', dynamicCalGoal); set('g-p-2', dynamicP); set('g-c-2', dynamicC); set('g-f-2', dynamicF);
   // Stash for elsewhere
   s._effectiveTargetCal = dynamicCalGoal;
   // Live deficit indicator: TDEE = baseline maintenance + today's extra burn − consumed
@@ -926,6 +947,7 @@ function renderMacros(){
   set('c-p', Math.round(m.p)+'g');
   set('c-c', Math.round(m.c)+'g');
   set('c-f', Math.round(m.f)+'g');
+  set('c-cal-2', Math.round(m.cal)); set('c-p-2', Math.round(m.p)+'g'); set('c-c-2', Math.round(m.c)+'g'); set('c-f-2', Math.round(m.f)+'g');
   // Row 3: LEFT / OVER
   function diff(v, target, unit){
     const left = target - v;
@@ -940,10 +962,12 @@ function renderMacros(){
   const dC = diff(m.c, dynamicC, 'g');
   const dF = diff(m.f, dynamicF, 'g');
   [['cal',dCal],['p',dP],['c',dC],['f',dF]].forEach(([id,d]) => {
-    const numEl = document.getElementById('d-'+id);
-    const lblEl = document.getElementById('d-'+id+'-l');
-    if (numEl) { numEl.textContent = d.val; numEl.style.color = d.color; }
-    if (lblEl) { lblEl.textContent = d.label; lblEl.style.color = d.color; }
+    ['', '-2'].forEach(sfx => {
+      const numEl = document.getElementById('d-'+id+sfx);
+      const lblEl = document.getElementById('d-'+id+'-l'+sfx);
+      if (numEl) { numEl.textContent = d.val; numEl.style.color = d.color; }
+      if (lblEl) { lblEl.textContent = d.label; lblEl.style.color = d.color; }
+    });
   });
 }
 
