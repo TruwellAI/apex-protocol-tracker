@@ -414,6 +414,12 @@ body { padding-bottom: 90px; }
     <div class="section-h"><h2>🔥 Streaks · perfect-day count</h2></div>
     <div id="streaks-grid" style="margin:0 16px 14px;display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
 
+    <!-- 🌙 END-OF-DAY LOCK BUTTON -->
+    <div style="margin:0 16px 30px;">
+      <button id="day-done-btn" class="btn btn-block" style="font-size:14px;padding:16px;background:linear-gradient(135deg,var(--accent2),var(--accent));color:#000;font-weight:800;letter-spacing:.06em;text-transform:uppercase;" onclick="lockInDay()">🌙 Day done — Lock it in</button>
+      <div id="day-done-status" style="text-align:center;font-size:11px;color:var(--muted);margin-top:8px;font-family:'Share Tech Mono',monospace;letter-spacing:.08em;"></div>
+    </div>
+
     <!-- ACTIVITY: 3 checks + 2 day-total inputs. Simple. -->
     <div style="margin:0 16px 14px;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px;">
       <div style="display:flex;gap:8px;margin-bottom:14px;">
@@ -1754,6 +1760,86 @@ function renderStreaks(){
   </div>`).join('');
 }
 
+// Lock in today's day — final commit, snapshot saved, big celebration if perfect
+function lockInDay(){
+  const t = today();
+  const s = load();
+  const k = todayKey();
+  // Compute today's summary
+  const m = sumMacros(t.food);
+  const ml = t.mealsLogged || {};
+  const mealsHit = Object.values(ml).filter(Boolean).length;
+  const peps = t.peptides || {};
+  const dow = dayOfWeek();
+  const scheduledPeps = PEPTIDES.filter(p => p.days === 'all' || (Array.isArray(p.days) && p.days.includes(dow)));
+  const pepsDone = scheduledPeps.filter(p => peps[p.id]).length;
+  const c = t.checks || {};
+  const a = t.activity || {};
+  const summary = {
+    cal: Math.round(m.cal),
+    protein: Math.round(m.p),
+    carb: Math.round(m.c),
+    fat: Math.round(m.f),
+    mealsHit, mealsTotal: 6,
+    pepsDone, pepsTotal: scheduledPeps.length,
+    workout: !!c.workout,
+    walks: !!c.walkAM && !!c.walkPM,
+    water: (a.daySteps != null ? null : null), // placeholder
+    waterCups: t.water || 0,
+    daySteps: a.daySteps || 0,
+    dayKcal: a.dayKcal || 0,
+    locked: true,
+    lockedAt: new Date().toISOString(),
+  };
+  if (!s.daily[k]) s.daily[k] = {};
+  s.daily[k]._summary = summary;
+  s.daily[k]._locked = true;
+  save(s);
+  haptic(true);
+  // Celebration based on completeness
+  const perfect = mealsHit >= 5 && pepsDone === scheduledPeps.length && c.workout && c.walkAM && c.walkPM && (t.water||0) >= 16;
+  if (perfect) {
+    toast('🏆 PERFECT DAY LOCKED · Boat-ready compounding', '#FBBF24');
+  } else {
+    const skipped = [];
+    if (mealsHit < 5) skipped.push(`meals ${mealsHit}/6`);
+    if (pepsDone < scheduledPeps.length) skipped.push(`peptides ${pepsDone}/${scheduledPeps.length}`);
+    if (!c.workout) skipped.push('workout');
+    if (!c.walkAM) skipped.push('AM walk');
+    if (!c.walkPM) skipped.push('PM walk');
+    if ((t.water||0) < 16) skipped.push(`water ${t.water||0}/16`);
+    toast(`🌙 Day locked · gaps: ${skipped.join(', ')}`, 'var(--accent)');
+  }
+  renderAll();
+}
+
+function renderDayDoneBtn(){
+  const btn = document.getElementById('day-done-btn');
+  const status = document.getElementById('day-done-status');
+  if (!btn) return;
+  const t = today();
+  if (t._locked) {
+    btn.textContent = '✓ Day Locked In';
+    btn.style.background = 'rgba(0,255,157,.10)';
+    btn.style.color = 'var(--accent2)';
+    btn.style.border = '1px solid var(--accent2)';
+    btn.onclick = null;
+    btn.style.cursor = 'default';
+    if (status && t._summary) {
+      const sm = t._summary;
+      status.textContent = `Locked · ${sm.cal} cal · ${sm.protein}P · ${sm.pepsDone}/${sm.pepsTotal} shots · ${sm.daySteps.toLocaleString()} steps`;
+    }
+  } else {
+    btn.textContent = '🌙 Day done — Lock it in';
+    btn.style.background = 'linear-gradient(135deg,var(--accent2),var(--accent))';
+    btn.style.color = '#000';
+    btn.style.border = '0';
+    btn.onclick = lockInDay;
+    btn.style.cursor = 'pointer';
+    if (status) status.textContent = 'Tap when you\'re done eating + walking + last shot taken';
+  }
+}
+
 // Celebratory check — fires when full day's targets are hit
 function checkPerfectDay(){
   const t = today();
@@ -1786,6 +1872,7 @@ function renderAll(){
   safe('Streaks',       renderStreaks);
   safe('DowStrip',      renderDowStrip);
   safe('CheckPerfect',  checkPerfectDay);
+  safe('DayDoneBtn',    renderDayDoneBtn);
   renderStackIntel();
   renderPeptides();
   renderSteps();
