@@ -1117,9 +1117,9 @@ function renderPeptides(){
       : 'Preview only — switch to TODAY tab on the strip above to log';
 
     // Weekly schedule (all peptides regardless of today)
-    const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const shortDow = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
     document.getElementById('pep-week').innerHTML = PEPTIDES.map(p => {
-      const days = p.days === 'all' ? 'Daily' : p.days.map(d => dayNames[d]).join(' · ');
+      const days = p.days === 'all' ? 'Daily' : p.days.map(d => shortDow[d]).join(' · ');
       return `<div class="card" style="cursor:default;">
         <div class="card-body">
           <div class="card-name">${p.name} <span class="tag" style="background:${p.color}22;color:${p.color};border:1px solid ${p.color};">${p.tag}</span></div>
