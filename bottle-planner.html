@@ -67,60 +67,23 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
   <h1>Bottle Planner</h1>
   <p class="sub">Pick a peptide. We'll tell you exactly what bottles to buy, when, and for how many weeks. Zero guesswork.</p>
 
-  <!-- INPUTS — bare bones -->
+  <!-- INPUTS — radically simplified. Just pick the peptide. -->
   <div class="card">
-    <div class="field">
-      <label>Which peptide?</label>
-      <select id="peptide-select" onchange="runPlanner()"></select>
+    <div class="field" style="margin-bottom:0;">
+      <label>Which peptide are you running?</label>
+      <select id="peptide-select" onchange="runPlanner()" style="font-size:18px;padding:14px;"></select>
     </div>
+    <!-- Hidden inputs with sensible defaults — power users access via tiny link below -->
+    <input type="hidden" id="vial-mg" value="10">
+    <input type="hidden" id="bac-ml" value="3">
+    <input type="hidden" id="shelf-days" value="30">
+  </div>
 
-    <!-- All technical fields hidden — set automatically. Power users can override. -->
-    <details id="advanced-inputs" style="margin-bottom:0;">
-      <summary style="cursor:pointer;list-style:none;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;font-weight:700;padding:6px 0;-webkit-tap-highlight-color:transparent;opacity:.7;">⚙ Custom vial size · only tap if you already bought a specific bottle</summary>
-      <div style="padding-top:8px;">
-        <div class="row">
-          <div class="field">
-            <label>Vial size (mg)</label>
-            <input type="number" id="vial-mg" value="10" min="1" max="500">
-          </div>
-          <div class="field">
-            <label>BAC water (mL)</label>
-            <input type="number" id="bac-ml" value="3" step="0.5" min="0.5" max="10">
-          </div>
-        </div>
-        <div class="field" style="margin-bottom:0;">
-          <label>Shelf life (days refrigerated)</label>
-          <input type="number" id="shelf-days" value="30" min="7" max="365">
-        </div>
-      </div>
-    </details>
+    <!-- Hidden mode buttons — toggled via the small text link below the plan -->
+    <button type="button" id="mode-new" onclick="setMode('new')" style="display:none;"></button>
+    <button type="button" id="mode-mid" onclick="setMode('mid')" style="display:none;"></button>
 
-    <!-- WHERE ARE YOU IN YOUR CYCLE? -->
-    <div class="field">
-      <label>Where are you in your cycle?</label>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px;">
-        <button type="button" id="mode-new"     onclick="setMode('new')"     style="padding:14px 8px;border-radius:8px;background:rgba(0,255,157,.10);border:1px solid var(--accent2);color:var(--accent2);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:.04em;cursor:pointer;-webkit-tap-highlight-color:transparent;">🆕 BRAND NEW · WK 1</button>
-        <button type="button" id="mode-mid"     onclick="setMode('mid')"     style="padding:14px 8px;border-radius:8px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:.04em;cursor:pointer;-webkit-tap-highlight-color:transparent;">▶ ALREADY ON CYCLE</button>
-      </div>
-    </div>
-
-    <!-- ALREADY-ON-CYCLE INPUTS — streamlined to TWO questions -->
-    <div id="mid-cycle-fields" style="display:none;background:rgba(0,212,255,.04);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:14px;">
-      <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.16em;color:var(--accent);font-weight:700;text-transform:uppercase;margin-bottom:6px;">▶ JUST TWO QUESTIONS</div>
-      <div style="font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:14px;">We'll figure out which week you're on from your dose. No need to count.</div>
-      <div class="field">
-        <label>What's your total weekly dose right now? (mg)</label>
-        <input type="number" id="last-dose-mg" value="4" min="0.1" step="0.1">
-        <div style="font-size:11px;color:var(--muted);margin-top:6px;line-height:1.45;">Add up everything you inject in a week. Split 2× weekly @ 2 mg = <strong>4 mg</strong>. Daily 0.5 mg × 7 = <strong>3.5 mg</strong>. Doesn't matter how you split it — just total weekly mg.</div>
-      </div>
-      <div class="field" style="margin-bottom:0;">
-        <label>How many more weeks do you want to stay on this protocol?</label>
-        <input type="number" id="forward-weeks" value="12" min="1" max="52">
-        <div style="font-size:11px;color:var(--muted);margin-top:6px;line-height:1.45;">We'll plan all your bottle purchases for that window. Default 12 wks = ~3-month plan.</div>
-      </div>
-      <!-- Hidden: derived from dose -->
-      <input type="hidden" id="current-week" value="1">
-    </div>
+    <!-- mid-cycle inputs moved to results section (revealed via toggle link) -->
 
     <!-- Strategy + flat-dose inputs hidden inside Advanced (auto = titration for first-timers) -->
     <details id="strategy-advanced" style="margin-bottom:14px;display:none;">
@@ -154,8 +117,28 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
   <div id="results" class="results">
 
     <div class="card">
-      <div class="eyebrow">📦 Your purchase plan</div>
+      <div class="eyebrow">📦 Your full plan</div>
       <div id="r-recommend" class="recommend"></div>
+
+      <!-- Tiny mode-switch link below the plan -->
+      <div style="margin-top:14px;text-align:center;">
+        <a id="mode-link" href="javascript:void(0)" onclick="toggleMode()" style="display:inline-block;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);text-decoration:underline;text-transform:uppercase;font-weight:700;-webkit-tap-highlight-color:transparent;">▶ I'm already on a cycle · adjust plan</a>
+      </div>
+    </div>
+
+    <!-- MID-CYCLE INPUTS — only revealed when user taps the link above -->
+    <div id="mid-cycle-fields" style="display:none;background:rgba(0,212,255,.04);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.16em;color:var(--accent);font-weight:700;text-transform:uppercase;margin-bottom:6px;">▶ TWO QUESTIONS</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:14px;">We'll figure out your week from your dose.</div>
+      <div class="field">
+        <label>What's your total weekly dose right now? (mg)</label>
+        <input type="number" id="last-dose-mg" value="4" min="0.1" step="0.1" oninput="runPlanner()">
+      </div>
+      <div class="field" style="margin-bottom:0;">
+        <label>How many more weeks do you want to plan?</label>
+        <input type="number" id="forward-weeks" value="12" min="1" max="52" oninput="runPlanner()">
+      </div>
+      <input type="hidden" id="current-week" value="1">
     </div>
 
     <!-- DETAILED BREAKDOWN — collapsed by default, for users who want the math -->
@@ -178,16 +161,18 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
       </div>
     </details>
 
-    <!-- SAVE / SHARE PLAN -->
-    <div class="card">
-      <div class="eyebrow">💾 Save this plan</div>
-      <div style="font-size:13px;color:var(--muted);line-height:1.5;margin:6px 0 12px;">Pull this exact plan back up later or send the link to your coach / supplier.</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <button class="btn" style="flex:1;min-width:140px;font-size:13px;padding:12px;" onclick="sharePlan()">🔗 Copy share link</button>
-        <button class="btn btn-ghost" style="flex:1;min-width:140px;font-size:13px;padding:12px;" onclick="savePlan()">⭐ Save to my plans</button>
+    <!-- SAVE / SHARE PLAN — collapsed -->
+    <details style="background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:14px;">
+      <summary style="cursor:pointer;list-style:none;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;font-weight:700;-webkit-tap-highlight-color:transparent;">💾 Save or share this plan</summary>
+      <div style="padding-top:14px;">
+        <div style="font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:12px;">Pull this plan back up later or send the link to your coach / supplier.</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn" style="flex:1;min-width:140px;font-size:13px;padding:12px;" onclick="sharePlan()">🔗 Copy share link</button>
+          <button class="btn btn-ghost" style="flex:1;min-width:140px;font-size:13px;padding:12px;" onclick="savePlan()">⭐ Save to my plans</button>
+        </div>
+        <div id="share-status" style="margin-top:10px;font-size:12px;color:var(--accent2);font-family:'Share Tech Mono',monospace;letter-spacing:.04em;text-align:center;display:none;"></div>
       </div>
-      <div id="share-status" style="margin-top:10px;font-size:12px;color:var(--accent2);font-family:'Share Tech Mono',monospace;letter-spacing:.04em;text-align:center;display:none;"></div>
-    </div>
+    </details>
 
     <!-- MY SAVED PLANS -->
     <div id="saved-plans-card" class="card" style="display:none;">
@@ -246,6 +231,15 @@ h1 { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 32px; let
   }
   // Mode toggle: BRAND NEW vs ALREADY ON CYCLE
   let cycleMode = 'new';
+  window.toggleMode = function(){
+    setMode(cycleMode === 'new' ? 'mid' : 'new');
+    const link = document.getElementById('mode-link');
+    if (link) link.textContent = cycleMode === 'mid' ? '🆕 BACK TO BRAND-NEW PLAN' : '▶ I\'m already on a cycle · adjust plan';
+    // Show/hide mid-cycle inputs (now revealed inline below the plan)
+    const midFields = document.getElementById('mid-cycle-fields');
+    if (midFields) midFields.style.display = cycleMode === 'mid' ? 'block' : 'none';
+  };
+
   window.setMode = function(mode){
     cycleMode = mode;
     const newBtn = document.getElementById('mode-new');
