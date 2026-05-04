@@ -761,27 +761,35 @@ const MEAL_PLAN = [
 // PEPTIDE STACK — Neil's daily + weekly schedule
 // dayOfWeek: 0=Sun, 1=Mon ... ; 'all' = every day
 // ─────────────────────────────────────────────
+// ─────────────────────────────────────────────
+// PEPTIDE STACK — Neil's daily + weekly schedule
+// SSOT INTEGRATION: each entry has a `ssot` slug that links to /data/peptides.json.
+// `dose` field is Neil's CURRENT protocol value. SSOT-drift audit runs on page load
+// and console-warns if Apex encyclopedia values change vs what's hard-coded here.
+// To intentionally override SSOT (e.g., Neil's loading dose vs Apex maintenance),
+// add `ssotOverride: true` to mark it acceptable.
+// ─────────────────────────────────────────────
 const PEPTIDES = [
   // ── DAILY AM FASTED (before walk) ──
   { id:'5amq',   name:'5-Amino-1MQ',     dose:'2 mg · 40u (10mg/2mL recon)', window:'AM fasted SubQ', days:'all', tag:'NNMT', color:'#FBBF24', ssot:'5amino1mq.html' },
   { id:'slupp',  name:'SLU-PP-332',      dose:'1 pill',         window:'AM fasted',          days:'all',      tag:'ERRα',  color:'#F472B6', ssot:'slu-pp-322.html' },
-  { id:'lcarAM', name:'L-Carnitine (AM)', dose:'50u · 25 mg (PRE-MIXED 50mg/mL)', window:'AM fasted · 30min before Walk #1', days:'all', tag:'fat-ox', color:'#A78BFA', ssot:'l-carnitine.html' },
+  { id:'lcarAM', name:'L-Carnitine (AM)', dose:'50u · 25 mg (PRE-MIXED 50mg/mL)', window:'AM fasted · 30min before Walk #1', days:'all', tag:'fat-ox', color:'#A78BFA', ssot:'l-carnitine.html', ssotOverride:'pre-mixed bottle, not lyo' },
   { id:'anavarAM', name:'Anavar',         dose:'25 mg oral',     window:'AM with food',       days:'all',      tag:'Rx',    color:'#FF6B35', ssot:null },
   { id:'bpcAM',  name:'BPC-157',         dose:'250 mcg · 5u',   window:'AM',                 days:'all',      tag:'heal',  color:'#34D399', ssot:'bpc157.html' },
   { id:'ghkcu',  name:'GHK-Cu',          dose:'2 mg · 12u (50mg vial / 3mL BAC)', window:'AM · separate site from TB-500 (copper degrades it)', days:'all', tag:'collagen', color:'#A78BFA', ssot:'ghkcu.html' },
   { id:'tesa',   name:'Tesamorelin',     dose:'30u · 1.5 mg (10mg vial / 2mL BAC = 5 mg/mL)', window:'AM fasted · 2hrs before food', days:'all', tag:'VAT', color:'#00FF9D', ssot:'tesamorelin.html' },
   // ── PRE-GYM (sustains plasma L-Carnitine through the noon lift) ──
-  { id:'lcarPM', name:'L-Carnitine (pre-gym)', dose:'50u · 25 mg (PRE-MIXED 50mg/mL)', window:'Pre-workout ~11:30am · sustains plasma into the lift', days:'all', tag:'fat-ox', color:'#A78BFA', ssot:'l-carnitine.html' },
+  { id:'lcarPM', name:'L-Carnitine (pre-gym)', dose:'50u · 25 mg (PRE-MIXED 50mg/mL)', window:'Pre-workout ~11:30am · sustains plasma into the lift', days:'all', tag:'fat-ox', color:'#A78BFA', ssot:'l-carnitine.html', ssotOverride:'pre-mixed bottle, not lyo' },
   // ── POST-WORKOUT (every training day) ──
   { id:'igf',    name:'IGF-1 LR3 (site-target)', dose:'30u total · 15u per worked muscle group', window:'Post-workout · split into worked muscles', days:'all', tag:'GH', color:'#00D4FF', ssot:'igf1-lr3.html' },
   // ── DAILY PM ──
   { id:'anavarPM', name:'Anavar',         dose:'25 mg oral',     window:'PM with food',       days:'all',      tag:'Rx',    color:'#FF6B35', ssot:null },
   { id:'bpcPM',  name:'BPC-157',         dose:'250 mcg · 5u',   window:'PM',                 days:'all',      tag:'heal',  color:'#34D399', ssot:'bpc157.html' },
   // ── DAILY TRT (pre-mixed 250 mg/mL) ──
-  { id:'test',   name:'Testosterone Cyp',dose:'30u (75 mg)',    window:'Daily AM · 250 mg/mL pre-mix', days:'all', tag:'TRT', color:'#F472B6', ssot:'testosterone-cyp.html' },
+  { id:'test',   name:'Testosterone Cyp',dose:'30u (75 mg)',    window:'Daily AM · 250 mg/mL pre-mix', days:'all', tag:'TRT', color:'#F472B6', ssot:'testosterone-cyp.html', ssotOverride:'cut/blast 525 mg/wk daily, not 200/wk standard TRT' },
   { id:'hcg',    name:'HCG',             dose:'500 IU · 30u',   window:'AM · Mon · Wed · Fri', days:[1,3,5], tag:'fertility', color:'#FBBF24', ssot:null, note:'5000 IU vial + 3 mL BAC → 1667 IU/mL · 30u draw = 500 IU. Maintains testicular size + libido + fertility on TRT. Refrigerate after mixing, use within 30 days.' },
   // ── 2x WEEKLY (Mon + Thu) ──
-  { id:'tb',     name:'TB-500',          dose:'5 mg · 50u',     window:'AM · Mon + Thu',     days:[1,4],      tag:'heal',  color:'#34D399', ssot:'tb500.html' },
+  { id:'tb',     name:'TB-500',          dose:'5 mg · 50u',     window:'AM · Mon + Thu',     days:[1,4],      tag:'heal',  color:'#34D399', ssot:'tb500.html', ssotOverride:'loading dose wks 1-4 (5mg vs 2.5mg maintenance)' },
   // ── 3x WEEKLY (Mon · Wed · Fri) ──
   { id:'reta',   name:'Retatrutide',     dose:'25u',            window:'AM · M · W · F',     days:[1,3,5],    tag:'GLP-1', color:'#00FF9D', ssot:'retatrutide.html' },
   { id:'nad',    name:'NAD+',            dose:'20u',            window:'M · W · F AM',       days:[1,3,5],    tag:'mito',  color:'#FBBF24', ssot:'nad-plus.html' },
@@ -2008,6 +2016,40 @@ function checkPerfectDay(){
   }
 }
 
+// ─────────────────────────────────────────────
+// SSOT AUDIT — runs on page load. Verifies cut-app peptide doses against
+// /data/peptides.json (Apex encyclopedia). Logs drift warnings to console.
+// Acceptable drifts have ssotOverride:'reason' on the entry.
+// ─────────────────────────────────────────────
+function auditSSOT(){
+  if (!window.APEX_PEPTIDES) {
+    console.warn('[SSOT] window.APEX_PEPTIDES not loaded — peptide-data.js missing or failed.');
+    return;
+  }
+  const issues = [];
+  PEPTIDES.forEach(p => {
+    if (!p.ssot) return;
+    const s = window.APEX_PEPTIDES[p.ssot];
+    if (!s) {
+      issues.push(`${p.name} → SSOT slug '${p.ssot}' not found in encyclopedia`);
+      return;
+    }
+    if (p.ssotOverride) return; // intentional drift, skip
+    // Extract mg from cut-app dose string and compare to SSOT dose_mg_per_inj
+    const cutMgMatch = String(p.dose).match(/(\d+(?:\.\d+)?)\s*mg(?!\/)/);
+    const cutMg = cutMgMatch ? parseFloat(cutMgMatch[1]) : null;
+    const ssotMg = s.dose_mg_per_inj;
+    if (cutMg && ssotMg && Math.abs(cutMg - ssotMg) > 0.05) {
+      issues.push(`${p.name} → cut shows ${cutMg}mg, SSOT says ${ssotMg}mg (no override flag)`);
+    }
+  });
+  if (issues.length) {
+    console.warn('[SSOT AUDIT]', issues.length, 'drift(s) detected:', issues);
+  } else {
+    console.log('[SSOT AUDIT] ✓ All linked peptides match Apex encyclopedia.');
+  }
+}
+
 function safe(name, fn){ try { fn(); } catch(e) { console.error('[render]', name, e.message); } }
 function renderAll(){
   safe('Hero',          renderHero);
@@ -2029,6 +2071,8 @@ function renderAll(){
   renderRules();
   renderProgress();
 }
+// Run SSOT audit on boot — warns in console if Apex encyclopedia drifts from cut app
+auditSSOT();
 renderAll();
 
 // ── GLOBAL TAP HAPTIC: every button + every card click triggers feedback ──
