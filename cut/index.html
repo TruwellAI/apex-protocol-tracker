@@ -1175,14 +1175,47 @@ function renderPeptides(){
       post:  { label:'⚡ POST-WORKOUT — within 30 min of last set', color:'var(--accent)' },
       pm:    { label:'🌙 PM / EVENING', color:'#A78BFA' },
     };
+    function shortDose(p){
+      const d = String(p.dose);
+      // priority: units (e.g. "30u", "40u"), then "N mg oral" / "N pill" / mcg
+      const u = d.match(/(\d+(?:\.\d+)?)\s*u\b/i);            if (u) return u[1] + 'u';
+      const pill = d.match(/(\d+(?:\.\d+)?)\s*pill/i);        if (pill) return pill[1] + ' pill';
+      const oral = d.match(/(\d+(?:\.\d+)?)\s*mg\s*oral/i);   if (oral) return oral[1] + ' mg';
+      const mg = d.match(/(\d+(?:\.\d+)?)\s*mg\b/i);          if (mg) return mg[1] + ' mg';
+      const mcg = d.match(/(\d+(?:\.\d+)?)\s*mcg\b/i);        if (mcg) return mcg[1] + ' mcg';
+      return d.split('·')[0].trim();
+    }
+    function timingPills(p){
+      const w = String(p.window).toLowerCase();
+      const isPM = /\bpm\b|evening|bedtime|dinner|5:30|6pm/.test(w);
+      const isAM = !isPM && /\bam\b|morning|breakfast/.test(w);
+      const fasted = /fasted/.test(w);
+      const food   = /with food|with dinner|with breakfast/.test(w);
+      const pills = [];
+      if (isPM) pills.push(`<span style="background:rgba(167,139,250,.14);color:#A78BFA;border:1px solid rgba(167,139,250,.45);padding:2px 7px;border-radius:4px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.1em;font-weight:700;">PM</span>`);
+      else if (isAM) pills.push(`<span style="background:rgba(0,255,157,.12);color:var(--accent2);border:1px solid rgba(0,255,157,.45);padding:2px 7px;border-radius:4px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.1em;font-weight:700;">AM</span>`);
+      if (fasted) pills.push(`<span style="background:rgba(0,212,255,.12);color:var(--accent);border:1px solid rgba(0,212,255,.45);padding:2px 7px;border-radius:4px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.1em;font-weight:700;">FASTED</span>`);
+      else if (food) pills.push(`<span style="background:rgba(255,107,53,.12);color:#FF6B35;border:1px solid rgba(255,107,53,.45);padding:2px 7px;border-radius:4px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.1em;font-weight:700;">W/ FOOD</span>`);
+      // day badge for non-daily
+      if (Array.isArray(p.days)) {
+        const sd = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+        const dayStr = p.days.map(d => sd[d]).join('·');
+        pills.push(`<span style="background:rgba(251,191,36,.12);color:#FBBF24;border:1px solid rgba(251,191,36,.45);padding:2px 7px;border-radius:4px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.1em;font-weight:700;">${dayStr}</span>`);
+      }
+      return pills.join(' ');
+    }
     const cardHtml = (p) => {
       const isDoneToday = isViewingToday && t.peptides[p.id];
       const clickable = isViewingToday;
       return `<div class="card ${isDoneToday?'done':''}" ${clickable?`onclick="togglePep('${p.id}')"`:'style="cursor:default;opacity:.85;"'}>
         <div class="card-check">${isDoneToday?'✓':''}</div>
         <div class="card-body">
-          <div class="card-name">${p.name} <span class="tag" style="background:${p.color}22;color:${p.color};border:1px solid ${p.color};">${p.tag}</span></div>
-          <div class="card-meta">${p.dose} · ${p.window}</div>
+          <div class="card-name" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;white-space:normal;">
+            <span>${p.name}</span>
+            <span style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:15px;color:${p.color};letter-spacing:.3px;">${shortDose(p)}</span>
+            ${timingPills(p)}
+          </div>
+          <div class="card-meta" style="margin-top:3px;opacity:.75;">${p.window}</div>
         </div>
       </div>`;
     };
