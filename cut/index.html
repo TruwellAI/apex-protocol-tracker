@@ -463,18 +463,14 @@ body { padding-bottom: 90px; }
           <span id="proj-eod-burn" style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:16px;color:var(--warn);">— cal EOD</span>
         </div>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
           <div class="ac-field" style="margin:0;">
-            <label style="font-size:9px;letter-spacing:.1em;color:var(--warn);font-weight:700;">☀ NOON</label>
-            <input type="number" id="in-noon-kcal" placeholder="0" inputmode="numeric" oninput="saveDayTotal()" style="font-size:14px;padding:8px;">
+            <label style="font-size:10px;letter-spacing:.1em;color:var(--accent);font-weight:700;">🏋︎ POST-GYM</label>
+            <input type="number" id="in-postgym-kcal" placeholder="0" inputmode="numeric" oninput="saveDayTotal()" style="font-size:15px;padding:10px;">
           </div>
           <div class="ac-field" style="margin:0;">
-            <label style="font-size:9px;letter-spacing:.1em;color:var(--accent);font-weight:700;">🏋︎ POST-GYM</label>
-            <input type="number" id="in-postgym-kcal" placeholder="0" inputmode="numeric" oninput="saveDayTotal()" style="font-size:14px;padding:8px;">
-          </div>
-          <div class="ac-field" style="margin:0;">
-            <label style="font-size:9px;letter-spacing:.1em;color:var(--accent3);font-weight:700;">🌙 EOD</label>
-            <input type="number" id="in-eod-kcal" placeholder="0" inputmode="numeric" oninput="saveDayTotal()" style="font-size:14px;padding:8px;">
+            <label style="font-size:10px;letter-spacing:.1em;color:var(--accent3);font-weight:700;">🌙 EOD</label>
+            <input type="number" id="in-eod-kcal" placeholder="0" inputmode="numeric" oninput="saveDayTotal()" style="font-size:15px;padding:10px;">
           </div>
         </div>
 
@@ -491,7 +487,7 @@ body { padding-bottom: 90px; }
       <!-- 🤖 SMART RECOMMENDATION: tells you EXACTLY what to eat + how far to walk -->
       <div id="smart-rec" style="margin-top:10px;padding:12px;background:linear-gradient(135deg,rgba(0,212,255,.08),rgba(0,255,157,.04));border:1px solid var(--border2);border-radius:8px;">
         <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--accent);font-weight:700;margin-bottom:6px;">🤖 RECOMMENDATION · stay at −1000</div>
-        <div id="smart-rec-body" style="font-size:12px;color:var(--text);line-height:1.55;">Log your noon cal-burn above to get a tailored plan for afternoon + PM walk.</div>
+        <div id="smart-rec-body" style="font-size:12px;color:var(--text);line-height:1.55;">Log your post-gym cal-burn above to get a tailored plan for afternoon + PM walk.</div>
       </div>
 
       <!-- 🍽 MACRO FILLER: greedy food pick to hit remaining cal/P/C/F -->
@@ -1757,23 +1753,20 @@ function saveDayTotal(){
   if (!s.daily[todayKey()].activity) s.daily[todayKey()].activity = {};
   const stepsEl = document.getElementById('in-day-steps');
   const kcalEl  = document.getElementById('in-day-kcal');
-  const noonEl  = document.getElementById('in-noon-kcal');
   const pgEl    = document.getElementById('in-postgym-kcal');
   const eodEl   = document.getElementById('in-eod-kcal');
   const pmEl    = document.getElementById('in-pm-projection');
   const a = s.daily[todayKey()].activity;
   a.daySteps = stepsEl ? parseInt(stepsEl.value)||0 : 0;
-  a.noonKcal    = noonEl ? parseInt(noonEl.value)||0 : 0;
   a.postGymKcal = pgEl   ? parseInt(pgEl.value)  ||0 : 0;
   a.eodKcal     = eodEl  ? parseInt(eodEl.value) ||0 : 0;
   // Latest non-zero check-in becomes the official "burned so far"
   const fromTopOfDay = parseInt(kcalEl?.value) || 0;
-  a.dayKcal = a.eodKcal || a.postGymKcal || a.noonKcal || fromTopOfDay;
-  // Auto-shrink projection: noon→300, post-gym→150, EOD→0
+  a.dayKcal = a.eodKcal || a.postGymKcal || fromTopOfDay;
+  // Auto-shrink projection: post-gym→150, EOD→0, otherwise→300
   let projDefault = 300;
   if (a.eodKcal)        projDefault = 0;
   else if (a.postGymKcal) projDefault = 150;
-  else if (a.noonKcal)  projDefault = 300;
   // Only override if user hasn't typed their own value
   if (pmEl && document.activeElement !== pmEl) {
     if (!a.pmProjection || a.pmProjection === 0) a.pmProjection = projDefault;
@@ -1827,14 +1820,12 @@ function renderChecks(){
   // Day-total inputs
   const stepsIn = document.getElementById('in-day-steps');
   const kcalIn  = document.getElementById('in-day-kcal');
-  const noonIn  = document.getElementById('in-noon-kcal');
   const pgIn    = document.getElementById('in-postgym-kcal');
   const eodIn   = document.getElementById('in-eod-kcal');
   if (stepsIn && document.activeElement !== stepsIn && a.daySteps) stepsIn.value = a.daySteps;
   if (kcalIn  && document.activeElement !== kcalIn  && a.dayKcal)  kcalIn.value  = a.dayKcal;
-  if (noonIn  && document.activeElement !== noonIn  && a.noonKcal)    noonIn.value = a.noonKcal;
-  if (pgIn    && document.activeElement !== pgIn    && a.postGymKcal) pgIn.value   = a.postGymKcal;
-  if (eodIn   && document.activeElement !== eodIn   && a.eodKcal)     eodIn.value  = a.eodKcal;
+  if (pgIn    && document.activeElement !== pgIn    && a.postGymKcal) pgIn.value  = a.postGymKcal;
+  if (eodIn   && document.activeElement !== eodIn   && a.eodKcal)     eodIn.value = a.eodKcal;
   // Steps progress bar toward 10k goal
   const bar = document.getElementById('steps-progress-bar');
   if (bar) bar.style.width = Math.min(100, ((a.daySteps||0)/10000)*100) + '%';
@@ -1887,7 +1878,7 @@ function renderChecks(){
       // Already over — stop eating
       html = `<strong style="color:var(--bad);">🛑 You're at or over the EOD goal.</strong> Stop eating for the day. PM walk still happens — every step now is pure deficit boost. <strong>Skip remaining planned meals</strong> (${remainingMealNames || 'none scheduled'}). Hydrate, hit the walk, lock the day.`;
     }
-    recEl.innerHTML = html || 'Log your noon cal-burn to get a tailored plan.';
+    recEl.innerHTML = html || 'Log your post-gym cal-burn to get a tailored plan.';
   }
 
   // ── MACRO FILLER ──
