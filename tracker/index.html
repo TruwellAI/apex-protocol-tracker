@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Cut">
+<meta name="apple-mobile-web-app-title" content="Apex Tracker">
 <meta name="theme-color" content="#0A0A0A">
 <link rel="manifest" href="manifest.json">
 <!-- Apex brand fonts: Rajdhani for headings, Barlow for body, Share Tech Mono for labels -->
@@ -15,7 +15,7 @@
 <!-- ENCYCLOPEDIA INTEGRATION: pulls SSOT + interaction engine + units math from main Apex app -->
 <script src="../data/peptide-data.js?v=20260502a"></script>
 <script src="../assets/apex-stack-render.js?v=20260502a"></script>
-<title>Neil's Cut · 239 → 22 lb fat</title>
+<title>Apex Tracker · Custom Protocol</title>
 <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="pragma" content="no-cache">
 <meta http-equiv="expires" content="0">
@@ -823,7 +823,7 @@ const MEAL_PLAN = [
 // To intentionally override SSOT (e.g., Neil's loading dose vs Apex maintenance),
 // add `ssotOverride: true` to mark it acceptable.
 // ─────────────────────────────────────────────
-const PEPTIDES = [
+let PEPTIDES = [
   // ── DAILY AM FASTED (before walk) ──
   { id:'5amq',   name:'5-Amino-1MQ',     dose:'2 mg · 40u (10mg/2mL recon)', window:'AM fasted SubQ', days:'all', tag:'NNMT', color:'#FBBF24', ssot:'5amino1mq.html' },
   { id:'slupp',  name:'SLU-PP-332',      dose:'1 pill',         window:'AM fasted',          days:'all',      tag:'ERRα',  color:'#F472B6', ssot:'slu-pp-322.html' },
@@ -850,6 +850,54 @@ const PEPTIDES = [
   { id:'mots',   name:'MOTS-c',          dose:'60u · 2 mg per dose (6 mg/wk total · 10mg vial / 3mL BAC = 3.33 mg/mL)', window:'AM · M · W · F', days:[1,3,5], tag:'mito', color:'#FBBF24', ssot:'motsc.html' },
 ];
 
+// ─────────────────────────────────────────────
+// CUSTOM PROTOCOL OVERRIDE
+// If user came through /start/ wizard, apex_protocol_v1 lives in localStorage.
+// Replace PEPTIDES with their stack + sync macros into the cut state.
+// ─────────────────────────────────────────────
+(function applyCustomProtocol(){
+  let proto;
+  try { proto = JSON.parse(localStorage.getItem('apex_protocol_v1')); } catch(e){}
+  if (!proto || !proto.stack) {
+    // No wizard data — redirect to /start/ unless they're already there
+    if (!location.search.includes('skip')) {
+      location.replace('../start/');
+    }
+    return;
+  }
+  // Map their stack to PEPTIDES schema
+  PEPTIDES = proto.stack.map(s => {
+    const doseStr = s.oral
+      ? `${s.perDoseMg||0} mg oral`
+      : (s.perDoseUnits ? `${s.perDoseUnits}u · ${(s.perDoseMg||0).toFixed(2)} mg` : `${s.perDoseMg||0} mg`);
+    return {
+      id: s.id,
+      name: s.name,
+      dose: doseStr,
+      window: s.window + (s.fasted ? ' fasted' : ''),
+      days: s.days || 'all',
+      tag: s.tag || 'custom',
+      color: s.color || '#00D4FF',
+      ssot: null,
+    };
+  });
+  // Sync macros into the cut app's state on first run after wizard
+  try {
+    const KEY_LOCAL = 'apex_tracker_v1';
+    const cs = JSON.parse(localStorage.getItem(KEY_LOCAL) || '{}');
+    if (proto.macros && (!cs._protocolApplied || cs._protocolApplied !== proto.createdAt)) {
+      cs.targetCal = proto.macros.cal;
+      cs.targetP   = proto.macros.p;
+      cs.targetC   = proto.macros.c;
+      cs.targetF   = proto.macros.f;
+      cs.startWeight = proto.user.weight;
+      cs.goalBF      = proto.user.goalBf;
+      cs._protocolApplied = proto.createdAt;
+      localStorage.setItem(KEY_LOCAL, JSON.stringify(cs));
+    }
+  } catch(e){}
+})();
+
 const TRAIN = [
   { d:1, name:'Chest + Tris',  body:'Bench · Incline · Fly · Skull · Pushdown · Dip',  sets:'5×5 · 4×8 · 3×12 · 4×10 · 3×12 · 3×12' },
   { d:2, name:'Back + Bis',    body:'Deadlift · Row · Pull-up · Curl · Hammer · Preacher', sets:'5×5 · 4×8 · 3×AMRAP · 4×8 · 3×10 · 3×12' },
@@ -863,7 +911,7 @@ const TRAIN = [
 // ─────────────────────────────────────────────
 // STATE
 // ─────────────────────────────────────────────
-const KEY = 'cut_app_v1';
+const KEY = 'apex_tracker_v1';  // isolated from /cut/ Neil-only data
 function todayKey(){
   const d = new Date();
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
