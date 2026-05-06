@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Apex · Build My Cut</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Apex Build">
+<meta name="theme-color" content="#0A0A0A">
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0A0A0A; --panel:#121212; --panel2:#1A1A1A;
+  --border:#222; --border2:#2A2A2A;
+  --text:#F0F0F0; --muted:#888;
+  --accent:#00D4FF; --accent2:#00FF9D; --accent3:#A78BFA;
+  --warn:#FBBF24; --danger:#FF6B35;
+}
+* { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html, body { margin:0; background:var(--bg); color:var(--text); font-family:'Barlow',-apple-system,sans-serif; -webkit-font-smoothing:antialiased; min-height:100vh; }
+.eyebrow { font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:.18em; color:var(--muted); font-weight:700; text-transform:uppercase; }
+h1, h2, h3, .h { font-family:'Rajdhani',sans-serif; letter-spacing:-.3px; font-weight:800; margin:0; }
+.label { font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:.14em; color:var(--muted); font-weight:700; text-transform:uppercase; display:block; margin-bottom:6px; }
+.note { font-size:13px; color:var(--muted); line-height:1.5; }
+
+.wrap { max-width:560px; margin:0 auto; padding:20px 18px 120px; }
+.brand { display:flex; align-items:center; gap:10px; margin-bottom:16px; }
+.brand-logo { width:36px; height:36px; border-radius:8px; background:linear-gradient(135deg,var(--accent),var(--accent2)); display:flex; align-items:center; justify-content:center; font-family:'Rajdhani',sans-serif; font-weight:800; color:#000; font-size:18px; }
+.brand-name { font-family:'Rajdhani',sans-serif; font-weight:800; font-size:18px; letter-spacing:-.4px; }
+
+.progress { display:flex; gap:6px; margin-bottom:24px; }
+.progress-step { flex:1; height:4px; background:var(--border); border-radius:2px; transition:background .2s; }
+.progress-step.on { background:var(--accent); }
+.progress-step.done { background:var(--accent2); }
+
+.step { display:none; animation:fadeIn .25s ease-out; }
+.step.on { display:block; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px);} to {opacity:1; transform:translateY(0);} }
+
+.input, .select, textarea { width:100%; background:var(--panel); border:1px solid var(--border); border-radius:10px; color:var(--text); padding:14px; font-size:16px; font-family:inherit; -webkit-appearance:none; }
+.input:focus { outline:none; border-color:var(--accent); }
+.row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.row3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+
+.tile { background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:14px; cursor:pointer; transition:all .15s; }
+.tile:hover { border-color:var(--accent); }
+.tile.on { background:rgba(0,212,255,.08); border-color:var(--accent); }
+.tile.on.green { background:rgba(0,255,157,.08); border-color:var(--accent2); }
+.tile-top { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; }
+.tile-name { font-family:'Rajdhani',sans-serif; font-weight:700; font-size:15px; }
+.tile-meta { font-size:11px; color:var(--muted); margin-top:4px; line-height:1.4; }
+.tile-tag { font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:.1em; padding:2px 6px; border-radius:4px; font-weight:700; }
+
+.deficit-pill { padding:18px 12px; border-radius:14px; cursor:pointer; transition:all .15s; text-align:center; background:var(--panel); border:1px solid var(--border); }
+.deficit-pill.on { background:rgba(255,107,53,.1); border-color:var(--danger); }
+.deficit-pill .v { font-family:'Rajdhani',sans-serif; font-weight:800; font-size:24px; color:var(--text); }
+.deficit-pill .l { font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:.1em; color:var(--muted); margin-top:4px; font-weight:700; }
+.deficit-pill .desc { font-size:10px; color:var(--muted); margin-top:6px; line-height:1.3; }
+
+.btn { padding:16px 22px; border-radius:12px; border:none; font-family:'Rajdhani',sans-serif; font-weight:800; font-size:15px; letter-spacing:.06em; text-transform:uppercase; cursor:pointer; transition:all .15s; }
+.btn-primary { background:linear-gradient(135deg,var(--accent2),var(--accent)); color:#000; }
+.btn-primary:hover { transform:translateY(-1px); }
+.btn-ghost { background:transparent; border:1px solid var(--border); color:var(--muted); }
+.btn-block { width:100%; }
+
+.nav-bar { position:fixed; bottom:0; left:0; right:0; padding:14px 18px calc(14px + env(safe-area-inset-bottom)); background:linear-gradient(to top,var(--bg) 60%,rgba(10,10,10,0)); display:flex; gap:10px; max-width:560px; margin:0 auto; }
+
+.peptide-card { background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:14px; margin-bottom:10px; }
+.peptide-card-h { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+.peptide-card-name { font-family:'Rajdhani',sans-serif; font-weight:700; font-size:16px; color:var(--accent); }
+.peptide-rm { background:transparent; border:none; color:var(--muted); cursor:pointer; font-size:14px; padding:4px 8px; }
+.recon-out { background:rgba(0,255,157,.06); border:1px solid var(--accent2); border-radius:8px; padding:10px 12px; margin-top:10px; font-size:13px; color:var(--text); line-height:1.5; }
+.recon-out strong { color:var(--accent2); font-family:'Rajdhani',sans-serif; font-weight:800; }
+
+.summary-row { display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border); font-size:14px; }
+.summary-row:last-child { border-bottom:none; }
+.summary-label { color:var(--muted); }
+.summary-val { font-family:'Rajdhani',sans-serif; font-weight:700; color:var(--text); }
+
+.macro-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:14px 0; }
+.macro-tile { background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:14px; text-align:center; }
+.macro-tile .v { font-family:'Rajdhani',sans-serif; font-weight:800; font-size:24px; }
+.macro-tile .l { font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:.12em; color:var(--muted); margin-top:4px; font-weight:700; }
+.macro-tile.cal { background:rgba(255,107,53,.08); border-color:var(--danger); }
+.macro-tile.cal .v { color:var(--danger); }
+.macro-tile.p .v { color:var(--accent); }
+.macro-tile.c .v { color:var(--warn); }
+.macro-tile.f .v { color:var(--accent3); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="brand">
+    <div class="brand-logo">A</div>
+    <div>
+      <div class="brand-name">APEX</div>
+      <div class="eyebrow">Build my custom protocol</div>
+    </div>
+  </div>
+
+  <div class="progress" id="progress"></div>
+
+  <!-- ═══ STEP 1 — BODY STATS ═══ -->
+  <div class="step on" data-step="1">
+    <div class="eyebrow">Step 1 of 5</div>
+    <h1 style="font-size:30px; margin:6px 0 8px;">Where are you starting?</h1>
+    <p class="note">We need your bodyweight + body fat to calculate your lean mass. Lean mass drives macros.</p>
+
+    <div style="margin-top:20px;">
+      <label class="label">Current weight (lb)</label>
+      <input class="input" id="in-weight" type="number" inputmode="decimal" step="0.1" placeholder="e.g. 215">
+    </div>
+    <div class="row" style="margin-top:14px;">
+      <div>
+        <label class="label">Body fat %</label>
+        <input class="input" id="in-bf" type="number" inputmode="decimal" step="0.1" placeholder="e.g. 18">
+        <div class="note" style="margin-top:6px;font-size:11px;">If you don't know, estimate: visible 6-pack ≈ 8-10%, slight ab outline ≈ 12-15%, no abs ≈ 18-22%, soft midsection ≈ 25%+</div>
+      </div>
+      <div>
+        <label class="label">Goal body fat %</label>
+        <input class="input" id="in-bfgoal" type="number" inputmode="decimal" step="0.1" placeholder="e.g. 10">
+      </div>
+    </div>
+    <div class="row" style="margin-top:14px;">
+      <div>
+        <label class="label">Age</label>
+        <input class="input" id="in-age" type="number" inputmode="numeric" placeholder="35">
+      </div>
+      <div>
+        <label class="label">Sex</label>
+        <select class="select input" id="in-sex">
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
+      </div>
+    </div>
+    <div style="margin-top:14px;">
+      <label class="label">Activity level (outside training)</label>
+      <select class="select input" id="in-activity">
+        <option value="1.4">Mostly desk · light walks</option>
+        <option value="1.55" selected>Active · 8-10k steps + 5-6 lifts/wk</option>
+        <option value="1.7">Very active · 12k+ steps + manual labor</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- ═══ STEP 2 — AGGRESSIVENESS ═══ -->
+  <div class="step" data-step="2">
+    <div class="eyebrow">Step 2 of 5</div>
+    <h1 style="font-size:30px; margin:6px 0 8px;">How aggressive?</h1>
+    <p class="note">Bigger deficit = faster fat loss. Too big = muscle loss + sleep wreckage. Pick one.</p>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:18px;" id="deficit-grid"></div>
+
+    <div class="note" style="margin-top:18px; padding:12px; background:rgba(251,191,36,.06); border:1px solid var(--warn); border-radius:8px; color:var(--text); font-size:12px; line-height:1.5;">
+      <strong style="color:var(--warn);">Reality check:</strong> 1000-cal deficit only works with locked nutrition, daily walks, lifting 5-6×/wk, and 8 hrs sleep. If you can't commit to those, drop to 500-750.
+    </div>
+  </div>
+
+  <!-- ═══ STEP 3 — PEPTIDES ═══ -->
+  <div class="step" data-step="3">
+    <div class="eyebrow">Step 3 of 5</div>
+    <h1 style="font-size:30px; margin:6px 0 8px;">Your peptide stack</h1>
+    <p class="note">Add each peptide you're running. We'll compute units-on-the-pen from your vial size + BAC water amount. Skip if you're not on any yet.</p>
+
+    <div id="pep-list" style="margin-top:16px;"></div>
+
+    <button class="btn btn-ghost btn-block" style="margin-top:8px; border-style:dashed; color:var(--accent2); border-color:var(--accent2);" onclick="addPeptide()">＋ Add a peptide</button>
+  </div>
+
+  <!-- ═══ STEP 4 — FOOD PREFERENCES ═══ -->
+  <div class="step" data-step="4">
+    <div class="eyebrow">Step 4 of 5</div>
+    <h1 style="font-size:30px; margin:6px 0 8px;">Foods you actually like</h1>
+    <p class="note">Tap your favorites in each row. We'll bias your meal log toward these.</p>
+
+    <h3 style="margin:24px 0 10px; color:var(--accent);">Proteins</h3>
+    <div id="prot-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;"></div>
+
+    <h3 style="margin:24px 0 10px; color:var(--warn);">Carbs</h3>
+    <div id="carb-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;"></div>
+
+    <h3 style="margin:24px 0 10px; color:var(--accent3);">Fats</h3>
+    <div id="fat-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;"></div>
+  </div>
+
+  <!-- ═══ STEP 5 — REVIEW + LAUNCH ═══ -->
+  <div class="step" data-step="5">
+    <div class="eyebrow">Step 5 of 5</div>
+    <h1 style="font-size:30px; margin:6px 0 8px;">Your protocol</h1>
+    <p class="note">Review. If it looks right, launch your tracker.</p>
+
+    <h3 style="margin:20px 0 10px; color:var(--accent);">Daily macros</h3>
+    <div class="macro-grid" id="macro-summary"></div>
+
+    <h3 style="margin:20px 0 10px; color:var(--accent);">Body</h3>
+    <div id="body-summary"></div>
+
+    <h3 style="margin:20px 0 10px; color:var(--accent);">Stack</h3>
+    <div id="stack-summary"></div>
+
+    <h3 style="margin:20px 0 10px; color:var(--accent);">Foods</h3>
+    <div id="prefs-summary" style="font-size:13px; color:var(--text); line-height:1.7;"></div>
+
+    <button class="btn btn-primary btn-block" style="margin-top:30px;" onclick="launchTracker()">🚀 Launch my tracker</button>
+  </div>
+
+  <div class="nav-bar">
+    <button class="btn btn-ghost" id="btn-back" onclick="prev()" style="flex:1; display:none;">← Back</button>
+    <button class="btn btn-primary" id="btn-next" onclick="next()" style="flex:2;">Continue →</button>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// PEPTIDE LIBRARY (curated, scrollable picker)
+// ─────────────────────────────────────────────
+const PEPTIDE_LIBRARY = [
+  { id:'reta',     name:'Retatrutide',         tag:'GLP-1',  color:'#00FF9D', defaultMg:4,    perWeek:1, suggestedDays:[1,3,5], window:'AM', fasted:true,  vialMg:10 },
+  { id:'sema',     name:'Semaglutide',         tag:'GLP-1',  color:'#00FF9D', defaultMg:1,    perWeek:1, suggestedDays:[1],     window:'AM', fasted:true,  vialMg:5  },
+  { id:'tirz',     name:'Tirzepatide',         tag:'GLP-1',  color:'#00FF9D', defaultMg:5,    perWeek:1, suggestedDays:[1],     window:'AM', fasted:true,  vialMg:10 },
+  { id:'tesa',     name:'Tesamorelin',         tag:'VAT',    color:'#00FF9D', defaultMg:1.5,  perWeek:7, suggestedDays:'all',   window:'AM', fasted:true,  vialMg:10 },
+  { id:'aod',      name:'AOD-9604',            tag:'fat-ox', color:'#A78BFA', defaultMg:0.5,  perWeek:5, suggestedDays:[1,2,3,4,5], window:'AM', fasted:true, vialMg:5 },
+  { id:'5amq',     name:'5-Amino-1MQ',         tag:'NNMT',   color:'#FBBF24', defaultMg:2,    perWeek:7, suggestedDays:'all',   window:'AM', fasted:true,  vialMg:10 },
+  { id:'lcar',     name:'L-Carnitine',         tag:'fat-ox', color:'#A78BFA', defaultMg:25,   perWeek:7, suggestedDays:'all',   window:'AM', fasted:true,  vialMg:500, premixed:true },
+  { id:'bpc',      name:'BPC-157',             tag:'heal',   color:'#34D399', defaultMg:0.25, perWeek:7, suggestedDays:'all',   window:'AM', fasted:false, vialMg:5  },
+  { id:'tb',       name:'TB-500',              tag:'heal',   color:'#34D399', defaultMg:5,    perWeek:2, suggestedDays:[1,4],   window:'AM', fasted:false, vialMg:10 },
+  { id:'ghkcu',    name:'GHK-Cu',              tag:'collagen', color:'#A78BFA', defaultMg:2,  perWeek:7, suggestedDays:'all',   window:'AM', fasted:false, vialMg:50 },
+  { id:'mots',     name:'MOTS-c',              tag:'mito',   color:'#FBBF24', defaultMg:2,    perWeek:3, suggestedDays:[1,3,5], window:'AM', fasted:true,  vialMg:10 },
+  { id:'nad',      name:'NAD+',                tag:'mito',   color:'#FBBF24', defaultMg:50,   perWeek:3, suggestedDays:[1,3,5], window:'AM', fasted:false, vialMg:500 },
+  { id:'igf',      name:'IGF-1 LR3',           tag:'GH',     color:'#00D4FF', defaultMg:0.04, perWeek:7, suggestedDays:'all',   window:'Post-workout', fasted:false, vialMg:1 },
+  { id:'ipa',      name:'Ipamorelin',          tag:'GH',     color:'#00D4FF', defaultMg:0.3,  perWeek:7, suggestedDays:'all',   window:'PM', fasted:true,  vialMg:5  },
+  { id:'cjc',      name:'CJC-1295 (no DAC)',   tag:'GH',     color:'#00D4FF', defaultMg:0.1,  perWeek:7, suggestedDays:'all',   window:'PM', fasted:true,  vialMg:2  },
+  { id:'test',     name:'Testosterone Cyp',    tag:'TRT',    color:'#F472B6', defaultMg:25,   perWeek:7, suggestedDays:'all',   window:'AM', fasted:false, vialMg:1000, premixed:true, premixConc:250 },
+  { id:'hcg',      name:'HCG',                 tag:'TRT',    color:'#FBBF24', defaultMg:0.5,  perWeek:3, suggestedDays:[1,3,5], window:'AM', fasted:false, vialMg:5, unitNote:'5000 IU vial · 500 IU = 0.5 "mg" placeholder' },
+  { id:'anavar',   name:'Anavar (oral)',       tag:'Rx',     color:'#FF6B35', defaultMg:25,   perWeek:14,suggestedDays:'all',   window:'AM+PM with food', fasted:false, oral:true },
+];
+
+const FOOD_PREFS = {
+  protein: ['Chicken breast','Ribeye/steak','Salmon','Tuna','Shrimp','Egg whites','Whole eggs','Greek yogurt','Protein shake','Cottage cheese','Ground turkey','Lean ground beef'],
+  carb:    ['White rice','Sweet potato','Russet potato','Oatmeal','Quinoa','Pasta','Sourdough/bread','Bagel','Berries','Banana','Apple','Brussels sprouts'],
+  fat:     ['Avocado','Olive oil','Almonds/cashews','Peanut butter','Macadamia nuts','Cheese','Butter','Egg yolks','Coconut oil','Dark chocolate','Salmon (fat)','Bacon'],
+};
+
+const DEFICITS = [
+  { v:250,  l:'Conservative', d:'~0.5 lb/wk · easiest to sustain · for recomp' },
+  { v:500,  l:'Moderate',     d:'~1 lb/wk · sustainable for 12+ weeks' },
+  { v:750,  l:'Aggressive',   d:'~1.5 lb/wk · 6-10 wks max · diet locked' },
+  { v:1000, l:'Sprint',       d:'~2 lb/wk · 6 wks max · advanced only' },
+];
+
+// ─────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────
+let currentStep = 1;
+const TOTAL_STEPS = 5;
+const state = {
+  weight: null, bf: null, bfGoal: null, age: 35, sex: 'male', activity: 1.55,
+  deficit: 500,
+  peptides: [], // { libId, name, vialMg, bacMl, mgPerMl, weeklyMg, perDoseMg, perDoseUnits, days, window, fasted, premixed }
+  prefs: { protein:[], carb:[], fat:[] },
+};
+
+// ─────────────────────────────────────────────
+// RENDER HELPERS
+// ─────────────────────────────────────────────
+function renderProgress(){
+  const wrap = document.getElementById('progress');
+  let html = '';
+  for (let i=1; i<=TOTAL_STEPS; i++){
+    const cls = i < currentStep ? 'done' : (i === currentStep ? 'on' : '');
+    html += `<div class="progress-step ${cls}"></div>`;
+  }
+  wrap.innerHTML = html;
+}
+function showStep(n){
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('on'));
+  const target = document.querySelector(`.step[data-step="${n}"]`);
+  if (target) target.classList.add('on');
+  currentStep = n;
+  renderProgress();
+  document.getElementById('btn-back').style.display = n === 1 ? 'none' : 'block';
+  document.getElementById('btn-next').textContent = n === TOTAL_STEPS ? 'Done' : 'Continue →';
+  if (n === TOTAL_STEPS) {
+    document.getElementById('btn-next').style.display = 'none';
+    renderSummary();
+  } else {
+    document.getElementById('btn-next').style.display = 'block';
+  }
+  window.scrollTo(0, 0);
+}
+function next(){
+  if (!validate()) return;
+  if (currentStep < TOTAL_STEPS) showStep(currentStep + 1);
+}
+function prev(){ if (currentStep > 1) showStep(currentStep - 1); }
+
+function validate(){
+  if (currentStep === 1) {
+    state.weight = parseFloat(document.getElementById('in-weight').value);
+    state.bf     = parseFloat(document.getElementById('in-bf').value);
+    state.bfGoal = parseFloat(document.getElementById('in-bfgoal').value) || (state.bf - 5);
+    state.age    = parseInt(document.getElementById('in-age').value) || 35;
+    state.sex    = document.getElementById('in-sex').value;
+    state.activity = parseFloat(document.getElementById('in-activity').value);
+    if (!state.weight || !state.bf) { alert('Enter your weight and body fat %.'); return false; }
+    if (state.weight < 80 || state.weight > 500) { alert('Weight looks off — enter in pounds.'); return false; }
+    if (state.bf < 3 || state.bf > 60) { alert('Body fat % looks off.'); return false; }
+  }
+  return true;
+}
+
+// ─── STEP 2: deficit grid ─────────────────────
+function renderDeficitGrid(){
+  const grid = document.getElementById('deficit-grid');
+  grid.innerHTML = DEFICITS.map(d => `
+    <div class="deficit-pill ${state.deficit===d.v?'on':''}" onclick="pickDeficit(${d.v})">
+      <div class="v">${d.v}</div>
+      <div class="l">cal/day off</div>
+      <div class="desc"><strong>${d.l}</strong><br>${d.d}</div>
+    </div>
+  `).join('');
+}
+function pickDeficit(v){ state.deficit = v; renderDeficitGrid(); }
+
+// ─── STEP 3: peptides ─────────────────────────
+function renderPeptides(){
+  const wrap = document.getElementById('pep-list');
+  if (!state.peptides.length) {
+    wrap.innerHTML = `<div class="note" style="text-align:center; padding:20px; background:var(--panel); border:1px dashed var(--border); border-radius:10px;">No peptides added yet. Tap below to add one.</div>`;
+    return;
+  }
+  wrap.innerHTML = state.peptides.map((p, i) => {
+    const lib = PEPTIDE_LIBRARY.find(x => x.id === p.libId);
+    return `
+      <div class="peptide-card">
+        <div class="peptide-card-h">
+          <div class="peptide-card-name">${p.name || lib?.name || 'Custom'}</div>
+          <button class="peptide-rm" onclick="rmPeptide(${i})">✕</button>
+        </div>
+        ${p.premixed ? `
+          <label class="label">Pre-mix concentration (mg/mL)</label>
+          <input class="input" type="number" inputmode="decimal" value="${p.premixConc||50}" oninput="updPep(${i},'premixConc',this.value);recompute(${i})">
+        ` : `
+          <div class="row">
+            <div>
+              <label class="label">Vial size (mg)</label>
+              <input class="input" type="number" inputmode="decimal" value="${p.vialMg||''}" oninput="updPep(${i},'vialMg',this.value);recompute(${i})">
+            </div>
+            <div>
+              <label class="label">BAC water (mL)</label>
+              <input class="input" type="number" inputmode="decimal" value="${p.bacMl||''}" placeholder="e.g. 2" oninput="updPep(${i},'bacMl',this.value);recompute(${i})">
+            </div>
+          </div>
+        `}
+        <div class="row" style="margin-top:10px;">
+          <div>
+            <label class="label">Weekly total (mg)</label>
+            <input class="input" type="number" inputmode="decimal" step="0.1" value="${p.weeklyMg||''}" oninput="updPep(${i},'weeklyMg',this.value);recompute(${i})">
+          </div>
+          <div>
+            <label class="label">Shots per week</label>
+            <input class="input" type="number" inputmode="numeric" value="${p.perWeek||7}" oninput="updPep(${i},'perWeek',this.value);recompute(${i})">
+          </div>
+        </div>
+        <div id="recon-${i}" class="recon-out"></div>
+      </div>
+    `;
+  }).join('');
+  state.peptides.forEach((_, i) => recompute(i));
+}
+function updPep(i, key, val){ state.peptides[i][key] = parseFloat(val) || val; }
+function rmPeptide(i){ state.peptides.splice(i, 1); renderPeptides(); }
+function addPeptide(){
+  const choice = prompt('Pick a peptide:\n\n' + PEPTIDE_LIBRARY.map((p,n) => `${n+1}. ${p.name}`).join('\n') + '\n\n(or type a custom name)');
+  if (!choice) return;
+  const num = parseInt(choice);
+  let p;
+  if (!isNaN(num) && num >= 1 && num <= PEPTIDE_LIBRARY.length) {
+    const lib = PEPTIDE_LIBRARY[num - 1];
+    p = {
+      libId: lib.id, name: lib.name,
+      vialMg: lib.vialMg, bacMl: 2,
+      weeklyMg: lib.defaultMg * lib.perWeek,
+      perWeek: lib.perWeek,
+      window: lib.window, fasted: lib.fasted,
+      days: lib.suggestedDays,
+      premixed: lib.premixed || false,
+      premixConc: lib.premixConc || 50,
+      oral: lib.oral || false,
+      color: lib.color, tag: lib.tag,
+    };
+  } else {
+    p = { libId:'custom', name:choice.trim(), vialMg:10, bacMl:2, weeklyMg:5, perWeek:7, window:'AM', fasted:false, days:'all', premixed:false, color:'#888', tag:'custom' };
+  }
+  state.peptides.push(p);
+  renderPeptides();
+}
+function recompute(i){
+  const p = state.peptides[i];
+  const out = document.getElementById('recon-'+i);
+  if (!out) return;
+  if (p.oral) {
+    out.innerHTML = `Oral · take <strong>${p.weeklyMg/p.perWeek||0} mg</strong> per dose · ${p.perWeek||0}× per week`;
+    p.perDoseMg = p.weeklyMg / p.perWeek;
+    p.perDoseUnits = null;
+    return;
+  }
+  let mgPerMl;
+  if (p.premixed) {
+    mgPerMl = p.premixConc;
+  } else {
+    if (!p.vialMg || !p.bacMl) { out.innerHTML = `<span style="color:var(--muted);">Enter vial size + BAC water amount.</span>`; return; }
+    mgPerMl = p.vialMg / p.bacMl;
+  }
+  p.mgPerMl = mgPerMl;
+  if (!p.weeklyMg || !p.perWeek) { out.innerHTML = `<span style="color:var(--muted);">Enter weekly mg + shots per week.</span>`; return; }
+  const mgPerDose = p.weeklyMg / p.perWeek;
+  const ml = mgPerDose / mgPerMl;
+  const units = ml * 100; // 100 units per mL on a U-100 pen
+  p.perDoseMg = mgPerDose;
+  p.perDoseUnits = units;
+  out.innerHTML = `Concentration: <strong>${mgPerMl.toFixed(2)} mg/mL</strong> · per shot: <strong>${mgPerDose.toFixed(2)} mg = ${units.toFixed(0)} units</strong>`;
+}
+
+// ─── STEP 4: prefs ────────────────────────────
+function renderPrefs(){
+  ['protein','carb','fat'].forEach(cat => {
+    const grid = document.getElementById(cat==='protein'?'prot-grid':(cat==='carb'?'carb-grid':'fat-grid'));
+    grid.innerHTML = FOOD_PREFS[cat].map(food => {
+      const on = state.prefs[cat].includes(food);
+      return `<div class="tile ${on?'on green':''}" onclick="togglePref('${cat}','${food.replace(/'/g,"\\'")}')">
+        <div class="tile-name">${food}</div>
+      </div>`;
+    }).join('');
+  });
+}
+function togglePref(cat, food){
+  const arr = state.prefs[cat];
+  const i = arr.indexOf(food);
+  if (i >= 0) arr.splice(i, 1); else arr.push(food);
+  renderPrefs();
+}
+
+// ─── MACRO MATH ───────────────────────────────
+function computeMacros(){
+  const lbm = state.weight * (1 - state.bf/100);
+  // Katch-McArdle BMR (uses LBM directly — best for lean trackers)
+  const lbmKg = lbm / 2.2046;
+  const bmr = 370 + 21.6 * lbmKg;
+  const tdee = bmr * state.activity;
+  const cal = Math.round(tdee - state.deficit);
+  // Protein: 1.0g/lb LBM (deficit safe), 1.15g if aggressive
+  const pPerLbm = state.deficit >= 750 ? 1.15 : 1.0;
+  const p = Math.round(lbm * pPerLbm);
+  // Fat: 0.3g/lb total bodyweight (hormone floor)
+  const f = Math.round(state.weight * 0.3);
+  // Carbs: remainder
+  const calFromPF = p*4 + f*9;
+  const c = Math.max(50, Math.round((cal - calFromPF) / 4));
+  return { lbm:Math.round(lbm), bmr:Math.round(bmr), tdee:Math.round(tdee), cal, p, c, f };
+}
+
+// ─── STEP 5: review ───────────────────────────
+function renderSummary(){
+  const m = computeMacros();
+  document.getElementById('macro-summary').innerHTML = `
+    <div class="macro-tile cal"><div class="v">${m.cal}</div><div class="l">CAL</div></div>
+    <div class="macro-tile p"><div class="v">${m.p}g</div><div class="l">PROTEIN</div></div>
+    <div class="macro-tile c"><div class="v">${m.c}g</div><div class="l">CARBS</div></div>
+    <div class="macro-tile f"><div class="v">${m.f}g</div><div class="l">FAT</div></div>
+  `;
+  document.getElementById('body-summary').innerHTML = `
+    <div class="summary-row"><span class="summary-label">Weight</span><span class="summary-val">${state.weight} lb</span></div>
+    <div class="summary-row"><span class="summary-label">Body fat</span><span class="summary-val">${state.bf}%</span></div>
+    <div class="summary-row"><span class="summary-label">Lean mass</span><span class="summary-val">${m.lbm} lb</span></div>
+    <div class="summary-row"><span class="summary-label">BMR</span><span class="summary-val">${m.bmr} cal</span></div>
+    <div class="summary-row"><span class="summary-label">TDEE</span><span class="summary-val">${m.tdee} cal</span></div>
+    <div class="summary-row"><span class="summary-label">Deficit</span><span class="summary-val">−${state.deficit} cal/day</span></div>
+    <div class="summary-row"><span class="summary-label">Goal BF</span><span class="summary-val">${state.bfGoal}%</span></div>
+  `;
+  document.getElementById('stack-summary').innerHTML = state.peptides.length
+    ? state.peptides.map(p => `
+        <div class="summary-row">
+          <span class="summary-label">${p.name}</span>
+          <span class="summary-val">${p.oral ? p.perDoseMg+' mg' : (p.perDoseUnits ? Math.round(p.perDoseUnits)+'u · '+p.perDoseMg.toFixed(2)+' mg' : '—')} · ${p.perWeek}×/wk</span>
+        </div>
+      `).join('')
+    : '<div class="note">No peptides — that\'s ok.</div>';
+  const prefsHtml = ['protein','carb','fat'].map(cat => {
+    const arr = state.prefs[cat];
+    if (!arr.length) return '';
+    const label = cat.charAt(0).toUpperCase() + cat.slice(1) + 's';
+    return `<div><strong style="color:var(--accent);">${label}:</strong> ${arr.join(', ')}</div>`;
+  }).filter(Boolean).join('');
+  document.getElementById('prefs-summary').innerHTML = prefsHtml || '<div class="note">No preferences picked.</div>';
+}
+
+// ─── LAUNCH ───────────────────────────────────
+function launchTracker(){
+  const m = computeMacros();
+  const protocol = {
+    version: 1,
+    createdAt: new Date().toISOString(),
+    user: {
+      weight: state.weight, bf: state.bf, lbm: m.lbm,
+      goalBf: state.bfGoal, age: state.age, sex: state.sex, activity: state.activity,
+    },
+    goal: 'cut',
+    deficit: state.deficit,
+    macros: { cal:m.cal, p:m.p, c:m.c, f:m.f, bmr:m.bmr, tdee:m.tdee },
+    stack: state.peptides.map((p, idx) => ({
+      id: 'p_' + idx + '_' + (p.libId || 'cust'),
+      libId: p.libId,
+      name: p.name,
+      tag: p.tag,
+      color: p.color,
+      vialMg: p.vialMg, bacMl: p.bacMl, mgPerMl: p.mgPerMl,
+      premixed: p.premixed, premixConc: p.premixConc, oral: p.oral,
+      weeklyMg: p.weeklyMg, perWeek: p.perWeek,
+      perDoseMg: p.perDoseMg, perDoseUnits: p.perDoseUnits ? Math.round(p.perDoseUnits) : null,
+      window: p.window, fasted: p.fasted, days: p.days,
+    })),
+    prefs: state.prefs,
+  };
+  localStorage.setItem('apex_protocol_v1', JSON.stringify(protocol));
+  // jump to tracker
+  window.location.href = '../cut/?fresh=1';
+}
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+renderProgress();
+renderDeficitGrid();
+renderPeptides();
+renderPrefs();
+</script>
+</body>
+</html>
