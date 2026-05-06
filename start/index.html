@@ -399,6 +399,16 @@ function renderPeptides(){
 function updPep(i, key, val){ state.peptides[i][key] = parseFloat(val) || val; }
 function rmPeptide(i){ state.peptides.splice(i, 1); renderPeptides(); }
 function haptic(ms){ try { if (navigator.vibrate) navigator.vibrate(ms || 12); } catch(e){} }
+function pickerToast(msg, color){
+  const ex = document.getElementById('pk-toast'); if (ex) ex.remove();
+  const el = document.createElement('div');
+  el.id = 'pk-toast';
+  el.style.cssText = `position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:${color||'#00FF9D'}; color:#000; padding:12px 22px; border-radius:24px; font-family:'Rajdhani',sans-serif; font-weight:800; font-size:14px; letter-spacing:.04em; z-index:400; box-shadow:0 6px 20px rgba(0,0,0,.5);`;
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateX(-50%) translateY(10px)'; el.style.transition = 'all .25s'; }, 1400);
+  setTimeout(() => el.remove(), 1800);
+}
 
 function openPicker(){
   document.getElementById('pep-search').value = '';
@@ -433,7 +443,7 @@ function pickPeptide(libId){
   const lib = PEPTIDE_LIBRARY.find(x => x.id === libId);
   if (!lib) return;
   const already = state.peptides.some(x => x.libId === libId);
-  if (already) { haptic(40); return; } // bzzt — already in stack
+  if (already) { haptic(40); pickerToast('Already in stack', '#FF6B35'); return; }
   const p = {
     libId: lib.id, name: lib.name,
     vialMg: lib.vialMg, bacMl: 2,
@@ -448,15 +458,17 @@ function pickPeptide(libId){
   };
   state.peptides.push(p);
   haptic(15);
-  renderPickerGrid(document.getElementById('pep-search').value);
+  pickerToast(`✓ Added ${lib.name}`, '#00FF9D');
   renderPeptides();
+  closePicker();
 }
 function addCustom(){
   const name = document.getElementById('pep-custom').value.trim();
-  if (!name) return;
+  if (!name) { pickerToast('Type a name first', '#FBBF24'); return; }
   const p = { libId:'custom_'+Date.now(), name, vialMg:10, bacMl:2, weeklyMg:5, perWeek:7, window:'AM', fasted:false, days:'all', premixed:false, color:'#888', tag:'custom' };
   state.peptides.push(p);
   haptic(15);
+  pickerToast(`✓ Added ${name}`, '#00FF9D');
   document.getElementById('pep-custom').value = '';
   renderPeptides();
   closePicker();
