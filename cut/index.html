@@ -456,18 +456,35 @@ body { padding-bottom: 90px; }
         </div>
       </div>
 
-      <!-- ☀️ MID-DAY CHECK-IN: project remaining day's burn for accurate deficit math -->
-      <div style="margin-top:10px;padding:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.30);border-radius:8px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-          <span style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--warn);font-weight:700;">☀ NOON CHECK-IN · PM PROJECTION</span>
-          <span id="proj-eod-burn" style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:16px;color:var(--warn);">— cal</span>
+      <!-- ☀️ APPLE WATCH CHECK-INS: noon · post-gym · EOD — progressively tightens deficit math -->
+      <div style="margin-top:10px;padding:12px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.30);border-radius:8px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <span style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--warn);font-weight:700;">⌚ APPLE WATCH CHECK-INS</span>
+          <span id="proj-eod-burn" style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:16px;color:var(--warn);">— cal EOD</span>
         </div>
-        <div class="ac-field" style="margin-top:4px;">
-          <label>PM walk projected burn (default 300)</label>
-          <input type="number" id="in-pm-projection" placeholder="300" inputmode="numeric" oninput="saveDayTotal()">
+
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;">
+          <div class="ac-field" style="margin:0;">
+            <label style="font-size:9px;letter-spacing:.1em;color:var(--warn);font-weight:700;">☀ NOON</label>
+            <input type="number" id="in-noon-kcal" placeholder="0" inputmode="numeric" oninput="saveDayTotal()" style="font-size:14px;padding:8px;">
+          </div>
+          <div class="ac-field" style="margin:0;">
+            <label style="font-size:9px;letter-spacing:.1em;color:var(--accent);font-weight:700;">🏋︎ POST-GYM</label>
+            <input type="number" id="in-postgym-kcal" placeholder="0" inputmode="numeric" oninput="saveDayTotal()" style="font-size:14px;padding:8px;">
+          </div>
+          <div class="ac-field" style="margin:0;">
+            <label style="font-size:9px;letter-spacing:.1em;color:var(--accent3);font-weight:700;">🌙 EOD</label>
+            <input type="number" id="in-eod-kcal" placeholder="0" inputmode="numeric" oninput="saveDayTotal()" style="font-size:14px;padding:8px;">
+          </div>
         </div>
+
+        <div class="ac-field" style="margin-top:8px;">
+          <label style="font-size:9px;letter-spacing:.1em;color:var(--muted);font-weight:700;">PM PROJECTION (cal still to burn — auto-shrinks per check-in)</label>
+          <input type="number" id="in-pm-projection" placeholder="300" inputmode="numeric" oninput="saveDayTotal()" style="font-size:14px;padding:8px;">
+        </div>
+
         <div style="margin-top:8px;font-size:11px;color:var(--text);line-height:1.4;">
-          <strong style="color:var(--accent);">Cal left for afternoon + dinner:</strong> <span id="cal-left-rest" style="color:var(--accent2);font-weight:700;">—</span>
+          <strong style="color:var(--accent);">Cal left for rest of day:</strong> <span id="cal-left-rest" style="color:var(--accent2);font-weight:700;">—</span>
         </div>
       </div>
 
@@ -1740,10 +1757,30 @@ function saveDayTotal(){
   if (!s.daily[todayKey()].activity) s.daily[todayKey()].activity = {};
   const stepsEl = document.getElementById('in-day-steps');
   const kcalEl  = document.getElementById('in-day-kcal');
+  const noonEl  = document.getElementById('in-noon-kcal');
+  const pgEl    = document.getElementById('in-postgym-kcal');
+  const eodEl   = document.getElementById('in-eod-kcal');
   const pmEl    = document.getElementById('in-pm-projection');
-  s.daily[todayKey()].activity.daySteps = stepsEl ? parseInt(stepsEl.value)||0 : 0;
-  s.daily[todayKey()].activity.dayKcal  = kcalEl  ? parseInt(kcalEl.value) ||0 : 0;
-  s.daily[todayKey()].activity.pmProjection = pmEl ? parseInt(pmEl.value)||0 : 0;
+  const a = s.daily[todayKey()].activity;
+  a.daySteps = stepsEl ? parseInt(stepsEl.value)||0 : 0;
+  a.noonKcal    = noonEl ? parseInt(noonEl.value)||0 : 0;
+  a.postGymKcal = pgEl   ? parseInt(pgEl.value)  ||0 : 0;
+  a.eodKcal     = eodEl  ? parseInt(eodEl.value) ||0 : 0;
+  // Latest non-zero check-in becomes the official "burned so far"
+  const fromTopOfDay = parseInt(kcalEl?.value) || 0;
+  a.dayKcal = a.eodKcal || a.postGymKcal || a.noonKcal || fromTopOfDay;
+  // Auto-shrink projection: noon→300, post-gym→150, EOD→0
+  let projDefault = 300;
+  if (a.eodKcal)        projDefault = 0;
+  else if (a.postGymKcal) projDefault = 150;
+  else if (a.noonKcal)  projDefault = 300;
+  // Only override if user hasn't typed their own value
+  if (pmEl && document.activeElement !== pmEl) {
+    if (!a.pmProjection || a.pmProjection === 0) a.pmProjection = projDefault;
+    if (a.eodKcal) a.pmProjection = 0; // EOD locks projection to 0
+  } else {
+    a.pmProjection = pmEl ? parseInt(pmEl.value)||0 : projDefault;
+  }
   save(s);
   renderAll(); // recompute deficit live
 }
@@ -1790,8 +1827,14 @@ function renderChecks(){
   // Day-total inputs
   const stepsIn = document.getElementById('in-day-steps');
   const kcalIn  = document.getElementById('in-day-kcal');
+  const noonIn  = document.getElementById('in-noon-kcal');
+  const pgIn    = document.getElementById('in-postgym-kcal');
+  const eodIn   = document.getElementById('in-eod-kcal');
   if (stepsIn && document.activeElement !== stepsIn && a.daySteps) stepsIn.value = a.daySteps;
   if (kcalIn  && document.activeElement !== kcalIn  && a.dayKcal)  kcalIn.value  = a.dayKcal;
+  if (noonIn  && document.activeElement !== noonIn  && a.noonKcal)    noonIn.value = a.noonKcal;
+  if (pgIn    && document.activeElement !== pgIn    && a.postGymKcal) pgIn.value   = a.postGymKcal;
+  if (eodIn   && document.activeElement !== eodIn   && a.eodKcal)     eodIn.value  = a.eodKcal;
   // Steps progress bar toward 10k goal
   const bar = document.getElementById('steps-progress-bar');
   if (bar) bar.style.width = Math.min(100, ((a.daySteps||0)/10000)*100) + '%';
