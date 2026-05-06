@@ -781,7 +781,7 @@ const FOODS = [
 // MEAL PLAN: Neil's daily 2,300-cal cut menu
 // 1000-cal deficit · 240P / 220C / 50F
 // ─────────────────────────────────────────────
-const MEAL_PLAN = [
+let MEAL_PLAN = [
   { id:'m1', time:'☀️ BREAKFAST',     when:'~7:30am · after AM peptides + Walk #1',  items:[
     { id:'dkb',     qty:2 },
     { id:'eggw',    qty:1 },
@@ -896,7 +896,102 @@ let PEPTIDES = [
       localStorage.setItem(KEY_LOCAL, JSON.stringify(cs));
     }
   } catch(e){}
+
+  // ── BUILD CUSTOM MEAL PLAN FROM PREFS + MACROS ──
+  if (proto.prefs && proto.macros) {
+    try {
+      const customPlan = generateMealPlanFromPrefs(proto.prefs, proto.macros);
+      if (customPlan && customPlan.length) MEAL_PLAN = customPlan;
+    } catch(e){ console.warn('meal gen failed', e); }
+  }
 })();
+
+// ── PREF → FOOD MACRO MAP ──
+const PREF_FOOD_MAP = {
+  // proteins
+  'Chicken breast':    { id:'pf_chicken',  name:'Chicken breast (cooked)',  serving:'4 oz', cal:185, p:35, c:0,  f:4,  role:'protein' },
+  'Ribeye/steak':      { id:'pf_ribeye',   name:'Ribeye steak (cooked)',    serving:'4 oz', cal:280, p:30, c:0,  f:18, role:'protein' },
+  'Salmon':            { id:'pf_salmon',   name:'Salmon (cooked)',          serving:'4 oz', cal:235, p:25, c:0,  f:14, role:'protein-fat' },
+  'Tuna':              { id:'pf_tuna',     name:'Tuna (canned)',            serving:'1 can', cal:110, p:24, c:0,  f:1,  role:'protein' },
+  'Shrimp':            { id:'pf_shrimp',   name:'Shrimp (cooked)',          serving:'4 oz', cal:120, p:24, c:0,  f:2,  role:'protein' },
+  'Egg whites':        { id:'pf_eggw',     name:'Egg whites',               serving:'1 cup', cal:130, p:27, c:2,  f:0,  role:'protein' },
+  'Whole eggs':        { id:'pf_eggs',     name:'Whole eggs',               serving:'2 eggs', cal:155, p:13, c:1,  f:11, role:'protein-fat' },
+  'Greek yogurt':      { id:'pf_yogurt',   name:'Greek yogurt 0%',          serving:'1 cup', cal:150, p:18, c:11, f:4,  role:'protein' },
+  'Protein shake':     { id:'pf_shake',    name:'Whey protein shake',       serving:'1 scoop + water', cal:160, p:30, c:5, f:3, role:'protein-fast' },
+  'Cottage cheese':    { id:'pf_cottage',  name:'Cottage cheese 1%',        serving:'1 cup', cal:165, p:28, c:6,  f:2,  role:'protein' },
+  'Ground turkey':     { id:'pf_turkey',   name:'Ground turkey 93%',        serving:'4 oz cooked', cal:170, p:22, c:0, f:9, role:'protein' },
+  'Lean ground beef':  { id:'pf_beef',     name:'Lean ground beef 93%',     serving:'4 oz cooked', cal:185, p:25, c:0, f:9, role:'protein' },
+  // carbs
+  'White rice':        { id:'pf_rice',     name:'White rice (cooked)',      serving:'1 cup', cal:205, p:4,  c:45, f:0,  role:'carb' },
+  'Sweet potato':      { id:'pf_swpot',    name:'Sweet potato (cooked)',    serving:'1 cup', cal:180, p:4,  c:41, f:0,  role:'carb' },
+  'Russet potato':     { id:'pf_potato',   name:'Russet potato (baked)',    serving:'1 medium', cal:160, p:4, c:37, f:0, role:'carb' },
+  'Oatmeal':           { id:'pf_oats',     name:'Oatmeal (high fiber)',     serving:'1 packet', cal:160, p:5, c:30, f:3, role:'carb-fast' },
+  'Quinoa':            { id:'pf_quinoa',   name:'Quinoa (cooked)',          serving:'1 cup', cal:220, p:8, c:39, f:4, role:'carb' },
+  'Pasta':             { id:'pf_pasta',    name:'Pasta (cooked)',           serving:'1 cup', cal:220, p:8, c:43, f:1, role:'carb' },
+  'Sourdough/bread':   { id:'pf_bread',    name:"Sourdough bread",          serving:'1 slice', cal:120, p:5, c:23, f:1, role:'carb' },
+  'Bagel':             { id:'pf_bagel',    name:'Plain bagel',              serving:'1 bagel', cal:280, p:11, c:55, f:2, role:'carb' },
+  'Berries':           { id:'pf_berry',    name:'Berries',                  serving:'1 cup', cal:80, p:1, c:20, f:0, role:'carb-fast' },
+  'Banana':            { id:'pf_banana',   name:'Banana',                   serving:'1 medium', cal:105, p:1, c:27, f:0, role:'carb-fast' },
+  'Apple':             { id:'pf_apple',    name:'Apple',                    serving:'1 medium', cal:95, p:0, c:25, f:0, role:'carb-fast' },
+  'Brussels sprouts':  { id:'pf_brussels', name:'Brussels sprouts (cooked)', serving:'1 cup', cal:60, p:4, c:11, f:1, role:'veg' },
+  // fats
+  'Avocado':           { id:'pf_avo',      name:'Avocado',                  serving:'1/2 medium', cal:120, p:1.5, c:6, f:11, role:'fat' },
+  'Olive oil':         { id:'pf_olive',    name:'Olive oil',                serving:'1 tbsp',     cal:120, p:0,   c:0, f:14, role:'fat' },
+  'Almonds/cashews':   { id:'pf_almonds',  name:'Almonds',                  serving:'1 oz (~23)', cal:165, p:6, c:6, f:14, role:'fat' },
+  'Peanut butter':     { id:'pf_pb',       name:'Peanut butter',            serving:'1 tbsp',     cal:95, p:4, c:3, f:8, role:'fat' },
+  'Macadamia nuts':    { id:'pf_mac',      name:'Macadamia nuts',           serving:'1 oz',       cal:200, p:2, c:4, f:21, role:'fat' },
+  'Cheese':            { id:'pf_cheese',   name:'Cheese',                   serving:'1 slice',    cal:110, p:7, c:1, f:9, role:'fat' },
+  'Butter':            { id:'pf_butter',   name:'Butter',                   serving:'1 tbsp',     cal:100, p:0, c:0, f:11, role:'fat' },
+  'Egg yolks':         { id:'pf_yolks',    name:'Egg yolks',                serving:'2 yolks',    cal:110, p:5, c:1, f:9, role:'fat' },
+  'Coconut oil':       { id:'pf_coco',     name:'Coconut oil',              serving:'1 tbsp',     cal:120, p:0, c:0, f:14, role:'fat' },
+  'Dark chocolate':    { id:'pf_choc',     name:'Dark chocolate 85%',       serving:'1 oz',       cal:170, p:3, c:10, f:13, role:'fat' },
+  'Salmon (fat)':      { id:'pf_salmon2',  name:'Salmon (fat source)',      serving:'4 oz',       cal:235, p:25, c:0, f:14, role:'protein-fat' },
+  'Bacon':             { id:'pf_bacon',    name:'Bacon',                    serving:'2 strips',   cal:90, p:6, c:0, f:7, role:'fat' },
+};
+
+// Generate a 5-meal plan from user prefs, scaled to hit macro targets
+function generateMealPlanFromPrefs(prefs, macros){
+  const protList = (prefs.protein||[]).map(n => PREF_FOOD_MAP[n]).filter(Boolean);
+  const carbList = (prefs.carb||[]).map(n => PREF_FOOD_MAP[n]).filter(Boolean);
+  const fatList  = (prefs.fat||[]).map(n => PREF_FOOD_MAP[n]).filter(Boolean);
+  if (!protList.length || !carbList.length) return null;
+
+  // pick variety — rotate through prefs
+  const pick = (arr, i) => arr[i % arr.length];
+  const fastProt = protList.find(x => x.role.includes('fast')) || protList[0];
+  const fastCarb = carbList.find(x => x.role.includes('fast')) || carbList[0];
+  const veg      = carbList.find(x => x.role === 'veg');
+  const anyFat   = fatList[0] || PREF_FOOD_MAP['Avocado'];
+
+  // Cal share per meal: 25 / 15 / 20 / 20 / 20
+  const targets = [
+    { share:.25, name:'☀️ BREAKFAST', when:'~7:30am · after AM peptides + Walk',
+      items:[ pick(protList,0), pick(carbList,0), anyFat ] },
+    { share:.15, name:'🏋︎ PRE-GYM',   when:'~1 hr before lift · easy carbs + fast protein',
+      items:[ fastProt, fastCarb ] },
+    { share:.20, name:'⚡ POST-GYM',   when:'within 30 min of last set · refill glycogen',
+      items:[ fastProt, pick(carbList,1) ] },
+    { share:.20, name:'🍗 LUNCH',      when:'~3-4pm · solid protein + carb',
+      items:[ pick(protList,1) || pick(protList,0), pick(carbList,2) || pick(carbList,0) ].concat(veg ? [veg] : []) },
+    { share:.20, name:'🍽 DINNER',     when:'5:30-6pm · final macro hit',
+      items:[ pick(protList,2) || pick(protList,0), pick(carbList,3) || pick(carbList,0), anyFat ] },
+  ];
+
+  // Scale each meal's items to hit cal target proportionally (round qty to .5)
+  return targets.map((m, idx) => {
+    const targetCal = macros.cal * m.share;
+    const baseCal = m.items.reduce((s,it) => s + it.cal, 0);
+    const scale = baseCal > 0 ? targetCal / baseCal : 1;
+    // Round per-item qty to nearest 0.5, min 0.5
+    const items = m.items.map(it => {
+      const qty = Math.max(0.5, Math.round(scale * 2) / 2);
+      // also inject these into FOODS so addFood/findFood works
+      if (!FOODS.find(x => x.id === it.id)) FOODS.push(it);
+      return { id: it.id, qty };
+    });
+    return { id:'gm'+idx, time:m.name, when:m.when, items };
+  });
+}
 
 const TRAIN = [
   { d:1, name:'Chest + Tris',  body:'Bench · Incline · Fly · Skull · Pushdown · Dip',  sets:'5×5 · 4×8 · 3×12 · 4×10 · 3×12 · 3×12' },
