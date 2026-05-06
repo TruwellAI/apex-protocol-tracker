@@ -456,25 +456,44 @@ body { padding-bottom: 90px; }
         </div>
       </div>
 
-      <!-- ☀️ MID-DAY CHECK-IN: project remaining day's burn for accurate deficit math -->
-      <div style="margin-top:10px;padding:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.30);border-radius:8px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-          <span style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--warn);font-weight:700;">☀ NOON CHECK-IN · PM PROJECTION</span>
-          <span id="proj-eod-burn" style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:16px;color:var(--warn);">— cal</span>
+      <!-- ☀️ APPLE WATCH CHECK-INS: noon · post-gym · EOD — progressively tightens deficit math -->
+      <div style="margin-top:10px;padding:12px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.30);border-radius:8px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <span style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--warn);font-weight:700;">⌚ APPLE WATCH CHECK-INS</span>
+          <span id="proj-eod-burn" style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:16px;color:var(--warn);">— cal EOD</span>
         </div>
-        <div class="ac-field" style="margin-top:4px;">
-          <label>PM walk projected burn (default 300)</label>
-          <input type="number" id="in-pm-projection" placeholder="300" inputmode="numeric" oninput="saveDayTotal()">
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div class="ac-field" style="margin:0;">
+            <label style="font-size:10px;letter-spacing:.1em;color:var(--accent);font-weight:700;">🏋︎ POST-GYM</label>
+            <input type="number" id="in-postgym-kcal" placeholder="0" inputmode="numeric" oninput="saveDayTotal()" style="font-size:15px;padding:10px;">
+          </div>
+          <div class="ac-field" style="margin:0;">
+            <label style="font-size:10px;letter-spacing:.1em;color:var(--accent3);font-weight:700;">🌙 EOD</label>
+            <input type="number" id="in-eod-kcal" placeholder="0" inputmode="numeric" oninput="saveDayTotal()" style="font-size:15px;padding:10px;">
+          </div>
         </div>
+
+        <div class="ac-field" style="margin-top:8px;">
+          <label style="font-size:9px;letter-spacing:.1em;color:var(--muted);font-weight:700;">PM PROJECTION (cal still to burn — auto-shrinks per check-in)</label>
+          <input type="number" id="in-pm-projection" placeholder="300" inputmode="numeric" oninput="saveDayTotal()" style="font-size:14px;padding:8px;">
+        </div>
+
         <div style="margin-top:8px;font-size:11px;color:var(--text);line-height:1.4;">
-          <strong style="color:var(--accent);">Cal left for afternoon + dinner:</strong> <span id="cal-left-rest" style="color:var(--accent2);font-weight:700;">—</span>
+          <strong style="color:var(--accent);">Cal left for rest of day:</strong> <span id="cal-left-rest" style="color:var(--accent2);font-weight:700;">—</span>
         </div>
       </div>
 
       <!-- 🤖 SMART RECOMMENDATION: tells you EXACTLY what to eat + how far to walk -->
       <div id="smart-rec" style="margin-top:10px;padding:12px;background:linear-gradient(135deg,rgba(0,212,255,.08),rgba(0,255,157,.04));border:1px solid var(--border2);border-radius:8px;">
         <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--accent);font-weight:700;margin-bottom:6px;">🤖 RECOMMENDATION · stay at −1000</div>
-        <div id="smart-rec-body" style="font-size:12px;color:var(--text);line-height:1.55;">Log your noon cal-burn above to get a tailored plan for afternoon + PM walk.</div>
+        <div id="smart-rec-body" style="font-size:12px;color:var(--text);line-height:1.55;">Log your post-gym cal-burn above to get a tailored plan for afternoon + PM walk.</div>
+      </div>
+
+      <!-- 🍽 MACRO FILLER: greedy food pick to hit remaining cal/P/C/F -->
+      <div id="macro-filler" style="margin-top:10px;padding:12px;background:linear-gradient(135deg,rgba(0,255,157,.08),rgba(167,139,250,.04));border:1px solid var(--accent2);border-radius:8px;display:none;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--accent2);font-weight:700;margin-bottom:6px;">🍽 EAT THIS · from your favorites</div>
+        <div id="macro-filler-body" style="font-size:12px;color:var(--text);line-height:1.6;"></div>
       </div>
     </div>
 
@@ -851,40 +870,31 @@ let PEPTIDES = [
 ];
 
 // ─────────────────────────────────────────────
-// CUSTOM PROTOCOL OVERRIDE
-// If user came through /start/ wizard, apex_protocol_v1 lives in localStorage.
-// Replace PEPTIDES with their stack + sync macros into the cut state.
+// CUSTOM PROTOCOL OVERRIDE — wizard data drives PEPTIDES, MEAL_PLAN, macros
 // ─────────────────────────────────────────────
+let __APEX_PROTO__ = null;
 (function applyCustomProtocol(){
   let proto;
   try { proto = JSON.parse(localStorage.getItem('apex_protocol_v1')); } catch(e){}
   if (!proto || !proto.stack) {
-    // No wizard data — redirect to /start/ unless they're already there
-    if (!location.search.includes('skip')) {
-      location.replace('../start/');
-    }
+    if (!location.search.includes('skip')) location.replace('../start/');
     return;
   }
-  // Map their stack to PEPTIDES schema
-  PEPTIDES = proto.stack.map(s => {
-    const doseStr = s.oral
+  __APEX_PROTO__ = proto;
+  PEPTIDES = proto.stack.map(s => ({
+    id: s.id,
+    name: s.name,
+    dose: s.oral
       ? `${s.perDoseMg||0} mg oral`
-      : (s.perDoseUnits ? `${s.perDoseUnits}u · ${(s.perDoseMg||0).toFixed(2)} mg` : `${s.perDoseMg||0} mg`);
-    return {
-      id: s.id,
-      name: s.name,
-      dose: doseStr,
-      window: s.window + (s.fasted ? ' fasted' : ''),
-      days: s.days || 'all',
-      tag: s.tag || 'custom',
-      color: s.color || '#00D4FF',
-      ssot: null,
-    };
-  });
-  // Sync macros into the cut app's state on first run after wizard
+      : (s.perDoseUnits ? `${s.perDoseUnits}u · ${(s.perDoseMg||0).toFixed(2)} mg` : `${s.perDoseMg||0} mg`),
+    window: s.window + (s.fasted ? ' fasted' : ''),
+    days: s.days || 'all',
+    tag: s.tag || 'custom',
+    color: s.color || '#00D4FF',
+    ssot: null,
+  }));
   try {
-    const KEY_LOCAL = 'apex_tracker_v1';
-    const cs = JSON.parse(localStorage.getItem(KEY_LOCAL) || '{}');
+    const cs = JSON.parse(localStorage.getItem('apex_tracker_v1') || '{}');
     if (proto.macros && (!cs._protocolApplied || cs._protocolApplied !== proto.createdAt)) {
       cs.targetCal = proto.macros.cal;
       cs.targetP   = proto.macros.p;
@@ -893,24 +903,21 @@ let PEPTIDES = [
       cs.startWeight = proto.user.weight;
       cs.goalBF      = proto.user.goalBf;
       cs._protocolApplied = proto.createdAt;
-      localStorage.setItem(KEY_LOCAL, JSON.stringify(cs));
+      localStorage.setItem('apex_tracker_v1', JSON.stringify(cs));
     }
   } catch(e){}
-
-  // ── BUILD CUSTOM MEAL PLAN FROM PREFS + MACROS ──
   if (proto.prefs && proto.macros) {
     try {
-      const customPlan = generateMealPlanFromPrefs(proto.prefs, proto.macros);
-      if (customPlan && customPlan.length) MEAL_PLAN = customPlan;
+      const cp = generateMealPlanFromPrefs(proto.prefs, proto.macros);
+      if (cp && cp.length) MEAL_PLAN = cp;
     } catch(e){ console.warn('meal gen failed', e); }
   }
 })();
 
-// ── PREF → FOOD MACRO MAP ──
+// PREF NAME → FOOD MACRO entry (also gets injected into FOODS so addFood works)
 const PREF_FOOD_MAP = {
-  // proteins
   'Chicken breast':    { id:'pf_chicken',  name:'Chicken breast (cooked)',  serving:'4 oz', cal:185, p:35, c:0,  f:4,  role:'protein' },
-  'Ribeye/steak':      { id:'pf_ribeye',   name:'Ribeye steak (cooked)',    serving:'4 oz', cal:280, p:30, c:0,  f:18, role:'protein' },
+  'Ribeye/steak':      { id:'pf_ribeye',   name:'Ribeye steak (cooked)',    serving:'4 oz', cal:280, p:30, c:0,  f:18, role:'protein-fat' },
   'Salmon':            { id:'pf_salmon',   name:'Salmon (cooked)',          serving:'4 oz', cal:235, p:25, c:0,  f:14, role:'protein-fat' },
   'Tuna':              { id:'pf_tuna',     name:'Tuna (canned)',            serving:'1 can', cal:110, p:24, c:0,  f:1,  role:'protein' },
   'Shrimp':            { id:'pf_shrimp',   name:'Shrimp (cooked)',          serving:'4 oz', cal:120, p:24, c:0,  f:2,  role:'protein' },
@@ -921,7 +928,6 @@ const PREF_FOOD_MAP = {
   'Cottage cheese':    { id:'pf_cottage',  name:'Cottage cheese 1%',        serving:'1 cup', cal:165, p:28, c:6,  f:2,  role:'protein' },
   'Ground turkey':     { id:'pf_turkey',   name:'Ground turkey 93%',        serving:'4 oz cooked', cal:170, p:22, c:0, f:9, role:'protein' },
   'Lean ground beef':  { id:'pf_beef',     name:'Lean ground beef 93%',     serving:'4 oz cooked', cal:185, p:25, c:0, f:9, role:'protein' },
-  // carbs
   'White rice':        { id:'pf_rice',     name:'White rice (cooked)',      serving:'1 cup', cal:205, p:4,  c:45, f:0,  role:'carb' },
   'Sweet potato':      { id:'pf_swpot',    name:'Sweet potato (cooked)',    serving:'1 cup', cal:180, p:4,  c:41, f:0,  role:'carb' },
   'Russet potato':     { id:'pf_potato',   name:'Russet potato (baked)',    serving:'1 medium', cal:160, p:4, c:37, f:0, role:'carb' },
@@ -934,7 +940,6 @@ const PREF_FOOD_MAP = {
   'Banana':            { id:'pf_banana',   name:'Banana',                   serving:'1 medium', cal:105, p:1, c:27, f:0, role:'carb-fast' },
   'Apple':             { id:'pf_apple',    name:'Apple',                    serving:'1 medium', cal:95, p:0, c:25, f:0, role:'carb-fast' },
   'Brussels sprouts':  { id:'pf_brussels', name:'Brussels sprouts (cooked)', serving:'1 cup', cal:60, p:4, c:11, f:1, role:'veg' },
-  // fats
   'Avocado':           { id:'pf_avo',      name:'Avocado',                  serving:'1/2 medium', cal:120, p:1.5, c:6, f:11, role:'fat' },
   'Olive oil':         { id:'pf_olive',    name:'Olive oil',                serving:'1 tbsp',     cal:120, p:0,   c:0, f:14, role:'fat' },
   'Almonds/cashews':   { id:'pf_almonds',  name:'Almonds',                  serving:'1 oz (~23)', cal:165, p:6, c:6, f:14, role:'fat' },
@@ -949,21 +954,16 @@ const PREF_FOOD_MAP = {
   'Bacon':             { id:'pf_bacon',    name:'Bacon',                    serving:'2 strips',   cal:90, p:6, c:0, f:7, role:'fat' },
 };
 
-// Generate a 5-meal plan from user prefs, scaled to hit macro targets
 function generateMealPlanFromPrefs(prefs, macros){
   const protList = (prefs.protein||[]).map(n => PREF_FOOD_MAP[n]).filter(Boolean);
   const carbList = (prefs.carb||[]).map(n => PREF_FOOD_MAP[n]).filter(Boolean);
   const fatList  = (prefs.fat||[]).map(n => PREF_FOOD_MAP[n]).filter(Boolean);
   if (!protList.length || !carbList.length) return null;
-
-  // pick variety — rotate through prefs
   const pick = (arr, i) => arr[i % arr.length];
   const fastProt = protList.find(x => x.role.includes('fast')) || protList[0];
   const fastCarb = carbList.find(x => x.role.includes('fast')) || carbList[0];
   const veg      = carbList.find(x => x.role === 'veg');
   const anyFat   = fatList[0] || PREF_FOOD_MAP['Avocado'];
-
-  // Cal share per meal: 25 / 15 / 20 / 20 / 20
   const targets = [
     { share:.25, name:'☀️ BREAKFAST', when:'~7:30am · after AM peptides + Walk',
       items:[ pick(protList,0), pick(carbList,0), anyFat ] },
@@ -976,16 +976,12 @@ function generateMealPlanFromPrefs(prefs, macros){
     { share:.20, name:'🍽 DINNER',     when:'5:30-6pm · final macro hit',
       items:[ pick(protList,2) || pick(protList,0), pick(carbList,3) || pick(carbList,0), anyFat ] },
   ];
-
-  // Scale each meal's items to hit cal target proportionally (round qty to .5)
   return targets.map((m, idx) => {
     const targetCal = macros.cal * m.share;
     const baseCal = m.items.reduce((s,it) => s + it.cal, 0);
     const scale = baseCal > 0 ? targetCal / baseCal : 1;
-    // Round per-item qty to nearest 0.5, min 0.5
     const items = m.items.map(it => {
       const qty = Math.max(0.5, Math.round(scale * 2) / 2);
-      // also inject these into FOODS so addFood/findFood works
       if (!FOODS.find(x => x.id === it.id)) FOODS.push(it);
       return { id: it.id, qty };
     });
@@ -1006,7 +1002,7 @@ const TRAIN = [
 // ─────────────────────────────────────────────
 // STATE
 // ─────────────────────────────────────────────
-const KEY = 'apex_tracker_v1';  // isolated from /cut/ Neil-only data
+const KEY = 'apex_tracker_v1';
 function todayKey(){
   const d = new Date();
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
@@ -1101,6 +1097,97 @@ function sumMacros(foodArr){
     r.cal += f.cal * it.qty; r.p += f.p * it.qty; r.c += f.c * it.qty; r.f += f.f * it.qty;
   });
   return r;
+}
+
+// Greedy macro filler — pick foods from FOODS + customFoods to hit remaining cal/P/C/F.
+// Strategy: prioritize protein gap first (most important on a cut), then carbs, then fat,
+// while keeping total cal under remCal + 100 buffer.
+function pickFoodsToHitMacros(remCal, remP, remC, remF){
+  // Pref-aware: if user picked favorites in /start/, bias selection toward those.
+  // Favorites = FOODS entries with id starting with 'pf_' (auto-injected by meal generator) + customFoods.
+  // If favorites can't fill the gap, fall back to the full library.
+  const customs = (load().customFoods)||[];
+  const favorites = [...FOODS.filter(f => String(f.id).startsWith('pf_')), ...customs];
+  const fullLib   = [...FOODS, ...customs];
+  // If user has favorites, try those first; if remaining macros still big after, supplement from full lib
+  const hasFavs = favorites.length > 0;
+  const all = hasFavs ? favorites : fullLib;
+  // pre-classify each food by primary macro (the one with most cal contribution)
+  const scored = all.filter(f => f.cal > 0).map(f => {
+    const fromP = f.p * 4, fromC = f.c * 4, fromF = f.f * 9;
+    const total = fromP + fromC + fromF || 1;
+    return {
+      ...f,
+      pPct: fromP / total,
+      cPct: fromC / total,
+      fPct: fromF / total,
+      pPerCal: f.cal > 0 ? f.p / f.cal : 0,
+      cPerCal: f.cal > 0 ? f.c / f.cal : 0,
+      fPerCal: f.cal > 0 ? f.f / f.cal : 0,
+    };
+  });
+  const picks = [];
+  let budget = { cal:remCal, p:remP, c:remC, f:remF };
+  const calBuffer = 100;
+  // Helper: try to add up to maxQty servings of a food, capped by budget
+  function tryAdd(food, maxQty){
+    if (!food || food.cal <= 0) return;
+    let qty = 0;
+    for (let q = 1; q <= maxQty; q++) {
+      if (budget.cal - food.cal < -calBuffer) break;
+      if (budget.p < -5 && food.p > 0) break;
+      if (budget.f < -10 && food.fPct > 0.4) break; // don't blow fat budget on a fat-heavy food
+      budget.cal -= food.cal;
+      budget.p -= food.p;
+      budget.c -= food.c;
+      budget.f -= food.f;
+      qty++;
+    }
+    if (qty > 0) {
+      const existing = picks.find(x => x.id === food.id);
+      if (existing) existing.qty += qty;
+      else picks.push({ id:food.id, name:food.name, serving:food.serving, qty, cal:food.cal*qty, p:food.p*qty, c:food.c*qty, f:food.f*qty });
+    }
+  }
+  // 1. Fill protein gap: pick top protein-dense food, max 3 servings
+  if (budget.p > 15) {
+    const proteins = scored.filter(f => f.pPct >= 0.45 && f.p >= 15).sort((a,b) => b.pPerCal - a.pPerCal);
+    if (proteins.length) tryAdd(proteins[0], 3);
+  }
+  // 2. Top up smaller protein gap with a moderate option
+  if (budget.p > 8) {
+    const proteins2 = scored.filter(f => f.pPct >= 0.35 && f.p >= 8 && !picks.find(p => p.id === f.id)).sort((a,b) => b.pPerCal - a.pPerCal);
+    if (proteins2.length) tryAdd(proteins2[0], 2);
+  }
+  // 3. Fill carb gap if there's room
+  if (budget.c > 20 && budget.cal > 100) {
+    const carbs = scored.filter(f => f.cPct >= 0.55 && f.c >= 15).sort((a,b) => b.cPerCal - a.cPerCal);
+    if (carbs.length) tryAdd(carbs[0], 2);
+  }
+  // 4. Fill fat gap if needed
+  if (budget.f > 8 && budget.cal > 80) {
+    const fats = scored.filter(f => f.fPct >= 0.55 && f.f >= 5).sort((a,b) => b.fPerCal - a.fPerCal);
+    if (fats.length) tryAdd(fats[0], 1);
+  }
+  // 5. If protein still short, hit it again with whey-type fast option
+  if (budget.p > 12) {
+    const lastP = scored.filter(f => f.pPct >= 0.5 && f.cal <= 200 && !picks.find(p => p.id === f.id)).sort((a,b) => b.pPerCal - a.pPerCal);
+    if (lastP.length) tryAdd(lastP[0], 1);
+  }
+  // 6. Fallback: if user has favorites but they couldn't close the gap, supplement from full library
+  if (hasFavs && (budget.p > 15 || budget.cal > 300)) {
+    const extras = fullLib.filter(f => !picks.find(p => p.id === f.id) && !String(f.id).startsWith('pf_'));
+    const extrasScored = extras.filter(f => f.cal > 0).map(f => {
+      const fromP = f.p * 4, fromC = f.c * 4, fromF = f.f * 9;
+      const total = fromP + fromC + fromF || 1;
+      return { ...f, pPct: fromP/total, cPct: fromC/total, fPct: fromF/total, pPerCal: f.cal>0?f.p/f.cal:0 };
+    });
+    if (budget.p > 15) {
+      const proteins = extrasScored.filter(f => f.pPct >= 0.45 && f.p >= 15).sort((a,b) => b.pPerCal - a.pPerCal);
+      if (proteins.length) tryAdd(proteins[0], 2);
+    }
+  }
+  return picks;
 }
 
 function renderMacros(){
@@ -1807,10 +1894,27 @@ function saveDayTotal(){
   if (!s.daily[todayKey()].activity) s.daily[todayKey()].activity = {};
   const stepsEl = document.getElementById('in-day-steps');
   const kcalEl  = document.getElementById('in-day-kcal');
+  const pgEl    = document.getElementById('in-postgym-kcal');
+  const eodEl   = document.getElementById('in-eod-kcal');
   const pmEl    = document.getElementById('in-pm-projection');
-  s.daily[todayKey()].activity.daySteps = stepsEl ? parseInt(stepsEl.value)||0 : 0;
-  s.daily[todayKey()].activity.dayKcal  = kcalEl  ? parseInt(kcalEl.value) ||0 : 0;
-  s.daily[todayKey()].activity.pmProjection = pmEl ? parseInt(pmEl.value)||0 : 0;
+  const a = s.daily[todayKey()].activity;
+  a.daySteps = stepsEl ? parseInt(stepsEl.value)||0 : 0;
+  a.postGymKcal = pgEl   ? parseInt(pgEl.value)  ||0 : 0;
+  a.eodKcal     = eodEl  ? parseInt(eodEl.value) ||0 : 0;
+  // Latest non-zero check-in becomes the official "burned so far"
+  const fromTopOfDay = parseInt(kcalEl?.value) || 0;
+  a.dayKcal = a.eodKcal || a.postGymKcal || fromTopOfDay;
+  // Auto-shrink projection: post-gym→150, EOD→0, otherwise→300
+  let projDefault = 300;
+  if (a.eodKcal)        projDefault = 0;
+  else if (a.postGymKcal) projDefault = 150;
+  // Only override if user hasn't typed their own value
+  if (pmEl && document.activeElement !== pmEl) {
+    if (!a.pmProjection || a.pmProjection === 0) a.pmProjection = projDefault;
+    if (a.eodKcal) a.pmProjection = 0; // EOD locks projection to 0
+  } else {
+    a.pmProjection = pmEl ? parseInt(pmEl.value)||0 : projDefault;
+  }
   save(s);
   renderAll(); // recompute deficit live
 }
@@ -1857,8 +1961,12 @@ function renderChecks(){
   // Day-total inputs
   const stepsIn = document.getElementById('in-day-steps');
   const kcalIn  = document.getElementById('in-day-kcal');
+  const pgIn    = document.getElementById('in-postgym-kcal');
+  const eodIn   = document.getElementById('in-eod-kcal');
   if (stepsIn && document.activeElement !== stepsIn && a.daySteps) stepsIn.value = a.daySteps;
   if (kcalIn  && document.activeElement !== kcalIn  && a.dayKcal)  kcalIn.value  = a.dayKcal;
+  if (pgIn    && document.activeElement !== pgIn    && a.postGymKcal) pgIn.value  = a.postGymKcal;
+  if (eodIn   && document.activeElement !== eodIn   && a.eodKcal)     eodIn.value = a.eodKcal;
   // Steps progress bar toward 10k goal
   const bar = document.getElementById('steps-progress-bar');
   if (bar) bar.style.width = Math.min(100, ((a.daySteps||0)/10000)*100) + '%';
@@ -1911,8 +2019,43 @@ function renderChecks(){
       // Already over — stop eating
       html = `<strong style="color:var(--bad);">🛑 You're at or over the EOD goal.</strong> Stop eating for the day. PM walk still happens — every step now is pure deficit boost. <strong>Skip remaining planned meals</strong> (${remainingMealNames || 'none scheduled'}). Hydrate, hit the walk, lock the day.`;
     }
-    recEl.innerHTML = html || 'Log your noon cal-burn to get a tailored plan.';
+    recEl.innerHTML = html || 'Log your post-gym cal-burn to get a tailored plan.';
   }
+
+  // ── MACRO FILLER ──
+  // After cal-burn check-in, suggest specific foods to hit remaining cal/P/C/F.
+  const fillerCard = document.getElementById('macro-filler');
+  const fillerBody = document.getElementById('macro-filler-body');
+  if (fillerCard && fillerBody) {
+    if (burnSoFar > 0) {
+      const eaten = sumMacros(t.food);
+      const remCal = Math.max(0, dynamicGoal - eaten.cal);
+      const remP   = Math.max(0, (s.targetP||240) - eaten.p);
+      const remC   = Math.max(0, (s.targetC||175) - eaten.c);
+      const remF   = Math.max(0, (s.targetF||70)  - eaten.f);
+      if (remCal < 100 && remP < 10) {
+        fillerCard.style.display = 'block';
+        fillerBody.innerHTML = `<strong style="color:var(--accent2);">✓ You're dialed.</strong> Macros are within range — no more food needed today.`;
+      } else {
+        const picks = pickFoodsToHitMacros(remCal, remP, remC, remF);
+        const tot = picks.reduce((a, x) => ({ cal:a.cal+x.cal, p:a.p+x.p, c:a.c+x.c, f:a.f+x.f }), { cal:0, p:0, c:0, f:0 });
+        fillerCard.style.display = 'block';
+        if (!picks.length) {
+          fillerBody.innerHTML = `<strong style="color:var(--warn);">Tight budget.</strong> ${remCal} cal / ${remP}P / ${remC}C / ${remF}F left. Try a Premier shake (160 cal · 30P) or 4 oz chicken (140 cal · 26P) and re-check.`;
+        } else {
+          const lines = picks.map(x => `<div style="display:flex;justify-content:space-between;gap:8px;padding:4px 0;"><span>${x.qty>1?x.qty+'× ':''}<strong>${x.name}</strong> <span style="color:var(--muted);font-size:11px;">${x.serving}</span></span><span style="color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:11px;white-space:nowrap;">${Math.round(x.cal)}c · ${Math.round(x.p)}P</span></div>`).join('');
+          fillerBody.innerHTML = `
+            <div style="margin-bottom:8px;font-size:11px;color:var(--muted);">Need: <strong style="color:var(--text);">${remCal} cal</strong> · <strong style="color:var(--accent);">${remP}P</strong> · <strong style="color:var(--warn);">${remC}C</strong> · <strong style="color:var(--accent3);">${remF}F</strong></div>
+            ${lines}
+            <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);">Total: <strong style="color:var(--accent2);">${Math.round(tot.cal)} cal</strong> · ${Math.round(tot.p)}P · ${Math.round(tot.c)}C · ${Math.round(tot.f)}F · gap ${Math.round(remCal-tot.cal)} cal / ${Math.round(remP-tot.p)}P</div>
+          `;
+        }
+      }
+    } else {
+      fillerCard.style.display = 'none';
+    }
+  }
+
   // Workout pill label = today's split
   const workoutLbl = document.getElementById('ct-workout-label');
   if (workoutLbl) {
