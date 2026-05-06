@@ -551,6 +551,62 @@ body { padding-bottom: 90px; }
     </div>
     <div class="list" id="food-list"></div>
 
+    <!-- ═══ CUSTOM FOOD ADDER ═══ -->
+    <div style="margin:14px 16px 0;">
+      <button onclick="openCustomFood()" style="width:100%;padding:14px;border-radius:10px;background:linear-gradient(135deg,rgba(0,255,157,.08),rgba(0,212,255,.05));border:1px dashed rgba(0,255,157,.45);color:var(--accent2);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;letter-spacing:.04em;cursor:pointer;-webkit-tap-highlight-color:transparent;">＋ Add custom food on the fly</button>
+    </div>
+
+    <!-- ═══ CUSTOM FOOD MODAL ═══ -->
+    <div id="cf-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:300;padding:20px;overflow-y:auto;-webkit-overflow-scrolling:touch;">
+      <div style="max-width:500px;margin:40px auto;background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:20px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:20px;color:var(--accent2);">＋ Custom food</div>
+          <button onclick="closeCustomFood()" style="background:transparent;border:none;color:var(--muted);font-size:22px;cursor:pointer;padding:4px 8px;">✕</button>
+        </div>
+
+        <!-- STEP 1: name + serving + ask -->
+        <div id="cf-step1">
+          <label style="display:block;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--muted);font-weight:700;margin-bottom:6px;text-transform:uppercase;">Food name</label>
+          <input id="cf-name" type="text" placeholder="e.g. pepperoni pizza slice" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:12px;font-size:16px;font-family:inherit;-webkit-appearance:none;margin-bottom:12px;box-sizing:border-box;">
+          <label style="display:block;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--muted);font-weight:700;margin-bottom:6px;text-transform:uppercase;">Serving size</label>
+          <input id="cf-serving" type="text" placeholder="e.g. 1 slice, 1 cup, 4 oz" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:12px;font-size:16px;font-family:inherit;-webkit-appearance:none;margin-bottom:18px;box-sizing:border-box;">
+
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--muted);font-weight:700;margin-bottom:8px;text-transform:uppercase;">Do you know the macros?</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <button onclick="cfPathManual()" style="padding:14px 8px;border-radius:10px;background:rgba(0,212,255,.08);border:1px solid var(--accent);color:var(--accent);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;cursor:pointer;-webkit-tap-highlight-color:transparent;">✓ Yes — I'll enter them</button>
+            <button onclick="cfPathGuess()" style="padding:14px 8px;border-radius:10px;background:rgba(0,255,157,.08);border:1px solid var(--accent2);color:var(--accent2);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;cursor:pointer;-webkit-tap-highlight-color:transparent;">🤖 No — best guess</button>
+          </div>
+        </div>
+
+        <!-- STEP 2: macro entry / review -->
+        <div id="cf-step2" style="display:none;">
+          <div id="cf-step2-banner" style="padding:10px 12px;border-radius:8px;font-size:12px;line-height:1.45;margin-bottom:14px;"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+            <div>
+              <label style="display:block;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--muted);font-weight:700;margin-bottom:4px;text-transform:uppercase;">Calories</label>
+              <input id="cf-cal" type="number" inputmode="numeric" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:10px;font-size:16px;font-family:inherit;-webkit-appearance:none;box-sizing:border-box;">
+            </div>
+            <div>
+              <label style="display:block;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--muted);font-weight:700;margin-bottom:4px;text-transform:uppercase;">Protein (g)</label>
+              <input id="cf-p" type="number" inputmode="decimal" step="0.1" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:10px;font-size:16px;font-family:inherit;-webkit-appearance:none;box-sizing:border-box;">
+            </div>
+            <div>
+              <label style="display:block;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--muted);font-weight:700;margin-bottom:4px;text-transform:uppercase;">Carbs (g)</label>
+              <input id="cf-c" type="number" inputmode="decimal" step="0.1" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:10px;font-size:16px;font-family:inherit;-webkit-appearance:none;box-sizing:border-box;">
+            </div>
+            <div>
+              <label style="display:block;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--muted);font-weight:700;margin-bottom:4px;text-transform:uppercase;">Fat (g)</label>
+              <input id="cf-f" type="number" inputmode="decimal" step="0.1" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:10px;font-size:16px;font-family:inherit;-webkit-appearance:none;box-sizing:border-box;">
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 2fr;gap:10px;">
+            <button onclick="cfBack()" style="padding:14px 8px;border-radius:10px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;cursor:pointer;-webkit-tap-highlight-color:transparent;">← Back</button>
+            <button onclick="cfSave()" style="padding:14px 8px;border-radius:10px;background:linear-gradient(135deg,var(--accent2),var(--accent));border:none;color:#000;font-family:'Rajdhani',sans-serif;font-weight:800;font-size:14px;letter-spacing:.06em;cursor:pointer;-webkit-tap-highlight-color:transparent;">SAVE + LOG TO TODAY</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="section-h" style="margin-top:18px;">
       <h2>Today's full intake log</h2>
       <button class="btn-ghost" style="font-size:11px;padding:6px 10px;border-radius:6px;cursor:pointer;font-family:inherit;background:transparent;border:1px solid var(--border);color:var(--muted);" onclick="resetFoodLog()">↺ Reset day</button>
@@ -833,7 +889,13 @@ function get(){
   s.targetF = s.targetF || 70;         // hormone-floor fat (was too low at 50g)
   s.weights = s.weights || [];   // [{date, weight, bf, waist}]
   s.daily = s.daily || {};       // { '2026-05-02': { food:[{id,qty}], peptides:{id:true}, steps:N } }
+  s.customFoods = s.customFoods || []; // user-added custom foods
   return s;
+}
+
+// Lookup a food by id from core FOODS or user customFoods
+function findFood(id){
+  return FOODS.find(x => x.id === id) || (load().customFoods||[]).find(x => x.id === id);
 }
 
 function today(){
@@ -891,7 +953,7 @@ function renderHero(){
 function sumMacros(foodArr){
   let r = { cal:0, p:0, c:0, f:0 };
   (foodArr||[]).forEach(it => {
-    const f = FOODS.find(x => x.id === it.id);
+    const f = findFood(it.id);
     if (!f) return;
     r.cal += f.cal * it.qty; r.p += f.p * it.qty; r.c += f.c * it.qty; r.f += f.f * it.qty;
   });
@@ -979,16 +1041,171 @@ function renderMacros(){
 
 function renderFoodList(){
   const list = document.getElementById('food-list');
-  list.innerHTML = FOODS.map(f => `
-    <div class="card" onclick="addFood('${f.id}')" style="transition:transform .12s, background .12s;">
+  const custom = (load().customFoods || []);
+  const all = [...custom, ...FOODS];
+  list.innerHTML = all.map(f => {
+    const isCustom = String(f.id).startsWith('cf_');
+    const badge = isCustom ? `<span style="background:rgba(0,255,157,.14);color:var(--accent2);border:1px solid var(--accent2);padding:1px 6px;border-radius:4px;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.1em;font-weight:700;margin-left:6px;vertical-align:middle;">CUSTOM${f.guessed?' · GUESS':''}</span>` : '';
+    const removeBtn = isCustom ? `<button onclick="event.stopPropagation();removeCustomFood('${f.id}')" style="position:absolute;top:6px;right:6px;background:transparent;border:none;color:var(--muted);font-size:14px;cursor:pointer;padding:2px 6px;opacity:.6;">✕</button>` : '';
+    return `<div class="card" onclick="addFood('${f.id}')" style="transition:transform .12s, background .12s;position:relative;">
+      ${removeBtn}
       <div class="card-check">＋</div>
       <div class="card-body">
-        <div class="card-name">${f.name}</div>
+        <div class="card-name">${f.name}${badge}</div>
         <div class="card-meta">${f.serving} · ${f.cal} cal · P${f.p} C${f.c} F${f.f}</div>
       </div>
       <div class="card-right"><div class="v">${f.cal}</div><div class="l">cal</div></div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
+}
+
+// ─── CUSTOM FOOD ADDER ───────────────────────────
+const FOOD_GUESS_DB = [
+  // [keyword(s), perServing { serving, cal, p, c, f }]
+  { kw:['pizza'],                   serving:'1 slice',     cal:285, p:12, c:36, f:10 },
+  { kw:['burger','cheeseburger'],   serving:'1 burger',    cal:540, p:25, c:40, f:28 },
+  { kw:['fry','fries'],             serving:'medium order',cal:365, p:4,  c:48, f:17 },
+  { kw:['burrito'],                 serving:'1 burrito',   cal:620, p:25, c:75, f:22 },
+  { kw:['taco'],                    serving:'1 taco',      cal:210, p:10, c:18, f:11 },
+  { kw:['sandwich','sub'],          serving:'1 sandwich',  cal:430, p:24, c:45, f:15 },
+  { kw:['salad'],                   serving:'1 bowl',      cal:220, p:10, c:18, f:12 },
+  { kw:['soup'],                    serving:'1 cup',       cal:160, p:8,  c:18, f:6  },
+  { kw:['pasta','spaghetti','penne','lasagna'], serving:'1 cup', cal:330, p:14, c:48, f:9 },
+  { kw:['rice'],                    serving:'1 cup cooked',cal:205, p:4,  c:45, f:0  },
+  { kw:['bread','toast'],           serving:'1 slice',     cal:80,  p:4,  c:15, f:1  },
+  { kw:['bagel'],                   serving:'1 bagel',     cal:280, p:11, c:55, f:2  },
+  { kw:['oatmeal','oats'],          serving:'1 packet',    cal:160, p:5,  c:30, f:3  },
+  { kw:['cereal'],                  serving:'1 cup + milk',cal:230, p:9,  c:38, f:5  },
+  { kw:['egg'],                     serving:'1 large',     cal:75,  p:6,  c:0,  f:5  },
+  { kw:['bacon'],                   serving:'2 strips',    cal:90,  p:6,  c:0,  f:7  },
+  { kw:['chicken breast','chicken'],serving:'4 oz cooked', cal:185, p:35, c:0,  f:4  },
+  { kw:['steak','beef'],            serving:'4 oz cooked', cal:280, p:30, c:0,  f:18 },
+  { kw:['salmon'],                  serving:'4 oz cooked', cal:235, p:25, c:0,  f:14 },
+  { kw:['tuna'],                    serving:'1 can drained',cal:110,p:24, c:0,  f:1  },
+  { kw:['shrimp'],                  serving:'4 oz cooked', cal:120, p:24, c:0,  f:2  },
+  { kw:['fish'],                    serving:'4 oz cooked', cal:200, p:25, c:0,  f:10 },
+  { kw:['protein shake','shake','whey'], serving:'1 scoop',cal:160, p:30, c:5,  f:3  },
+  { kw:['yogurt','greek yogurt'],   serving:'1 cup',       cal:150, p:18, c:11, f:4  },
+  { kw:['milk'],                    serving:'1 cup',       cal:150, p:8,  c:12, f:8  },
+  { kw:['cheese'],                  serving:'1 slice',     cal:110, p:7,  c:1,  f:9  },
+  { kw:['butter'],                  serving:'1 tbsp',      cal:100, p:0,  c:0,  f:11 },
+  { kw:['olive oil','oil'],         serving:'1 tbsp',      cal:120, p:0,  c:0,  f:14 },
+  { kw:['avocado'],                 serving:'1/2 medium',  cal:120, p:1.5,c:6,  f:11 },
+  { kw:['guac','guacamole'],        serving:'2 tbsp',      cal:60,  p:1,  c:3,  f:5  },
+  { kw:['nuts','almond','peanut','cashew','walnut'], serving:'1 oz', cal:170, p:6, c:6, f:14 },
+  { kw:['peanut butter','pb'],      serving:'1 tbsp',      cal:95,  p:4,  c:3,  f:8  },
+  { kw:['banana'],                  serving:'1 medium',    cal:105, p:1,  c:27, f:0  },
+  { kw:['apple'],                   serving:'1 medium',    cal:95,  p:0,  c:25, f:0  },
+  { kw:['orange'],                  serving:'1 medium',    cal:65,  p:1,  c:16, f:0  },
+  { kw:['berries','blueberries','strawberries'], serving:'1 cup', cal:80, p:1, c:20, f:0 },
+  { kw:['grapes'],                  serving:'1 cup',       cal:105, p:1,  c:27, f:0  },
+  { kw:['potato','baked potato'],   serving:'1 medium',    cal:160, p:4,  c:37, f:0  },
+  { kw:['sweet potato'],            serving:'1 cup',       cal:180, p:4,  c:41, f:0  },
+  { kw:['broccoli','green beans','spinach','asparagus','vegetables','veggies'], serving:'1 cup', cal:50, p:3, c:10, f:0 },
+  { kw:['ice cream'],               serving:'1/2 cup',     cal:140, p:2,  c:17, f:7  },
+  { kw:['chocolate'],               serving:'1 oz',        cal:155, p:2,  c:14, f:9  },
+  { kw:['cookie'],                  serving:'1 cookie',    cal:150, p:2,  c:21, f:7  },
+  { kw:['cake','brownie'],          serving:'1 slice',     cal:340, p:4,  c:48, f:15 },
+  { kw:['donut'],                   serving:'1 donut',     cal:265, p:3,  c:31, f:14 },
+  { kw:['chip','chips'],            serving:'1 oz',        cal:155, p:2,  c:15, f:10 },
+  { kw:['popcorn'],                 serving:'3 cups',      cal:95,  p:3,  c:19, f:1  },
+  { kw:['beer'],                    serving:'12 oz',       cal:155, p:2,  c:13, f:0  },
+  { kw:['wine'],                    serving:'5 oz glass',  cal:125, p:0,  c:4,  f:0  },
+  { kw:['liquor','vodka','whiskey','tequila','gin','rum'], serving:'1.5 oz shot', cal:100, p:0, c:0, f:0 },
+  { kw:['coffee','espresso'],       serving:'1 cup black', cal:5,   p:0,  c:0,  f:0  },
+  { kw:['latte','cappuccino'],      serving:'12 oz',       cal:180, p:9,  c:18, f:9  },
+  { kw:['soda','coke','pepsi','sprite'], serving:'12 oz can', cal:140, p:0, c:39, f:0 },
+  { kw:['juice','orange juice'],    serving:'1 cup',       cal:110, p:2,  c:26, f:0  },
+];
+
+let cfState = { name:'', serving:'', mode:null, guessed:false };
+
+function openCustomFood(){
+  cfState = { name:'', serving:'', mode:null, guessed:false };
+  document.getElementById('cf-name').value = '';
+  document.getElementById('cf-serving').value = '';
+  document.getElementById('cf-cal').value = '';
+  document.getElementById('cf-p').value = '';
+  document.getElementById('cf-c').value = '';
+  document.getElementById('cf-f').value = '';
+  document.getElementById('cf-step1').style.display = 'block';
+  document.getElementById('cf-step2').style.display = 'none';
+  document.getElementById('cf-modal').style.display = 'block';
+  setTimeout(() => document.getElementById('cf-name').focus(), 100);
+}
+function closeCustomFood(){ document.getElementById('cf-modal').style.display = 'none'; }
+function cfBack(){
+  document.getElementById('cf-step1').style.display = 'block';
+  document.getElementById('cf-step2').style.display = 'none';
+}
+function cfPathManual(){
+  const name = document.getElementById('cf-name').value.trim();
+  if (!name) { alert('Enter a food name first.'); return; }
+  cfState.name = name;
+  cfState.serving = document.getElementById('cf-serving').value.trim() || '1 serving';
+  cfState.mode = 'manual';
+  cfState.guessed = false;
+  document.getElementById('cf-step2-banner').style.cssText = 'padding:10px 12px;border-radius:8px;font-size:12px;line-height:1.45;margin-bottom:14px;background:rgba(0,212,255,.06);border:1px solid var(--border2);color:var(--text);';
+  document.getElementById('cf-step2-banner').innerHTML = `<strong style="color:var(--accent);">Enter the macros</strong> for <em>${cfState.name}</em> (${cfState.serving}). Save when done.`;
+  document.getElementById('cf-step1').style.display = 'none';
+  document.getElementById('cf-step2').style.display = 'block';
+}
+function cfPathGuess(){
+  const name = document.getElementById('cf-name').value.trim();
+  if (!name) { alert('Enter a food name first.'); return; }
+  cfState.name = name;
+  cfState.serving = document.getElementById('cf-serving').value.trim();
+  cfState.mode = 'guess';
+  cfState.guessed = true;
+  // run guess engine
+  const lower = name.toLowerCase();
+  let match = null;
+  for (const entry of FOOD_GUESS_DB) {
+    if (entry.kw.some(k => lower.includes(k))) { match = entry; break; }
+  }
+  let cal, p, c, f, srv, conf;
+  if (match) {
+    cal = match.cal; p = match.p; c = match.c; f = match.f;
+    srv = cfState.serving || match.serving;
+    conf = 'Found in database — adjust if your portion differs.';
+  } else {
+    // generic balanced-meal estimate
+    cal = 400; p = 20; c = 40; f = 15;
+    srv = cfState.serving || '1 serving';
+    conf = 'No match found — used a generic balanced-meal estimate (400 cal). Adjust to match.';
+  }
+  cfState.serving = srv;
+  document.getElementById('cf-cal').value = cal;
+  document.getElementById('cf-p').value = p;
+  document.getElementById('cf-c').value = c;
+  document.getElementById('cf-f').value = f;
+  document.getElementById('cf-step2-banner').style.cssText = 'padding:10px 12px;border-radius:8px;font-size:12px;line-height:1.45;margin-bottom:14px;background:rgba(0,255,157,.06);border:1px solid var(--accent2);color:var(--text);';
+  document.getElementById('cf-step2-banner').innerHTML = `🤖 <strong style="color:var(--accent2);">Best guess for <em>${cfState.name}</em></strong> (${srv}) · ${conf}`;
+  document.getElementById('cf-step1').style.display = 'none';
+  document.getElementById('cf-step2').style.display = 'block';
+}
+function cfSave(){
+  const cal = parseFloat(document.getElementById('cf-cal').value) || 0;
+  const p   = parseFloat(document.getElementById('cf-p').value) || 0;
+  const c   = parseFloat(document.getElementById('cf-c').value) || 0;
+  const f   = parseFloat(document.getElementById('cf-f').value) || 0;
+  if (!cal && !p && !c && !f) { alert('Enter at least one macro value.'); return; }
+  const id = 'cf_' + Date.now();
+  const entry = { id, name:cfState.name, serving:cfState.serving, cal:Math.round(cal), p, c, f, guessed:cfState.guessed };
+  const s = load();
+  s.customFoods = s.customFoods || [];
+  s.customFoods.unshift(entry);
+  save(s);
+  closeCustomFood();
+  addFood(id); // immediately log to today + render
+  toast(`✓ ${entry.name} saved + logged`, '#00FF9D');
+}
+function removeCustomFood(id){
+  if (!confirm('Remove this custom food from your library? (logged servings stay logged)')) return;
+  const s = load();
+  s.customFoods = (s.customFoods || []).filter(x => x.id !== id);
+  save(s);
+  renderFoodList();
 }
 
 // Update sticky Eat-tab running total
@@ -1032,7 +1249,7 @@ function renderFoodLog(){
     grouped[it.id].indices.push(idx);
   });
   log.innerHTML = Object.values(grouped).map(g => {
-    const f = FOODS.find(x => x.id === g.id);
+    const f = findFood(g.id);
     return `<div class="card">
       <div class="card-body">
         <div class="card-name">${f.name} <span style="color:var(--muted);font-weight:500;font-size:12px;">×${g.qty}</span></div>
@@ -1381,7 +1598,7 @@ function addFood(id){
   s.daily[todayKey()].food.push({ id, qty: 1 });
   save(s);
   haptic();
-  const f = FOODS.find(x => x.id === id);
+  const f = findFood(id);
   if (f) toast(`+ ${f.name} · ${f.cal} cal`);
   renderAll();
 }
@@ -1706,7 +1923,7 @@ document.querySelectorAll('.tab').forEach(b => {
 function mealMacros(meal){
   let r = { cal:0, p:0, c:0, f:0 };
   meal.items.forEach(it => {
-    const f = FOODS.find(x => x.id === it.id);
+    const f = findFood(it.id);
     if (!f) return;
     r.cal += f.cal*it.qty; r.p += f.p*it.qty; r.c += f.c*it.qty; r.f += f.f*it.qty;
   });
@@ -1745,7 +1962,7 @@ function renderPlan(){
     const mm = mealMacros(m);
     const isLogged = !!logged[m.id];
     const itemRows = m.items.map(it => {
-      const f = FOODS.find(x => x.id === it.id);
+      const f = findFood(it.id);
       // Multiply portion size by qty for display: "1 cup × 2 = 2 cups"
       const portionLine = it.qty > 1 ? `${it.qty} × ${f.serving}` : f.serving;
       return `<div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text);padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04);">
