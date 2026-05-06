@@ -243,13 +243,13 @@ h1, h2, h3, .h { font-family:'Rajdhani',sans-serif; letter-spacing:-.3px; font-w
 // PEPTIDE LIBRARY (curated, scrollable picker)
 // ─────────────────────────────────────────────
 const PEPTIDE_LIBRARY = [
-  { id:'reta',     name:'Retatrutide',         tag:'GLP-1',  color:'#00FF9D', defaultMg:4,    perWeek:1, suggestedDays:[1,3,5], window:'AM', fasted:true,  vialMg:10 },
-  { id:'sema',     name:'Semaglutide',         tag:'GLP-1',  color:'#00FF9D', defaultMg:1,    perWeek:1, suggestedDays:[1],     window:'AM', fasted:true,  vialMg:5  },
-  { id:'tirz',     name:'Tirzepatide',         tag:'GLP-1',  color:'#00FF9D', defaultMg:5,    perWeek:1, suggestedDays:[1],     window:'AM', fasted:true,  vialMg:10 },
+  { id:'reta',     name:'Retatrutide',         tag:'GLP-1',  color:'#00FF9D', defaultMg:1,    perWeek:1, suggestedDays:[1],     window:'AM', fasted:true,  vialMg:10, titration:true, titrationNote:'Start at 1 mg/wk (~20u at 5 mg/mL) for 4 weeks. Titrate up only if appetite suppression is mild and no nausea: wk 5-8 → 2mg, wk 9-12 → 4mg, maintenance 6-8mg. Never jump levels — gut wins.' },
+  { id:'sema',     name:'Semaglutide',         tag:'GLP-1',  color:'#00FF9D', defaultMg:0.25, perWeek:1, suggestedDays:[1],     window:'AM', fasted:true,  vialMg:5,  titration:true, titrationNote:'Start 0.25 mg/wk × 4 weeks. Titrate: wk 5-8 → 0.5mg, wk 9-12 → 1mg, then 1.7mg, max 2.4mg. Skip a step if nausea hits — drop back, hold longer.' },
+  { id:'tirz',     name:'Tirzepatide',         tag:'GLP-1',  color:'#00FF9D', defaultMg:2.5,  perWeek:1, suggestedDays:[1],     window:'AM', fasted:true,  vialMg:10, titration:true, titrationNote:'Start 2.5 mg/wk × 4 weeks. Titrate every 4 wks: 5mg → 7.5mg → 10mg → 12.5mg → max 15mg. Hold a level longer if sides flare.' },
   { id:'tesa',     name:'Tesamorelin',         tag:'VAT',    color:'#00FF9D', defaultMg:1.5,  perWeek:7, suggestedDays:'all',   window:'AM', fasted:true,  vialMg:10 },
   { id:'aod',      name:'AOD-9604',            tag:'fat-ox', color:'#A78BFA', defaultMg:0.5,  perWeek:5, suggestedDays:[1,2,3,4,5], window:'AM', fasted:true, vialMg:5 },
   { id:'5amq',     name:'5-Amino-1MQ',         tag:'NNMT',   color:'#FBBF24', defaultMg:2,    perWeek:7, suggestedDays:'all',   window:'AM', fasted:true,  vialMg:10 },
-  { id:'lcar',     name:'L-Carnitine',         tag:'fat-ox', color:'#A78BFA', defaultMg:25,   perWeek:7, suggestedDays:'all',   window:'AM', fasted:true,  vialMg:500, premixed:true },
+  { id:'lcar',     name:'L-Carnitine',         tag:'fat-ox', color:'#A78BFA', defaultMg:100,  perWeek:7, suggestedDays:'all',   window:'AM', fasted:true,  vialMg:500, premixed:true, premixConc:50, doseNote:'Effective fat-ox dose: 100-500 mg per shot. At 50 mg/mL pre-mix that\'s 200-1000 units. Sub-100 mg = sub-therapeutic.' },
   { id:'bpc',      name:'BPC-157',             tag:'heal',   color:'#34D399', defaultMg:0.25, perWeek:7, suggestedDays:'all',   window:'AM', fasted:false, vialMg:5  },
   { id:'tb',       name:'TB-500',              tag:'heal',   color:'#34D399', defaultMg:5,    perWeek:2, suggestedDays:[1,4],   window:'AM', fasted:false, vialMg:10 },
   { id:'ghkcu',    name:'GHK-Cu',              tag:'collagen', color:'#A78BFA', defaultMg:2,  perWeek:7, suggestedDays:'all',   window:'AM', fasted:false, vialMg:50 },
@@ -365,6 +365,12 @@ function renderPeptides(){
           <div class="peptide-card-name">${p.name || lib?.name || 'Custom'}</div>
           <button class="peptide-rm" onclick="rmPeptide(${i})">✕</button>
         </div>
+        ${p.titration && p.titrationNote ? `
+          <div style="background:rgba(251,191,36,.08); border:1px solid var(--warn); border-radius:8px; padding:10px 12px; margin-bottom:10px; font-size:12px; line-height:1.55; color:var(--text);">
+            <div style="font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:.14em; color:var(--warn); font-weight:700; margin-bottom:4px;">⚠ TITRATION REQUIRED</div>
+            ${p.titrationNote}
+          </div>
+        ` : ''}
         ${p.premixed ? `
           <label class="label">Pre-mix concentration (mg/mL)</label>
           <input class="input" type="number" inputmode="decimal" value="${p.premixConc||50}" oninput="updPep(${i},'premixConc',this.value);recompute(${i})">
@@ -455,6 +461,8 @@ function pickPeptide(libId){
     premixConc: lib.premixConc || 50,
     oral: lib.oral || false,
     color: lib.color, tag: lib.tag,
+    titration: lib.titration || false,
+    titrationNote: lib.titrationNote || null,
   };
   state.peptides.push(p);
   haptic(15);
