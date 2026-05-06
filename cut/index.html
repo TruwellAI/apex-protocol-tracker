@@ -419,10 +419,6 @@ body { padding-bottom: 90px; }
       <button class="btn btn-ghost" style="flex:1;font-size:11px;padding:10px;" onclick="undoLastFood()">⌫ Undo last item</button>
     </div>
 
-    <!-- 🔥 STREAKS CARD -->
-    <div class="section-h"><h2>🔥 Streaks · perfect-day count</h2></div>
-    <div id="streaks-grid" style="margin:0 16px 14px;display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
-
     <!-- 🌙 END-OF-DAY LOCK BUTTON -->
     <div style="margin:0 16px 30px;">
       <button id="day-done-btn" class="btn btn-block" style="font-size:14px;padding:16px;background:linear-gradient(135deg,var(--accent2),var(--accent));color:#000;font-weight:800;letter-spacing:.06em;text-transform:uppercase;" onclick="lockInDay()">🌙 Day done — Lock it in</button>
@@ -2114,7 +2110,6 @@ function renderAll(){
   safe('FoodList',      renderFoodList);
   safe('FoodLog',       renderFoodLog);
   safe('Plan',          renderPlan);
-  safe('Streaks',       renderStreaks);
   safe('DowStrip',      renderDowStrip);
   safe('CheckPerfect',  checkPerfectDay);
   safe('DayDoneBtn',    renderDayDoneBtn);
