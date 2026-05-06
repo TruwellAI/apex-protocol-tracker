@@ -1887,8 +1887,10 @@ function renderChecks(){
   const fillerCard = document.getElementById('macro-filler');
   const fillerBody = document.getElementById('macro-filler-body');
   if (fillerCard && fillerBody) {
-    if (burnSoFar > 0) {
-      const eaten = sumMacros(t.food);
+    const eatenForCheck = sumMacros(t.food);
+    // Fire any time at least one meal-sized amount has been eaten (cal > 200) OR a check-in is logged
+    if (eatenForCheck.cal > 200 || burnSoFar > 0) {
+      const eaten = eatenForCheck;
       const remCal = Math.max(0, dynamicGoal - eaten.cal);
       const remP   = Math.max(0, (s.targetP||240) - eaten.p);
       const remC   = Math.max(0, (s.targetC||175) - eaten.c);
