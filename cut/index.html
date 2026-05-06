@@ -476,6 +476,12 @@ body { padding-bottom: 90px; }
         <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--accent);font-weight:700;margin-bottom:6px;">🤖 RECOMMENDATION · stay at −1000</div>
         <div id="smart-rec-body" style="font-size:12px;color:var(--text);line-height:1.55;">Log your noon cal-burn above to get a tailored plan for afternoon + PM walk.</div>
       </div>
+
+      <!-- 🍽 MACRO FILLER: greedy food pick to hit remaining cal/P/C/F -->
+      <div id="macro-filler" style="margin-top:10px;padding:12px;background:linear-gradient(135deg,rgba(0,255,157,.08),rgba(167,139,250,.04));border:1px solid var(--accent2);border-radius:8px;display:none;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--accent2);font-weight:700;margin-bottom:6px;">🍽 EAT THIS · hits your remaining macros</div>
+        <div id="macro-filler-body" style="font-size:12px;color:var(--text);line-height:1.6;"></div>
+      </div>
     </div>
 
     <!-- WATER -->
@@ -958,6 +964,76 @@ function sumMacros(foodArr){
     r.cal += f.cal * it.qty; r.p += f.p * it.qty; r.c += f.c * it.qty; r.f += f.f * it.qty;
   });
   return r;
+}
+
+// Greedy macro filler — pick foods from FOODS + customFoods to hit remaining cal/P/C/F.
+// Strategy: prioritize protein gap first (most important on a cut), then carbs, then fat,
+// while keeping total cal under remCal + 100 buffer.
+function pickFoodsToHitMacros(remCal, remP, remC, remF){
+  const all = [...FOODS, ...((load().customFoods)||[])];
+  // pre-classify each food by primary macro (the one with most cal contribution)
+  const scored = all.filter(f => f.cal > 0).map(f => {
+    const fromP = f.p * 4, fromC = f.c * 4, fromF = f.f * 9;
+    const total = fromP + fromC + fromF || 1;
+    return {
+      ...f,
+      pPct: fromP / total,
+      cPct: fromC / total,
+      fPct: fromF / total,
+      pPerCal: f.cal > 0 ? f.p / f.cal : 0,
+      cPerCal: f.cal > 0 ? f.c / f.cal : 0,
+      fPerCal: f.cal > 0 ? f.f / f.cal : 0,
+    };
+  });
+  const picks = [];
+  let budget = { cal:remCal, p:remP, c:remC, f:remF };
+  const calBuffer = 100;
+  // Helper: try to add up to maxQty servings of a food, capped by budget
+  function tryAdd(food, maxQty){
+    if (!food || food.cal <= 0) return;
+    let qty = 0;
+    for (let q = 1; q <= maxQty; q++) {
+      if (budget.cal - food.cal < -calBuffer) break;
+      if (budget.p < -5 && food.p > 0) break;
+      if (budget.f < -10 && food.fPct > 0.4) break; // don't blow fat budget on a fat-heavy food
+      budget.cal -= food.cal;
+      budget.p -= food.p;
+      budget.c -= food.c;
+      budget.f -= food.f;
+      qty++;
+    }
+    if (qty > 0) {
+      const existing = picks.find(x => x.id === food.id);
+      if (existing) existing.qty += qty;
+      else picks.push({ id:food.id, name:food.name, serving:food.serving, qty, cal:food.cal*qty, p:food.p*qty, c:food.c*qty, f:food.f*qty });
+    }
+  }
+  // 1. Fill protein gap: pick top protein-dense food, max 3 servings
+  if (budget.p > 15) {
+    const proteins = scored.filter(f => f.pPct >= 0.45 && f.p >= 15).sort((a,b) => b.pPerCal - a.pPerCal);
+    if (proteins.length) tryAdd(proteins[0], 3);
+  }
+  // 2. Top up smaller protein gap with a moderate option
+  if (budget.p > 8) {
+    const proteins2 = scored.filter(f => f.pPct >= 0.35 && f.p >= 8 && !picks.find(p => p.id === f.id)).sort((a,b) => b.pPerCal - a.pPerCal);
+    if (proteins2.length) tryAdd(proteins2[0], 2);
+  }
+  // 3. Fill carb gap if there's room
+  if (budget.c > 20 && budget.cal > 100) {
+    const carbs = scored.filter(f => f.cPct >= 0.55 && f.c >= 15).sort((a,b) => b.cPerCal - a.cPerCal);
+    if (carbs.length) tryAdd(carbs[0], 2);
+  }
+  // 4. Fill fat gap if needed
+  if (budget.f > 8 && budget.cal > 80) {
+    const fats = scored.filter(f => f.fPct >= 0.55 && f.f >= 5).sort((a,b) => b.fPerCal - a.fPerCal);
+    if (fats.length) tryAdd(fats[0], 1);
+  }
+  // 5. If protein still short, hit it again with whey-type fast option
+  if (budget.p > 12) {
+    const lastP = scored.filter(f => f.pPct >= 0.5 && f.cal <= 200 && !picks.find(p => p.id === f.id)).sort((a,b) => b.pPerCal - a.pPerCal);
+    if (lastP.length) tryAdd(lastP[0], 1);
+  }
+  return picks;
 }
 
 function renderMacros(){
@@ -1770,6 +1846,41 @@ function renderChecks(){
     }
     recEl.innerHTML = html || 'Log your noon cal-burn to get a tailored plan.';
   }
+
+  // ── MACRO FILLER ──
+  // After cal-burn check-in, suggest specific foods to hit remaining cal/P/C/F.
+  const fillerCard = document.getElementById('macro-filler');
+  const fillerBody = document.getElementById('macro-filler-body');
+  if (fillerCard && fillerBody) {
+    if (burnSoFar > 0) {
+      const eaten = sumMacros(t.food);
+      const remCal = Math.max(0, dynamicGoal - eaten.cal);
+      const remP   = Math.max(0, (s.targetP||240) - eaten.p);
+      const remC   = Math.max(0, (s.targetC||175) - eaten.c);
+      const remF   = Math.max(0, (s.targetF||70)  - eaten.f);
+      if (remCal < 100 && remP < 10) {
+        fillerCard.style.display = 'block';
+        fillerBody.innerHTML = `<strong style="color:var(--accent2);">✓ You're dialed.</strong> Macros are within range — no more food needed today.`;
+      } else {
+        const picks = pickFoodsToHitMacros(remCal, remP, remC, remF);
+        const tot = picks.reduce((a, x) => ({ cal:a.cal+x.cal, p:a.p+x.p, c:a.c+x.c, f:a.f+x.f }), { cal:0, p:0, c:0, f:0 });
+        fillerCard.style.display = 'block';
+        if (!picks.length) {
+          fillerBody.innerHTML = `<strong style="color:var(--warn);">Tight budget.</strong> ${remCal} cal / ${remP}P / ${remC}C / ${remF}F left. Try a Premier shake (160 cal · 30P) or 4 oz chicken (140 cal · 26P) and re-check.`;
+        } else {
+          const lines = picks.map(x => `<div style="display:flex;justify-content:space-between;gap:8px;padding:4px 0;"><span>${x.qty>1?x.qty+'× ':''}<strong>${x.name}</strong> <span style="color:var(--muted);font-size:11px;">${x.serving}</span></span><span style="color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:11px;white-space:nowrap;">${Math.round(x.cal)}c · ${Math.round(x.p)}P</span></div>`).join('');
+          fillerBody.innerHTML = `
+            <div style="margin-bottom:8px;font-size:11px;color:var(--muted);">Need: <strong style="color:var(--text);">${remCal} cal</strong> · <strong style="color:var(--accent);">${remP}P</strong> · <strong style="color:var(--warn);">${remC}C</strong> · <strong style="color:var(--accent3);">${remF}F</strong></div>
+            ${lines}
+            <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);">Total: <strong style="color:var(--accent2);">${Math.round(tot.cal)} cal</strong> · ${Math.round(tot.p)}P · ${Math.round(tot.c)}C · ${Math.round(tot.f)}F · gap ${Math.round(remCal-tot.cal)} cal / ${Math.round(remP-tot.p)}P</div>
+          `;
+        }
+      }
+    } else {
+      fillerCard.style.display = 'none';
+    }
+  }
+
   // Workout pill label = today's split
   const workoutLbl = document.getElementById('ct-workout-label');
   if (workoutLbl) {
