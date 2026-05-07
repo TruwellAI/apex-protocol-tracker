@@ -586,7 +586,8 @@ body { padding-bottom: 90px; }
         <!-- STEP 1: name + serving + ask -->
         <div id="cf-step1">
           <label style="display:block;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--muted);font-weight:700;margin-bottom:6px;text-transform:uppercase;">Food name</label>
-          <input id="cf-name" type="text" placeholder="e.g. pepperoni pizza slice" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:12px;font-size:16px;font-family:inherit;-webkit-appearance:none;margin-bottom:12px;box-sizing:border-box;">
+          <input id="cf-name" type="text" placeholder="e.g. in-n-out 4x4, big mac, chipotle bowl, papa johns" oninput="cfLiveSearch()" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:12px;font-size:16px;font-family:inherit;-webkit-appearance:none;margin-bottom:6px;box-sizing:border-box;">
+          <div id="cf-live-match" style="display:none;background:rgba(0,255,157,.06);border:1px solid var(--accent2);border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:12px;line-height:1.5;color:var(--text);"></div>
           <label style="display:block;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--muted);font-weight:700;margin-bottom:6px;text-transform:uppercase;">Serving size</label>
           <input id="cf-serving" type="text" placeholder="e.g. 1 slice, 1 cup, 4 oz" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:12px;font-size:16px;font-family:inherit;-webkit-appearance:none;margin-bottom:18px;box-sizing:border-box;">
 
@@ -1207,12 +1208,56 @@ const FOOD_GUESS_DB = [
   { kw:['latte','cappuccino'],      serving:'12 oz',       cal:180, p:9,  c:18, f:9  },
   { kw:['soda','coke','pepsi','sprite'], serving:'12 oz can', cal:140, p:0, c:39, f:0 },
   { kw:['juice','orange juice'],    serving:'1 cup',       cal:110, p:2,  c:26, f:0  },
+  // ── CHAIN RESTAURANTS — exact menu items (longest keywords first) ──
+  { kw:['in-n-out 4x4','in n out 4x4','4x4'],          serving:'buttered bun · spread + LTO',     cal:980, p:60, c:41, f:62 },
+  { kw:['in-n-out 3x3','in n out 3x3','3x3'],          serving:'1 burger',                         cal:790, p:48, c:41, f:51 },
+  { kw:['in-n-out double-double','in n out double double','double-double','double double'], serving:'1 burger', cal:670, p:37, c:41, f:41 },
+  { kw:['flying dutchman','dutchman'],                 serving:'2 patty + 2 cheese, no bun',       cal:420, p:28, c:3,  f:33 },
+  { kw:['animal style fries','animal fries'],          serving:'1 order',                          cal:750, p:23, c:55, f:48 },
+  { kw:['in-n-out fries','in n out fries'],            serving:'1 order',                          cal:395, p:7,  c:54, f:18 },
+  { kw:['cheeseburger in-n-out','in n out cheeseburger'],serving:'1 burger',                       cal:480, p:22, c:39, f:27 },
+  { kw:['big mac','bigmac'],                           serving:'1 burger',                         cal:550, p:25, c:45, f:30 },
+  { kw:['quarter pounder'],                            serving:'1 burger w/ cheese',               cal:520, p:30, c:42, f:26 },
+  { kw:['mcdouble','mc double'],                       serving:'1 burger',                         cal:400, p:22, c:33, f:20 },
+  { kw:['mcchicken'],                                  serving:'1 sandwich',                       cal:400, p:14, c:39, f:21 },
+  { kw:['mcnuggets','chicken nuggets','nuggets'],      serving:'10 piece',                         cal:420, p:23, c:25, f:25 },
+  { kw:['whopper'],                                    serving:'1 burger',                         cal:660, p:28, c:49, f:40 },
+  { kw:['wendys baconator','baconator'],               serving:'1 burger',                         cal:960, p:60, c:39, f:64 },
+  { kw:['chipotle bowl','chipotle burrito bowl','burrito bowl'], serving:'rice + chicken + beans + salsa + cheese', cal:780, p:55, c:80, f:25 },
+  { kw:['chipotle steak bowl','steak bowl'],           serving:'rice + steak + beans + salsa',     cal:790, p:48, c:80, f:28 },
+  { kw:['chipotle barbacoa'],                          serving:'bowl with rice + beans',           cal:760, p:45, c:78, f:28 },
+  { kw:['cava bowl','cava'],                           serving:'rice + protein + dips',            cal:720, p:45, c:60, f:32 },
+  { kw:['sweetgreen','sweet green'],                   serving:'1 bowl',                           cal:550, p:35, c:45, f:25 },
+  { kw:['mobetta','mo betta',"mo'bettahs",'mo bettahs','mini chicken plate'], serving:"chicken thigh + rice + veggies", cal:620, p:35, c:60, f:22 },
+  { kw:['panda express orange chicken','orange chicken'], serving:'1 entree',                      cal:490, p:25, c:51, f:23 },
+  { kw:['panda express'],                              serving:'2 entree + rice plate',            cal:980, p:42, c:115,f:38 },
+  { kw:['panera mac','mac and cheese'],                serving:'1 cup',                            cal:480, p:18, c:45, f:25 },
+  { kw:['chick-fil-a','chick fil a','chickfila','chicken sandwich'], serving:'1 sandwich',         cal:440, p:29, c:41, f:19 },
+  { kw:['cfa nuggets','chick-fil-a nuggets'],          serving:'8 count',                          cal:250, p:27, c:11, f:11 },
+  { kw:['waffle fries'],                               serving:'medium',                           cal:420, p:5,  c:50, f:24 },
+  { kw:['five guys','5 guys','five guys burger'],      serving:'1 cheeseburger',                   cal:980, p:46, c:42, f:65 },
+  { kw:['shake shack','shackburger'],                  serving:'1 cheeseburger',                   cal:550, p:31, c:36, f:33 },
+  { kw:['raising canes','canes'],                      serving:'3 finger combo',                   cal:1110,p:43, c:106,f:55 },
+  { kw:['subway','sub footlong'],                      serving:'12" turkey',                       cal:560, p:48, c:90, f:8  },
+  { kw:['olive garden alfredo','fettuccine alfredo'],  serving:'1 entree',                         cal:1010,p:25, c:99, f:54 },
+  { kw:['papa johns','papa john'],                     serving:'2 large slices',                   cal:680, p:26, c:76, f:28 },
+  { kw:['dominos','dominoes'],                         serving:'2 medium slices',                  cal:520, p:22, c:62, f:20 },
+  { kw:['costco hot dog','costco dog'],                serving:'1 dog + bun',                      cal:550, p:21, c:46, f:31 },
+  { kw:['costco pizza'],                               serving:'1 slice cheese',                   cal:760, p:32, c:90, f:30 },
+  { kw:['costco chicken bake'],                        serving:'1 bake',                           cal:770, p:55, c:75, f:25 },
+  { kw:['starbucks egg bites','egg bites'],            serving:'2 bites',                          cal:300, p:19, c:9,  f:22 },
+  { kw:['starbucks oatmeal'],                          serving:'1 cup',                            cal:220, p:5,  c:39, f:5  },
+  { kw:['acai bowl','acai'],                           serving:'1 bowl',                           cal:480, p:9,  c:78, f:18 },
+  { kw:['poke bowl','poke'],                           serving:'1 bowl',                           cal:580, p:35, c:75, f:14 },
+  { kw:['ramen','tonkotsu'],                           serving:'1 bowl',                           cal:600, p:20, c:65, f:25 },
 ];
 
 let cfState = { name:'', serving:'', mode:null, guessed:false };
 
 function openCustomFood(){
   cfState = { name:'', serving:'', mode:null, guessed:false };
+  const lm = document.getElementById('cf-live-match');
+  if (lm) { lm.style.display='none'; lm.style.background='rgba(0,255,157,.06)'; lm.style.borderColor='var(--accent2)'; }
   document.getElementById('cf-name').value = '';
   document.getElementById('cf-serving').value = '';
   document.getElementById('cf-cal').value = '';
@@ -1240,6 +1285,26 @@ function cfPathManual(){
   document.getElementById('cf-step2-banner').innerHTML = `<strong style="color:var(--accent);">Enter the macros</strong> for <em>${cfState.name}</em> (${cfState.serving}). Save when done.`;
   document.getElementById('cf-step1').style.display = 'none';
   document.getElementById('cf-step2').style.display = 'block';
+}
+function cfLiveSearch(){
+  const wrap = document.getElementById('cf-live-match');
+  if (!wrap) return;
+  const lower = (document.getElementById('cf-name').value || '').toLowerCase().trim();
+  if (lower.length < 2) { wrap.style.display = 'none'; return; }
+  // find first match — same logic as cfPathGuess
+  let match = null;
+  for (const entry of FOOD_GUESS_DB) {
+    if (entry.kw.some(k => lower.includes(k))) { match = entry; break; }
+  }
+  if (match) {
+    wrap.style.display = 'block';
+    wrap.innerHTML = `🔍 <b>Found:</b> ${match.kw[0]} · ${match.serving}<br><span style="color:var(--muted);">${match.cal} cal · ${match.p}p · ${match.c}c · ${match.f}f — tap "Best guess" to load it.</span>`;
+  } else {
+    wrap.style.display = 'block';
+    wrap.style.background = 'rgba(255,107,53,.06)';
+    wrap.style.borderColor = '#FF6B35';
+    wrap.innerHTML = `🤖 No exact match — "Best guess" will use a generic 400-cal meal estimate that you can adjust.`;
+  }
 }
 function cfPathGuess(){
   const name = document.getElementById('cf-name').value.trim();
