@@ -703,6 +703,38 @@ body { padding-bottom: 90px; }
       <div id="dow-banner-title" style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:18px;color:var(--text);margin-top:2px;">What you're taking · 12 shots</div>
       <div id="dow-banner-sub" style="font-size:11px;color:var(--muted);margin-top:2px;">Tap any peptide to log · listed in injection order</div>
     </div>
+
+    <!-- ═══ DAILY READINESS · COACH MODE ═══ -->
+    <div style="margin:0 16px 14px;padding:14px;background:linear-gradient(135deg,rgba(167,139,250,.08),rgba(0,212,255,.04));border:1px solid #A78BFA;border-radius:12px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.16em;color:#A78BFA;font-weight:700;">🧠 DAILY READINESS · COACH MODE</div>
+        <div id="dr-status-pill" style="font-size:10px;font-family:'Share Tech Mono',monospace;letter-spacing:.1em;padding:3px 8px;border-radius:4px;background:rgba(255,255,255,.06);color:var(--muted);">PENDING</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;">
+        <div>
+          <label style="display:block;font-size:9px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:.1em;margin-bottom:4px;">SLEEP (hrs)</label>
+          <input id="dr-sleep" type="number" inputmode="decimal" step="0.5" placeholder="7.5" oninput="renderReadiness()" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:8px;font-size:14px;-webkit-appearance:none;box-sizing:border-box;font-family:inherit;">
+        </div>
+        <div>
+          <label style="display:block;font-size:9px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:.1em;margin-bottom:4px;">RHR (bpm)</label>
+          <input id="dr-rhr" type="number" inputmode="numeric" placeholder="58" oninput="renderReadiness()" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:8px;font-size:14px;-webkit-appearance:none;box-sizing:border-box;font-family:inherit;">
+        </div>
+        <div>
+          <label style="display:block;font-size:9px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:.1em;margin-bottom:4px;">SORE?</label>
+          <select id="dr-sore" onchange="renderReadiness()" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:8px;font-size:13px;-webkit-appearance:none;box-sizing:border-box;font-family:inherit;">
+            <option value="">none</option>
+            <option value="chest">chest</option>
+            <option value="back">back</option>
+            <option value="legs">legs</option>
+            <option value="shoulders">shoulders</option>
+            <option value="arms">arms</option>
+            <option value="full">full body</option>
+          </select>
+        </div>
+      </div>
+      <div id="dr-banner" style="padding:12px;border-radius:8px;font-size:13px;line-height:1.5;color:var(--text);background:rgba(0,0,0,.25);">Log your sleep, RHR, and any soreness → coach builds today's plan.</div>
+      <div id="dr-deload" style="display:none;margin-top:10px;padding:12px;border-radius:8px;font-size:13px;line-height:1.5;background:rgba(251,191,36,.1);border:1px solid var(--warn);color:var(--text);"></div>
+    </div>
     <div class="section-h">
       <h2>Today's injections</h2>
       <span class="count" id="inj-count">0 / 0</span>
@@ -2311,6 +2343,131 @@ function renderPlan(){
     </div>`;
   }).join('');
 }
+// ── DAILY READINESS · COACH ENGINE ──────────────
+// Reads sleep, RHR, soreness → outputs today's training recommendation.
+// Maintains 7-day RHR baseline + 4-week deload counter.
+function saveReadiness(){
+  const s = load();
+  const k = todayKey();
+  s.daily = s.daily || {};
+  s.daily[k] = s.daily[k] || { food:[], peptides:{}, steps:0, water:0, checks:{}, mealsLogged:{} };
+  s.daily[k].readiness = {
+    sleep: parseFloat(document.getElementById('dr-sleep').value) || null,
+    rhr:   parseInt(document.getElementById('dr-rhr').value)   || null,
+    sore:  document.getElementById('dr-sore').value || '',
+  };
+  // Cycle-start anchor for deload counter
+  if (!s.cycleStart) s.cycleStart = k;
+  save(s);
+}
+function loadReadinessForToday(){
+  const t = today();
+  if (!t.readiness) return;
+  const setVal = (id, v) => { const el = document.getElementById(id); if (el && v != null) el.value = v; };
+  setVal('dr-sleep', t.readiness.sleep);
+  setVal('dr-rhr',   t.readiness.rhr);
+  const ss = document.getElementById('dr-sore'); if (ss && t.readiness.sore != null) ss.value = t.readiness.sore;
+}
+function rhrBaseline7d(){
+  const s = load();
+  const days = s.daily || {};
+  const keys = Object.keys(days).sort().slice(-8, -1); // last 7 days, excluding today
+  const vals = keys.map(k => days[k]?.readiness?.rhr).filter(x => x && x > 30);
+  if (!vals.length) return null;
+  return vals.reduce((a,b)=>a+b,0) / vals.length;
+}
+function weekOfCycle(){
+  const s = load();
+  if (!s.cycleStart) return 1;
+  const start = new Date(s.cycleStart);
+  const now = new Date();
+  const days = Math.floor((now - start) / (1000*60*60*24));
+  return Math.floor(days / 7) + 1;
+}
+function renderReadiness(){
+  saveReadiness();
+  const sleep = parseFloat(document.getElementById('dr-sleep').value);
+  const rhr   = parseInt(document.getElementById('dr-rhr').value);
+  const sore  = document.getElementById('dr-sore').value;
+  const banner = document.getElementById('dr-banner');
+  const pill   = document.getElementById('dr-status-pill');
+  const dl     = document.getElementById('dr-deload');
+
+  // Deload week banner (every 4th week)
+  const wk = weekOfCycle();
+  const isDeload = wk > 0 && wk % 4 === 0;
+  if (isDeload) {
+    dl.style.display = 'block';
+    dl.innerHTML = `🟡 <b>DELOAD WEEK · week ${wk} of cycle.</b> Drop volume by 40% and intensity by 20% all week. Mandatory — this is when your nervous system actually adapts. Skipping deload = plateau.`;
+  } else {
+    dl.style.display = 'none';
+  }
+
+  // No data yet
+  if (!sleep && !rhr && !sore) {
+    banner.innerHTML = `Log your sleep, RHR, and any soreness → coach builds today's plan.`;
+    banner.style.cssText = 'padding:12px;border-radius:8px;font-size:13px;line-height:1.5;color:var(--text);background:rgba(0,0,0,.25);';
+    pill.textContent = 'PENDING'; pill.style.color = 'var(--muted)'; pill.style.background = 'rgba(255,255,255,.06)';
+    return;
+  }
+
+  // ── DECISION ENGINE ──
+  const reasons = [];
+  let verdict = 'GREEN'; // GREEN · YELLOW · RED
+  let prescription = '';
+
+  // Sleep ladder
+  if (sleep != null && !isNaN(sleep)) {
+    if (sleep < 4)        { verdict='RED';    reasons.push(`Slept ${sleep}h — under 4 hrs`); prescription = '<b>NO TRAINING.</b> 10-15 min walk + light stretching only. Hydrate. Eat. Sleep early tonight.'; }
+    else if (sleep < 5)   { verdict='RED';    reasons.push(`Slept ${sleep}h — recovery zone`); prescription = '<b>RECOVERY DAY.</b> 20-30 min easy walk, light yoga, or mobility. No weights, no intensity.'; }
+    else if (sleep < 6)   { verdict='YELLOW'; reasons.push(`Slept ${sleep}h — undercooked`); prescription = '<b>40% INTENSITY CUT.</b> Cut session short. No heavy compounds, no HIIT, no sprints. Do the work but lighter.'; }
+    else if (sleep < 7)   { verdict='YELLOW'; reasons.push(`Slept ${sleep}h — moderate`); prescription = '<b>NORMAL PLAN, MODERATE INTENSITY.</b> If 3+ days under 7h in a row, your sleep pattern is the bottleneck — fix it.'; }
+    else                  { verdict='GREEN';  reasons.push(`Slept ${sleep}h — recovered`); prescription = '<b>FULL INTENSITY · GREEN LIGHT.</b> Body is recovered. Push hard today.'; }
+  }
+
+  // RHR check (only matters if we have a baseline)
+  const baseline = rhrBaseline7d();
+  if (rhr && baseline) {
+    const pctOver = ((rhr - baseline) / baseline) * 100;
+    if (pctOver >= 10) {
+      reasons.push(`RHR ${rhr} = ${pctOver.toFixed(0)}% above your 7-day baseline (${Math.round(baseline)})`);
+      if (verdict !== 'RED') { verdict = 'YELLOW'; prescription = '<b>ACTIVE RECOVERY ONLY.</b> Elevated RHR means you\'re fighting something — illness, stress, overtraining. If it persists 3+ days, see a doctor.'; }
+    } else if (pctOver <= -3 && sleep && sleep >= 7) {
+      reasons.push(`RHR ${rhr} dropped vs baseline (${Math.round(baseline)}) — strong recovery signal`);
+    }
+  } else if (rhr && !baseline) {
+    reasons.push(`RHR ${rhr} logged — building your baseline (need 3+ days of data)`);
+  }
+
+  // Soreness override
+  if (sore && sore !== '') {
+    if (sore === 'full') {
+      verdict = 'RED';
+      reasons.push('Full-body soreness flagged');
+      prescription = '<b>ACTIVE RECOVERY DAY.</b> Walk, stretch, foam roll, sauna. Don\'t train — body is asking for repair.';
+    } else {
+      reasons.push(`${sore.charAt(0).toUpperCase()+sore.slice(1)} flagged sore — skip those exercises today`);
+      // Append to existing prescription
+      prescription += `<br><br>⚠ <b>Skip ${sore} today.</b> Train a different muscle group or do active recovery for that area.`;
+    }
+  }
+
+  // Render verdict
+  const palette = {
+    GREEN:  { bg:'rgba(0,255,157,.08)',  bd:'#00FF9D', label:'GREEN · GO' },
+    YELLOW: { bg:'rgba(251,191,36,.08)', bd:'#FBBF24', label:'YELLOW · DIAL BACK' },
+    RED:    { bg:'rgba(239,68,68,.1)',   bd:'#EF4444', label:'RED · STOP / RECOVER' },
+  }[verdict];
+  pill.textContent = palette.label;
+  pill.style.color = palette.bd;
+  pill.style.background = palette.bg;
+  banner.style.cssText = `padding:12px;border-radius:8px;font-size:13px;line-height:1.55;color:var(--text);background:${palette.bg};border:1px solid ${palette.bd};`;
+  banner.innerHTML = `<div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:${palette.bd};font-weight:700;margin-bottom:6px;">${palette.label}</div>${prescription}<div style="font-size:11px;color:var(--muted);margin-top:8px;border-top:1px solid rgba(255,255,255,.06);padding-top:6px;">Why: ${reasons.join(' · ')}</div>`;
+}
+
+// Auto-load + render on day open
+window.addEventListener('DOMContentLoaded', () => { setTimeout(() => { loadReadinessForToday(); renderReadiness(); }, 200); });
+
 // ── MEAL ITEM SWAP / ADJUST ──
 let swapState = { mealId:null, itemIdx:null };
 function openSwap(mealId, itemIdx){
