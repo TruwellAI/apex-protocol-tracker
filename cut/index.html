@@ -704,6 +704,28 @@ body { padding-bottom: 90px; }
       <div id="dow-banner-sub" style="font-size:11px;color:var(--muted);margin-top:2px;">Tap any peptide to log · listed in injection order</div>
     </div>
 
+    <!-- ═══ THE WHOLE PICTURE · UNIFIED COMMAND CARD ═══ -->
+    <div id="big-picture" style="margin:0 16px 14px;padding:16px;background:linear-gradient(135deg,rgba(0,212,255,.1),rgba(0,255,157,.06));border:2px solid var(--accent);border-radius:14px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.18em;color:var(--accent);font-weight:700;">⊙ TODAY · THE WHOLE PICTURE</div>
+        <div id="bp-deficit-pill" style="font-size:10px;font-family:'Share Tech Mono',monospace;letter-spacing:.1em;padding:4px 10px;border-radius:4px;background:rgba(0,255,157,.12);color:var(--accent2);font-weight:700;">−1000 TARGET</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+        <div style="background:rgba(0,0,0,.3);border-radius:8px;padding:10px;">
+          <div style="font-size:9px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:.1em;margin-bottom:4px;">DEFICIT TODAY</div>
+          <div id="bp-deficit-val" style="font-size:22px;font-weight:800;color:var(--accent2);font-family:'Rajdhani',sans-serif;">−0</div>
+          <div id="bp-deficit-sub" style="font-size:10px;color:var(--muted);">eat: 0 · burn: 0</div>
+        </div>
+        <div style="background:rgba(0,0,0,.3);border-radius:8px;padding:10px;">
+          <div style="font-size:9px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:.1em;margin-bottom:4px;">PEPTIDE ASSIST</div>
+          <div id="bp-pep-val" style="font-size:22px;font-weight:800;color:var(--accent);font-family:'Rajdhani',sans-serif;">0 / 0</div>
+          <div id="bp-pep-sub" style="font-size:10px;color:var(--muted);">today's shots logged</div>
+        </div>
+      </div>
+      <div id="bp-roles" style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:12px;"></div>
+      <div id="bp-coach" style="padding:12px;border-radius:8px;font-size:13px;line-height:1.55;color:var(--text);background:rgba(0,0,0,.3);"></div>
+    </div>
+
     <!-- ═══ DAILY READINESS · COACH MODE ═══ -->
     <div style="margin:0 16px 14px;padding:14px;background:linear-gradient(135deg,rgba(167,139,250,.08),rgba(0,212,255,.04));border:1px solid #A78BFA;border-radius:12px;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
@@ -2463,10 +2485,144 @@ function renderReadiness(){
   pill.style.background = palette.bg;
   banner.style.cssText = `padding:12px;border-radius:8px;font-size:13px;line-height:1.55;color:var(--text);background:${palette.bg};border:1px solid ${palette.bd};`;
   banner.innerHTML = `<div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:${palette.bd};font-weight:700;margin-bottom:6px;">${palette.label}</div>${prescription}<div style="font-size:11px;color:var(--muted);margin-top:8px;border-top:1px solid rgba(255,255,255,.06);padding-top:6px;">Why: ${reasons.join(' · ')}</div>`;
+
+  // Sync big picture
+  try { renderBigPicture(); } catch(e){}
 }
 
 // Auto-load + render on day open
-window.addEventListener('DOMContentLoaded', () => { setTimeout(() => { loadReadinessForToday(); renderReadiness(); }, 200); });
+window.addEventListener('DOMContentLoaded', () => { setTimeout(() => { loadReadinessForToday(); renderReadiness(); renderBigPicture(); }, 200); });
+
+// ── THE WHOLE PICTURE · UNIFIED ENGINE ──────────
+// Synthesizes peptides + meals + workout + sleep into one daily verdict.
+// Built to keep you in your 1000 cal deficit while peptides protect muscle / suppress hunger / fuel recovery.
+const PEP_CUT_ROLES = {
+  // FAT-LOSS / APPETITE SUPPRESSION
+  reta:   { role:'🔥 Appetite suppression', desc:'GLP-1+GIP+glucagon → keeps you in deficit without willpower' },
+  sema:   { role:'🔥 Appetite suppression', desc:'GLP-1 → flattens hunger spikes' },
+  tirz:   { role:'🔥 Appetite suppression', desc:'GLP-1+GIP → smoother hunger control' },
+  aod:    { role:'🔥 Lipolysis',           desc:'pushes fat into bloodstream during fasted cardio' },
+  '5amq': { role:'🔥 NNMT block',          desc:'stops your body from storing the deficit as fat' },
+  '5-amq':{ role:'🔥 NNMT block',          desc:'stops your body from storing the deficit as fat' },
+  lcar:   { role:'🔥 Fat shuttle',         desc:'moves fat into mitochondria so you actually burn it' },
+  mots:   { role:'⚡ Mito · fat-ox',       desc:'builds new mitochondria → burn capacity goes up' },
+  tesa:   { role:'🔥 Visceral fat',        desc:'targets belly fat directly via own GH pulse' },
+  // MUSCLE / RECOVERY (offset deficit catabolism)
+  test:   { role:'💪 Muscle protection',   desc:'TRT keeps nitrogen positive while you eat under maintenance' },
+  anavar: { role:'💪 Muscle + dryness',    desc:'oral anabolic preserves lean mass during cut' },
+  igf:    { role:'💪 Direct anabolic',     desc:'post-workout muscle signal at the worked site' },
+  ipa:    { role:'💪 GH pulse',            desc:'PM GH burst protects muscle + fat-ox overnight' },
+  cjc:    { role:'💪 GHRH primer',         desc:'amplifies your GH pulse for muscle preservation' },
+  hcg:    { role:'⚙ Hormones',             desc:'preserves testes + fertility while on TRT' },
+  // RECOVERY / REPAIR
+  bpc:    { role:'🩹 Repair · gut',        desc:'patches gut + tendon stress from heavy training' },
+  tb:     { role:'🩹 Systemic repair',     desc:'systemic muscle/joint/connective recovery' },
+  ghkcu:  { role:'🩹 Skin + collagen',     desc:'collagen synthesis, protects skin during rapid fat loss' },
+  // ENERGY / LONGEVITY
+  nad:    { role:'⚡ Cellular energy',     desc:'sirtuins + DNA repair, keeps energy up in deficit' },
+  ss31:   { role:'⚡ Mito protection',     desc:'protects against oxidative stress from cardio' },
+  epitalon:{ role:'🧬 Telomere cycle',     desc:'10-20 day pulse, run during deficit for longevity stack' },
+  cartalax:{ role:'🩹 Cartilage signal',   desc:'10-20 day cycle for joint repair' },
+};
+
+function renderBigPicture(){
+  const t = today();
+  const s = load();
+
+  // ── DEFICIT STATUS ──
+  const eaten = sumMacros(t.food || []);
+  const burnSoFar = (parseInt(t.postGymKcal) || 0) || (parseInt(t.eodKcal) || 0) || 750;
+  const baseline = 750;
+  const projectedBurn = burnSoFar >= baseline ? burnSoFar : baseline;
+  const baselineMaint = (s.targetCal || 2300) + 1000; // 3300 maintenance
+  const tdeeToday = baselineMaint + (projectedBurn - baseline);
+  const deficit = Math.max(0, tdeeToday - eaten.cal);
+  document.getElementById('bp-deficit-val').textContent = '−' + Math.round(deficit);
+  document.getElementById('bp-deficit-sub').textContent = `eat: ${Math.round(eaten.cal)} · burn: ${Math.round(projectedBurn)}`;
+  // Pill
+  const pill = document.getElementById('bp-deficit-pill');
+  if (eaten.cal === 0) { pill.textContent = '−1000 TARGET'; pill.style.color = 'var(--accent)'; pill.style.background='rgba(0,212,255,.12)'; }
+  else if (deficit >= 900 && deficit <= 1200) { pill.textContent = '✓ ON TRACK'; pill.style.color = 'var(--accent2)'; pill.style.background='rgba(0,255,157,.12)'; }
+  else if (deficit > 1200) { pill.textContent = '⚠ TOO STEEP'; pill.style.color = 'var(--warn)'; pill.style.background='rgba(251,191,36,.12)'; }
+  else if (deficit < 700 && eaten.cal > 1000) { pill.textContent = '⚠ DEFICIT WEAK'; pill.style.color = 'var(--warn)'; pill.style.background='rgba(251,191,36,.12)'; }
+
+  // ── PEPTIDE ASSIST ──
+  const dow = dayOfWeek();
+  const todaysPeps = PEPTIDES.filter(p => p.days === 'all' || (Array.isArray(p.days) && p.days.includes(dow)));
+  const logged = t.peptides || {};
+  const loggedToday = todaysPeps.filter(p => logged[p.id]).length;
+  document.getElementById('bp-pep-val').textContent = `${loggedToday} / ${todaysPeps.length}`;
+  document.getElementById('bp-pep-sub').textContent = `today's shots logged`;
+
+  // ── ROLE TAGS ── what each scheduled peptide is doing for the cut today
+  const rolesEl = document.getElementById('bp-roles');
+  // Map peptide ids to library keys (handle suffixes like AM/PM)
+  const seen = new Set();
+  const roleCards = todaysPeps.map(p => {
+    // Try direct match first, then strip AM/PM suffix
+    const lid = (p.id || '').replace(/AM$|PM$|am$|pm$/, '').toLowerCase();
+    const role = PEP_CUT_ROLES[lid] || PEP_CUT_ROLES[p.id];
+    if (!role || seen.has(role.role)) return null;
+    seen.add(role.role);
+    const isLogged = !!logged[p.id];
+    return `<div style="background:rgba(0,0,0,.3);border-left:3px solid ${isLogged?'var(--accent2)':'var(--border)'};border-radius:6px;padding:8px 10px;${isLogged?'':'opacity:.6;'}">
+      <div style="font-size:11px;font-weight:700;color:var(--text);">${role.role}</div>
+      <div style="font-size:10px;color:var(--muted);line-height:1.4;margin-top:2px;">${role.desc}</div>
+    </div>`;
+  }).filter(Boolean).join('');
+  rolesEl.innerHTML = roleCards || '<div style="grid-column:1/-1;font-size:11px;color:var(--muted);text-align:center;padding:8px;">No peptides scheduled today.</div>';
+
+  // ── UNIFIED COACH LINE ──
+  // Reads readiness verdict + deficit status + peptide compliance → one action line
+  const coach = document.getElementById('bp-coach');
+  const sleep = parseFloat(document.getElementById('dr-sleep')?.value);
+  const sore  = document.getElementById('dr-sore')?.value;
+  const verdictEl = document.getElementById('dr-status-pill')?.textContent || 'PENDING';
+  const lines = [];
+
+  // Deficit guidance
+  if (eaten.cal === 0) {
+    lines.push(`☀️ <b>Day not started.</b> Goal: eat ${Math.round((s.targetCal||2300))} cal · burn ${baseline}+ · land in 1000-cal deficit.`);
+  } else if (deficit >= 900 && deficit <= 1200) {
+    lines.push(`✓ <b>On the line.</b> ${Math.round(deficit)} deficit hits your target. Stay disciplined.`);
+  } else if (deficit > 1200) {
+    lines.push(`⚠ <b>Deficit is too steep (${Math.round(deficit)}).</b> Eat ~${Math.round(deficit-1000)} more cal — protein-first. Steeper = muscle loss + thyroid drop.`);
+  } else if (deficit < 700) {
+    lines.push(`⚠ <b>Deficit is weak (${Math.round(deficit)}).</b> Stop eating early or move walk #2. You won't see the scale move otherwise.`);
+  } else {
+    lines.push(`📊 <b>${Math.round(deficit)} cal under TDEE.</b> Push toward 1000 by EOD.`);
+  }
+
+  // Peptide compliance
+  if (loggedToday < todaysPeps.length && todaysPeps.length > 0) {
+    const missing = todaysPeps.length - loggedToday;
+    lines.push(`💉 <b>${missing} shot${missing===1?'':'s'} unlogged today.</b> Your peptide assist is what makes the deficit work — log them on the schedule below.`);
+  } else if (todaysPeps.length > 0 && loggedToday === todaysPeps.length) {
+    lines.push(`💉 <b>All shots logged.</b> Stack is hitting · muscle protected · hunger suppressed · recovery on.`);
+  }
+
+  // Sleep / readiness
+  if (verdictEl.includes('RED')) {
+    lines.push(`😴 <b>RED zone.</b> Skip the gym. Walk + recovery only — training in this state digs the hole deeper.`);
+  } else if (verdictEl.includes('YELLOW')) {
+    lines.push(`😴 <b>YELLOW zone.</b> Cut workout intensity 40%. Lift, don't max.`);
+  } else if (verdictEl.includes('GREEN')) {
+    lines.push(`😴 <b>GREEN zone.</b> Body is recovered — push hard. Burn extra = eat more · same deficit.`);
+  }
+
+  coach.innerHTML = lines.map(l => `<div style="margin:4px 0;">${l}</div>`).join('');
+}
+
+// Re-render Big Picture whenever data changes
+const _origRenderTotals = window.renderTotals;
+const _origRenderPlan = window.renderPlan;
+const _origRenderInjections = window.renderInjections;
+['saveDayTotal','renderPlan','renderInjections','addFood','renderFoodLog'].forEach(fname => {
+  if (typeof window[fname] === 'function') {
+    const orig = window[fname];
+    window[fname] = function(){ const r = orig.apply(this, arguments); try { renderBigPicture(); } catch(e){} return r; };
+  }
+});
 
 // ── MEAL ITEM SWAP / ADJUST ──
 let swapState = { mealId:null, itemIdx:null };
