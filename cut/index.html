@@ -559,8 +559,38 @@ body { padding-bottom: 90px; }
     </div>
     <div style="padding:0 16px 14px;">
       <button class="btn btn-block" onclick="autoLogAllMeals()">📋 Log entire day's plan</button>
-      <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:8px;">Tap any meal card to log just that one · greys out when logged · tap again to undo</div>
+      <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:8px;">Tap a meal card to mark it eaten · grays out when done · tap again to undo · tap any food row to swap or change qty</div>
     </div>
+
+    <!-- ═══ PROGRESS SCOREBOARD — eaten vs remaining ═══ -->
+    <div id="plan-scoreboard" style="margin:0 14px 14px;padding:14px;background:linear-gradient(135deg,rgba(0,212,255,.08),rgba(0,255,157,.04));border:1px solid var(--accent);border-radius:12px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--accent);font-weight:700;">⊙ TODAY'S PROGRESS</div>
+        <div id="plan-mealcount-badge" style="font-size:11px;color:var(--muted);font-family:'Share Tech Mono',monospace;">0 / 6 meals</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+        <div style="text-align:center;padding:10px 4px;background:rgba(0,0,0,.25);border-radius:8px;">
+          <div style="font-size:10px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:.1em;">EATEN</div>
+          <div id="sb-eaten" style="font-size:22px;font-weight:800;color:var(--accent2);font-family:'Rajdhani',sans-serif;">0</div>
+          <div id="sb-eaten-macros" style="font-size:10px;color:var(--muted);">0P · 0C · 0F</div>
+        </div>
+        <div style="text-align:center;padding:10px 4px;background:rgba(0,212,255,.08);border-radius:8px;border:1px solid var(--accent);">
+          <div style="font-size:10px;color:var(--accent);font-family:'Share Tech Mono',monospace;letter-spacing:.1em;font-weight:700;">REMAINING</div>
+          <div id="sb-rem" style="font-size:22px;font-weight:800;color:var(--accent);font-family:'Rajdhani',sans-serif;">2300</div>
+          <div id="sb-rem-macros" style="font-size:10px;color:var(--muted);">240P · 220C · 50F</div>
+        </div>
+        <div style="text-align:center;padding:10px 4px;background:rgba(0,0,0,.25);border-radius:8px;">
+          <div style="font-size:10px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:.1em;">GOAL</div>
+          <div id="sb-goal" style="font-size:22px;font-weight:800;color:var(--text);font-family:'Rajdhani',sans-serif;">2300</div>
+          <div id="sb-goal-sub" style="font-size:10px;color:var(--muted);">based on burn</div>
+        </div>
+      </div>
+      <div style="height:6px;background:rgba(255,255,255,.06);border-radius:3px;margin-top:10px;overflow:hidden;">
+        <div id="sb-progress" style="height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));width:0%;transition:width .35s;"></div>
+      </div>
+      <div id="sb-coach" style="font-size:12px;color:var(--text);line-height:1.55;margin-top:10px;padding:8px 10px;background:rgba(0,0,0,.25);border-radius:6px;display:none;"></div>
+    </div>
+
     <div class="list" id="plan-list"></div>
 
     <!-- ═══ FOOD QUICK-LOG (moved from old Eat tab) ═══ -->
@@ -573,6 +603,35 @@ body { padding-bottom: 90px; }
     <!-- ═══ CUSTOM FOOD ADDER ═══ -->
     <div style="margin:14px 16px 0;">
       <button onclick="openCustomFood()" style="width:100%;padding:14px;border-radius:10px;background:linear-gradient(135deg,rgba(0,255,157,.08),rgba(0,212,255,.05));border:1px dashed rgba(0,255,157,.45);color:var(--accent2);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;letter-spacing:.04em;cursor:pointer;-webkit-tap-highlight-color:transparent;">＋ Add custom food on the fly</button>
+    </div>
+
+    <!-- ═══ MEAL ITEM SWAP MODAL ═══ -->
+    <div id="swap-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:300;padding:20px;overflow-y:auto;-webkit-overflow-scrolling:touch;">
+      <div style="max-width:500px;margin:40px auto;background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:20px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:20px;color:var(--accent);">🔁 Swap or adjust</div>
+          <button onclick="closeSwap()" style="background:transparent;border:none;color:var(--muted);font-size:22px;cursor:pointer;padding:4px 8px;">✕</button>
+        </div>
+        <div id="swap-current" style="padding:12px;background:rgba(0,0,0,.25);border-radius:8px;margin-bottom:14px;font-size:13px;color:var(--text);"></div>
+
+        <label style="display:block;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--muted);font-weight:700;margin-bottom:6px;text-transform:uppercase;">Change quantity</label>
+        <div style="display:flex;gap:6px;margin-bottom:14px;">
+          <button onclick="setSwapQty(0.5)" style="flex:1;padding:10px;border-radius:8px;background:var(--bg);border:1px solid var(--border);color:var(--text);font-weight:700;cursor:pointer;">½×</button>
+          <button onclick="setSwapQty(1)" style="flex:1;padding:10px;border-radius:8px;background:var(--bg);border:1px solid var(--border);color:var(--text);font-weight:700;cursor:pointer;">1×</button>
+          <button onclick="setSwapQty(1.5)" style="flex:1;padding:10px;border-radius:8px;background:var(--bg);border:1px solid var(--border);color:var(--text);font-weight:700;cursor:pointer;">1.5×</button>
+          <button onclick="setSwapQty(2)" style="flex:1;padding:10px;border-radius:8px;background:var(--bg);border:1px solid var(--border);color:var(--text);font-weight:700;cursor:pointer;">2×</button>
+          <button onclick="setSwapQty(3)" style="flex:1;padding:10px;border-radius:8px;background:var(--bg);border:1px solid var(--border);color:var(--text);font-weight:700;cursor:pointer;">3×</button>
+        </div>
+
+        <label style="display:block;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--muted);font-weight:700;margin-bottom:6px;text-transform:uppercase;">Or swap for a different food</label>
+        <input id="swap-search" type="text" placeholder="Type to search foods..." oninput="renderSwapList()" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:10px;font-size:14px;font-family:inherit;-webkit-appearance:none;margin-bottom:10px;box-sizing:border-box;">
+        <div id="swap-list" style="max-height:240px;overflow-y:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--border);border-radius:8px;background:var(--bg);"></div>
+
+        <div style="display:flex;gap:10px;margin-top:14px;">
+          <button onclick="removeSwapItem()" style="flex:1;padding:12px;border-radius:8px;background:rgba(239,68,68,.1);border:1px solid #EF4444;color:#EF4444;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">🗑 Remove</button>
+          <button onclick="closeSwap()" style="flex:2;padding:12px;border-radius:8px;background:linear-gradient(135deg,var(--accent2),var(--accent));border:none;color:#000;font-family:'Rajdhani',sans-serif;font-weight:800;font-size:13px;letter-spacing:.06em;cursor:pointer;">DONE</button>
+        </div>
+      </div>
     </div>
 
     <!-- ═══ CUSTOM FOOD MODAL ═══ -->
@@ -2172,19 +2231,62 @@ function renderPlan(){
 
   const t = today();
   const logged = t.mealsLogged || {};
+
+  // ── SCOREBOARD: eaten vs remaining vs goal ──
+  const s = load();
+  const goal = s._effectiveTargetCal || s.targetCal || 2300;
+  const eatenMacros = sumMacros(t.food || []);
+  const eatenCount = Object.values(logged).filter(Boolean).length;
+  const totalMeals = plan.length;
+  const remCal = Math.max(0, goal - eatenMacros.cal);
+  const remP   = Math.max(0, (s.targetP || 240) - eatenMacros.p);
+  const remC   = Math.max(0, (s.targetC || 220) - eatenMacros.c);
+  const remF   = Math.max(0, (s.targetF || 50)  - eatenMacros.f);
+  const pct    = Math.min(100, (eatenMacros.cal / goal) * 100);
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  set('sb-eaten', Math.round(eatenMacros.cal));
+  set('sb-eaten-macros', `${Math.round(eatenMacros.p)}P · ${Math.round(eatenMacros.c)}C · ${Math.round(eatenMacros.f)}F`);
+  set('sb-rem', Math.round(remCal));
+  set('sb-rem-macros', `${Math.round(remP)}P · ${Math.round(remC)}C · ${Math.round(remF)}F`);
+  set('sb-goal', Math.round(goal));
+  set('plan-mealcount-badge', `${eatenCount} / ${totalMeals} meals`);
+  const bar = document.getElementById('sb-progress'); if (bar) bar.style.width = pct + '%';
+  // Coach line — show after first meal logged or after a check-in
+  const coach = document.getElementById('sb-coach');
+  if (coach) {
+    const hasCheckin = (t.postGymKcal || t.eodKcal || (t.checks && Object.keys(t.checks).length > 1));
+    if (eatenCount > 0 || hasCheckin) {
+      coach.style.display = 'block';
+      if (remCal < 100) {
+        coach.innerHTML = `🎯 <b>You're on target.</b> ${Math.round(remCal)} cal left — finish clean and you hit your deficit.`;
+        coach.style.background = 'rgba(0,255,157,.08)';
+      } else if (remCal > 800 && eatenCount >= 4) {
+        coach.innerHTML = `⚠ <b>Under-eating.</b> ${Math.round(remCal)} cal left with only ${totalMeals-eatenCount} meals to go. Don't go below ${Math.max(2000, goal-200)} — slows metabolism + tanks lifts.`;
+        coach.style.background = 'rgba(251,191,36,.08)';
+      } else {
+        coach.innerHTML = `📊 <b>${Math.round(remCal)} cal left</b> across <b>${totalMeals - eatenCount} meal${totalMeals-eatenCount===1?'':'s'}</b>. Aim for ~${Math.round(remCal/Math.max(1,totalMeals-eatenCount))} cal each.`;
+        coach.style.background = 'rgba(0,0,0,.25)';
+      }
+    } else {
+      coach.style.display = 'none';
+    }
+  }
   list.innerHTML = plan.map(m => {
     const mm = mealMacros(m);
     const isLogged = !!logged[m.id];
-    const itemRows = m.items.map(it => {
+    const itemRows = m.items.map((it, ix) => {
       const f = findFood(it.id);
       // Multiply portion size by qty for display: "1 cup × 2 = 2 cups"
       const portionLine = it.qty > 1 ? `${it.qty} × ${f.serving}` : f.serving;
-      return `<div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text);padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04);">
+      return `<div onclick="event.stopPropagation();openSwap('${m.id}',${ix})" style="display:flex;justify-content:space-between;font-size:12px;color:var(--text);padding:8px 4px;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;-webkit-tap-highlight-color:rgba(0,212,255,.15);border-radius:4px;${isLogged?'':''}">
         <div style="flex:1;min-width:0;">
           <div style="font-weight:600;">${f.name}</div>
           <div style="font-size:11px;color:var(--accent);font-family:'Share Tech Mono',monospace;letter-spacing:.04em;margin-top:1px;">${portionLine}</div>
         </div>
-        <span style="color:var(--muted);flex-shrink:0;margin-left:8px;">${Math.round(f.cal*it.qty)} cal</span>
+        <div style="text-align:right;flex-shrink:0;margin-left:8px;">
+          <div style="color:var(--muted);">${Math.round(f.cal*it.qty)} cal</div>
+          <div style="font-size:9px;color:var(--accent);opacity:.7;margin-top:1px;">tap to swap</div>
+        </div>
       </div>`;
     }).join('');
     const dimmedStyle = isLogged
@@ -2209,6 +2311,53 @@ function renderPlan(){
     </div>`;
   }).join('');
 }
+// ── MEAL ITEM SWAP / ADJUST ──
+let swapState = { mealId:null, itemIdx:null };
+function openSwap(mealId, itemIdx){
+  swapState = { mealId, itemIdx };
+  const meal = MEAL_PLAN.find(m => m.id === mealId); if (!meal) return;
+  const it = meal.items[itemIdx]; const f = findFood(it.id); if (!f) return;
+  document.getElementById('swap-current').innerHTML = `<b>Currently:</b> ${it.qty}× ${f.name} (${f.serving}) · ${Math.round(f.cal*it.qty)} cal · ${Math.round(f.p*it.qty)}P / ${Math.round(f.c*it.qty)}C / ${Math.round(f.f*it.qty)}F`;
+  document.getElementById('swap-search').value = '';
+  renderSwapList();
+  document.getElementById('swap-modal').style.display = 'block';
+}
+function closeSwap(){ document.getElementById('swap-modal').style.display = 'none'; renderPlan(); renderFoodLog(); }
+function setSwapQty(q){
+  const meal = MEAL_PLAN.find(m => m.id === swapState.mealId); if (!meal) return;
+  meal.items[swapState.itemIdx].qty = q;
+  // Update display in modal
+  const it = meal.items[swapState.itemIdx]; const f = findFood(it.id);
+  document.getElementById('swap-current').innerHTML = `<b>Currently:</b> ${it.qty}× ${f.name} (${f.serving}) · ${Math.round(f.cal*it.qty)} cal · ${Math.round(f.p*it.qty)}P / ${Math.round(f.c*it.qty)}C / ${Math.round(f.f*it.qty)}F`;
+  toast(`✓ ${q}× ${f.name}`, '#00FF9D');
+}
+function renderSwapList(){
+  const q = (document.getElementById('swap-search').value || '').toLowerCase();
+  const all = [...FOODS, ...((load().customFoods)||[])];
+  const filtered = q ? all.filter(f => f.name.toLowerCase().includes(q)) : all.slice(0, 30);
+  const list = document.getElementById('swap-list');
+  if (!list) return;
+  if (!filtered.length) { list.innerHTML = '<div style="padding:14px;text-align:center;color:var(--muted);font-size:12px;">No matches. Try a different keyword.</div>'; return; }
+  list.innerHTML = filtered.map(f => `<div onclick="doSwapFood('${f.id}')" style="padding:10px 12px;border-bottom:1px solid var(--border);cursor:pointer;-webkit-tap-highlight-color:rgba(0,212,255,.15);">
+    <div style="font-weight:600;color:var(--text);font-size:13px;">${f.name}</div>
+    <div style="font-size:11px;color:var(--muted);">${f.serving} · ${f.cal} cal · ${f.p}P / ${f.c}C / ${f.f}F</div>
+  </div>`).join('');
+}
+function doSwapFood(newId){
+  const meal = MEAL_PLAN.find(m => m.id === swapState.mealId); if (!meal) return;
+  meal.items[swapState.itemIdx].id = newId;
+  const it = meal.items[swapState.itemIdx]; const f = findFood(it.id);
+  document.getElementById('swap-current').innerHTML = `<b>Currently:</b> ${it.qty}× ${f.name} (${f.serving}) · ${Math.round(f.cal*it.qty)} cal · ${Math.round(f.p*it.qty)}P / ${Math.round(f.c*it.qty)}C / ${Math.round(f.f*it.qty)}F`;
+  toast(`✓ Swapped to ${f.name}`, '#00D4FF');
+}
+function removeSwapItem(){
+  const meal = MEAL_PLAN.find(m => m.id === swapState.mealId); if (!meal) return;
+  if (meal.items.length <= 1) { alert('Cannot remove the last item — swap it instead.'); return; }
+  meal.items.splice(swapState.itemIdx, 1);
+  toast('🗑 Removed item', '#FF6B35');
+  closeSwap();
+}
+
 function logMeal(id){
   const meal = activePlan().find(m => m.id === id); if (!meal) return;
   const s = load();
