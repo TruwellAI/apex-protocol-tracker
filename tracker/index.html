@@ -925,6 +925,7 @@ let CUSTOM_MACROS = null;
       tag: item.tag || '',
       color: item.color || '#00D4FF',
       ssot: item.libId ? (item.libId + '.html') : null,
+      eduNote: item.eduNote || null,
     };
   });
 
@@ -1667,6 +1668,7 @@ function renderPeptides(){
         <div class="card-body">
           <div class="card-name">${p.name} <span class="tag" style="background:${p.color}22;color:${p.color};border:1px solid ${p.color};">${p.tag}</span></div>
           <div class="card-meta">${p.dose} · <strong style="color:var(--text);">${days}</strong> · ${p.window}</div>
+          ${p.eduNote ? `<div style="margin-top:8px; padding:8px 10px; background:rgba(167,139,250,.08); border:1px solid #A78BFA; border-radius:6px; font-size:11px; line-height:1.5; color:var(--text);"><div style="font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:.14em; color:#A78BFA; font-weight:700; margin-bottom:3px;">🧬 WHY THIS / WHY NOW</div>${p.eduNote}</div>` : ''}
         </div>
       </div>`;
     }).join('');

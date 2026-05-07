@@ -254,8 +254,11 @@ const PEPTIDE_LIBRARY = [
   { id:'bpc',      name:'BPC-157',             tag:'heal',   color:'#34D399', defaultMg:0.25, perWeek:7, suggestedDays:'all',   window:'AM', fasted:false, vialMg:5  },
   { id:'tb',       name:'TB-500',              tag:'heal',   color:'#34D399', defaultMg:5,    perWeek:2, suggestedDays:[1,4],   window:'AM', fasted:false, vialMg:10 },
   { id:'ghkcu',    name:'GHK-Cu',              tag:'collagen', color:'#A78BFA', defaultMg:2,  perWeek:7, suggestedDays:'all',   window:'AM', fasted:false, vialMg:50 },
-  { id:'mots',     name:'MOTS-c',              tag:'mito',   color:'#FBBF24', defaultMg:2,    perWeek:3, suggestedDays:[1,3,5], window:'AM', fasted:true,  vialMg:10 },
-  { id:'nad',      name:'NAD+',                tag:'mito',   color:'#FBBF24', defaultMg:50,   perWeek:3, suggestedDays:[1,3,5], window:'AM', fasted:false, vialMg:500 },
+  { id:'mots',     name:'MOTS-c',              tag:'mito',   color:'#FBBF24', defaultMg:2,    perWeek:3, suggestedDays:[1,3,5], window:'AM', fasted:true,  vialMg:10, eduNote:'Mitochondrial peptide encoded inside mtDNA — your cells already make it, you\'re just supplementing what age depletes. M/W/F dosing matches its long half-life and prevents receptor desensitization. Pair with NAD+ on the same days for compounding mito-biogenesis. Run 4-8 weeks, then 2-4 weeks off so your own MOTS-c production stays online.' },
+  { id:'nad',      name:'NAD+',                tag:'mito',   color:'#FBBF24', defaultMg:50,   perWeek:3, suggestedDays:[1,3,5], window:'AM', fasted:false, vialMg:500, eduNote:'NAD+ rebuilds the cofactor your sirtuins (SIRT1/SIRT3) and PARPs need to repair DNA and run mitochondria. AM only — it\'s wake-promoting and can wreck sleep if dosed late. M/W/F lets your salvage pathway breathe (NAMPT enzymes upregulate on off-days). Cycle 4-8 weeks on, 2-4 off — chronic daily use blunts your own NAMPT response.' },
+  { id:'epitalon', name:'Epitalon',            tag:'longevity', color:'#A78BFA', defaultMg:10, perWeek:7, suggestedDays:'all',   window:'AM', fasted:true,  vialMg:50, eduNote:'Telomerase activator. Run 1-2 cycles PER YEAR, 10-20 days each (10mg/day SubQ AM). The benefit is the telomere lengthening pulse — chronic dosing wastes vials with no extra effect. Most protocols: 1 cycle in spring + optional 1 in fall. Stack with NAD+ during cycle for compounding longevity signaling. After 20 days, STOP for 6 months minimum.' },
+  { id:'ss31',     name:'SS-31',               tag:'mito',   color:'#FBBF24', defaultMg:5,    perWeek:5, suggestedDays:[1,2,3,4,5], window:'AM', fasted:true, vialMg:50, eduNote:'Targets cardiolipin in the inner mitochondrial membrane — protects ETC against oxidative stress. Run 4-6 week cycles, then 4+ weeks off. AM dosing because mito-biogenesis aligns with circadian PGC-1α peak. NEVER stack with high-dose NAD+ same hour (NAD+ pushes ETC throughput, SS-31 calms ROS — opposing signals; space 4+ hrs).' },
+  { id:'cartalax', name:'Cartalax',            tag:'longevity', color:'#A78BFA', defaultMg:1, perWeek:7, suggestedDays:'all',   window:'AM', fasted:true,  vialMg:20, eduNote:'Bioregulator peptide for connective tissue / cartilage gene expression. Run 10-20 day cycles, 2-4×/year. Like Epitalon, it triggers a programmed pulse — once your cells get the signal, more dosing doesn\'t add anything. Pair with TB-500 + BPC-157 during cycle for full joint repair stack.' },
   { id:'igf',      name:'IGF-1 LR3',           tag:'GH',     color:'#00D4FF', defaultMg:0.04, perWeek:7, suggestedDays:'all',   window:'Post-workout', fasted:false, vialMg:1 },
   { id:'ipa',      name:'Ipamorelin',          tag:'GH',     color:'#00D4FF', defaultMg:0.3,  perWeek:7, suggestedDays:'all',   window:'PM', fasted:true,  vialMg:5  },
   { id:'cjc',      name:'CJC-1295 (no DAC)',   tag:'GH',     color:'#00D4FF', defaultMg:0.1,  perWeek:7, suggestedDays:'all',   window:'PM', fasted:true,  vialMg:2  },
@@ -372,6 +375,12 @@ function renderPeptides(){
             ${p.titrationNote}
           </div>
         ` : ''}
+        ${p.eduNote ? `
+          <div style="background:rgba(167,139,250,.08); border:1px solid #A78BFA; border-radius:8px; padding:10px 12px; margin-bottom:10px; font-size:12px; line-height:1.55; color:var(--text);">
+            <div style="font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:.14em; color:#A78BFA; font-weight:700; margin-bottom:4px;">🧬 WHY THIS / WHY NOW</div>
+            ${p.eduNote}
+          </div>
+        ` : ''}
         ${p.premixed ? `
           <label class="label">Pre-mix concentration (mg/mL)</label>
           <input class="input" type="number" inputmode="decimal" value="${p.premixConc||50}" oninput="updPep(${i},'premixConc',this.value);recompute(${i})">
@@ -464,6 +473,7 @@ function pickPeptide(libId){
     color: lib.color, tag: lib.tag,
     titration: lib.titration || false,
     titrationNote: lib.titrationNote || null,
+    eduNote: lib.eduNote || null,
   };
   state.peptides.push(p);
   haptic(15);
@@ -606,6 +616,7 @@ function launchTracker(){
       weeklyMg: p.weeklyMg, perWeek: p.perWeek,
       perDoseMg: p.perDoseMg, perDoseUnits: p.perDoseUnits ? Math.round(p.perDoseUnits) : null,
       window: p.window, fasted: p.fasted, days: p.days,
+      eduNote: p.eduNote || null,
     })),
     prefs: state.prefs,
   };
