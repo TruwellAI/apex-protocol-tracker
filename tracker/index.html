@@ -649,6 +649,13 @@ body { padding-bottom: 90px; }
     </div>
     <div class="list" id="pep-full-list"></div>
 
+    <details id="stack-synergy-tracker-wrap" style="margin:18px 16px 0;background:rgba(167,139,250,.05);border:1px solid #A78BFA;border-radius:10px;overflow:hidden;display:none;">
+      <summary style="cursor:pointer;list-style:none;padding:14px;display:flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.14em;color:#A78BFA;font-weight:700;-webkit-tap-highlight-color:transparent;">
+        🧬 What this stack is doing <span style="margin-left:auto;font-size:10px;opacity:.6;">▾ tap to expand</span>
+      </summary>
+      <div id="stack-synergy-tracker" style="padding:0 14px 14px;"></div>
+    </details>
+
     <details style="margin:18px 16px 0;background:var(--panel);border:1px solid var(--border);border-radius:10px;overflow:hidden;">
       <summary style="cursor:pointer;list-style:none;padding:14px;display:flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--muted);font-weight:700;-webkit-tap-highlight-color:transparent;">
         📅 Full weekly reference (all peptides) <span style="margin-left:auto;font-size:10px;opacity:.6;">▾ tap to expand</span>
@@ -990,6 +997,77 @@ let CUSTOM_MACROS = null;
     ];
   }
 })();
+
+// ─────────────────────────────────────────────
+// STACK SYNERGY (mirror of /start/) — explains the stack on the tracker
+// ─────────────────────────────────────────────
+const SYNERGY_GOALS = {
+  muscle:    { icon:'💪', label:'MUSCLE GROWTH',     ids:['igf','ipa','cjc','test','anavar'] },
+  fatloss:   { icon:'🔥', label:'FAT LOSS',          ids:['reta','sema','tirz','aod','5amq','lcar','mots','tesa'] },
+  longevity: { icon:'🧬', label:'LONGEVITY · ANTI-AGING', ids:['epitalon','cartalax','ghkcu','nad','ss31'] },
+  mito:      { icon:'⚡', label:'MITOCHONDRIAL · ENERGY', ids:['nad','mots','ss31','5amq'] },
+  repair:    { icon:'🩹', label:'REPAIR · RECOVERY',  ids:['bpc','tb','ghkcu','igf'] },
+  hormones:  { icon:'⚙️', label:'HORMONE OPTIMIZATION', ids:['test','hcg'] },
+};
+const SYNERGY_PAIRS = [
+  { ids:['cjc','ipa'],  type:'sync',  msg:'<b>CJC-1295 + Ipamorelin</b> = the classic GH stack. CJC opens the door (GHRH), Ipa rings the bell (GHRP). Clean GH pulse, no shutdown. PM dose, fasted.' },
+  { ids:['igf','cjc'],  type:'sync',  msg:'<b>IGF-1 LR3 + CJC-1295</b> = direct anabolic + GH receptor priming. CJC primes the system → IGF-1 delivers post-workout muscle signal at the worked site.' },
+  { ids:['igf','ipa'],  type:'sync',  msg:'<b>IGF-1 + Ipamorelin</b> = synthetic IGF-1 (post-workout) plus endogenous GH burst (PM). Two anabolic windows per day.' },
+  { ids:['epitalon','nad'], type:'sequence', msg:'<b>Epitalon + NAD+</b> → run NAD+ M/W/F during your 10-20 day Epitalon cycle. Telomerase activation runs on sirtuin signaling — sirtuins need NAD+ as fuel. Cycle is the foundation, NAD+ is the fuel.' },
+  { ids:['epitalon','nad','ss31'], type:'sequence', msg:'<b>Epitalon → NAD+ → SS-31</b> = the longevity trifecta. ORDER MATTERS:<br>1) <b>Epitalon</b> = foundation (telomere lengthening pulse, 10-20 days/yr)<br>2) <b>NAD+</b> = fuel (sirtuin/PARP cofactor, M/W/F AM during cycle)<br>3) <b>SS-31</b> = repair (cardiolipin protection, AM, space 4+ hrs from NAD+)<br>Foundation → Fuel → Repair.' },
+  { ids:['bpc','tb'],   type:'sync',  msg:'<b>BPC-157 + TB-500</b> = full tissue repair. BPC for gut/tendon/local; TB-500 for systemic muscle/joint/connective. Most-used recovery pair on the market.' },
+  { ids:['bpc','tb','ghkcu'], type:'sync', msg:'<b>BPC + TB + GHK-Cu</b> = KLOW-style full repair stack. BPC (gut/tendon) + TB (systemic) + GHK-Cu (collagen, skin, scar). Inject GHK-Cu at a different site — copper degrades TB-500.' },
+  { ids:['mots','nad'], type:'sync',  msg:'<b>MOTS-c + NAD+</b> = mitochondrial-biogenesis pair. Same M/W/F days for compounding signal. NAD+ rebuilds the cofactor, MOTS-c upregulates the gene expression.' },
+  { ids:['test','hcg'], type:'sync',  msg:'<b>Test Cyp + HCG</b> = TRT with testicular preservation. HCG mimics LH so testes stay online while exogenous T does its job. Preserves size + fertility.' },
+  { ids:['tesa','ipa'], type:'sync',  msg:'<b>Tesamorelin + Ipamorelin</b> = VAT-targeting GH stack. Tesa is a GHRH analog (targets visceral fat), Ipa is the GHRP. Like CJC+Ipa with belly-fat focus.' },
+  { ids:['reta','sema'], type:'conflict', msg:'<b>⚠ Retatrutide + Semaglutide</b> — both GLP-1s. Pick ONE. Doorbell rule.' },
+  { ids:['reta','tirz'], type:'conflict', msg:'<b>⚠ Retatrutide + Tirzepatide</b> — both multi-receptor GLP agonists. Pick ONE.' },
+  { ids:['sema','tirz'], type:'conflict', msg:'<b>⚠ Semaglutide + Tirzepatide</b> — both GLP-1s. Pick ONE.' },
+  { ids:['cjc','tesa'],  type:'conflict', msg:'<b>⚠ CJC-1295 + Tesamorelin</b> — both GHRH analogs. Pick one.' },
+];
+function renderTrackerSynergy(){
+  const wrap = document.getElementById('stack-synergy-tracker');
+  const outer = document.getElementById('stack-synergy-tracker-wrap');
+  if (!wrap || !outer) return;
+  let raw = null;
+  try { raw = localStorage.getItem('apex_protocol_v1'); } catch(e){}
+  if (!raw) return;
+  let p; try { p = JSON.parse(raw); } catch(e){ return; }
+  if (!p || !p.stack || !p.stack.length) return;
+  const ids = p.stack.map(x => x.libId).filter(Boolean);
+  const has = id => ids.includes(id);
+
+  const goalsHit = Object.entries(SYNERGY_GOALS).filter(([k,g]) => g.ids.some(id => has(id)));
+  const goalCards = goalsHit.map(([k,g]) => {
+    const matching = p.stack.filter(x => g.ids.includes(x.libId));
+    return `<div style="background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:12px; margin-bottom:8px;">
+      <div style="font-family:'Share Tech Mono',monospace; font-size:11px; letter-spacing:.14em; color:var(--accent); font-weight:700; margin-bottom:6px;">${g.icon} ${g.label}</div>
+      <div style="font-size:13px; color:var(--text); line-height:1.5;">${matching.map(x => x.name).join(' · ')}</div>
+    </div>`;
+  }).join('');
+
+  const matchedPairs = SYNERGY_PAIRS.filter(rule => rule.ids.every(id => has(id)));
+  const filtered = matchedPairs.filter((pp, i) => !matchedPairs.some((other, j) => j !== i && other.ids.length > pp.ids.length && pp.ids.every(id => other.ids.includes(id)) && other.type === pp.type));
+  const conflicts = filtered.filter(x => x.type === 'conflict');
+  const synergies = filtered.filter(x => x.type === 'sync');
+  const sequences = filtered.filter(x => x.type === 'sequence');
+
+  const card = (color, label, msg) => `<div style="background:${color}11; border:1px solid ${color}; border-radius:10px; padding:12px; margin-bottom:8px; font-size:13px; line-height:1.55; color:var(--text);"><div style="font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:.14em; color:${color}; font-weight:700; margin-bottom:4px;">${label}</div>${msg}</div>`;
+  const conflictCards = conflicts.map(x => card('#EF4444', '⚠ CONFLICT', x.msg)).join('');
+  const synergyCards  = synergies.map(x => card('#00FF9D', '✓ SYNERGY', x.msg)).join('');
+  const sequenceCards = sequences.map(x => card('#A78BFA', '📐 SEQUENCE · ORDER MATTERS', x.msg)).join('');
+
+  wrap.innerHTML = `
+    <p style="font-size:12px; color:var(--muted); margin:8px 0 12px; line-height:1.5;">Read this BEFORE you reconstitute. Know what you're doing and why.</p>
+    <div style="font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:.14em; color:var(--muted); font-weight:700; margin:10px 0 8px;">⊙ AREAS COVERED</div>
+    ${goalCards}
+    ${sequences.length ? `<div style="font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:.14em; color:var(--muted); font-weight:700; margin:14px 0 8px;">⊙ STACK ORDER · WHY ONE BUILDS ON THE NEXT</div>${sequenceCards}` : ''}
+    ${synergies.length ? `<div style="font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:.14em; color:var(--muted); font-weight:700; margin:14px 0 8px;">⊙ PAIRINGS · WHAT WORKS TOGETHER</div>${synergyCards}` : ''}
+    ${conflicts.length ? `<div style="font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:.14em; color:#EF4444; font-weight:700; margin:14px 0 8px;">⊙ CONFLICTS · FIX THESE</div>${conflictCards}` : ''}
+  `;
+  outer.style.display = 'block';
+}
+window.addEventListener('DOMContentLoaded', renderTrackerSynergy);
 
 // ─────────────────────────────────────────────
 // STATE

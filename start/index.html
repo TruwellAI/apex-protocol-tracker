@@ -217,6 +217,9 @@ h1, h2, h3, .h { font-family:'Rajdhani',sans-serif; letter-spacing:-.3px; font-w
     <h1 style="font-size:30px; margin:6px 0 8px;">Your protocol</h1>
     <p class="note">Review. If it looks right, launch your tracker.</p>
 
+    <h3 style="margin:20px 0 10px; color:var(--accent);">🧬 What this stack is doing</h3>
+    <div id="stack-synergy"></div>
+
     <h3 style="margin:20px 0 10px; color:var(--accent);">Daily macros</h3>
     <div class="macro-grid" id="macro-summary"></div>
 
@@ -557,8 +560,98 @@ function computeMacros(){
   return { lbm:Math.round(lbm), bmr:Math.round(bmr), tdee:Math.round(tdee), cal, p, c, f };
 }
 
+// ─── STACK SYNERGY ENGINE ─────────────────────
+// Reads picked peptides → outputs categorized goals + pairing logic + sequence
+const SYNERGY_GOALS = {
+  muscle:    { icon:'💪', label:'MUSCLE GROWTH',     ids:['igf','ipa','cjc','test','anavar'] },
+  fatloss:   { icon:'🔥', label:'FAT LOSS',          ids:['reta','sema','tirz','aod','5amq','lcar','mots','tesa'] },
+  longevity: { icon:'🧬', label:'LONGEVITY · ANTI-AGING', ids:['epitalon','cartalax','ghkcu','nad','ss31'] },
+  mito:      { icon:'⚡', label:'MITOCHONDRIAL · ENERGY', ids:['nad','mots','ss31','5amq'] },
+  repair:    { icon:'🩹', label:'REPAIR · RECOVERY',  ids:['bpc','tb','ghkcu','igf'] },
+  hormones:  { icon:'⚙️', label:'HORMONE OPTIMIZATION', ids:['test','hcg'] },
+};
+
+// pair: [requires all libIds] → message
+const SYNERGY_PAIRS = [
+  { ids:['cjc','ipa'],  type:'sync',  msg:'<b>CJC-1295 + Ipamorelin</b> = the classic GH stack. CJC is the GHRH (opens the door), Ipa is the GHRP (rings the bell). Together they trigger a clean GH pulse without crushing your own production. PM dose, fasted.' },
+  { ids:['igf','cjc'],  type:'sync',  msg:'<b>IGF-1 LR3 + CJC-1295</b> = direct anabolic + GH receptor priming. CJC opens GH pulse → IGF-1 delivers the post-workout muscle signal at the worked site.' },
+  { ids:['igf','ipa'],  type:'sync',  msg:'<b>IGF-1 + Ipamorelin</b> = synthetic IGF-1 (post-workout) plus endogenous GH burst (PM). Two anabolic windows per day.' },
+  { ids:['epitalon','nad'], type:'sequence', msg:'<b>Epitalon + NAD+</b> → run NAD+ M/W/F during your 10-20 day Epitalon cycle. Telomerase activation runs on sirtuin signaling — sirtuins need NAD+ as fuel. The cycle is the foundation, NAD+ is the fuel.' },
+  { ids:['epitalon','nad','ss31'], type:'sequence', msg:'<b>Epitalon → NAD+ → SS-31</b> = the longevity trifecta. ORDER MATTERS:<br>1) <b>Epitalon</b> = foundation (telomere lengthening pulse, 10-20 days/yr)<br>2) <b>NAD+</b> = fuel (sirtuin/PARP cofactor, M/W/F AM during cycle)<br>3) <b>SS-31</b> = repair (cardiolipin protection, AM, space 4+ hrs from NAD+)<br>One builds the foundation, one fuels the machinery, one repairs what oxidative stress damages.' },
+  { ids:['bpc','tb'],   type:'sync',  msg:'<b>BPC-157 + TB-500</b> = full tissue repair stack. BPC handles gut/tendon/local injury; TB-500 handles systemic muscle/joint/connective tissue. Most-used recovery pair on the market.' },
+  { ids:['bpc','tb','ghkcu'], type:'sync', msg:'<b>BPC + TB + GHK-Cu</b> = the KLOW-style full repair stack. BPC (gut/tendon) + TB (systemic) + GHK-Cu (collagen, skin, scar repair). Inject GHK-Cu at a different site — copper degrades TB-500.' },
+  { ids:['mots','nad'], type:'sync',  msg:'<b>MOTS-c + NAD+</b> = mitochondrial-biogenesis pair. Same M/W/F days for compounding signal. NAD+ rebuilds the cofactor, MOTS-c upregulates the gene expression — they finish each other\'s sentences.' },
+  { ids:['test','hcg'], type:'sync',  msg:'<b>Test Cyp + HCG</b> = TRT with testicular preservation. HCG mimics LH so your testes stay online while exogenous T does its job. Preserves size + fertility on cycle.' },
+  { ids:['tesa','ipa'], type:'sync',  msg:'<b>Tesamorelin + Ipamorelin</b> = VAT-targeting GH stack. Tesa is a GHRH analog (like CJC, but specifically targets visceral fat), Ipa is the GHRP. Like CJC+Ipa but with belly-fat focus.' },
+  // CONFLICTS
+  { ids:['reta','sema'], type:'conflict', msg:'<b>⚠ Retatrutide + Semaglutide</b> — both GLP-1s. Pick ONE. Stacking is "ringing the doorbell twice" — same receptor, no extra effect, more side effects.' },
+  { ids:['reta','tirz'], type:'conflict', msg:'<b>⚠ Retatrutide + Tirzepatide</b> — both GLP-1 / multi-receptor agonists. Pick ONE.' },
+  { ids:['sema','tirz'], type:'conflict', msg:'<b>⚠ Semaglutide + Tirzepatide</b> — both GLP-1s. Pick ONE.' },
+  { ids:['cjc','tesa'],  type:'conflict', msg:'<b>⚠ CJC-1295 + Tesamorelin</b> — both GHRH analogs. Pick one. Stacking = doorbell twice.' },
+];
+
+function renderSynergy(){
+  const wrap = document.getElementById('stack-synergy');
+  if (!wrap) return;
+  if (!state.peptides.length) {
+    wrap.innerHTML = '<div class="note">Add peptides first — stack analysis appears here.</div>';
+    return;
+  }
+  const ids = state.peptides.map(p => p.libId);
+  const has = id => ids.includes(id);
+
+  // 1. Goal coverage
+  const goalsHit = Object.entries(SYNERGY_GOALS).filter(([k,g]) => g.ids.some(id => has(id)));
+  const goalCards = goalsHit.map(([k,g]) => {
+    const matching = state.peptides.filter(p => g.ids.includes(p.libId));
+    return `<div style="background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:12px; margin-bottom:8px;">
+      <div style="font-family:'Share Tech Mono',monospace; font-size:11px; letter-spacing:.14em; color:var(--accent); font-weight:700; margin-bottom:6px;">${g.icon} ${g.label}</div>
+      <div style="font-size:13px; color:var(--text); line-height:1.5;">${matching.map(p => p.name).join(' · ')}</div>
+    </div>`;
+  }).join('');
+
+  // 2. Pairings + sequences + conflicts
+  const matchedPairs = SYNERGY_PAIRS.filter(rule => rule.ids.every(id => has(id)));
+  // Dedupe — if a longer pair matches, drop shorter sub-pairs that share peptides
+  const filteredPairs = matchedPairs.filter((p, i) => {
+    return !matchedPairs.some((other, j) => j !== i && other.ids.length > p.ids.length && p.ids.every(id => other.ids.includes(id)) && other.type === p.type);
+  });
+  const conflicts = filteredPairs.filter(p => p.type === 'conflict');
+  const synergies = filteredPairs.filter(p => p.type === 'sync');
+  const sequences = filteredPairs.filter(p => p.type === 'sequence');
+
+  const conflictCards = conflicts.map(c => `
+    <div style="background:rgba(239,68,68,.08); border:1px solid #EF4444; border-radius:10px; padding:12px; margin-bottom:8px; font-size:13px; line-height:1.55; color:var(--text);">
+      <div style="font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:.14em; color:#EF4444; font-weight:700; margin-bottom:4px;">⚠ CONFLICT</div>
+      ${c.msg}
+    </div>`).join('');
+
+  const synergyCards = synergies.map(s => `
+    <div style="background:rgba(0,255,157,.06); border:1px solid var(--accent2); border-radius:10px; padding:12px; margin-bottom:8px; font-size:13px; line-height:1.55; color:var(--text);">
+      <div style="font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:.14em; color:var(--accent2); font-weight:700; margin-bottom:4px;">✓ SYNERGY</div>
+      ${s.msg}
+    </div>`).join('');
+
+  const sequenceCards = sequences.map(s => `
+    <div style="background:rgba(167,139,250,.08); border:1px solid #A78BFA; border-radius:10px; padding:12px; margin-bottom:8px; font-size:13px; line-height:1.55; color:var(--text);">
+      <div style="font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:.14em; color:#A78BFA; font-weight:700; margin-bottom:4px;">📐 SEQUENCE · ORDER MATTERS</div>
+      ${s.msg}
+    </div>`).join('');
+
+  wrap.innerHTML = `
+    <p class="note" style="margin-bottom:10px;">Read this BEFORE you reconstitute. Know what you're doing and why.</p>
+    <div style="font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:.14em; color:var(--muted); font-weight:700; margin:14px 0 8px;">⊙ AREAS COVERED</div>
+    ${goalCards}
+    ${sequences.length ? `<div style="font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:.14em; color:var(--muted); font-weight:700; margin:14px 0 8px;">⊙ STACK ORDER · WHY ONE BUILDS ON THE NEXT</div>${sequenceCards}` : ''}
+    ${synergies.length ? `<div style="font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:.14em; color:var(--muted); font-weight:700; margin:14px 0 8px;">⊙ PAIRINGS · WHAT WORKS TOGETHER</div>${synergyCards}` : ''}
+    ${conflicts.length ? `<div style="font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:.14em; color:#EF4444; font-weight:700; margin:14px 0 8px;">⊙ CONFLICTS · FIX THESE</div>${conflictCards}` : ''}
+    ${(synergies.length + sequences.length + conflicts.length === 0) ? '<div class="note">No specific pairings detected — your stack hits independent goals without overlap.</div>' : ''}
+  `;
+}
+
 // ─── STEP 5: review ───────────────────────────
 function renderSummary(){
+  renderSynergy();
   const m = computeMacros();
   document.getElementById('macro-summary').innerHTML = `
     <div class="macro-tile cal"><div class="v">${m.cal}</div><div class="l">CAL</div></div>
