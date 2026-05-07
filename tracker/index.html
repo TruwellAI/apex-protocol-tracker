@@ -2696,5 +2696,213 @@ document.addEventListener('click', (e) => {
   if (_hapticAudioCtx && _hapticAudioCtx.state === 'suspended') _hapticAudioCtx.resume();
 }, true);
 </script>
+<!-- ─────────────────────────────────────────────
+     MY STACK BLUEPRINT — always-accessible corner button + full overlay
+     Beginner-friendly summary: what it does · when to take it · what to buy
+     ───────────────────────────────────────────── -->
+<button id="bp-fab" onclick="openBlueprint()" style="position:fixed;bottom:88px;right:14px;z-index:150;background:linear-gradient(135deg,#A78BFA,#00D4FF);color:#0a0e1a;border:none;border-radius:50px;padding:12px 18px;font-family:'Rajdhani',sans-serif;font-weight:800;font-size:13px;letter-spacing:.08em;box-shadow:0 6px 20px rgba(167,139,250,.5);cursor:pointer;-webkit-tap-highlight-color:transparent;">📋 MY BLUEPRINT</button>
+
+<div id="bp-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:400;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0;">
+  <div style="max-width:640px;margin:0 auto;padding:18px 14px 80px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;position:sticky;top:0;background:rgba(10,14,26,.95);backdrop-filter:blur(8px);padding:10px 0;z-index:5;">
+      <div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.18em;color:#A78BFA;font-weight:700;">⊙ MY STACK BLUEPRINT</div>
+        <div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:24px;color:var(--text);letter-spacing:.02em;">Read this before you mix.</div>
+      </div>
+      <button onclick="closeBlueprint()" style="background:transparent;border:1px solid var(--border);color:var(--text);width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer;">✕</button>
+    </div>
+    <p style="font-size:13px;color:var(--muted);line-height:1.55;margin-bottom:18px;">If you've never done peptides before, start here. This is your stack in plain English — what each one does, when to inject, and exactly what to buy.</p>
+
+    <div style="display:flex;gap:6px;margin-bottom:18px;overflow-x:auto;-webkit-overflow-scrolling:touch;">
+      <button class="bp-tab" data-bp="what" onclick="switchBp('what')" style="flex-shrink:0;padding:10px 14px;background:#A78BFA;color:#0a0e1a;border:none;border-radius:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.12em;font-weight:700;cursor:pointer;">🎯 WHAT IT DOES</button>
+      <button class="bp-tab" data-bp="when" onclick="switchBp('when')" style="flex-shrink:0;padding:10px 14px;background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.12em;font-weight:700;cursor:pointer;">⏰ WHEN TO TAKE</button>
+      <button class="bp-tab" data-bp="buy"  onclick="switchBp('buy')"  style="flex-shrink:0;padding:10px 14px;background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.12em;font-weight:700;cursor:pointer;">🛒 WHAT TO BUY</button>
+    </div>
+
+    <div id="bp-content"></div>
+  </div>
+</div>
+
+<script>
+function openBlueprint(){ document.getElementById('bp-modal').style.display='block'; document.body.style.overflow='hidden'; switchBp('what'); }
+function closeBlueprint(){ document.getElementById('bp-modal').style.display='none'; document.body.style.overflow=''; }
+
+function switchBp(tab){
+  document.querySelectorAll('.bp-tab').forEach(b => {
+    const on = b.dataset.bp === tab;
+    b.style.background = on ? '#A78BFA' : 'var(--panel)';
+    b.style.color = on ? '#0a0e1a' : 'var(--text)';
+    b.style.border = on ? 'none' : '1px solid var(--border)';
+  });
+  const root = document.getElementById('bp-content');
+  let raw = null;
+  try { raw = localStorage.getItem('apex_protocol_v1'); } catch(e){}
+  if (!raw) { root.innerHTML = '<div class="note" style="text-align:center;padding:40px 20px;">No protocol locked in. <a href="../start/" style="color:var(--accent);">Start the wizard →</a></div>'; return; }
+  let p; try { p = JSON.parse(raw); } catch(e){ return; }
+
+  if (tab === 'what')      root.innerHTML = bpWhat(p);
+  else if (tab === 'when') root.innerHTML = bpWhen(p);
+  else if (tab === 'buy')  root.innerHTML = bpBuy(p);
+}
+
+// ── WHAT IT DOES — reuse synergy logic, expand with plain-English benefit per peptide
+const BP_PLAIN = {
+  reta:'Appetite suppression + fat loss. The strongest GLP/GIP agonist on the market — feels like your hunger switch turns off. 1×/wk.',
+  sema:'Appetite suppression. Original GLP-1 — proven, predictable, slower to titrate. 1×/wk.',
+  tirz:'Appetite suppression + insulin sensitivity. GLP-1 + GIP, smoother than Sema. 1×/wk.',
+  tesa:'Burns visceral (belly) fat by triggering your own GH pulse. Daily AM fasted.',
+  aod:'Lipolytic — pushes fat into the bloodstream to be burned. Use during fasted cardio.',
+  '5amq':'Blocks the NNMT enzyme that makes you store fat as you age. Daily AM, no needle (oral or SubQ).',
+  lcar:'Shuttles fatty acids into mitochondria so they can actually be burned for fuel. Pre-workout.',
+  bpc:'Heals gut + tendons + local injuries. The "wound healer" peptide. Daily SubQ near the area you want to heal.',
+  tb:'Systemic muscle/joint/connective-tissue repair. Works deeper than BPC. 2×/wk loading, then weekly.',
+  ghkcu:'Collagen + skin + scar repair. Copper peptide. Inject at a different site from TB-500 — copper degrades it.',
+  igf:'Direct anabolic — synthetic IGF-1 delivered to the muscle you just worked. Post-workout, into worked group.',
+  ipa:'Triggers your pituitary to release a clean GH pulse. PM, fasted, 90 min before bed.',
+  cjc:'GHRH analog — primes the pituitary so Ipa\'s pulse is bigger. Stack with Ipa, PM fasted.',
+  test:'TRT base. Pre-mixed cyp at 250 mg/mL. Daily SubQ smooths blood levels vs weekly IM.',
+  hcg:'Mimics LH. Keeps testes online during TRT — preserves size + fertility. M/W/F.',
+  anavar:'Oral anabolic. Strength + dryness. With food, AM + PM.',
+  mots:'Mitochondrial peptide encoded inside mtDNA. Builds new mitochondria. M/W/F AM with NAD+ for compounding.',
+  nad:'Cofactor for sirtuins (SIRT1/3) + PARPs that repair DNA. AM only. M/W/F lets your salvage pathway recover.',
+  epitalon:'Telomerase activator — lengthens telomeres in a programmed pulse. 10-20 days, 1-2× per year ONLY.',
+  cartalax:'Bioregulator for cartilage + connective-tissue gene expression. 10-20 day cycles, 2-4× per year.',
+  ss31:'Protects mitochondrial inner membrane (cardiolipin) from oxidative damage. AM, 4+ hrs from NAD+.',
+};
+
+function bpWhat(p){
+  const ids = (p.stack||[]).map(x => x.libId).filter(Boolean);
+  const has = id => ids.includes(id);
+  const goalsHit = Object.entries(SYNERGY_GOALS).filter(([k,g]) => g.ids.some(id => has(id)));
+  const goalCards = goalsHit.map(([k,g]) => {
+    const matching = (p.stack||[]).filter(x => g.ids.includes(x.libId));
+    return `<div style="background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);font-weight:700;margin-bottom:8px;">${g.icon} ${g.label}</div>
+      ${matching.map(x => `<div style="margin:8px 0;padding:10px;background:rgba(0,0,0,.25);border-left:3px solid ${x.color||'#A78BFA'};border-radius:6px;"><div style="font-weight:700;color:var(--text);font-size:14px;">${x.name}</div><div style="font-size:12px;color:var(--muted);line-height:1.55;margin-top:4px;">${BP_PLAIN[x.libId] || 'Plain-English summary not available — check the encyclopedia.'}</div></div>`).join('')}
+    </div>`;
+  }).join('');
+
+  const matchedPairs = SYNERGY_PAIRS.filter(rule => rule.ids.every(id => has(id)));
+  const filtered = matchedPairs.filter((pp, i) => !matchedPairs.some((other, j) => j !== i && other.ids.length > pp.ids.length && pp.ids.every(id => other.ids.includes(id)) && other.type === pp.type));
+  const conflicts = filtered.filter(x => x.type === 'conflict');
+  const synergies = filtered.filter(x => x.type === 'sync');
+  const sequences = filtered.filter(x => x.type === 'sequence');
+  const card = (color, label, msg) => `<div style="background:${color}11;border:1px solid ${color};border-radius:10px;padding:12px;margin-bottom:8px;font-size:13px;line-height:1.55;color:var(--text);"><div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:${color};font-weight:700;margin-bottom:4px;">${label}</div>${msg}</div>`;
+
+  return `
+    <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--muted);font-weight:700;margin:6px 0 10px;">⊙ AREAS YOUR STACK COVERS</div>
+    ${goalCards}
+    ${sequences.length ? `<div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--muted);font-weight:700;margin:18px 0 10px;">⊙ ORDER MATTERS · WHY ONE BUILDS ON THE NEXT</div>${sequences.map(x => card('#A78BFA','📐 SEQUENCE', x.msg)).join('')}` : ''}
+    ${synergies.length ? `<div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--muted);font-weight:700;margin:18px 0 10px;">⊙ PAIRINGS THAT WORK TOGETHER</div>${synergies.map(x => card('#00FF9D','✓ SYNERGY', x.msg)).join('')}` : ''}
+    ${conflicts.length ? `<div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:#EF4444;font-weight:700;margin:18px 0 10px;">⊙ CONFLICTS · FIX THESE FIRST</div>${conflicts.map(x => card('#EF4444','⚠ CONFLICT', x.msg)).join('')}` : ''}
+  `;
+}
+
+// ── WHEN TO TAKE — group by daily window
+function bpWhen(p){
+  const stack = p.stack || [];
+  // bucket by window keyword
+  const buckets = {
+    am:        { icon:'☀️', label:'AM FASTED · before food/coffee', items:[] },
+    breakfast: { icon:'🥣', label:'WITH BREAKFAST',                 items:[] },
+    pre:       { icon:'🏋︎', label:'PRE-WORKOUT · 30-60 min before', items:[] },
+    post:      { icon:'⚡', label:'POST-WORKOUT · within 30 min',    items:[] },
+    pm:        { icon:'🌆', label:'PM · with dinner',               items:[] },
+    bed:       { icon:'🌙', label:'BEDTIME · fasted, 90 min before sleep', items:[] },
+  };
+  stack.forEach(x => {
+    const w = (x.window||'').toLowerCase();
+    if (w.includes('post-workout') || w.includes('post workout')) buckets.post.items.push(x);
+    else if (w.includes('pre-work') || w.includes('pre-gym') || w.includes('pre workout')) buckets.pre.items.push(x);
+    else if (w.includes('with breakfast') || w.includes('breakfast')) buckets.breakfast.items.push(x);
+    else if (w.includes('pm') && w.includes('dinner')) buckets.pm.items.push(x);
+    else if (w.includes('bed') || w.includes('sleep')) buckets.bed.items.push(x);
+    else if (w.includes('pm')) buckets.bed.items.push(x);
+    else buckets.am.items.push(x);
+  });
+
+  const dowMap = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const fmtDays = d => d === 'all' ? 'Daily' : (Array.isArray(d) ? d.map(i => dowMap[i]).join(' · ') : 'Daily');
+  const fmtDose = x => x.oral ? (x.perDoseMg+' mg oral') : (x.perDoseUnits ? Math.round(x.perDoseUnits)+'u (~'+(x.perDoseMg||'?').toFixed?.(2) || x.perDoseMg+' mg)' : '—');
+
+  const sections = Object.values(buckets).filter(b => b.items.length).map(b => `
+    <div style="background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px;">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);font-weight:700;margin-bottom:10px;">${b.icon} ${b.label}</div>
+      ${b.items.map(x => `<div style="margin:8px 0;padding:10px 12px;background:rgba(0,0,0,.25);border-left:3px solid ${x.color||'#A78BFA'};border-radius:6px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
+          <div style="font-weight:700;color:var(--text);font-size:14px;">${x.name}</div>
+          <div style="font-size:11px;color:var(--muted);font-family:'Share Tech Mono',monospace;">${fmtDays(x.days)}</div>
+        </div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px;">${fmtDose(x)}</div>
+      </div>`).join('')}
+    </div>
+  `).join('');
+
+  return `
+    <p style="font-size:13px;color:var(--muted);line-height:1.55;margin-bottom:14px;">Your stack split into the 6 daily windows. Inject in this order — peptides clump by absorption profile, not random preference.</p>
+    ${sections || '<div class="note">No timing data — re-run the wizard.</div>'}
+    <div style="background:rgba(167,139,250,.08);border:1px solid #A78BFA;border-radius:10px;padding:14px;margin-top:14px;font-size:13px;line-height:1.55;color:var(--text);">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:#A78BFA;font-weight:700;margin-bottom:4px;">📐 GOLDEN RULES</div>
+      • Fasted = at least 30 min before food, especially coffee.<br>
+      • Rotate sites (left vs right belly, thigh, glute) — same site daily = scar tissue.<br>
+      • Different sites for GHK-Cu and TB-500 (copper degrades TB).<br>
+      • Same M/W/F for MOTS-c + NAD+ stacking. SS-31 same days but space 4+ hrs from NAD+.<br>
+      • Pre-mixed pens stay in the fridge. Dry vials room temp until reconstituted.
+    </div>
+  `;
+}
+
+// ── WHAT TO BUY — vials needed for 12-week cycle (default) per peptide
+function bpBuy(p){
+  const cycleWeeks = 12; // default 12-wk cycle
+  const stack = p.stack || [];
+  const rows = stack.map(x => {
+    if (x.oral) {
+      // Anavar etc — daily mg total
+      const dailyMg = (x.perDoseMg||0) * 2; // assume AM+PM if oral
+      const totalMg = dailyMg * 7 * cycleWeeks;
+      return { name:x.name, color:x.color, plan:`~${Math.round(totalMg)} mg total over ${cycleWeeks} weeks`, bottle:`Source via your prescriber.` };
+    }
+    if (x.libId === 'epitalon' || x.libId === 'cartalax') {
+      const cycleDays = 20;
+      const totalMg = (x.perDoseMg||0) * cycleDays;
+      const vials = Math.max(1, Math.ceil(totalMg / (x.vialMg||50)));
+      return { name:x.name, color:x.color, plan:`<b>1 cycle = 20 days</b>, ${(x.perDoseMg||0)} mg/day → <b>${Math.round(totalMg)} mg total</b>`, bottle:`<b>${vials} × ${x.vialMg||50} mg vial${vials>1?'s':''}</b> covers one cycle. Reorder before next cycle (typically 6 months later).` };
+    }
+    const weeklyMg = x.weeklyMg || ((x.perDoseMg||0) * (x.perWeek||0));
+    const totalMg = weeklyMg * cycleWeeks;
+    const vialMg = x.vialMg || (x.premixed ? null : 10);
+    if (x.premixed) {
+      const totalMl = totalMg / (x.premixConc||50);
+      const bottles = Math.ceil(totalMl / 5); // assume 5 mL bottle
+      return { name:x.name, color:x.color, plan:`~${Math.round(weeklyMg)} mg/week × ${cycleWeeks} wks = <b>${Math.round(totalMg)} mg total</b>`, bottle:`<b>${bottles} × pre-mixed bottle${bottles>1?'s':''}</b> @ ${x.premixConc||50} mg/mL (assuming 5mL bottle).` };
+    }
+    const vials = vialMg ? Math.max(1, Math.ceil(totalMg / vialMg)) : 0;
+    return { name:x.name, color:x.color, plan:`~${Math.round(weeklyMg)} mg/week × ${cycleWeeks} wks = <b>${Math.round(totalMg)} mg total</b>`, bottle:vialMg ? `<b>${vials} × ${vialMg} mg vial${vials>1?'s':''}</b> covers the cycle.` : `Custom — enter vial size in wizard.` };
+  });
+
+  const bacBottles = stack.filter(x => !x.premixed && !x.oral).length;
+  const needles = Math.ceil(stack.filter(x => !x.oral).reduce((sum, x) => sum + ((x.perWeek||7) * cycleWeeks), 0));
+
+  return `
+    <p style="font-size:13px;color:var(--muted);line-height:1.55;margin-bottom:14px;">Shopping list for a <b>${cycleWeeks}-week cycle</b>. Buy once, run the full cycle, reorder before the next one.</p>
+    ${rows.map(r => `<div style="background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;border-left:4px solid ${r.color||'#A78BFA'};">
+      <div style="font-weight:800;color:var(--text);font-size:15px;margin-bottom:6px;">${r.name}</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.55;margin-bottom:6px;">${r.plan}</div>
+      <div style="font-size:13px;color:var(--accent2);line-height:1.55;">${r.bottle}</div>
+    </div>`).join('')}
+    <div style="background:rgba(0,212,255,.08);border:1px solid var(--accent);border-radius:10px;padding:14px;margin-top:14px;">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--accent);font-weight:700;margin-bottom:8px;">🛒 SUPPORTING SUPPLIES</div>
+      <div style="font-size:13px;color:var(--text);line-height:1.7;">
+        • <b>${bacBottles||1} × bacteriostatic water (30 mL)</b> — for reconstituting dry vials.<br>
+        • <b>~${Math.max(needles, 100)} × insulin syringes (½ mL, 31g, 5/16")</b> — buy in 100-pack.<br>
+        • <b>1 × Apex pen (V3 reusable)</b> — runs on standard 3 mL cartridges, eliminates re-jabbing.<br>
+        • <b>1 box × alcohol swabs</b> — 200-ct.<br>
+        • <b>1 × sharps container</b> — keep sealed, dispose at any pharmacy.
+      </div>
+    </div>
+  `;
+}
+</script>
 </body>
 </html>
