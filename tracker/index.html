@@ -801,7 +801,7 @@ const FOODS = [
 // MEAL PLAN: Neil's daily 2,300-cal cut menu
 // 1000-cal deficit · 240P / 220C / 50F
 // ─────────────────────────────────────────────
-const MEAL_PLAN = [
+let MEAL_PLAN = [
   { id:'m1', time:'☀️ BREAKFAST',     when:'~7:30am · after AM peptides + Walk #1',  items:[
     { id:'dkb',     qty:2 },
     { id:'eggw',    qty:1 },
@@ -843,7 +843,7 @@ const MEAL_PLAN = [
 // To intentionally override SSOT (e.g., Neil's loading dose vs Apex maintenance),
 // add `ssotOverride: true` to mark it acceptable.
 // ─────────────────────────────────────────────
-const PEPTIDES = [
+let PEPTIDES = [
   // ── DAILY AM FASTED (before walk) ──
   { id:'5amq',   name:'5-Amino-1MQ',     dose:'2 mg · 40u (10mg/2mL recon)', window:'AM fasted SubQ', days:'all', tag:'NNMT', color:'#FBBF24', ssot:'5amino1mq.html' },
   { id:'slupp',  name:'SLU-PP-332',      dose:'1 pill',         window:'AM fasted',          days:'all',      tag:'ERRα',  color:'#F472B6', ssot:'slu-pp-322.html' },
@@ -881,6 +881,116 @@ const TRAIN = [
 ];
 
 // ─────────────────────────────────────────────
+// CUSTOM PROTOCOL — read apex_protocol_v1 from /start/ wizard
+// ─────────────────────────────────────────────
+let CUSTOM_TARGET_CAL = null;
+let CUSTOM_MACROS = null;
+(function loadCustomProtocol(){
+  let raw = null;
+  try { raw = localStorage.getItem('apex_protocol_v1'); } catch(e){}
+  if (!raw) {
+    // No protocol — bounce to wizard
+    if (location.search.indexOf('nored') === -1) {
+      location.href = '../start/';
+    }
+    return;
+  }
+  let p; try { p = JSON.parse(raw); } catch(e){ return; }
+  if (!p || !p.stack) return;
+
+  // Override macros
+  if (p.macros) {
+    CUSTOM_TARGET_CAL = p.macros.cal;
+    CUSTOM_MACROS = { p:p.macros.p, c:p.macros.c, f:p.macros.f };
+  }
+
+  // Override PEPTIDES from locked-in stack
+  PEPTIDES = p.stack.map(item => {
+    const days = item.days === 'all' ? 'all' : (Array.isArray(item.days) ? item.days : 'all');
+    let doseStr;
+    if (item.oral) {
+      doseStr = (item.perDoseMg || item.weeklyMg || '?') + ' mg oral';
+    } else if (item.premixed) {
+      doseStr = (item.perDoseUnits||'?') + 'u · ' + (item.perDoseMg||'?') + ' mg (PRE-MIXED ' + (item.premixConc||'?') + 'mg/mL)';
+    } else {
+      doseStr = (item.perDoseUnits||'?') + 'u · ' + (item.perDoseMg||'?') + ' mg';
+      if (item.mgPerMl) doseStr += ' (' + item.mgPerMl.toFixed(1) + ' mg/mL)';
+    }
+    return {
+      id: item.id,
+      name: item.name,
+      dose: doseStr,
+      window: item.window || 'AM',
+      days: days,
+      tag: item.tag || '',
+      color: item.color || '#00D4FF',
+      ssot: item.libId ? (item.libId + '.html') : null,
+    };
+  });
+
+  // Build a meal plan from prefs
+  if (p.prefs && CUSTOM_MACROS) {
+    const prefs = p.prefs;
+    const PREF_FOOD_MAP = {
+      // proteins
+      pf_chicken:{ id:'chicken', qty:1.5 },
+      pf_eggw:   { id:'eggw',    qty:1   },
+      pf_premier:{ id:'premier', qty:1   },
+      pf_chobani:{ id:'chobani', qty:1   },
+      pf_steak:  { id:'chicken', qty:1.5 }, // proxy
+      // carbs
+      pf_rice:   { id:'rice',    qty:1   },
+      pf_potato: { id:'potato',  qty:1   },
+      pf_sweetpot:{ id:'sweetpot',qty:1  },
+      pf_oats:   { id:'oats',    qty:1   },
+      pf_dkb:    { id:'dkb',     qty:2   },
+      // fats / sides
+      pf_avo:    { id:'avo',     qty:1   },
+      pf_brussels:{ id:'brussels',qty:1  },
+      pf_blue:   { id:'blue',    qty:1   },
+      pf_guac:   { id:'guac',    qty:2   },
+      // treats
+      pf_papa:   { id:'papa',    qty:1   },
+      pf_flydutch:{ id:'flydutch',qty:1  },
+      pf_mobetta:{ id:'mobetta', qty:1   },
+    };
+    const picked = (prefs || []).map(k => PREF_FOOD_MAP[k]).filter(Boolean);
+    const protein = picked.filter(x => { const f = FOODS.find(z=>z.id===x.id); return f && f.p >= 15; });
+    const carbs   = picked.filter(x => { const f = FOODS.find(z=>z.id===x.id); return f && f.c >= 15 && f.p < 15; });
+    const sides   = picked.filter(x => { const f = FOODS.find(z=>z.id===x.id); return f && f.p < 15 && f.c < 15; });
+
+    const pick = (arr, fallback) => arr.length ? arr[Math.floor(Math.random()*arr.length)] : fallback;
+    MEAL_PLAN = [
+      { id:'m1', time:'☀️ BREAKFAST',  when:'~7:30am · after AM peptides + walk', items:[
+        pick(protein, {id:'eggw', qty:1}),
+        pick(carbs,   {id:'oats', qty:1}),
+        pick(sides,   {id:'avo',  qty:1}),
+      ]},
+      { id:'m2', time:'🏋︎ PRE-GYM',    when:'~1hr before lift · easy carbs + fast protein', items:[
+        pick(carbs,   {id:'oats',    qty:1}),
+        { id:'premier', qty:1 },
+      ]},
+      { id:'m3', time:'⚡ POST-GYM',    when:'within 30min of last set · anabolic refill', items:[
+        pick(protein, {id:'chobani', qty:1}),
+        pick(sides,   {id:'blue',    qty:1}),
+      ]},
+      { id:'m4', time:'🍗 LATE LUNCH', when:'~3-4pm · solid bridge to dinner', items:[
+        pick(protein, {id:'chicken', qty:1.5}),
+        pick(carbs,   {id:'rice',    qty:1}),
+      ]},
+      { id:'m5', time:'🌆 DINNER',     when:'~6-7pm · biggest protein hit', items:[
+        pick(protein, {id:'chicken', qty:2}),
+        pick(carbs,   {id:'potato',  qty:1}),
+        pick(sides,   {id:'avo',     qty:1}),
+      ]},
+      { id:'m6', time:'🌙 BEDTIME',    when:'~9-10pm · slow casein (optional)', items:[
+        { id:'chobani', qty:1 },
+      ]},
+    ];
+  }
+})();
+
+// ─────────────────────────────────────────────
 // STATE
 // ─────────────────────────────────────────────
 const KEY = 'apex_tracker_v1';
@@ -903,7 +1013,8 @@ function get(){
   s.goalWeight = s.goalWeight || 230;     // 208 LBM + 22 lb fat target
   s.goalFat = s.goalFat || 22;            // Neil's locked target — 22 lb of fat
   s.goalBF = s.goalBF || 9.6;             // 22 / 230
-  s.targetCal = s.targetCal || 2300;   // 1000 deficit · 6-week boat shred
+  s.targetCal = s.targetCal || CUSTOM_TARGET_CAL || 2300;   // 1000 deficit default
+  if (CUSTOM_MACROS) { s.targetP = CUSTOM_MACROS.p; s.targetC = CUSTOM_MACROS.c; s.targetF = CUSTOM_MACROS.f; }
   s.targetP = s.targetP || 240;        // 1.15 g/lb LBM — anabolic protection
   s.targetC = s.targetC || 175;        // training fuel + glycogen
   s.targetF = s.targetF || 70;         // hormone-floor fat (was too low at 50g)
