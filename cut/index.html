@@ -345,6 +345,9 @@ details[open] > summary .grp-chev { transform: rotate(180deg); }
   <!-- ═══ TODAY PANEL ═══ -->
   <div class="panel on" data-panel="today">
 
+    <!-- ═══ POST-WORKOUT IGF-1 COUNTDOWN BANNER ═══ -->
+    <div id="post-workout-banner" style="margin:14px 16px 0;display:none;"></div>
+
     <!-- ═══ THE WHOLE PICTURE · UNIFIED COMMAND CARD ═══ -->
     <details class="col-card col-accent" id="big-picture-wrap" style="margin-top:14px;">
       <summary>
@@ -2012,15 +2015,87 @@ function togglePep(id){
   s.daily[todayKey()].peptides[id] = !s.daily[todayKey()].peptides[id];
   save(s);
   haptic();
+  try { renderPostWorkoutBanner(); } catch(e){}
   renderPeptides();
 }
 function toggleCheck(key){
   const s = load();
   s.daily = s.daily || {}; s.daily[todayKey()] = s.daily[todayKey()] || { food:[], peptides:{}, steps:0, water:0, checks:{}, activity:{} };
   if (!s.daily[todayKey()].checks) s.daily[todayKey()].checks = {};
-  s.daily[todayKey()].checks[key] = !s.daily[todayKey()].checks[key];
-  save(s); haptic(); renderChecks();
+  const wasOn = s.daily[todayKey()].checks[key];
+  s.daily[todayKey()].checks[key] = !wasOn;
+
+  // Record workout timestamp + arm post-workout pin reminder
+  if (key === 'workout' && !wasOn) {
+    s.daily[todayKey()].workoutAt = Date.now();
+    armPostWorkoutTimer();
+    // Best-effort phone notification at 25 min
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+  }
+  if (key === 'workout' && wasOn) {
+    delete s.daily[todayKey()].workoutAt;
+    if (window._pwTimer) clearTimeout(window._pwTimer);
+  }
+
+  save(s); haptic(); renderChecks(); renderPostWorkoutBanner();
 }
+
+// ── POST-WORKOUT IGF-1 COUNTDOWN ──────────────────
+// 25 min after workout check → banner + (best-effort) push notification
+// Stays visible until IGF-1 is logged or the day rolls over.
+function armPostWorkoutTimer(){
+  if (window._pwTimer) clearTimeout(window._pwTimer);
+  const t = today();
+  if (!t.workoutAt) return;
+  const elapsed = Date.now() - t.workoutAt;
+  const ms25 = 25 * 60 * 1000;
+  if (elapsed < ms25) {
+    window._pwTimer = setTimeout(() => {
+      // Fire native notification if permitted
+      if ('Notification' in window && Notification.permission === 'granted') {
+        try { new Notification('💉 Pin window closing', { body: 'IGF-1 / post-workout peptide → window is at 25 min. Pin now.', icon: '/apex-protocol-tracker/icon.png' }); } catch(e){}
+      }
+      try { haptic(); } catch(e){}
+      renderPostWorkoutBanner();
+    }, ms25 - elapsed);
+  }
+  // Tick visual countdown every 30s
+  if (window._pwTick) clearInterval(window._pwTick);
+  window._pwTick = setInterval(renderPostWorkoutBanner, 30000);
+}
+function renderPostWorkoutBanner(){
+  const wrap = document.getElementById('post-workout-banner');
+  if (!wrap) return;
+  const t = today();
+  const igfDone = t.peptides && t.peptides.igf;
+  if (!t.workoutAt || igfDone) { wrap.style.display = 'none'; return; }
+  const elapsedMs = Date.now() - t.workoutAt;
+  const elapsedMin = Math.floor(elapsedMs / 60000);
+  const remaining25 = 25 - elapsedMin;
+  let color, label, msg;
+  if (elapsedMin < 30) {
+    color = '#00FF9D'; label = '🟢 OPTIMAL · pin now'; msg = `<b>${remaining25 > 0 ? remaining25+' min left' : 'window closing'}</b> in the prime 25-min anabolic stack. Capillaries open, GLUT4 peaking, mTOR primed at the worked site.`;
+  } else if (elapsedMin < 60) {
+    color = '#FBBF24'; label = '🟡 GOOD · still strong'; msg = `<b>${elapsedMin} min post-lift.</b> ~85-90% of the effect still on the table. Pin within the next 15-20 min.`;
+  } else if (elapsedMin < 120) {
+    color = '#FB923C'; label = '🟠 LATE · ~60-70% effect'; msg = `<b>${elapsedMin} min post-lift.</b> mRNA translation back to baseline but local IGF receptors still upregulated. Pin anyway — better than skipping.`;
+  } else {
+    color = '#EF4444'; label = '🔴 PAST WINDOW'; msg = `<b>${Math.floor(elapsedMin/60)}h ${elapsedMin%60}m post-lift.</b> Site-specific multiplier gone. Still systemically anabolic — pin if you haven't, then fix the workflow.`;
+  }
+  wrap.style.display = 'block';
+  wrap.innerHTML = `<div onclick="document.querySelector('[data-tab=inject]').click();" style="cursor:pointer;background:${color}11;border:1px solid ${color};border-left:4px solid ${color};border-radius:10px;padding:12px 14px;-webkit-tap-highlight-color:transparent;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:${color};font-weight:700;">⏱ POST-WORKOUT WINDOW</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:${color};font-weight:700;">${label}</div>
+    </div>
+    <div style="font-size:13px;color:var(--text);line-height:1.55;">${msg}</div>
+    <div style="font-size:10px;color:var(--muted);margin-top:6px;">tap → jump to Inject tab</div>
+  </div>`;
+}
+// Re-arm on page load if there's an active workout timestamp
+window.addEventListener('DOMContentLoaded', () => { setTimeout(() => { try { armPostWorkoutTimer(); renderPostWorkoutBanner(); } catch(e){} }, 200); });
 function saveDayTotal(){
   const s = load();
   s.daily = s.daily || {}; s.daily[todayKey()] = s.daily[todayKey()] || { food:[], peptides:{}, steps:0, water:0, checks:{}, activity:{} };
