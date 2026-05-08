@@ -578,85 +578,92 @@ body { padding-bottom: 90px; }
     <div style="height:30px;"></div>
   </div>
 
-  <!-- ═══ MEALS PANEL — consolidated: macro ladder · planned meals · free food log ═══ -->
+  <!-- ═══ MEALS PANEL — holistic top card · everything else collapses ═══ -->
   <div class="panel" data-panel="plan">
-    <!-- LIVE MACRO LADDER (Goal · Consumed · Left/Over) — same as Today tab, sticky-feel at top -->
-    <div style="margin:14px 16px 8px;background:var(--panel);border:1px solid var(--border);border-radius:12px;overflow:hidden;">
-      <!-- Row 1: GOAL -->
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;border-bottom:1px solid var(--border);">
-        <div class="ml-cell" style="padding:10px;text-align:center;">
-          <div class="ml-label">GOAL</div>
-          <div class="ml-num" style="color:var(--muted);"><span id="g-cal-2">2300</span></div>
-          <div class="ml-unit">cal</div>
-        </div>
-        <div class="ml-cell" style="padding:10px;text-align:center;border-left:1px solid var(--border);">
-          <div class="ml-label">PROTEIN</div>
-          <div class="ml-num" style="color:var(--muted);"><span id="g-p-2">240</span>g</div>
-        </div>
-        <div class="ml-cell" style="padding:10px;text-align:center;border-left:1px solid var(--border);">
-          <div class="ml-label">CARB</div>
-          <div class="ml-num" style="color:var(--muted);"><span id="g-c-2">175</span>g</div>
-        </div>
-        <div class="ml-cell" style="padding:10px;text-align:center;border-left:1px solid var(--border);">
-          <div class="ml-label">FAT</div>
-          <div class="ml-num" style="color:var(--muted);"><span id="g-f-2">70</span>g</div>
-        </div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;border-bottom:1px solid var(--border);background:rgba(0,212,255,.04);">
-        <div class="ml-cell" style="padding:10px;text-align:center;"><div class="ml-label" style="color:var(--accent);">CONSUMED</div><div class="ml-num" id="c-cal-2" style="color:var(--accent);">0</div></div>
-        <div class="ml-cell" style="padding:10px;text-align:center;border-left:1px solid var(--border);"><div class="ml-label" style="color:var(--accent);">EATEN</div><div class="ml-num" id="c-p-2" style="color:var(--accent);">0g</div></div>
-        <div class="ml-cell" style="padding:10px;text-align:center;border-left:1px solid var(--border);"><div class="ml-label" style="color:var(--accent);">EATEN</div><div class="ml-num" id="c-c-2" style="color:var(--accent);">0g</div></div>
-        <div class="ml-cell" style="padding:10px;text-align:center;border-left:1px solid var(--border);"><div class="ml-label" style="color:var(--accent);">EATEN</div><div class="ml-num" id="c-f-2" style="color:var(--accent);">0g</div></div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;">
-        <div class="ml-cell" style="padding:10px;text-align:center;"><div class="ml-label" id="d-cal-l-2">LEFT</div><div class="ml-num" id="d-cal-2" style="color:var(--accent2);">2300</div></div>
-        <div class="ml-cell" style="padding:10px;text-align:center;border-left:1px solid var(--border);"><div class="ml-label" id="d-p-l-2">LEFT</div><div class="ml-num" id="d-p-2" style="color:var(--accent2);">240g</div></div>
-        <div class="ml-cell" style="padding:10px;text-align:center;border-left:1px solid var(--border);"><div class="ml-label" id="d-c-l-2">LEFT</div><div class="ml-num" id="d-c-2" style="color:var(--accent2);">175g</div></div>
-        <div class="ml-cell" style="padding:10px;text-align:center;border-left:1px solid var(--border);"><div class="ml-label" id="d-f-l-2">LEFT</div><div class="ml-num" id="d-f-2" style="color:var(--accent2);">70g</div></div>
-      </div>
-    </div>
 
-    <!-- PLAN HEADER (hidden — old plan totals; values still bound for code that reads them) -->
-    <div style="display:none;">
-      <span id="plan-mode-label">Daily meal plan</span>
-      <span id="plan-cal-total">2300</span><span id="plan-p-total">240</span><span id="plan-c-total">220</span><span id="plan-f-total">50</span><span id="plan-meal-count">6</span>
-    </div>
-
-    <!-- ═══ PROGRESS SCOREBOARD — eaten vs remaining ═══ -->
-    <div id="plan-scoreboard" style="margin:0 14px 14px;padding:14px;background:linear-gradient(135deg,rgba(0,212,255,.08),rgba(0,255,157,.04));border:1px solid var(--accent);border-radius:12px;">
+    <!-- ═══ HOLISTIC ENERGY CARD — burn · eat · deficit at a glance ═══ -->
+    <div style="margin:14px 16px;padding:14px;background:linear-gradient(135deg,rgba(0,212,255,.10),rgba(0,255,157,.06));border:2px solid var(--accent);border-radius:14px;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--accent);font-weight:700;">⊙ TODAY'S PROGRESS</div>
-        <div id="plan-mealcount-badge" style="font-size:11px;color:var(--muted);font-family:'Share Tech Mono',monospace;">0 / 6 meals</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--accent);font-weight:700;">⊙ TODAY · ENERGY BALANCE</div>
+        <div id="plan-mealcount-badge" style="font-size:10px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:.1em;">0 / 6 meals</div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
-        <div style="text-align:center;padding:10px 4px;background:rgba(0,0,0,.25);border-radius:8px;">
-          <div style="font-size:10px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:.1em;">EATEN</div>
-          <div id="sb-eaten" style="font-size:22px;font-weight:800;color:var(--accent2);font-family:'Rajdhani',sans-serif;">0</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+        <div style="background:rgba(0,0,0,.3);border-radius:8px;padding:10px;text-align:center;">
+          <div style="font-size:9px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:.1em;">🔥 BURNED</div>
+          <div id="hb-burn" style="font-size:24px;font-weight:800;color:var(--warn);font-family:'Rajdhani',sans-serif;">0</div>
+          <div id="hb-burn-sub" style="font-size:10px;color:var(--muted);">cal · projected EOD</div>
+        </div>
+        <div style="background:rgba(0,0,0,.3);border-radius:8px;padding:10px;text-align:center;">
+          <div style="font-size:9px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:.1em;">🍽 EATEN</div>
+          <div id="sb-eaten" style="font-size:24px;font-weight:800;color:var(--accent2);font-family:'Rajdhani',sans-serif;">0</div>
           <div id="sb-eaten-macros" style="font-size:10px;color:var(--muted);">0P · 0C · 0F</div>
         </div>
-        <div style="text-align:center;padding:10px 4px;background:rgba(0,212,255,.08);border-radius:8px;border:1px solid var(--accent);">
-          <div style="font-size:10px;color:var(--accent);font-family:'Share Tech Mono',monospace;letter-spacing:.1em;font-weight:700;">REMAINING</div>
-          <div id="sb-rem" style="font-size:22px;font-weight:800;color:var(--accent);font-family:'Rajdhani',sans-serif;">2300</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div style="background:rgba(0,212,255,.08);border:1px solid var(--accent);border-radius:8px;padding:10px;text-align:center;">
+          <div style="font-size:9px;color:var(--accent);font-family:'Share Tech Mono',monospace;letter-spacing:.1em;font-weight:700;">CAL LEFT</div>
+          <div id="sb-rem" style="font-size:24px;font-weight:800;color:var(--accent);font-family:'Rajdhani',sans-serif;">2300</div>
           <div id="sb-rem-macros" style="font-size:10px;color:var(--muted);">240P · 220C · 50F</div>
         </div>
-        <div style="text-align:center;padding:10px 4px;background:rgba(0,0,0,.25);border-radius:8px;">
-          <div style="font-size:10px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:.1em;">GOAL</div>
-          <div id="sb-goal" style="font-size:22px;font-weight:800;color:var(--text);font-family:'Rajdhani',sans-serif;">2300</div>
-          <div id="sb-goal-sub" style="font-size:10px;color:var(--muted);">based on burn</div>
+        <div style="background:rgba(0,0,0,.3);border-radius:8px;padding:10px;text-align:center;">
+          <div style="font-size:9px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:.1em;">📉 DEFICIT</div>
+          <div id="hb-deficit" style="font-size:24px;font-weight:800;color:var(--text);font-family:'Rajdhani',sans-serif;">−0</div>
+          <div id="hb-deficit-sub" style="font-size:10px;color:var(--muted);">target −1000</div>
         </div>
       </div>
       <div style="height:6px;background:rgba(255,255,255,.06);border-radius:3px;margin-top:10px;overflow:hidden;">
         <div id="sb-progress" style="height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));width:0%;transition:width .35s;"></div>
       </div>
       <div id="sb-coach" style="font-size:12px;color:var(--text);line-height:1.55;margin-top:10px;padding:8px 10px;background:rgba(0,0,0,.25);border-radius:6px;display:none;"></div>
+      <!-- hidden — sb-goal kept for code that reads it -->
+      <span id="sb-goal" style="display:none;">2300</span>
+      <span id="sb-goal-sub" style="display:none;"></span>
     </div>
 
-    <!-- ═══ CONSUMED LOG · what you've actually eaten today ═══ -->
-    <div class="section-h" style="margin-top:18px;">
-      <h2>✓ Eaten today</h2>
-      <span class="count" id="meals-consumed-count">0 cal</span>
+    <!-- ═══ MACRO BREAKDOWN · collapsible ═══ -->
+    <details style="margin:0 16px 14px;background:var(--panel);border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+      <summary style="cursor:pointer;list-style:none;padding:12px 14px;display:flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent);font-weight:700;-webkit-tap-highlight-color:transparent;">
+        📊 Macro breakdown <span style="margin-left:auto;font-size:10px;opacity:.7;color:var(--muted);">▾ tap</span>
+      </summary>
+      <div style="padding:0 0 4px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;border-top:1px solid var(--border);">
+          <div class="ml-cell" style="padding:10px;text-align:center;">
+            <div class="ml-label">GOAL</div>
+            <div class="ml-num" style="color:var(--muted);"><span id="g-cal-2">2300</span></div>
+            <div class="ml-unit">cal</div>
+          </div>
+          <div class="ml-cell" style="padding:10px;text-align:center;border-left:1px solid var(--border);"><div class="ml-label">PROTEIN</div><div class="ml-num" style="color:var(--muted);"><span id="g-p-2">240</span>g</div></div>
+          <div class="ml-cell" style="padding:10px;text-align:center;border-left:1px solid var(--border);"><div class="ml-label">CARB</div><div class="ml-num" style="color:var(--muted);"><span id="g-c-2">175</span>g</div></div>
+          <div class="ml-cell" style="padding:10px;text-align:center;border-left:1px solid var(--border);"><div class="ml-label">FAT</div><div class="ml-num" style="color:var(--muted);"><span id="g-f-2">70</span>g</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;border-top:1px solid var(--border);background:rgba(0,212,255,.04);">
+          <div class="ml-cell" style="padding:10px;text-align:center;"><div class="ml-label" style="color:var(--accent);">EATEN</div><div class="ml-num" id="c-cal-2" style="color:var(--accent);">0</div></div>
+          <div class="ml-cell" style="padding:10px;text-align:center;border-left:1px solid var(--border);"><div class="ml-label" style="color:var(--accent);">EATEN</div><div class="ml-num" id="c-p-2" style="color:var(--accent);">0g</div></div>
+          <div class="ml-cell" style="padding:10px;text-align:center;border-left:1px solid var(--border);"><div class="ml-label" style="color:var(--accent);">EATEN</div><div class="ml-num" id="c-c-2" style="color:var(--accent);">0g</div></div>
+          <div class="ml-cell" style="padding:10px;text-align:center;border-left:1px solid var(--border);"><div class="ml-label" style="color:var(--accent);">EATEN</div><div class="ml-num" id="c-f-2" style="color:var(--accent);">0g</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;border-top:1px solid var(--border);">
+          <div class="ml-cell" style="padding:10px;text-align:center;"><div class="ml-label" id="d-cal-l-2">LEFT</div><div class="ml-num" id="d-cal-2" style="color:var(--accent2);">2300</div></div>
+          <div class="ml-cell" style="padding:10px;text-align:center;border-left:1px solid var(--border);"><div class="ml-label" id="d-p-l-2">LEFT</div><div class="ml-num" id="d-p-2" style="color:var(--accent2);">240g</div></div>
+          <div class="ml-cell" style="padding:10px;text-align:center;border-left:1px solid var(--border);"><div class="ml-label" id="d-c-l-2">LEFT</div><div class="ml-num" id="d-c-2" style="color:var(--accent2);">175g</div></div>
+          <div class="ml-cell" style="padding:10px;text-align:center;border-left:1px solid var(--border);"><div class="ml-label" id="d-f-l-2">LEFT</div><div class="ml-num" id="d-f-2" style="color:var(--accent2);">70g</div></div>
+        </div>
+      </div>
+    </details>
+
+    <!-- PLAN HEADER (hidden — values still bound for code that reads them) -->
+    <div style="display:none;">
+      <span id="plan-mode-label">Daily meal plan</span>
+      <span id="plan-cal-total">2300</span><span id="plan-p-total">240</span><span id="plan-c-total">220</span><span id="plan-f-total">50</span><span id="plan-meal-count">6</span>
     </div>
-    <div class="list" id="meals-consumed-log"></div>
+
+    <!-- ═══ EATEN TODAY · collapsible ═══ -->
+    <details style="margin:0 16px 14px;background:var(--panel);border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+      <summary style="cursor:pointer;list-style:none;padding:12px 14px;display:flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent2);font-weight:700;-webkit-tap-highlight-color:transparent;">
+        ✓ Eaten today <span id="meals-consumed-count" style="margin-left:auto;font-size:10px;opacity:.7;color:var(--muted);font-family:'Rajdhani',sans-serif;font-weight:700;letter-spacing:.02em;">0 cal</span>
+      </summary>
+      <div class="list" id="meals-consumed-log" style="padding:0 14px 14px;"></div>
+    </details>
 
     <!-- ═══ PRE-MADE MEALS · collapsible ═══ -->
     <details id="meals-premade-wrap" style="margin:18px 16px 0;background:var(--panel);border:1px solid var(--border);border-radius:10px;overflow:hidden;">
@@ -2339,6 +2346,21 @@ function renderPlan(){
   set('sb-goal', Math.round(goal));
   set('plan-mealcount-badge', `${eatenCount} / ${totalMeals} meals`);
   const pmcb = document.getElementById('premade-meal-count-badge'); if (pmcb) pmcb.textContent = `${eatenCount} / ${totalMeals} eaten`;
+
+  // Holistic burn + deficit
+  const burnSoFar = (parseInt(t.postGymKcal) || 0) || (parseInt(t.eodKcal) || 0) || 0;
+  const baseline = 750;
+  const projectedBurn = burnSoFar > 0 ? (burnSoFar >= baseline ? burnSoFar : burnSoFar + (parseInt(t.pmProj)||300)) : baseline;
+  const baselineMaint = (s.targetCal || 2300) + 1000;
+  const tdeeToday = baselineMaint + (projectedBurn - baseline);
+  const deficit = Math.max(0, tdeeToday - eatenMacros.cal);
+  set('hb-burn', Math.round(projectedBurn));
+  set('hb-burn-sub', burnSoFar > 0 ? `cal · checked in` : `cal · projected EOD`);
+  set('hb-deficit', '−' + Math.round(deficit));
+  if (deficit >= 900 && deficit <= 1200) { document.getElementById('hb-deficit-sub').textContent = '✓ on −1000 line'; document.getElementById('hb-deficit').style.color = 'var(--accent2)'; }
+  else if (deficit > 1200) { document.getElementById('hb-deficit-sub').textContent = '⚠ too steep'; document.getElementById('hb-deficit').style.color = 'var(--warn)'; }
+  else if (deficit < 700 && eatenMacros.cal > 1000) { document.getElementById('hb-deficit-sub').textContent = '⚠ deficit weak'; document.getElementById('hb-deficit').style.color = 'var(--warn)'; }
+  else { document.getElementById('hb-deficit-sub').textContent = 'target −1000'; document.getElementById('hb-deficit').style.color = 'var(--text)'; }
   const bar = document.getElementById('sb-progress'); if (bar) bar.style.width = pct + '%';
   // Coach line — show after first meal logged or after a check-in
   const coach = document.getElementById('sb-coach');
