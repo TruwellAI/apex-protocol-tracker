@@ -341,7 +341,7 @@ body { padding-bottom: 90px; }
   <div class="panel on" data-panel="today">
 
     <!-- ═══ THE WHOLE PICTURE · UNIFIED COMMAND CARD ═══ -->
-    <details class="col-card col-accent" id="big-picture-wrap" open style="margin-top:14px;">
+    <details class="col-card col-accent" id="big-picture-wrap" style="margin-top:14px;">
       <summary>
         <span style="color:var(--accent);">⊙ TODAY · THE WHOLE PICTURE</span>
         <span id="bp-deficit-pill" class="badge" style="background:rgba(0,255,157,.12);color:var(--accent2);">−1000 TARGET</span>
@@ -365,24 +365,28 @@ body { padding-bottom: 90px; }
     </details>
 
     <!-- ═══ DAILY READINESS · COACH MODE ═══ -->
-    <details class="col-card col-readiness">
+    <details class="col-card col-readiness" open>
       <summary>
         <span style="color:#A78BFA;">🧠 DAILY READINESS · COACH MODE</span>
         <span id="dr-status-pill" class="badge">PENDING</span>
       </summary>
       <div class="col-body">
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
         <div>
-          <label style="display:block;font-size:9px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:.1em;margin-bottom:4px;">SLEEP (hrs)</label>
-          <input id="dr-sleep" type="number" inputmode="decimal" step="0.5" placeholder="7.5" oninput="renderReadiness()" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:8px;font-size:14px;-webkit-appearance:none;box-sizing:border-box;font-family:inherit;">
+          <label style="display:block;font-size:9px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:.1em;margin-bottom:4px;">😴 SLEEP (hrs)</label>
+          <input id="dr-sleep" type="number" inputmode="decimal" step="0.5" placeholder="7.5" oninput="renderReadiness()" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:10px;font-size:15px;-webkit-appearance:none;box-sizing:border-box;font-family:inherit;">
         </div>
         <div>
-          <label style="display:block;font-size:9px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:.1em;margin-bottom:4px;">RHR (bpm)</label>
-          <input id="dr-rhr" type="number" inputmode="numeric" placeholder="58" oninput="renderReadiness()" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:8px;font-size:14px;-webkit-appearance:none;box-sizing:border-box;font-family:inherit;">
+          <label style="display:block;font-size:9px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:.1em;margin-bottom:4px;">⚖ WEIGHT (lb)</label>
+          <input id="dr-weight" type="number" inputmode="decimal" step="0.1" placeholder="240.0" oninput="renderReadiness()" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:10px;font-size:15px;-webkit-appearance:none;box-sizing:border-box;font-family:inherit;">
         </div>
         <div>
-          <label style="display:block;font-size:9px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:.1em;margin-bottom:4px;">SORE?</label>
-          <select id="dr-sore" onchange="renderReadiness()" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:8px;font-size:13px;-webkit-appearance:none;box-sizing:border-box;font-family:inherit;">
+          <label style="display:block;font-size:9px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:.1em;margin-bottom:4px;">❤ RHR (bpm)</label>
+          <input id="dr-rhr" type="number" inputmode="numeric" placeholder="58" oninput="renderReadiness()" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:10px;font-size:15px;-webkit-appearance:none;box-sizing:border-box;font-family:inherit;">
+        </div>
+        <div>
+          <label style="display:block;font-size:9px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:.1em;margin-bottom:4px;">💪 SORE?</label>
+          <select id="dr-sore" onchange="renderReadiness()" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:10px;font-size:14px;-webkit-appearance:none;box-sizing:border-box;font-family:inherit;">
             <option value="">none</option>
             <option value="chest">chest</option>
             <option value="back">back</option>
@@ -570,13 +574,14 @@ body { padding-bottom: 90px; }
           </div>
         </div>
 
-        <div class="ac-field" style="margin-top:8px;">
-          <label style="font-size:9px;letter-spacing:.1em;color:var(--muted);font-weight:700;">PM PROJECTION (cal still to burn — auto-shrinks per check-in)</label>
-          <input type="number" id="in-pm-projection" placeholder="300" inputmode="numeric" oninput="saveDayTotal()" style="font-size:14px;padding:8px;">
-        </div>
+        <!-- hidden — kept for code that references it; no longer user-facing -->
+        <input type="number" id="in-pm-projection" value="300" style="display:none;">
 
         <div style="margin-top:8px;font-size:11px;color:var(--text);line-height:1.4;">
           <strong style="color:var(--accent);">Cal left for rest of day:</strong> <span id="cal-left-rest" style="color:var(--accent2);font-weight:700;">—</span>
+        </div>
+        <div style="margin-top:8px;font-size:10px;color:var(--muted);line-height:1.4;">
+          Log <b>Post-gym</b> at lunch · Log <b>EOD</b> before bed. App handles the rest of the math.
         </div>
       </div>
 
@@ -2471,10 +2476,13 @@ function saveReadiness(){
   s.daily = s.daily || {};
   s.daily[k] = s.daily[k] || { food:[], peptides:{}, steps:0, water:0, checks:{}, mealsLogged:{} };
   s.daily[k].readiness = {
-    sleep: parseFloat(document.getElementById('dr-sleep').value) || null,
-    rhr:   parseInt(document.getElementById('dr-rhr').value)   || null,
-    sore:  document.getElementById('dr-sore').value || '',
+    sleep:  parseFloat(document.getElementById('dr-sleep').value) || null,
+    weight: parseFloat(document.getElementById('dr-weight').value) || null,
+    rhr:    parseInt(document.getElementById('dr-rhr').value)   || null,
+    sore:   document.getElementById('dr-sore').value || '',
   };
+  // Mirror weight to top-level so weight history charts can read it
+  if (s.daily[k].readiness.weight) s.daily[k].weight = s.daily[k].readiness.weight;
   // Cycle-start anchor for deload counter
   if (!s.cycleStart) s.cycleStart = k;
   save(s);
@@ -2483,8 +2491,9 @@ function loadReadinessForToday(){
   const t = today();
   if (!t.readiness) return;
   const setVal = (id, v) => { const el = document.getElementById(id); if (el && v != null) el.value = v; };
-  setVal('dr-sleep', t.readiness.sleep);
-  setVal('dr-rhr',   t.readiness.rhr);
+  setVal('dr-sleep',  t.readiness.sleep);
+  setVal('dr-weight', t.readiness.weight);
+  setVal('dr-rhr',    t.readiness.rhr);
   const ss = document.getElementById('dr-sore'); if (ss && t.readiness.sore != null) ss.value = t.readiness.sore;
 }
 function rhrBaseline7d(){
