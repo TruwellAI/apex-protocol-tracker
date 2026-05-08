@@ -2339,6 +2339,15 @@ document.querySelectorAll('.tab').forEach(b => {
     document.querySelectorAll('.panel').forEach(p => p.classList.toggle('on', p.dataset.panel === name));
     window.scrollTo(0,0);
     try { renderDowStrip(); } catch(e){}
+    // Defensive re-render so tab content is always populated
+    if (name === 'rules')    { try { renderRules(); }     catch(e){} }
+    if (name === 'train')    { try { renderTrain(); }     catch(e){} }
+    if (name === 'plan')     { try { renderPlan(); }      catch(e){} }
+    if (name === 'inject')   { try { renderPeptides(); }  catch(e){} }
+    if (name === 'progress') { try { renderProgress(); } catch(e){} }
+    // Hide global day-strip on tabs that aren't day-bound
+    const dowWrap = document.getElementById('global-dow-wrap');
+    if (dowWrap) dowWrap.style.display = (name === 'rules' || name === 'progress') ? 'none' : '';
   });
 });
 
