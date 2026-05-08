@@ -316,6 +316,16 @@ body { padding-bottom: 90px; }
     </div>
   </div>
 
+  <!-- ═══ GLOBAL DAY-OF-WEEK NAVIGATOR — visible across ALL tabs ═══ -->
+  <div id="global-dow-wrap" style="position:sticky;top:0;z-index:90;background:rgba(10,14,26,.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--border);padding-bottom:6px;">
+    <div id="dow-strip" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:8px 16px 6px;"></div>
+    <div id="dow-banner" style="margin:0 16px 6px;padding:10px 12px;background:linear-gradient(135deg,rgba(0,212,255,.08),rgba(0,255,157,.04));border:1px solid var(--border2);border-radius:8px;text-align:center;">
+      <div id="dow-banner-eyebrow" style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:700;">VIEWING TODAY</div>
+      <div id="dow-banner-title" style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:15px;color:var(--text);margin-top:1px;">What you're taking · 0 shots</div>
+      <div id="dow-banner-sub" style="font-size:10px;color:var(--muted);margin-top:1px;">Tap any day · scrolls injections + meals + workout</div>
+    </div>
+  </div>
+
   <!-- ═══ TODAY PANEL ═══ -->
   <div class="panel on" data-panel="today">
 
@@ -696,13 +706,6 @@ body { padding-bottom: 90px; }
 
   <!-- ═══ INJECT PANEL ═══ -->
   <div class="panel" data-panel="inject">
-    <!-- DAY-OF-WEEK NAVIGATOR — tap any day to see exactly what you take that day -->
-    <div id="dow-strip" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:14px 16px 8px;"></div>
-    <div id="dow-banner" style="margin:0 16px 14px;padding:14px;background:linear-gradient(135deg,rgba(0,212,255,.08),rgba(0,255,157,.04));border:1px solid var(--border2);border-radius:10px;text-align:center;">
-      <div id="dow-banner-eyebrow" style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:700;">VIEWING TODAY · MONDAY</div>
-      <div id="dow-banner-title" style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:18px;color:var(--text);margin-top:2px;">What you're taking · 12 shots</div>
-      <div id="dow-banner-sub" style="font-size:11px;color:var(--muted);margin-top:2px;">Tap any peptide to log · listed in injection order</div>
-    </div>
 
     <!-- ═══ THE WHOLE PICTURE · UNIFIED COMMAND CARD ═══ -->
     <div id="big-picture" style="margin:0 16px 14px;padding:16px;background:linear-gradient(135deg,rgba(0,212,255,.1),rgba(0,255,157,.06));border:2px solid var(--accent);border-radius:14px;">
@@ -2243,8 +2246,12 @@ document.querySelectorAll('.tab').forEach(b => {
     document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x.dataset.tab === name));
     document.querySelectorAll('.panel').forEach(p => p.classList.toggle('on', p.dataset.panel === name));
     window.scrollTo(0,0);
+    try { renderDowStrip(); } catch(e){}
   });
 });
+
+// Initial render of global day strip
+window.addEventListener('DOMContentLoaded', () => { setTimeout(() => { try { renderDowStrip(); } catch(e){} }, 100); });
 
 // ── PLAN RENDER + AUTO-LOG ──
 function mealMacros(meal){
@@ -2790,22 +2797,48 @@ let dowPreview = null; // null = today, otherwise 0-6 (Sun-Sat)
 function renderDowStrip(){
   const strip = document.getElementById('dow-strip'); if (!strip) return;
   const dn = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const dnFull = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   const todayDow = dayOfWeek();
   const viewDow = dowPreview != null ? dowPreview : todayDow;
   strip.innerHTML = dn.map((n,i) => {
     const isToday = i === todayDow;
     const isViewing = i === viewDow;
-    return `<button onclick="setDowPreview(${i})" style="padding:8px 4px;border-radius:8px;border:1px solid ${isViewing?'var(--accent2)':'var(--border)'};background:${isViewing?'rgba(0,255,157,.10)':'rgba(255,255,255,.02)'};color:${isViewing?'var(--accent2)':'var(--muted)'};font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.1em;cursor:pointer;font-weight:700;">
+    return `<button onclick="setDowPreview(${i})" style="padding:6px 4px;border-radius:8px;border:1px solid ${isViewing?'var(--accent2)':'var(--border)'};background:${isViewing?'rgba(0,255,157,.10)':'rgba(255,255,255,.02)'};color:${isViewing?'var(--accent2)':'var(--muted)'};font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.1em;cursor:pointer;font-weight:700;">
       <div>${n}</div>
       ${isToday?'<div style="font-size:7px;color:var(--accent);margin-top:2px;">TODAY</div>':''}
     </button>`;
   }).join('');
+
+  // Update banner with day-aware shot count + logged status
+  const banner = document.getElementById('dow-banner-eyebrow');
+  const title  = document.getElementById('dow-banner-title');
+  const sub    = document.getElementById('dow-banner-sub');
+  if (!banner || !title || !sub) return;
+  const dayPeps = PEPTIDES.filter(p => p.days === 'all' || (Array.isArray(p.days) && p.days.includes(viewDow)));
+  const isViewingToday = (viewDow === todayDow);
+  const t = today();
+  const logged = isViewingToday ? (t.peptides || {}) : {};
+  const loggedCount = dayPeps.filter(p => logged[p.id]).length;
+  const trainItem = (typeof TRAIN !== 'undefined') ? TRAIN.find(x => x.d === viewDow) : null;
+  const trainName = trainItem ? trainItem.name : '';
+  banner.textContent = isViewingToday ? `⊙ TODAY · ${dnFull[viewDow]}` : `⊙ PREVIEW · ${dnFull[viewDow]}`;
+  if (isViewingToday) {
+    title.innerHTML = `${loggedCount} / ${dayPeps.length} shots logged${trainName?` · ${trainName}`:''}`;
+    sub.textContent = `Scroll any tab — Today / Inject / Meals / Train all follow this day`;
+  } else {
+    title.innerHTML = `${dayPeps.length} shots planned${trainName?` · ${trainName}`:''}`;
+    sub.textContent = `Tap "Today" to jump back · this is what's coming`;
+  }
 }
 function setDowPreview(d){
   dowPreview = (d === dayOfWeek()) ? null : d;
   haptic();
   renderPeptides();
   renderDowStrip();
+  // Refresh other day-aware views so the strip drives every tab
+  try { renderPlan(); } catch(e){}
+  try { renderTrain(); } catch(e){}
+  try { renderBigPicture(); } catch(e){}
 }
 
 // ── STREAKS — consecutive days hitting each goal ──
