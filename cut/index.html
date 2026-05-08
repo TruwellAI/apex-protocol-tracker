@@ -616,14 +616,10 @@ body { padding-bottom: 90px; }
       </div>
     </div>
 
-    <!-- PLAN HEADER -->
-    <div class="hero" style="margin-top:8px;">
-      <div class="hero-eyebrow"><span id="plan-mode-label">Daily meal plan · 1000 cal deficit</span></div>
-      <div style="font-size:12px;color:var(--muted);margin-top:4px;">Plan total: <strong id="plan-cal-total" style="color:var(--accent2);">2300</strong> cal · <strong id="plan-p-total">240</strong>P · <strong id="plan-c-total">220</strong>C · <strong id="plan-f-total">50</strong>F · <span id="plan-meal-count">6</span> meals</div>
-    </div>
-    <div style="padding:0 16px 14px;">
-      <button class="btn btn-block" onclick="autoLogAllMeals()">📋 Log entire day's plan</button>
-      <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:8px;">Tap a meal card to mark it eaten · grays out when done · tap again to undo · tap any food row to swap or change qty</div>
+    <!-- PLAN HEADER (hidden — old plan totals; values still bound for code that reads them) -->
+    <div style="display:none;">
+      <span id="plan-mode-label">Daily meal plan</span>
+      <span id="plan-cal-total">2300</span><span id="plan-p-total">240</span><span id="plan-c-total">220</span><span id="plan-f-total">50</span><span id="plan-meal-count">6</span>
     </div>
 
     <!-- ═══ PROGRESS SCOREBOARD — eaten vs remaining ═══ -->
@@ -655,7 +651,24 @@ body { padding-bottom: 90px; }
       <div id="sb-coach" style="font-size:12px;color:var(--text);line-height:1.55;margin-top:10px;padding:8px 10px;background:rgba(0,0,0,.25);border-radius:6px;display:none;"></div>
     </div>
 
-    <div class="list" id="plan-list"></div>
+    <!-- ═══ CONSUMED LOG · what you've actually eaten today ═══ -->
+    <div class="section-h" style="margin-top:18px;">
+      <h2>✓ Eaten today</h2>
+      <span class="count" id="meals-consumed-count">0 cal</span>
+    </div>
+    <div class="list" id="meals-consumed-log"></div>
+
+    <!-- ═══ PRE-MADE MEALS · collapsible ═══ -->
+    <details id="meals-premade-wrap" style="margin:18px 16px 0;background:var(--panel);border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+      <summary style="cursor:pointer;list-style:none;padding:14px;display:flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--accent2);font-weight:700;-webkit-tap-highlight-color:transparent;">
+        📋 Pre-made meals (tap to expand) <span style="margin-left:auto;font-size:10px;opacity:.7;color:var(--muted);">▾ <span id="premade-meal-count-badge">6</span> meals</span>
+      </summary>
+      <div style="padding:0 14px 8px;">
+        <button class="btn btn-block" onclick="autoLogAllMeals()" style="font-size:13px;">📋 Log entire day's plan</button>
+        <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:8px;">Tap a meal card to mark eaten · greys out when done · tap any food row to swap qty</div>
+      </div>
+      <div class="list" id="plan-list" style="padding:0 14px 14px;"></div>
+    </details>
 
     <!-- ═══ FOOD QUICK-LOG (moved from old Eat tab) ═══ -->
     <div class="section-h" style="margin-top:24px;"><h2>🍽 Off-script · quick log</h2><span class="count" id="eat-total"></span></div>
@@ -1512,7 +1525,19 @@ function toast(msg, color){
 function renderFoodLog(){
   const t = today();
   const log = document.getElementById('food-log');
-  if (!t.food.length) { log.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:13px;padding:14px;">No food logged yet.</div>'; return; }
+  const mealsLog = document.getElementById('meals-consumed-log');
+  const mealsCount = document.getElementById('meals-consumed-count');
+  // Fill consumed-count badge (Meals tab)
+  if (mealsCount) {
+    const totals = t.food.reduce((a,it) => { const f = findFood(it.id); if (f) { a.cal += f.cal*it.qty; a.p += f.p*it.qty; a.c += f.c*it.qty; a.f += f.f*it.qty; } return a; }, {cal:0,p:0,c:0,f:0});
+    mealsCount.textContent = `${Math.round(totals.cal)} cal · ${Math.round(totals.p)}P · ${Math.round(totals.c)}C · ${Math.round(totals.f)}F`;
+  }
+  if (!t.food.length) {
+    const empty = '<div style="text-align:center;color:var(--muted);font-size:13px;padding:14px;">No food logged yet.</div>';
+    if (log) log.innerHTML = empty;
+    if (mealsLog) mealsLog.innerHTML = empty;
+    return;
+  }
   // Group by id with quantity
   const grouped = {};
   t.food.forEach((it, idx) => {
@@ -1520,7 +1545,7 @@ function renderFoodLog(){
     grouped[it.id].qty += it.qty;
     grouped[it.id].indices.push(idx);
   });
-  log.innerHTML = Object.values(grouped).map(g => {
+  const html = Object.values(grouped).map(g => {
     const f = findFood(g.id);
     return `<div class="card">
       <div class="card-body">
@@ -1533,6 +1558,8 @@ function renderFoodLog(){
       </div>
     </div>`;
   }).join('');
+  if (log) log.innerHTML = html;
+  if (mealsLog) mealsLog.innerHTML = html;
   // total
   const m = sumMacros(t.food);
   document.getElementById('eat-total').textContent = `${Math.round(m.cal)} cal · ${Math.round(m.p)}P / ${Math.round(m.c)}C / ${Math.round(m.f)}F`;
@@ -2311,6 +2338,7 @@ function renderPlan(){
   set('sb-rem-macros', `${Math.round(remP)}P · ${Math.round(remC)}C · ${Math.round(remF)}F`);
   set('sb-goal', Math.round(goal));
   set('plan-mealcount-badge', `${eatenCount} / ${totalMeals} meals`);
+  const pmcb = document.getElementById('premade-meal-count-badge'); if (pmcb) pmcb.textContent = `${eatenCount} / ${totalMeals} eaten`;
   const bar = document.getElementById('sb-progress'); if (bar) bar.style.width = pct + '%';
   // Coach line — show after first meal logged or after a check-in
   const coach = document.getElementById('sb-coach');
