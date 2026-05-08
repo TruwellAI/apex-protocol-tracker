@@ -174,6 +174,17 @@ body { padding-bottom: 90px; }
 
 .panel { display: none; }
 .panel.on { display: block; }
+/* ── Collapsible card system ────────────────────── */
+.col-card { margin: 0 16px 10px; background: var(--panel); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.col-card[open] { background: var(--panel); }
+.col-card > summary { cursor: pointer; list-style: none; padding: 12px 14px; display: flex; align-items: center; gap: 10px; font-family: 'Share Tech Mono', monospace; font-size: 11px; letter-spacing: .14em; font-weight: 700; color: var(--text); -webkit-tap-highlight-color: transparent; user-select: none; }
+.col-card > summary::-webkit-details-marker { display: none; }
+.col-card > summary::after { content: '▾'; margin-left: auto; font-size: 12px; color: var(--muted); transition: transform .2s; }
+.col-card[open] > summary::after { transform: rotate(180deg); }
+.col-card > summary .badge { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 11px; letter-spacing: .04em; padding: 3px 8px; border-radius: 4px; background: rgba(255,255,255,.06); color: var(--muted); }
+.col-card > .col-body { padding: 0 14px 14px; }
+.col-card.col-accent { border-color: var(--accent); background: linear-gradient(135deg,rgba(0,212,255,.06),rgba(0,255,157,.03)); }
+.col-card.col-readiness { border-color: #A78BFA; background: linear-gradient(135deg,rgba(167,139,250,.05),rgba(0,212,255,.03)); }
 
 /* Buttons */
 .btn {
@@ -330,11 +341,12 @@ body { padding-bottom: 90px; }
   <div class="panel on" data-panel="today">
 
     <!-- ═══ THE WHOLE PICTURE · UNIFIED COMMAND CARD ═══ -->
-    <div id="big-picture" style="margin:14px 16px;padding:16px;background:linear-gradient(135deg,rgba(0,212,255,.1),rgba(0,255,157,.06));border:2px solid var(--accent);border-radius:14px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.18em;color:var(--accent);font-weight:700;">⊙ TODAY · THE WHOLE PICTURE</div>
-        <div id="bp-deficit-pill" style="font-size:10px;font-family:'Share Tech Mono',monospace;letter-spacing:.1em;padding:4px 10px;border-radius:4px;background:rgba(0,255,157,.12);color:var(--accent2);font-weight:700;">−1000 TARGET</div>
-      </div>
+    <details class="col-card col-accent" id="big-picture-wrap" open style="margin-top:14px;">
+      <summary>
+        <span style="color:var(--accent);">⊙ TODAY · THE WHOLE PICTURE</span>
+        <span id="bp-deficit-pill" class="badge" style="background:rgba(0,255,157,.12);color:var(--accent2);">−1000 TARGET</span>
+      </summary>
+      <div id="big-picture" class="col-body" style="padding:4px 14px 14px;">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
         <div style="background:rgba(0,0,0,.3);border-radius:8px;padding:10px;">
           <div style="font-size:9px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:.1em;margin-bottom:4px;">DEFICIT TODAY</div>
@@ -349,14 +361,16 @@ body { padding-bottom: 90px; }
       </div>
       <div id="bp-roles" style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:12px;"></div>
       <div id="bp-coach" style="padding:12px;border-radius:8px;font-size:13px;line-height:1.55;color:var(--text);background:rgba(0,0,0,.3);"></div>
-    </div>
+      </div>
+    </details>
 
     <!-- ═══ DAILY READINESS · COACH MODE ═══ -->
-    <div style="margin:0 16px 14px;padding:14px;background:linear-gradient(135deg,rgba(167,139,250,.08),rgba(0,212,255,.04));border:1px solid #A78BFA;border-radius:12px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.16em;color:#A78BFA;font-weight:700;">🧠 DAILY READINESS · COACH MODE</div>
-        <div id="dr-status-pill" style="font-size:10px;font-family:'Share Tech Mono',monospace;letter-spacing:.1em;padding:3px 8px;border-radius:4px;background:rgba(255,255,255,.06);color:var(--muted);">PENDING</div>
-      </div>
+    <details class="col-card col-readiness">
+      <summary>
+        <span style="color:#A78BFA;">🧠 DAILY READINESS · COACH MODE</span>
+        <span id="dr-status-pill" class="badge">PENDING</span>
+      </summary>
+      <div class="col-body">
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;">
         <div>
           <label style="display:block;font-size:9px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:.1em;margin-bottom:4px;">SLEEP (hrs)</label>
@@ -381,11 +395,21 @@ body { padding-bottom: 90px; }
       </div>
       <div id="dr-banner" style="padding:12px;border-radius:8px;font-size:13px;line-height:1.5;color:var(--text);background:rgba(0,0,0,.25);">Log your sleep, RHR, and any soreness → coach builds today's plan.</div>
       <div id="dr-deload" style="display:none;margin-top:10px;padding:12px;border-radius:8px;font-size:13px;line-height:1.5;background:rgba(251,191,36,.1);border:1px solid var(--warn);color:var(--text);"></div>
-    </div>
+      </div>
+    </details>
 
-    <!-- FAT-LOSS GOAL HEADER (always visible) -->
-    <div class="hero" style="margin-bottom:10px;">
-      <div class="hero-eyebrow">🎯 Fat-loss goal · 6-week shred</div>
+    <!-- FAT-LOSS GOAL · collapsible -->
+    <details class="col-card">
+      <summary>🎯 FAT-LOSS GOAL · 6-WEEK SHRED <span class="badge" id="hs-bf-badge">— %</span></summary>
+      <div class="col-body">
+      <div class="hero" style="margin-bottom:0;background:transparent;border:none;padding:0;">
+      <div class="hero-row" style="margin-top:0;border-top:0;padding-top:0;">
+        <div class="hero-stat">
+          <div class="hero-stat-l">Fat now</div>
+          <div class="hero-stat-v cyan" id="hs-fatnow">31.1 lb</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-l">Fat goal</div>
       <div class="hero-row" style="margin-top:8px;border-top:0;padding-top:0;">
         <div class="hero-stat">
           <div class="hero-stat-l">Fat now</div>
@@ -404,19 +428,23 @@ body { padding-bottom: 90px; }
           <div class="hero-stat-v" id="hs-bf">13.0%</div>
         </div>
       </div>
-    </div>
-
-    <!-- DYNAMIC DEFICIT — flexes with Apple Watch burn for exact 1000 deficit (the rule) -->
-    <div id="deficit-banner" style="margin:0 16px 8px;padding:10px 12px;background:rgba(0,212,255,.06);border:1px solid var(--border2);border-radius:8px;font-size:11px;font-family:'Share Tech Mono',monospace;letter-spacing:.04em;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-        <span style="color:var(--muted);">⚡ TODAY'S DEFICIT (vs Apple Watch burn)</span>
-        <span id="deficit-live" style="color:var(--accent2);font-weight:700;">−1000 cal</span>
       </div>
-      <div style="font-size:10px;color:var(--muted);line-height:1.4;">Burn more → eat more. Burn less → eat less. Hit exactly <strong style="color:var(--accent2);">−1000</strong>. Excessive deficit triggers metabolic shutdown.</div>
-    </div>
+      </div>
+    </details>
 
-    <!-- 3-ROW MACRO LADDER: GOAL · CONSUMED · LEFT/OVER -->
-    <div style="margin:0 16px 14px;background:var(--panel);border:1px solid var(--border);border-radius:12px;overflow:hidden;">
+    <!-- DEFICIT BANNER · collapsible -->
+    <details class="col-card">
+      <summary>⚡ DEFICIT vs APPLE WATCH BURN <span id="deficit-live" class="badge" style="background:rgba(0,255,157,.12);color:var(--accent2);">−1000 cal</span></summary>
+      <div class="col-body">
+        <div style="font-size:11px;color:var(--muted);line-height:1.5;">Burn more → eat more. Burn less → eat less. Hit exactly <strong style="color:var(--accent2);">−1000</strong>. Excessive deficit triggers metabolic shutdown.</div>
+      </div>
+    </details>
+
+    <!-- MACRO LADDER · collapsible -->
+    <details class="col-card">
+      <summary>📊 MACRO LADDER · GOAL · CONSUMED · LEFT</summary>
+      <div class="col-body" style="padding:0;">
+    <div style="background:transparent;border:none;border-radius:0;overflow:hidden;">
       <!-- Row 1: GOAL -->
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;border-bottom:1px solid var(--border);">
         <div class="ml-cell" style="padding:10px;text-align:center;">
@@ -476,9 +504,11 @@ body { padding-bottom: 90px; }
         </div>
       </div>
     </div>
+      </div>
+    </details>
 
     <!-- Quick reset for the day -->
-    <div style="margin:0 16px 14px;display:flex;gap:8px;">
+    <div style="margin:0 16px 10px;display:flex;gap:8px;">
       <button class="btn btn-ghost" style="flex:1;font-size:11px;padding:10px;" onclick="resetFoodLog()">↺ Reset food + meals</button>
       <button class="btn btn-ghost" style="flex:1;font-size:11px;padding:10px;" onclick="undoLastFood()">⌫ Undo last item</button>
     </div>
@@ -489,8 +519,10 @@ body { padding-bottom: 90px; }
       <div id="day-done-status" style="text-align:center;font-size:11px;color:var(--muted);margin-top:8px;font-family:'Share Tech Mono',monospace;letter-spacing:.08em;"></div>
     </div>
 
-    <!-- ACTIVITY: 3 checks + 2 day-total inputs. Simple. -->
-    <div style="margin:0 16px 14px;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px;">
+    <!-- ACTIVITY · collapsible -->
+    <details class="col-card" open>
+      <summary>🏃 ACTIVITY · WALKS · WORKOUT · STEPS · BURN</summary>
+      <div class="col-body">
       <div style="display:flex;gap:8px;margin-bottom:14px;">
         <button onclick="toggleCheck('walkAM')" id="walk-am-pill" style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 8px;border-radius:8px;background:rgba(255,255,255,.02);border:1px solid var(--border);color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.12em;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent;">
           <div id="check-walkAM" class="ac-check" style="margin:0;width:18px;height:18px;font-size:10px;">✓</div>
@@ -559,10 +591,14 @@ body { padding-bottom: 90px; }
         <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--accent2);font-weight:700;margin-bottom:6px;">🍽 EAT THIS · hits your remaining macros</div>
         <div id="macro-filler-body" style="font-size:12px;color:var(--text);line-height:1.6;"></div>
       </div>
-    </div>
+      </div>
+    </details>
 
-    <!-- WATER -->
-    <div class="steps-card" style="padding:14px;">
+    <!-- WATER · collapsible -->
+    <details class="col-card">
+      <summary>💧 WATER <span class="badge"><span id="water-now-badge">0</span> / 16 cups</span></summary>
+      <div class="col-body">
+    <div class="steps-card" style="padding:14px;background:transparent;border:none;">
       <div style="font-size:10px;color:var(--muted);letter-spacing:.18em;text-transform:uppercase;font-weight:700;">💧 Water</div>
       <div class="steps-num" style="font-size:32px;"><span id="water-now">0</span><span class="target"> / 16 cups (1 gal)</span></div>
       <div class="steps-bar"><div class="steps-bar-fill" id="water-bar" style="width:0%;background:linear-gradient(90deg,#00D4FF,#00FF9D);"></div></div>
@@ -573,6 +609,8 @@ body { padding-bottom: 90px; }
         <button class="btn btn-ghost" style="flex:1;font-size:11px;padding:10px 6px;" onclick="resetWater()">Reset</button>
       </div>
     </div>
+      </div>
+    </details>
 
 
     <div style="height:30px;"></div>
@@ -1105,6 +1143,7 @@ function renderHero(){
     ? (fatToGo > 0 ? fatToGo.toFixed(1)+' lb' : '✓ HIT')
     : '—';
   document.getElementById('hs-bf').textContent = bf ? bf.toFixed(1)+'%' : '—';
+  const bfBadge = document.getElementById('hs-bf-badge'); if (bfBadge) bfBadge.textContent = bf ? bf.toFixed(1)+'% BF' : '—';
   // Cal display lives in the macro ladder now, not the hero — handled by renderMacros()
 }
 
@@ -2156,6 +2195,7 @@ function renderWater(){
   const t = today();
   const w = t.water || 0;
   document.getElementById('water-now').textContent = w;
+  const wb = document.getElementById('water-now-badge'); if (wb) wb.textContent = w;
   document.getElementById('water-bar').style.width = Math.min(100, (w/16)*100) + '%';
 }
 
