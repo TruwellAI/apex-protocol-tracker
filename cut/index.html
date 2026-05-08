@@ -3160,14 +3160,14 @@ function renderAll(){
   safe('DowStrip',      renderDowStrip);
   safe('CheckPerfect',  checkPerfectDay);
   safe('DayDoneBtn',    renderDayDoneBtn);
-  renderStackIntel();
-  renderPeptides();
-  renderSteps();
-  renderWater();
-  renderChecks();
-  renderTrain();
-  renderRules();
-  renderProgress();
+  safe('StackIntel',    renderStackIntel);
+  safe('Peptides',      renderPeptides);
+  safe('Steps',         renderSteps);
+  safe('Water',         renderWater);
+  safe('Checks',        renderChecks);
+  safe('Train',         renderTrain);
+  safe('Rules',         renderRules);
+  safe('Progress',      renderProgress);
 }
 // Run SSOT audit on boot — warns in console if Apex encyclopedia drifts from cut app
 auditSSOT();
