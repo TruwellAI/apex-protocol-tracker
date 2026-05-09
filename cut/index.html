@@ -1094,10 +1094,10 @@ function get(){
   s.goalWeight = s.goalWeight || 230;     // 208 LBM + 22 lb fat target
   s.goalFat = s.goalFat || 22;            // Neil's locked target — 22 lb of fat
   s.goalBF = s.goalBF || 9.6;             // 22 / 230
-  s.targetCal = s.targetCal || 2300;   // 1000 deficit · 6-week boat shred
-  s.targetP = s.targetP || 240;        // 1.15 g/lb LBM — anabolic protection
-  s.targetC = s.targetC || 175;        // training fuel + glycogen
-  s.targetF = s.targetF || 70;         // hormone-floor fat (was too low at 50g)
+  s.targetCal = s.targetCal || 2200;   // 1000 deficit @ age 52 TDEE 3190
+  s.targetP = s.targetP || 240;        // 1.15 g/lb LBM — anabolic protection (LOCKED)
+  s.targetC = s.targetC || 150;        // training fuel + glycogen
+  s.targetF = s.targetF || 70;         // hormone-floor fat (0.30 g/lb LBM)
   s.weights = s.weights || [];   // [{date, weight, bf, waist}]
   s.daily = s.daily || {};       // { '2026-05-02': { food:[{id,qty}], peptides:{id:true}, steps:N } }
   s.customFoods = s.customFoods || []; // user-added custom foods
@@ -1273,7 +1273,7 @@ function renderMacros(){
   // Stash for elsewhere
   s._effectiveTargetCal = dynamicCalGoal;
   // Live deficit indicator: TDEE = baseline maintenance + today's extra burn − consumed
-  const baselineMaint = s.targetCal + 1000; // ~3300
+  const baselineMaint = s.targetCal + 1000; // 3190 maintenance @ age 52
   const tdeeToday = baselineMaint + (projectedEODBurn - baselineBurn);
   const realDeficit = Math.round(tdeeToday - m.cal);
   const live = document.getElementById('deficit-live');
@@ -2493,7 +2493,7 @@ function renderPlan(){
   const burnSoFar = (parseInt(t.postGymKcal) || 0) || (parseInt(t.eodKcal) || 0) || 0;
   const baseline = 750;
   const projectedBurn = burnSoFar > 0 ? (burnSoFar >= baseline ? burnSoFar : burnSoFar + (parseInt(t.pmProj)||300)) : baseline;
-  const baselineMaint = (s.targetCal || 2300) + 1000;
+  const baselineMaint = (s.targetCal || 2200) + 1000;
   const tdeeToday = baselineMaint + (projectedBurn - baseline);
   const deficit = Math.max(0, tdeeToday - eatenMacros.cal);
   set('hb-burn', Math.round(projectedBurn));
@@ -2737,7 +2737,7 @@ function renderBigPicture(){
   const burnSoFar = (parseInt(t.postGymKcal) || 0) || (parseInt(t.eodKcal) || 0) || 750;
   const baseline = 750;
   const projectedBurn = burnSoFar >= baseline ? burnSoFar : baseline;
-  const baselineMaint = (s.targetCal || 2300) + 1000; // 3300 maintenance
+  const baselineMaint = (s.targetCal || 2200) + 1000; // 3300 maintenance
   const tdeeToday = baselineMaint + (projectedBurn - baseline);
   const deficit = Math.max(0, tdeeToday - eaten.cal);
   document.getElementById('bp-deficit-val').textContent = '−' + Math.round(deficit);
